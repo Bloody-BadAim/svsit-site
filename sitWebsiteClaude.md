@@ -1,4 +1,3 @@
-@AGENTS.md
 # SIT Website
 
 Website voor SIT (Studievereniging ICT), de studievereniging voor HBO-ICT aan de HvA.
