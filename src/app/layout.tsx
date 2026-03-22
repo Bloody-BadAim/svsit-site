@@ -28,7 +28,26 @@ export default function RootLayout({
     <html
       lang="nl"
       className={`${geistSans.variable} ${jetbrainsMono.variable} antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+// {SIT} — Studievereniging ICT
+// Hogeschool van Amsterdam
+//
+// Door studenten. Voor studenten. In code.
+//
+// TODO: meer events toevoegen
+// TODO: dark mode is de enige mode
+// FIXME: te weinig pizza bij events
+//
+// Wil je meehelpen? bestuur@svsit.nl
+`,
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

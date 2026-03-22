@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
+import CodeBackground from "@/components/CodeBackground";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -92,9 +93,10 @@ export default function WhyJoin() {
   return (
     <section
       ref={sectionRef}
-      className="relative pt-40 md:pt-56 pb-40 md:pb-56 px-6 md:px-12 lg:px-24"
+      className="relative pt-48 md:pt-64 pb-48 md:pb-64 px-6 md:px-12 lg:px-24"
     >
-      <div className="max-w-[1400px] mx-auto">
+      <CodeBackground />
+      <div className="relative max-w-[1400px] mx-auto">
         <SectionLabel number="02" label="waarom lid worden" />
 
         {/* Stacked reasons list */}

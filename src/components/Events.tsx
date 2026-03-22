@@ -49,6 +49,7 @@ export default function Events() {
   const triggerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const timelineLineRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -56,25 +57,24 @@ export default function Events() {
 
       const getScrollDistance = () => {
         if (!trackRef.current) return 0;
-        // Measure the actual overflow: how far the track extends beyond the viewport
         const trackWidth = trackRef.current.scrollWidth;
         const viewportWidth = window.innerWidth;
         return Math.max(0, trackWidth - viewportWidth);
       };
 
       // Main horizontal scroll — pin + scrub
-      gsap.to(trackRef.current, {
-        x: () => -getScrollDistance(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: triggerRef.current,
-          pin: true,
-          pinType: "transform",
-          scrub: 0.5,
-          start: "top top",
-          end: () => `+=${getScrollDistance()}`,
-          invalidateOnRefresh: true,
-        },
+      const mainTrigger = ScrollTrigger.create({
+        trigger: triggerRef.current,
+        pin: true,
+        pinType: "transform",
+        scrub: 0.5,
+        start: "top top",
+        end: () => `+=${getScrollDistance()}`,
+        invalidateOnRefresh: true,
+        animation: gsap.to(trackRef.current, {
+          x: () => -getScrollDistance(),
+          ease: "none",
+        }),
       });
 
       // Timeline line grows as you scroll
@@ -94,6 +94,27 @@ export default function Events() {
           }
         );
       }
+
+      // Animate each card in as it enters the viewport during horizontal scroll
+      cardRefs.current.forEach((card) => {
+        if (!card) return;
+        gsap.fromTo(
+          card,
+          { opacity: 0, scale: 0.8 },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+            ease: "back.out(1.4)",
+            scrollTrigger: {
+              trigger: card,
+              containerAnimation: mainTrigger.animation!,
+              start: "left 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -102,89 +123,16 @@ export default function Events() {
   return (
     <section ref={sectionRef} id="events" className="relative">
       {/* Section label above the pinned area */}
-      <div className="pt-40 md:pt-56 pb-12 px-6 md:px-12 lg:px-24">
+      <div className="pt-48 md:pt-64 pb-12 px-6 md:px-12 lg:px-24">
         <div className="max-w-[1400px] mx-auto">
           <SectionLabel number="03" label="events" />
         </div>
       </div>
 
       {/* Horizontal scroll container — pinned by GSAP */}
-      <div ref={triggerRef} className="relative h-screen flex items-center">
-        <div
-          ref={trackRef}
-          className="flex items-start gap-0"
-          style={{ paddingLeft: "clamp(24px, 4vw, 96px)", paddingRight: "30vw", width: "max-content" }}
-        >
-          {events.map((event, i) => (
-            <div
-              key={event.title}
-              className="flex flex-col items-center"
-              style={{ width: "clamp(350px, 35vw, 600px)", flexShrink: 0, marginRight: i < events.length - 1 ? "clamp(60px, 8vw, 140px)" : 0 }}
-            >
-              {/* Card */}
-              <div className="relative w-full border border-[var(--color-border)] bg-[#111113] hover:border-[var(--color-text-muted)]/30 transition-all duration-500">
-                <BorderTrail
-                  size={80}
-                  className="bg-gradient-to-l from-transparent via-current to-transparent"
-                  style={{ color: event.accent }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                />
-
-                <div className="p-8 md:p-10">
-                  {/* Badge */}
-                  <span
-                    className="inline-block font-mono text-[10px] px-3 py-1 border mb-6 tracking-wider"
-                    style={{ borderColor: event.badgeColor, color: event.badgeColor }}
-                  >
-                    {event.badge}
-                  </span>
-
-                  {/* Title */}
-                  <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">
-                    {event.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="font-mono text-sm text-[var(--color-text-muted)] leading-relaxed mb-6">
-                    {event.description}
-                  </p>
-
-                  {/* Location */}
-                  <div className="font-mono text-xs text-[var(--color-text-muted)] opacity-60">
-                    <span className="text-[var(--color-text)]">{event.location}</span>
-                    <span className="mx-2">&middot;</span>
-                    <span>{event.time}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Connector line from card to timeline */}
-              <div
-                className="w-px h-8 md:h-12"
-                style={{ background: event.accent, opacity: 0.5 }}
-              />
-
-              {/* Timeline dot */}
-              <div
-                className="w-3 h-3 rounded-full shadow-[0_0_12px_currentColor]"
-                style={{ background: event.accent, color: event.accent }}
-              />
-
-              {/* Date chip below timeline */}
-              <div className="mt-4">
-                <span
-                  className="font-mono text-xs font-bold px-3 py-1.5 border tracking-wider"
-                  style={{ borderColor: `${event.accent}40`, color: event.accent }}
-                >
-                  {event.date}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Horizontal timeline line */}
-        <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: "calc(50% - 120px)" }}>
+      <div ref={triggerRef} className="relative h-screen flex items-center overflow-hidden">
+        {/* Horizontal timeline line — sits at center */}
+        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 pointer-events-none z-0">
           <div
             ref={timelineLineRef}
             className="h-px w-full origin-left"
@@ -192,6 +140,152 @@ export default function Events() {
               background: "linear-gradient(to right, #F59E0B, #3B82F6, #EF4444)",
             }}
           />
+        </div>
+
+        <div
+          ref={trackRef}
+          className="flex items-center gap-0 relative z-10"
+          style={{ paddingLeft: "clamp(24px, 6vw, 120px)", paddingRight: "40vw", width: "max-content" }}
+        >
+          {events.map((event, i) => {
+            const isAbove = i % 2 === 0; // 0, 2 above — 1 below
+            return (
+              <div
+                key={event.title}
+                className="relative flex flex-col items-center"
+                style={{
+                  width: "clamp(350px, 35vw, 550px)",
+                  flexShrink: 0,
+                  marginRight: i < events.length - 1 ? "clamp(200px, 20vw, 300px)" : 0,
+                  height: "70vh",
+                }}
+              >
+                {/* TOP HALF */}
+                <div className="flex-1 flex flex-col justify-end items-center pb-4">
+                  {isAbove ? (
+                    <>
+                      {/* Card above the line */}
+                      <div
+                        ref={(el) => { cardRefs.current[i] = el; }}
+                        className="event-card relative w-full border border-[var(--color-border)] bg-[#111113] opacity-0"
+                      >
+                        <BorderTrail
+                          size={80}
+                          className="bg-gradient-to-l from-transparent via-current to-transparent"
+                          style={{ color: event.accent }}
+                          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                        />
+                        <div className="p-8 md:p-10">
+                          <span
+                            className="inline-block font-mono text-[10px] px-3 py-1 border mb-5 tracking-wider"
+                            style={{ borderColor: event.badgeColor, color: event.badgeColor }}
+                          >
+                            {event.badge}
+                          </span>
+                          <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">
+                            {event.title}
+                          </h3>
+                          <p className="font-mono text-sm text-[var(--color-text-muted)] leading-relaxed mb-5">
+                            {event.description}
+                          </p>
+                          <div className="font-mono text-xs text-[var(--color-text-muted)] opacity-60">
+                            <span className="text-[var(--color-text)]">{event.location}</span>
+                            <span className="mx-2">&middot;</span>
+                            <span>{event.time}</span>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Connector down to timeline */}
+                      <div
+                        className="w-px h-8"
+                        style={{ background: event.accent, opacity: 0.5 }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      {/* Date chip above the line (when card is below) */}
+                      <span
+                        className="font-mono text-xs font-bold px-3 py-1.5 border tracking-wider mb-4"
+                        style={{ borderColor: `${event.accent}40`, color: event.accent }}
+                      >
+                        {event.date}
+                      </span>
+                      {/* Connector down to timeline */}
+                      <div
+                        className="w-px h-8"
+                        style={{ background: event.accent, opacity: 0.3 }}
+                      />
+                    </>
+                  )}
+                </div>
+
+                {/* TIMELINE DOT — centered on the line */}
+                <div
+                  className="w-3.5 h-3.5 rounded-full shadow-[0_0_12px_currentColor] z-10 shrink-0"
+                  style={{ background: event.accent, color: event.accent }}
+                />
+
+                {/* BOTTOM HALF */}
+                <div className="flex-1 flex flex-col justify-start items-center pt-4">
+                  {!isAbove ? (
+                    <>
+                      {/* Connector down from timeline */}
+                      <div
+                        className="w-px h-8"
+                        style={{ background: event.accent, opacity: 0.5 }}
+                      />
+                      {/* Card below the line */}
+                      <div
+                        ref={(el) => { cardRefs.current[i] = el; }}
+                        className="event-card relative w-full border border-[var(--color-border)] bg-[#111113] opacity-0"
+                      >
+                        <BorderTrail
+                          size={80}
+                          className="bg-gradient-to-l from-transparent via-current to-transparent"
+                          style={{ color: event.accent }}
+                          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                        />
+                        <div className="p-8 md:p-10">
+                          <span
+                            className="inline-block font-mono text-[10px] px-3 py-1 border mb-5 tracking-wider"
+                            style={{ borderColor: event.badgeColor, color: event.badgeColor }}
+                          >
+                            {event.badge}
+                          </span>
+                          <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">
+                            {event.title}
+                          </h3>
+                          <p className="font-mono text-sm text-[var(--color-text-muted)] leading-relaxed mb-5">
+                            {event.description}
+                          </p>
+                          <div className="font-mono text-xs text-[var(--color-text-muted)] opacity-60">
+                            <span className="text-[var(--color-text)]">{event.location}</span>
+                            <span className="mx-2">&middot;</span>
+                            <span>{event.time}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Connector down from timeline */}
+                      <div
+                        className="w-px h-8"
+                        style={{ background: event.accent, opacity: 0.3 }}
+                      />
+                      {/* Date chip below the line (when card is above) */}
+                      <span
+                        className="font-mono text-xs font-bold px-3 py-1.5 border tracking-wider mt-4"
+                        style={{ borderColor: `${event.accent}40`, color: event.accent }}
+                      >
+                        {event.date}
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

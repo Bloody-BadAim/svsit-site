@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer id="footer" className="relative border-t border-[var(--color-border)] px-6 md:px-12 lg:px-24 py-16 md:py-20">
       <div className="max-w-[1400px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 lg:gap-24">
           {/* Left: Logo + tagline */}
           <div>
             <span className="font-mono text-2xl font-bold">
@@ -21,8 +21,8 @@ export default function Footer() {
 
           {/* Middle: Links */}
           <div>
-            <span className="font-mono text-[10px] text-[var(--color-text-muted)] tracking-[0.2em] uppercase mb-5 block opacity-50">
-              Links
+            <span className="font-mono text-[11px] text-[var(--color-text-muted)] tracking-[0.25em] uppercase mb-6 block opacity-40 font-medium">
+              LINKS
             </span>
             <nav className="flex flex-col gap-2.5">
               <a href="#about" className="font-mono text-sm text-[var(--color-text)] hover:text-[var(--color-accent-gold)] transition-colors">
@@ -42,8 +42,8 @@ export default function Footer() {
 
           {/* Right: Contact */}
           <div>
-            <span className="font-mono text-[10px] text-[var(--color-text-muted)] tracking-[0.2em] uppercase mb-5 block opacity-50">
-              Contact
+            <span className="font-mono text-[11px] text-[var(--color-text-muted)] tracking-[0.25em] uppercase mb-6 block opacity-40 font-medium">
+              CONTACT
             </span>
             <div className="flex flex-col gap-2.5">
               <a
@@ -72,20 +72,17 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Hidden HTML comment easter egg */}
-        <div className="mt-8 font-mono text-[10px] text-[var(--color-text-muted)] opacity-15">
-          {"<!-- TODO: meer events toevoegen -->"}
-        </div>
-
         {/* Bottom bar */}
-        <div className="mt-12 pt-6 border-t border-[var(--color-border)] flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-          <span className="font-mono text-xs text-[var(--color-text-muted)] opacity-40">
-            &copy; {new Date().getFullYear()} SIT — Studievereniging ICT
-          </span>
-          <span className="font-mono text-xs text-[var(--color-text-muted)] opacity-30">
-            <span className="text-[var(--color-accent-gold)]">{"// "}</span>
-            {"built_with: 'next.js' | tailwind | gsap"}
-          </span>
+        <div className="mt-16 pt-8 border-t border-[var(--color-border)]">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+            <span className="font-mono text-xs text-[var(--color-text-muted)] opacity-40">
+              &copy; {new Date().getFullYear()} SIT — Studievereniging ICT
+            </span>
+            <span className="font-mono text-xs text-[var(--color-text-muted)] opacity-30">
+              <span className="text-[var(--color-accent-gold)]">{"// "}</span>
+              {"built_with: 'next.js' | tailwind | gsap"}
+            </span>
+          </div>
         </div>
       </div>
     </footer>

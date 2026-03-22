@@ -82,7 +82,7 @@ export default function JoinCta() {
     <section
       ref={sectionRef}
       id="join"
-      className="relative min-h-[80vh] flex items-center px-6 md:px-12 lg:px-24 py-32 md:py-40 overflow-hidden"
+      className="relative min-h-[80vh] flex items-center px-6 md:px-12 lg:px-24 py-40 md:py-48 overflow-hidden"
     >
       {/* Background: radial gold glow */}
       <div
@@ -118,7 +118,7 @@ export default function JoinCta() {
         </h2>
 
         {/* Price + subtext + button row */}
-        <div className="mt-16 md:mt-20 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-0 items-end">
+        <div className="mt-20 md:mt-28 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-0 items-end">
           {/* Left: giant price */}
           <div ref={priceRef} className="invisible md:col-span-5">
             <div className="flex items-baseline gap-4">
@@ -132,7 +132,7 @@ export default function JoinCta() {
           </div>
 
           {/* Right: subtext + button */}
-          <div className="md:col-span-5 md:col-start-8 flex flex-col gap-10">
+          <div className="md:col-span-5 md:col-start-8 flex flex-col gap-14">
             <p
               ref={subtextRef}
               className="invisible font-mono text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed max-w-md"
@@ -141,12 +141,12 @@ export default function JoinCta() {
             </p>
 
             <div ref={buttonRef} className="invisible">
-              <Magnetic intensity={0.3} range={120}>
+              <Magnetic intensity={0.25} range={150}>
                 <a
                   href="https://sitlid.nl"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative inline-block px-14 py-6 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-base tracking-wide overflow-hidden transition-transform duration-200 hover:scale-[1.03] active:scale-[0.97]"
+                  className="group relative inline-block px-12 py-5 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-xl tracking-wide overflow-hidden transition-transform duration-200 hover:scale-[1.03] active:scale-[0.97]"
                 >
                   <GlowEffect
                     colors={["#F59E0B", "#D97706", "#FBBF24", "#F59E0B"]}

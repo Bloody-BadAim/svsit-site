@@ -9,11 +9,15 @@ import Footer from "@/components/Footer";
 import PageScrollProgress from "@/components/PageScrollProgress";
 import EventStrip from "@/components/EventStrip";
 import ConsoleEasterEgg from "@/components/ConsoleEasterEgg";
+import CustomCursor from "@/components/CustomCursor";
+import KonamiCode from "@/components/KonamiCode";
 
 export default function Home() {
   return (
     <>
+      <CustomCursor />
       <ConsoleEasterEgg />
+      <KonamiCode />
       <PageScrollProgress />
       <EventStrip />
       <Navbar />
