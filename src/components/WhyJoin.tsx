@@ -134,7 +134,7 @@ export default function WhyJoin() {
                       color: reason.accent,
                       opacity: 0.15,
                       ...(isEven
-                        ? { left: "-2%", md: { left: "0" } }
+                        ? { left: "-2%" }
                         : { right: "-2%" }),
                     }}
                     // Use className for left/right positioning since inline style objects don't support responsive
