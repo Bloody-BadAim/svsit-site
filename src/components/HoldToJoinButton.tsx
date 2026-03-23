@@ -391,14 +391,14 @@ export default function HoldToJoinButton({ href }: { href: string }) {
         ctx.fillStyle = "#09090B";
         ctx.fillRect(0, 0, w, h);
 
-        const lineHeight = 36;
+        // Responsive font size: smaller on narrow screens
+        const fontSize = w < 500 ? 13 : w < 768 ? 15 : 18;
+        const lineHeight = Math.round(fontSize * 2);
         const startY = h / 2 - (TERMINAL_LINES.length * lineHeight) / 2;
+        const centerX = w / 2;
         let charIdx = 0;
         let lineIdx = 0;
         let cursorVisible = true;
-
-        const maxLineWidth = Math.max(...TERMINAL_LINES.map((l) => l.length)) * 12;
-        const startX = (w - maxLineWidth) / 2;
 
         const cursorBlink = setInterval(() => { cursorVisible = !cursorVisible; }, 500);
 
@@ -411,22 +411,23 @@ export default function HoldToJoinButton({ href }: { href: string }) {
 
           ctx.fillStyle = "#09090B";
           ctx.fillRect(0, 0, w, h);
-          ctx.font = "18px JetBrains Mono, monospace";
+          ctx.font = `${fontSize}px JetBrains Mono, monospace`;
           ctx.textBaseline = "top";
-          ctx.textAlign = "left";
+          ctx.textAlign = "center";
           ctx.fillStyle = "#F59E0B";
 
           for (let i = 0; i < lineIdx; i++) {
-            ctx.fillText(TERMINAL_LINES[i], startX, startY + i * lineHeight);
+            ctx.fillText(TERMINAL_LINES[i], centerX, startY + i * lineHeight);
           }
 
           if (lineIdx < TERMINAL_LINES.length) {
             const line = TERMINAL_LINES[lineIdx];
             const partial = line.substring(0, charIdx);
-            ctx.fillText(partial, startX, startY + lineIdx * lineHeight);
+            ctx.fillText(partial, centerX, startY + lineIdx * lineHeight);
 
             if (cursorVisible) {
-              const cursorX = startX + ctx.measureText(partial).width;
+              const halfWidth = ctx.measureText(partial).width / 2;
+              const cursorX = centerX + halfWidth;
               ctx.fillRect(cursorX + 2, startY + lineIdx * lineHeight, 10, 20);
             }
 
@@ -438,7 +439,8 @@ export default function HoldToJoinButton({ href }: { href: string }) {
           } else {
             if (cursorVisible) {
               const lastLine = TERMINAL_LINES[TERMINAL_LINES.length - 1];
-              const cursorX = startX + ctx.measureText(lastLine).width;
+              const halfWidth = ctx.measureText(lastLine).width / 2;
+              const cursorX = centerX + halfWidth;
               ctx.fillStyle = "#F59E0B";
               ctx.fillRect(cursorX + 2, startY + (TERMINAL_LINES.length - 1) * lineHeight, 10, 20);
             }
