@@ -296,8 +296,9 @@ export default function HoldToJoinButton({ href }: { href: string }) {
 
     const canvas = canvasRef.current;
     if (!canvas) { cleanup(); return; }
-    const ctx = canvas.getContext("2d");
-    if (!ctx) { cleanup(); return; }
+    const rawCtx = canvas.getContext("2d");
+    if (!rawCtx) { cleanup(); return; }
+    const ctx: CanvasRenderingContext2D = rawCtx;
 
     const w = canvas.width;
     const h = canvas.height;
@@ -310,7 +311,7 @@ export default function HoldToJoinButton({ href }: { href: string }) {
       const particles = particlesRef.current;
 
       function convergeFrame() {
-        if (!mountedRef.current || !canvasRef.current || !ctx) return;
+        if (!mountedRef.current || !canvasRef.current) return;
 
         const elapsed = performance.now() - convergenceStart;
         const t = Math.min(elapsed / 500, 1);
@@ -362,7 +363,6 @@ export default function HoldToJoinButton({ href }: { href: string }) {
       }
 
       function goldenFlash() {
-        if (!ctx) return;
         // Flash: golden/white burst
         const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h));
         grad.addColorStop(0, "rgba(255, 255, 255, 0.95)");
@@ -373,14 +373,14 @@ export default function HoldToJoinButton({ href }: { href: string }) {
         ctx.fillRect(0, 0, w, h);
 
         setTimeout(() => {
-          if (!mountedRef.current || !canvasRef.current || !ctx) return;
+          if (!mountedRef.current || !canvasRef.current) return;
 
           // Step 3: Black out
           ctx.fillStyle = "#09090B";
           ctx.fillRect(0, 0, w, h);
 
           setTimeout(() => {
-            if (!mountedRef.current || !canvasRef.current || !ctx) return;
+            if (!mountedRef.current || !canvasRef.current) return;
             // Step 4: Terminal message
             typeTerminal(ctx, w, h);
           }, 200);

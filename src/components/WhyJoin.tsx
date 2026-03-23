@@ -184,6 +184,11 @@ export default function WhyJoin() {
 
           {/* Bottom line */}
           <div className="h-px w-full bg-[var(--color-border)]" />
+
+          {/* Error decoration */}
+          <p className="font-mono text-xs text-[var(--color-accent-red)] opacity-30 mt-6">
+            {"// FIXME: waarom is iedereen zo gemotiveerd"}
+          </p>
         </div>
       </div>
 

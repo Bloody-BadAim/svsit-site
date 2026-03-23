@@ -325,9 +325,14 @@ export default function Events() {
           })}
         </div>
 
-        <p className="font-mono text-sm text-[var(--color-accent-green)] text-center mt-16 md:mt-20 opacity-60">
-          {"// meer events coming soon..."}
-        </p>
+        <div className="text-center mt-16 md:mt-20 space-y-2">
+          <p className="font-mono text-sm text-[var(--color-accent-green)] opacity-60">
+            {"// meer events coming soon..."}
+          </p>
+          <p className="font-mono text-xs text-[var(--color-accent-red)] opacity-40">
+            {"// TODO: fix bug waar events.length altijd te laag is"}
+          </p>
+        </div>
       </div>
     </section>
   );

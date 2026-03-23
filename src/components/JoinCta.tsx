@@ -128,6 +128,9 @@ export default function JoinCta() {
             <span className="font-mono text-sm text-[var(--color-text-muted)] mt-2 block">
               eenmalig — lid voor je hele studiejaar
             </span>
+            <span className="font-mono text-[10px] text-[var(--color-accent-red)] mt-2 block opacity-50">
+              {"// RangeError: price too low to be real"}
+            </span>
           </div>
 
           {/* Right: subtext + button */}
@@ -136,7 +139,8 @@ export default function JoinCta() {
               ref={subtextRef}
               className="invisible font-mono text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed max-w-md"
             >
-              Geen maandelijkse kosten. Toegang tot alle events, workshops, borrels en de SIT community.
+
+              <span className="text-[var(--color-accent-blue)]">Geen</span> maandelijkse kosten. Toegang tot alle <span className="text-[var(--color-accent-blue)]">events</span>, workshops, borrels en de SIT community.
             </p>
 
             <div ref={buttonRef} className="invisible">

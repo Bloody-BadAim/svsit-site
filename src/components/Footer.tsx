@@ -63,7 +63,7 @@ export default function Footer() {
       <div className="py-24 md:py-32 px-6 md:px-12 lg:px-24 border-b border-[var(--color-border)]">
         <div ref={returnRef} className="max-w-[1400px] mx-auto">
           <span className="return-text block font-mono text-6xl md:text-8xl lg:text-9xl font-bold leading-none">
-            <span className="text-[var(--color-text-muted)] opacity-40">return </span>
+            <span className="text-[var(--color-accent-blue)] opacity-50">return </span>
             <span className="text-[var(--color-accent-gold)]">0</span>
             <span className="text-[var(--color-text-muted)] opacity-40">;</span>
           </span>
@@ -94,6 +94,9 @@ export default function Footer() {
                 <p>Creating Tomorrow</p>
                 <p>Hogeschool van Amsterdam</p>
                 <p className="mt-2 opacity-60">Door studenten, voor studenten.</p>
+                <p className="mt-3 text-[var(--color-accent-red)] opacity-40">
+                  {"⚠ WARN: sleep.hours < recommended"}
+                </p>
               </div>
             </div>
 
@@ -161,7 +164,14 @@ export default function Footer() {
                 &copy; {new Date().getFullYear()} SIT
               </span>
               <span className="font-mono text-xs text-[var(--color-text-muted)] opacity-30">
-                <span className="text-[var(--color-accent-green)]">{"// built_with: 'next.js' | tailwind | gsap"}</span>
+                <span className="text-[var(--color-accent-green)]">{"// "}</span>
+                <span className="text-[var(--color-accent-blue)]">built_with</span>
+                <span className="text-[var(--color-text-muted)]">{": "}</span>
+                <span className="text-[var(--color-accent-gold)]">{"'next.js'"}</span>
+                <span className="text-[var(--color-text-muted)]">{" | "}</span>
+                <span className="text-[var(--color-accent-gold)]">{"tailwind"}</span>
+                <span className="text-[var(--color-text-muted)]">{" | "}</span>
+                <span className="text-[var(--color-accent-gold)]">{"gsap"}</span>
               </span>
             </div>
           </div>

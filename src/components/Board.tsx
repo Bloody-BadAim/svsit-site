@@ -216,7 +216,7 @@ export default function Board() {
         {/* Title */}
         <div className="mb-10 md:mb-14">
           <h2 className="font-mono text-2xl md:text-3xl font-bold tracking-tight text-[var(--color-text)]">
-            SELECT YOUR BESTUURSLID
+            <span className="text-[var(--color-accent-blue)]">SELECT</span> YOUR BESTUURSLID
           </h2>
           <p className="font-mono text-sm text-[var(--color-text-muted)] mt-2">
             BESTUUR XI — 2026
@@ -368,7 +368,7 @@ export default function Board() {
                 {current.name.toUpperCase()}
               </h3>
               <p className="font-mono text-sm text-[var(--color-text-muted)] mt-1 mb-6">
-                class: {current.role}
+                <span className="text-[var(--color-accent-blue)]">class</span>: {current.role}
               </p>
 
               {/* Stats header */}

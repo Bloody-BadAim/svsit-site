@@ -293,6 +293,7 @@ export default function Hero() {
           { text: "$ npm run borrel", top: "6%", left: "82%", delay: "8s", duration: "24s", color: "var(--color-text-muted)" },
           { text: "ai.generate('study_tips')", top: "18%", left: "5%", delay: "3s", duration: "19s", color: "var(--color-accent-gold)" },
           { text: "SELECT * FROM studenten WHERE motivation = 'high'", top: "12%", left: "48%", delay: "6s", duration: "21s", color: "var(--color-text-muted)" },
+          { text: "ERR: cannot read property 'sleep' of student", top: "26%", left: "70%", delay: "10s", duration: "23s", color: "var(--color-accent-red)" },
         ].map((frag, i) => (
           <span
             key={i}
@@ -353,7 +354,7 @@ export default function Hero() {
               className={`font-mono text-lg md:text-xl text-[var(--color-text-muted)] max-w-lg leading-relaxed mb-10 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.2s_forwards]" : ""
                 }`}
             >
-              Door studenten. Voor studenten.
+              <span className="text-[var(--color-accent-blue)]">Door</span> studenten. <span className="text-[var(--color-accent-blue)]">Voor</span> studenten.
               <span className="text-[var(--color-accent-gold)]"> In tech.</span>
             </p>
 

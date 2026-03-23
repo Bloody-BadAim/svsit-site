@@ -157,8 +157,14 @@ export default function About() {
               ref={line3Ref}
               className="opacity-0 font-mono text-base md:text-lg leading-relaxed text-[var(--color-text-muted)]"
             >
-              We organiseren events, bouwen een community, en maken je studietijd
-              beter. Of je nu codeert, hackt, gamet, of onderneemt. Gerund door studenten die weten wat ze doen.
+
+              We organiseren <span className="text-[var(--color-accent-blue)]">events</span>, bouwen een community, en maken je studietijd
+              beter. Of je nu <span className="text-[var(--color-accent-blue)]">codeert</span>, hackt, gamet, of onderneemt.
+            </p>
+
+            {/* Error comment */}
+            <p className="font-mono text-xs text-[var(--color-accent-red)] opacity-50 mt-3">
+              {"// ERROR: te weinig pizza bij events"}
             </p>
 
             {/* Stats grid */}
@@ -171,7 +177,7 @@ export default function About() {
                   0
                 </span>
                 <span className="font-mono text-sm text-[var(--color-text-muted)] mt-1 block">
-                  sinds
+                  <span className="text-[var(--color-accent-blue)] opacity-60">const</span> sinds
                 </span>
               </div>
               <div className="stat-item opacity-0 group/spec cursor-default">

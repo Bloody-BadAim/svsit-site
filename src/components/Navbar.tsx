@@ -7,7 +7,7 @@ const jokes = [
   "Works on my machine \u00AF\\_(\u30C4)_/\u00AF",
   "// dit is geen comment, dit is een schreeuw om hulp",
   "git commit -m 'fix: everything'",
-  "404: social life not found",
+  "404: social_life not found",
   "while(true) { study(); code(); borrel(); }",
 ];
 
