@@ -23,7 +23,22 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "{SIT} — Studievereniging ICT",
   description:
-    "De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Door studenten. Voor studenten. In code.",
+    "De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Door studenten. Voor studenten. In tech.",
+  openGraph: {
+    title: "{SIT} — Studievereniging ICT",
+    description:
+      "De studievereniging voor HBO-ICT studenten aan de HvA. Events, community, en alles wat je studietijd beter maakt.",
+    siteName: "{SIT}",
+    locale: "nl_NL",
+    type: "website",
+    url: "https://svsit.nl",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "{SIT} — Studievereniging ICT",
+    description:
+      "De studievereniging voor HBO-ICT studenten aan de HvA. Events, community, en alles wat je studietijd beter maakt.",
+  },
 };
 
 export default function RootLayout({

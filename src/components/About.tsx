@@ -166,18 +166,19 @@ export default function About() {
               <div className="stat-item opacity-0">
                 <span
                   className="block font-mono text-4xl md:text-5xl font-bold text-[var(--color-accent-gold)]"
-                  data-target="11"
+                  data-target="2015"
                 >
                   0
                 </span>
                 <span className="font-mono text-sm text-[var(--color-text-muted)] mt-1 block">
-                  jaar oud
+                  sinds
                 </span>
               </div>
               <div className="stat-item opacity-0 group/spec cursor-default">
                 <span
                   className="block font-mono text-4xl md:text-5xl font-bold text-[var(--color-accent-blue)]"
                   data-target="5"
+                  data-suffix="+"
                 >
                   0
                 </span>
@@ -197,7 +198,7 @@ export default function About() {
               <div className="stat-item opacity-0">
                 <span
                   className="block font-mono text-4xl md:text-5xl font-bold text-[var(--color-accent-red)]"
-                  data-target="10"
+                  data-target="20"
                   data-suffix="+"
                 >
                   0

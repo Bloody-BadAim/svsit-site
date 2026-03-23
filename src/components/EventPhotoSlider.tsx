@@ -118,6 +118,7 @@ export default function EventPhotoSlider() {
   return (
     <div
       ref={wrapperRef}
+      aria-hidden="true"
       className="fixed top-0 right-6 h-screen z-10 pointer-events-none hidden xl:flex gap-4 items-center"
       style={{
         opacity: 0,

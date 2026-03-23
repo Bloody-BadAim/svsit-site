@@ -126,7 +126,7 @@ export default function JoinCta() {
               </span>
             </div>
             <span className="font-mono text-sm text-[var(--color-text-muted)] mt-2 block">
-              eenmalig — lid voor je hele studietijd
+              eenmalig — lid voor je hele studiejaar
             </span>
           </div>
 

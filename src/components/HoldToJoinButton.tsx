@@ -558,6 +558,8 @@ export default function HoldToJoinButton({ href }: { href: string }) {
     }
   }, [cleanup, animationLoop]);
 
+  const TAP_THRESHOLD = 300; // ms — anything shorter is a tap, not a hold
+
   // --- Event handlers ---
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -572,7 +574,16 @@ export default function HoldToJoinButton({ href }: { href: string }) {
     e.preventDefault();
     startHold();
   }, [startHold]);
-  const handleTouchEnd = useCallback(() => endHold(), [endHold]);
+  const handleTouchEnd = useCallback(() => {
+    // Quick tap → navigate directly (mobile-friendly fallback)
+    const holdDuration = performance.now() - holdStartRef.current;
+    if (holdDuration < TAP_THRESHOLD && !climaxRef.current) {
+      cleanup();
+      window.location.href = href;
+      return;
+    }
+    endHold();
+  }, [endHold, cleanup, href]);
 
   return (
     <Magnetic intensity={0.25} range={150}>
@@ -604,8 +615,8 @@ export default function HoldToJoinButton({ href }: { href: string }) {
         {/* Text */}
         <div className="relative z-10 flex flex-col items-center gap-1">
           <span ref={buttonTextRef}>WORD LID</span>
-          <span className="text-[10px] font-normal opacity-40 group-hover:opacity-80 translate-y-0.5 group-hover:translate-y-0 tracking-wider transition-all duration-300">
-            {"// hold to confirm"}
+          <span className="text-[10px] font-normal opacity-60 md:opacity-40 md:group-hover:opacity-80 translate-y-0.5 group-hover:translate-y-0 tracking-wider transition-all duration-300">
+            {"// tap or hold"}
           </span>
         </div>
 
