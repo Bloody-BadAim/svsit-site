@@ -3,9 +3,8 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { GlowEffect } from "@/components/ui/GlowEffect";
-import { Magnetic } from "@/components/ui/Magnetic";
 import SectionLabel from "@/components/SectionLabel";
+import HoldToJoinButton from "@/components/HoldToJoinButton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -141,24 +140,7 @@ export default function JoinCta() {
             </p>
 
             <div ref={buttonRef} className="invisible">
-              <Magnetic intensity={0.25} range={150}>
-                <a
-                  href="https://sitlid.nl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative inline-block px-12 py-5 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-xl tracking-wide overflow-hidden transition-transform duration-200 hover:scale-[1.03] active:scale-[0.97]"
-                >
-                  <GlowEffect
-                    colors={["#F59E0B", "#D97706", "#FBBF24", "#F59E0B"]}
-                    mode="breathe"
-                    blur="medium"
-                    duration={3}
-                    scale={1.2}
-                  />
-                  <span className="relative z-10">WORD LID →</span>
-                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                </a>
-              </Magnetic>
+              <HoldToJoinButton href="https://sitlid.nl" />
             </div>
 
             {/* Code decoration */}

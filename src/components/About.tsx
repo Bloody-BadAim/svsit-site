@@ -13,6 +13,7 @@ export default function About() {
   const line2Ref = useRef<HTMLSpanElement>(null);
   const line3Ref = useRef<HTMLParagraphElement>(null);
   const accentRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -58,6 +59,64 @@ export default function About() {
           }
         );
       }
+
+      // Stats count-up
+      if (statsRef.current) {
+        const counters = statsRef.current.querySelectorAll<HTMLElement>("[data-target]");
+        counters.forEach((el) => {
+          const target = parseFloat(el.dataset.target ?? "0");
+          const obj = { val: 0 };
+          gsap.to(obj, {
+            val: target,
+            duration: 1.5,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+            onUpdate: () => {
+              const prefix = el.dataset.prefix ?? "";
+              const suffix = el.dataset.suffix ?? "";
+              el.textContent = prefix + Math.round(obj.val) + suffix;
+            },
+          });
+        });
+
+        // Fade in stat items
+        const items = statsRef.current.querySelectorAll(".stat-item");
+        gsap.fromTo(
+          items,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: statsRef.current,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      }
+
+      // Parallax: right column drifts up slowly
+      const rightCol = sectionRef.current?.querySelector('.about-right-col');
+      if (rightCol) {
+        gsap.to(rightCol, {
+          y: -40,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -93,23 +152,72 @@ export default function About() {
           </div>
 
           {/* Right column: supporting text, offset down */}
-          <div className="md:col-span-4 md:col-start-9 md:pt-16 lg:pt-24">
+          <div className="about-right-col md:col-span-4 md:col-start-9 md:pt-16 lg:pt-24">
             <p
               ref={line3Ref}
               className="opacity-0 font-mono text-base md:text-lg leading-relaxed text-[var(--color-text-muted)]"
             >
               We organiseren events, bouwen een community, en maken je studietijd
-              beter. Gerund door studenten die weten wat ze doen.
+              beter. Of je nu codeert, hackt, gamet, of onderneemt. Gerund door studenten die weten wat ze doen.
             </p>
 
-            {/* Code-style decoration */}
-            <div className="mt-10 font-mono text-xs text-[var(--color-text-muted)] opacity-50">
-              <span className="text-[var(--color-accent-blue)]">const</span>{" "}
-              <span className="text-[var(--color-text)]">sit</span>{" "}
-              <span className="text-[var(--color-accent-gold)]">=</span>{" "}
-              <span className="text-[var(--color-accent-red)]">new</span>{" "}
-              <span className="text-[var(--color-accent-blue)]">Vereniging</span>
-              <span className="text-[var(--color-text-muted)]">();</span>
+            {/* Stats grid */}
+            <div ref={statsRef} className="mt-12 grid grid-cols-2 gap-8">
+              <div className="stat-item opacity-0">
+                <span
+                  className="block font-mono text-4xl md:text-5xl font-bold text-[var(--color-accent-gold)]"
+                  data-target="11"
+                >
+                  0
+                </span>
+                <span className="font-mono text-sm text-[var(--color-text-muted)] mt-1 block">
+                  jaar oud
+                </span>
+              </div>
+              <div className="stat-item opacity-0 group/spec cursor-default">
+                <span
+                  className="block font-mono text-4xl md:text-5xl font-bold text-[var(--color-accent-blue)]"
+                  data-target="5"
+                >
+                  0
+                </span>
+                <span className="font-mono text-sm text-[var(--color-text-muted)] mt-1 block">
+                  specialisaties
+                </span>
+                <div className="overflow-hidden max-h-0 group-hover/spec:max-h-40 transition-all duration-500 ease-out">
+                  <div className="flex flex-wrap gap-1.5 pt-3 font-mono text-[10px] text-[var(--color-text-muted)]">
+                    <span className="px-1.5 py-0.5 border border-[var(--color-border)]">SE</span>
+                    <span className="px-1.5 py-0.5 border border-[var(--color-border)]">Cyber</span>
+                    <span className="px-1.5 py-0.5 border border-[var(--color-border)]">Game Dev</span>
+                    <span className="px-1.5 py-0.5 border border-[var(--color-border)]">Business IT</span>
+                    <span className="px-1.5 py-0.5 border border-[var(--color-border)]">TI</span>
+                  </div>
+                </div>
+              </div>
+              <div className="stat-item opacity-0">
+                <span
+                  className="block font-mono text-4xl md:text-5xl font-bold text-[var(--color-accent-red)]"
+                  data-target="10"
+                  data-suffix="+"
+                >
+                  0
+                </span>
+                <span className="font-mono text-sm text-[var(--color-text-muted)] mt-1 block">
+                  events per jaar
+                </span>
+              </div>
+              <div className="stat-item opacity-0">
+                <span
+                  className="block font-mono text-4xl md:text-5xl font-bold text-[var(--color-accent-green)]"
+                  data-target="10"
+                  data-prefix="€"
+                >
+                  0
+                </span>
+                <span className="font-mono text-sm text-[var(--color-text-muted)] mt-1 block">
+                  lidmaatschap
+                </span>
+              </div>
             </div>
           </div>
         </div>

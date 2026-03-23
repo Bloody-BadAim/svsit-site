@@ -6,16 +6,25 @@ import { GlowEffect } from "@/components/ui/GlowEffect";
 const codeLines = [
   "import { SIT } from '@hva/verenigingen';",
   "",
-  "const bestuur = new Bestuur({",
-  "  jaar: 'XI',",
-  "  missie: 'community building',",
-  "  leden: await fetchStudenten(),",
+  "const sit = new Vereniging({",
+  "  naam: 'Studievereniging HBO-ICT',",
+  "  bestuur: 'XI',",
+  "  missie: 'tech + fun',",
   "});",
   "",
-  "bestuur.on('event', (e) => {",
-  "  console.log(`${e.naam} @ ${e.locatie}`);",
-  "  e.aanwezigen.forEach(s => s.enjoy());",
-  "});",
+  "sit.events = [",
+  "  'borrels', 'hackathons',",
+  "  'workshops', 'kroegentochten',",
+  "  'game nights', 'tech talks',",
+  "];",
+  "",
+  "sit.voor = [",
+  "  'software engineers',",
+  "  'cyber security',",
+  "  'game developers',",
+  "  'business IT',",
+  "  'technische informatica',",
+  "];",
   "",
   "await sit.launch();",
 ];
@@ -24,7 +33,7 @@ function colorize(line: string) {
   return line
     .replace(
       /\b(import|from|const|new|await)\b/g,
-      '<span style="color: var(--color-accent-red)">$1</span>'
+      '<span style="color: var(--color-accent-blue)">$1</span>'
     )
     .replace(
       /('[^']*'|`[^`]*`)/g,
@@ -32,11 +41,11 @@ function colorize(line: string) {
     )
     .replace(
       /(\/\/.*$)/,
-      '<span style="color: var(--color-text-muted)">$1</span>'
+      '<span style="color: var(--color-accent-green)">$1</span>'
     )
     .replace(
-      /(\.\w+\()/g,
-      '<span style="color: var(--color-accent-blue)">$1</span>'
+      /(\.\w+)/g,
+      '<span style="color: var(--color-accent-red)">$1</span>'
     );
 }
 
@@ -50,7 +59,7 @@ function CodeSnippet({ phase }: { phase: "typing" | "done" }) {
       i++;
       setVisibleLines(i);
       if (i >= codeLines.length) clearInterval(interval);
-    }, 250);
+    }, 180);
     return () => clearInterval(interval);
   }, [phase]);
 
@@ -60,7 +69,7 @@ function CodeSnippet({ phase }: { phase: "typing" | "done" }) {
       <div className="flex items-center gap-2 px-4 py-3 border border-[var(--color-border)] border-b-0 bg-[var(--color-surface)]">
         <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-accent-red)] opacity-60" />
         <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-accent-gold)] opacity-60" />
-        <span className="w-2.5 h-2.5 rounded-full bg-green-500 opacity-60" />
+        <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-accent-green)] opacity-60" />
         <span className="ml-3 font-mono text-[10px] text-[var(--color-text-muted)]">
           sit.config.ts
         </span>
@@ -129,7 +138,7 @@ export default function Hero() {
     return () => clearInterval(blinkInterval);
   }, []);
 
-  // Animated grid background
+  // Particle network with code characters
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -138,8 +147,8 @@ export default function Hero() {
     if (!ctx) return;
 
     let animationId: number;
-    let mouseX = 0;
-    let mouseY = 0;
+    let mouseX = -1000;
+    let mouseY = -1000;
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -154,54 +163,87 @@ export default function Hero() {
     };
     window.addEventListener("mousemove", onMouseMove);
 
-    const gridSize = 60;
-    let time = 0;
+    const chars = ["{", "}", "[", "]", ";", "/", "*", "<", ">", "=", "(", ")", "0", "1", "//", "=>", "&&", "||", "<?", "/>", "++", "!=", "AI", "GG", "#", ">>", "01"];
+    const particleCount = 140;
+    const connectionDist = 180;
+    const mousePushDist = 250;
+
+    interface Particle {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      char: string;
+      size: number;
+      baseOpacity: number;
+    }
+
+    const particles: Particle[] = Array.from({ length: particleCount }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      char: chars[Math.floor(Math.random() * chars.length)],
+      size: 11 + Math.random() * 7,
+      baseOpacity: 0.15 + Math.random() * 0.2,
+    }));
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.005;
 
-      const cols = Math.ceil(canvas.width / gridSize) + 1;
-      const rows = Math.ceil(canvas.height / gridSize) + 1;
+      // Update & draw particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
 
-      for (let i = 0; i < cols; i++) {
-        for (let j = 0; j < rows; j++) {
-          const x = i * gridSize;
-          const y = j * gridSize;
+        // Mouse repulsion
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < mousePushDist && dist > 0) {
+          const force = (1 - dist / mousePushDist) * 2;
+          p.vx += (dx / dist) * force;
+          p.vy += (dy / dist) * force;
+        }
 
-          // Distance from mouse
-          const dx = x - mouseX;
-          const dy = y - mouseY;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const maxDist = 300;
-          const influence = Math.max(0, 1 - dist / maxDist);
+        // Friction
+        p.vx *= 0.98;
+        p.vy *= 0.98;
 
-          // Base opacity with wave
-          const wave = Math.sin(time + i * 0.3 + j * 0.2) * 0.5 + 0.5;
-          const baseOpacity = 0.02 + wave * 0.02;
-          const opacity = baseOpacity + influence * 0.12;
+        // Drift back to base speed
+        p.vx += (Math.random() - 0.5) * 0.02;
+        p.vy += (Math.random() - 0.5) * 0.02;
 
-          // Draw intersection dot
-          const dotSize = 1 + influence * 2;
-          ctx.beginPath();
-          ctx.arc(x, y, dotSize, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(245, 158, 11, ${opacity})`;
-          ctx.fill();
+        p.x += p.vx;
+        p.y += p.vy;
 
-          // Draw grid lines (very subtle)
-          if (i < cols - 1) {
+        // Wrap around edges
+        if (p.x < -20) p.x = canvas.width + 20;
+        if (p.x > canvas.width + 20) p.x = -20;
+        if (p.y < -20) p.y = canvas.height + 20;
+        if (p.y > canvas.height + 20) p.y = -20;
+
+        // Brightness boost near mouse
+        const mouseDist = Math.sqrt((p.x - mouseX) ** 2 + (p.y - mouseY) ** 2);
+        const mouseGlow = mouseDist < 350 ? (1 - mouseDist / 350) * 0.5 : 0;
+        const opacity = p.baseOpacity + mouseGlow;
+
+        // Draw character
+        ctx.font = `${p.size}px "JetBrains Mono", monospace`;
+        ctx.fillStyle = `rgba(245, 158, 11, ${opacity})`;
+        ctx.fillText(p.char, p.x, p.y);
+
+        // Draw connection lines to nearby particles
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const cdx = p.x - p2.x;
+          const cdy = p.y - p2.y;
+          const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
+          if (cdist < connectionDist) {
+            const lineOpacity = (1 - cdist / connectionDist) * 0.12;
             ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.lineTo(x + gridSize, y);
-            ctx.strokeStyle = `rgba(255, 255, 255, ${baseOpacity * 0.5})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-          if (j < rows - 1) {
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.lineTo(x, y + gridSize);
-            ctx.strokeStyle = `rgba(255, 255, 255, ${baseOpacity * 0.5})`;
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(245, 158, 11, ${lineOpacity})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
@@ -242,8 +284,34 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-start px-6 md:px-12 lg:px-24 w-full max-w-[1400px]">
+      {/* Floating code fragments — fill the upper dead space */}
+      <div className="absolute inset-0 z-[2] pointer-events-none overflow-hidden" aria-hidden="true">
+        {[
+          { text: "// TODO: meer pizza bij events", top: "8%", left: "12%", delay: "0s", duration: "18s", color: "var(--color-accent-green)" },
+          { text: "> nmap -sV svsit.nl", top: "14%", left: "65%", delay: "2s", duration: "22s", color: "var(--color-accent-red)" },
+          { text: "player.score += 100; // GG", top: "22%", left: "38%", delay: "5s", duration: "20s", color: "var(--color-accent-blue)" },
+          { text: "$ npm run borrel", top: "6%", left: "82%", delay: "8s", duration: "24s", color: "var(--color-text-muted)" },
+          { text: "ai.generate('study_tips')", top: "18%", left: "5%", delay: "3s", duration: "19s", color: "var(--color-accent-gold)" },
+          { text: "SELECT * FROM studenten WHERE motivation = 'high'", top: "12%", left: "48%", delay: "6s", duration: "21s", color: "var(--color-text-muted)" },
+        ].map((frag, i) => (
+          <span
+            key={i}
+            className="absolute font-mono text-[10px] md:text-[11px] whitespace-nowrap"
+            style={{
+              top: frag.top,
+              left: frag.left,
+              color: frag.color,
+              opacity: 0,
+              animation: `floatCode ${frag.duration} ease-in-out ${frag.delay} infinite`,
+            }}
+          >
+            {frag.text}
+          </span>
+        ))}
+      </div>
+
+      {/* Content — shifted above dead center */}
+      <div className="relative z-10 flex flex-col items-start px-6 md:px-12 lg:px-24 w-full max-w-[1400px] mb-[8vh]">
         {/* Terminal-style line number gutter */}
         <div className="flex items-start gap-4 md:gap-8">
           <div className="hidden md:flex flex-col font-mono text-[var(--color-text-muted)] text-sm leading-[1.8] select-none opacity-30">
@@ -252,13 +320,13 @@ export default function Hero() {
             <span>03</span>
             <span>04</span>
             <span>05</span>
+            <span>06</span>
           </div>
 
           <div className="flex flex-col">
             {/* Comment line */}
-            <p className="font-mono text-sm md:text-base text-[var(--color-text-muted)] mb-2 opacity-0 animate-[fadeIn_0.5s_ease_0.8s_forwards]">
-              <span className="text-[var(--color-text-muted)]">{"// "}</span>
-              studievereniging ICT — Hogeschool van Amsterdam
+            <p className="font-mono text-sm md:text-base text-[var(--color-accent-green)] mb-2 opacity-0 animate-[fadeIn_0.5s_ease_0.8s_forwards]">
+              {"// "}studievereniging HBO-ICT — Hogeschool van Amsterdam
             </p>
 
             {/* Main logo */}
@@ -275,27 +343,24 @@ export default function Hero() {
                 {typedText.slice(4)}
               </span>
               <span
-                className={`inline-block w-[3px] h-[0.85em] bg-[var(--color-accent-gold)] ml-1 align-middle ${
-                  showCursor ? "opacity-100" : "opacity-0"
-                }`}
+                className={`inline-block w-[3px] h-[0.85em] bg-[var(--color-accent-gold)] ml-1 align-middle ${showCursor ? "opacity-100" : "opacity-0"
+                  }`}
               />
             </h1>
 
             {/* Tagline */}
             <p
-              className={`font-mono text-lg md:text-xl text-[var(--color-text-muted)] max-w-lg leading-relaxed mb-10 opacity-0 ${
-                phase === "done" ? "animate-[fadeIn_0.6s_ease_0.2s_forwards]" : ""
-              }`}
+              className={`font-mono text-lg md:text-xl text-[var(--color-text-muted)] max-w-lg leading-relaxed mb-10 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.2s_forwards]" : ""
+                }`}
             >
               Door studenten. Voor studenten.
-              <span className="text-[var(--color-accent-gold)]"> In code.</span>
+              <span className="text-[var(--color-accent-gold)]"> In tech.</span>
             </p>
 
             {/* CTAs */}
             <div
-              className={`flex flex-col sm:flex-row gap-4 opacity-0 ${
-                phase === "done" ? "animate-[fadeIn_0.6s_ease_0.5s_forwards]" : ""
-              }`}
+              className={`flex flex-col sm:flex-row gap-4 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.5s_forwards]" : ""
+                }`}
             >
               <a
                 href="#join"
@@ -312,10 +377,11 @@ export default function Hero() {
               </a>
               <a
                 href="#events"
-                className="px-8 py-4 border border-[var(--color-border)] text-[var(--color-text-muted)] font-mono text-sm tracking-wide hover:border-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-all duration-200"
+                className="group/events relative px-8 py-4 border border-[var(--color-border)] text-[var(--color-text-muted)] font-mono text-sm tracking-wide overflow-hidden hover:border-[var(--color-accent-gold)] hover:text-[var(--color-text)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
               >
-                BEKIJK EVENTS
-                <span className="inline-block ml-2 transition-transform duration-200 group-hover:translate-x-1">
+                <div className="absolute inset-0 bg-[var(--color-accent-gold)]/10 translate-x-[-101%] group-hover/events:translate-x-0 transition-transform duration-400" />
+                <span className="relative z-10">BEKIJK EVENTS</span>
+                <span className="relative z-10 inline-block ml-2 transition-transform duration-300 group-hover/events:translate-x-2">
                   →
                 </span>
               </a>
@@ -323,9 +389,8 @@ export default function Hero() {
 
             {/* Decorative dashes line (from logo: — x x x —) */}
             <div
-              className={`flex items-center gap-3 mt-16 font-mono text-xs text-[var(--color-text-muted)] opacity-0 ${
-                phase === "done" ? "animate-[fadeIn_0.6s_ease_0.8s_forwards]" : ""
-              }`}
+              className={`flex items-center gap-3 mt-16 font-mono text-xs text-[var(--color-text-muted)] opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.8s_forwards]" : ""
+                }`}
             >
               <span className="w-8 h-px bg-[var(--color-text-muted)]" />
               <span>x</span>
@@ -340,16 +405,20 @@ export default function Hero() {
       {/* Floating code snippet on the right */}
       <CodeSnippet phase={phase} />
 
-      {/* Scroll indicator — code themed */}
+      {/* Scroll indicator — terminal style */}
       <div
-        className={`absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-0 ${
-          phase === "done" ? "animate-[fadeIn_0.6s_ease_1.2s_forwards]" : ""
-        }`}
+        className={`absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_1.2s_forwards]" : ""
+          }`}
       >
         <span className="font-mono text-[10px] text-[var(--color-text-muted)] tracking-wide">
-          <span className="opacity-50">{"// "}</span>scroll down
+          <span className="text-[var(--color-accent-gold)] opacity-60">{"$ "}</span>
+          <span className="opacity-50">git pull</span>
+          <span className="opacity-30">{" --scroll"}</span>
         </span>
-        <div className="w-px h-8 bg-gradient-to-b from-[var(--color-text-muted)] to-transparent animate-pulse" />
+        <div className="flex flex-col items-center gap-1">
+          <div className="w-px h-4 bg-gradient-to-b from-[var(--color-accent-gold)]/40 to-transparent" />
+          <span className="font-mono text-[8px] text-[var(--color-accent-gold)] opacity-40 animate-bounce">▼</span>
+        </div>
       </div>
     </section>
   );

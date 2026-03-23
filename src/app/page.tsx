@@ -7,19 +7,20 @@ import Board from "@/components/Board";
 import JoinCta from "@/components/JoinCta";
 import Footer from "@/components/Footer";
 import PageScrollProgress from "@/components/PageScrollProgress";
-import EventStrip from "@/components/EventStrip";
+import EventPhotoSlider from "@/components/EventPhotoSlider";
 import ConsoleEasterEgg from "@/components/ConsoleEasterEgg";
 import CustomCursor from "@/components/CustomCursor";
 import KonamiCode from "@/components/KonamiCode";
+import SmoothScroll from "@/components/SmoothScroll";
 
 export default function Home() {
   return (
-    <>
+    <SmoothScroll>
       <CustomCursor />
       <ConsoleEasterEgg />
       <KonamiCode />
       <PageScrollProgress />
-      <EventStrip />
+      <EventPhotoSlider />
       <Navbar />
       <main>
         <Hero />
@@ -30,6 +31,6 @@ export default function Home() {
         <JoinCta />
       </main>
       <Footer />
-    </>
+    </SmoothScroll>
   );
 }

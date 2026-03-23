@@ -39,13 +39,13 @@ export default function Navbar() {
         <div className="relative">
           <a
             href="/"
-            className="font-mono text-lg tracking-tight text-[var(--color-text)] hover:text-[var(--color-accent-gold)] transition-colors duration-200"
+            className="group/logo font-mono text-lg tracking-tight text-[var(--color-text)] hover:text-[var(--color-accent-gold)] hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.4)] transition-all duration-300"
             onMouseEnter={handleLogoHover}
             onMouseLeave={() => setShowTooltip(false)}
           >
-            <span className="text-[var(--color-accent-gold)]">{"{"}</span>
+            <span className="inline-block text-[var(--color-accent-gold)] transition-transform duration-300 group-hover/logo:-translate-x-1">{"{"}</span>
             SIT
-            <span className="text-[var(--color-accent-gold)]">{"}"}</span>
+            <span className="inline-block text-[var(--color-accent-gold)] transition-transform duration-300 group-hover/logo:translate-x-1">{"}"}</span>
           </a>
 
           {/* Tooltip */}
@@ -59,27 +59,31 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-8 font-mono text-sm text-[var(--color-text-muted)]">
           <a
             href="#about"
-            className="hover:text-[var(--color-text)] transition-colors duration-200"
+            className="relative hover:text-[var(--color-text)] hover:-translate-y-0.5 transition-all duration-300 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-[var(--color-accent-gold)] after:transition-all after:duration-300 hover:after:w-full"
           >
             over_sit
           </a>
           <a
             href="#events"
-            className="hover:text-[var(--color-text)] transition-colors duration-200"
+            className="relative hover:text-[var(--color-text)] hover:-translate-y-0.5 transition-all duration-300 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-[var(--color-accent-gold)] after:transition-all after:duration-300 hover:after:w-full"
           >
             events
           </a>
           <a
             href="#bestuur"
-            className="hover:text-[var(--color-text)] transition-colors duration-200"
+            className="relative hover:text-[var(--color-text)] hover:-translate-y-0.5 transition-all duration-300 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-[var(--color-accent-gold)] after:transition-all after:duration-300 hover:after:w-full"
           >
             bestuur
           </a>
           <a
             href="#join"
-            className="px-4 py-2 border border-[var(--color-accent-gold)] text-[var(--color-accent-gold)] hover:bg-[var(--color-accent-gold)] hover:text-[var(--color-bg)] transition-all duration-200"
+            className="group/lid relative px-4 py-2 border border-[var(--color-accent-gold)] text-[var(--color-accent-gold)] overflow-hidden hover:text-[var(--color-bg)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(245,158,11,0.25)]"
           >
-            word_lid()
+            <div className="absolute inset-0 bg-[var(--color-accent-gold)] translate-y-full group-hover/lid:translate-y-0 transition-transform duration-300" />
+            <span className="relative z-10">
+              <span className="group-hover/lid:opacity-0 transition-opacity duration-200">word_lid()</span>
+              <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/lid:opacity-100 transition-opacity duration-200">word_lid(true)</span>
+            </span>
           </a>
         </div>
       </div>

@@ -10,6 +10,7 @@
   --color-accent-gold: #F59E0B;
   --color-accent-blue: #3B82F6;
   --color-accent-red: #EF4444;
+  --color-accent-green: #22C55E;
 }
 
 @theme inline {
@@ -22,7 +23,9 @@
   --color-gold: var(--color-accent-gold);
   --color-blue: var(--color-accent-blue);
   --color-red: var(--color-accent-red);
+  --color-green: var(--color-accent-green);
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-outfit);
   --font-mono: var(--font-jetbrains-mono);
 }
 
@@ -33,7 +36,7 @@
 }
 
 html {
-  scroll-behavior: auto; /* Lenis handles smooth scroll */
+  scroll-behavior: auto;
 }
 
 body {
@@ -90,6 +93,15 @@ body::before {
 @keyframes gridPulse {
   0%, 100% { opacity: 0.03; }
   50% { opacity: 0.06; }
+}
+
+/* Floating code fragments in hero */
+@keyframes floatCode {
+  0% { opacity: 0; transform: translateY(0) translateX(0); }
+  10% { opacity: 0.15; }
+  50% { opacity: 0.08; transform: translateY(-20px) translateX(10px); }
+  90% { opacity: 0.15; }
+  100% { opacity: 0; transform: translateY(0) translateX(0); }
 }
 
 /* Fade in animation */
