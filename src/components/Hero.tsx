@@ -326,8 +326,9 @@ export default function Hero() {
 
           <div className="flex flex-col">
             {/* Comment line */}
-            <p className="font-mono text-sm md:text-base text-[var(--color-accent-green)] mb-2 opacity-0 animate-[fadeIn_0.5s_ease_0.8s_forwards]">
-              {"// "}studievereniging HBO-ICT — Hogeschool van Amsterdam
+            <p className="font-mono text-[11px] sm:text-sm md:text-base text-[var(--color-accent-green)] mb-2 opacity-0 animate-[fadeIn_0.5s_ease_0.8s_forwards]">
+              <span className="hidden sm:inline">{"// "}studievereniging HBO-ICT — Hogeschool van Amsterdam</span>
+              <span className="sm:hidden">{"// "}studievereniging HBO-ICT — HvA</span>
             </p>
 
             {/* Main logo */}
@@ -364,7 +365,7 @@ export default function Hero() {
                 }`}
             >
               <a
-                href="#join"
+                href="/#join"
                 className="group relative px-8 py-4 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-sm tracking-wide overflow-hidden transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <GlowEffect
@@ -377,7 +378,7 @@ export default function Hero() {
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               </a>
               <a
-                href="#events"
+                href="/#events"
                 className="group/events relative px-8 py-4 border border-[var(--color-border)] text-[var(--color-text-muted)] font-mono text-sm tracking-wide overflow-hidden hover:border-[var(--color-accent-gold)] hover:text-[var(--color-text)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <div className="absolute inset-0 bg-[var(--color-accent-gold)]/10 translate-x-[-101%] group-hover/events:translate-x-0 transition-transform duration-400" />
@@ -388,16 +389,16 @@ export default function Hero() {
               </a>
             </div>
 
-            {/* Decorative dashes line (from logo: — x x x —) */}
+            {/* Amsterdam × marks — brand identity (red, green, blue) */}
             <div
-              className={`flex items-center gap-3 mt-16 font-mono text-xs text-[var(--color-text-muted)] opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.8s_forwards]" : ""
+              className={`flex items-center gap-3 mt-16 font-mono text-sm opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.8s_forwards]" : ""
                 }`}
             >
-              <span className="w-8 h-px bg-[var(--color-text-muted)]" />
-              <span>x</span>
-              <span>x</span>
-              <span>x</span>
-              <span className="w-8 h-px bg-[var(--color-text-muted)]" />
+              <span className="w-8 h-px bg-[var(--color-text-muted)] opacity-40" />
+              <span className="text-[var(--color-accent-red)] font-bold">×</span>
+              <span className="text-[var(--color-accent-green)] font-bold">×</span>
+              <span className="text-[var(--color-accent-blue)] font-bold">×</span>
+              <span className="w-8 h-px bg-[var(--color-text-muted)] opacity-40" />
             </div>
           </div>
         </div>
@@ -408,17 +409,16 @@ export default function Hero() {
 
       {/* Scroll indicator — terminal style */}
       <div
-        className={`absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_1.2s_forwards]" : ""
+        className={`absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_1.2s_forwards]" : ""
           }`}
       >
-        <span className="font-mono text-[10px] text-[var(--color-text-muted)] tracking-wide">
-          <span className="text-[var(--color-accent-gold)] opacity-60">{"$ "}</span>
-          <span className="opacity-50">git pull</span>
-          <span className="opacity-30">{" --scroll"}</span>
+        <span className="font-mono text-xs text-[var(--color-text-muted)] tracking-wider">
+          <span className="text-[var(--color-accent-gold)]">{"$ "}</span>
+          <span className="opacity-70">scroll down</span>
         </span>
         <div className="flex flex-col items-center gap-1">
-          <div className="w-px h-4 bg-gradient-to-b from-[var(--color-accent-gold)]/40 to-transparent" />
-          <span className="font-mono text-[8px] text-[var(--color-accent-gold)] opacity-40 animate-bounce">▼</span>
+          <div className="w-px h-6 bg-gradient-to-b from-[var(--color-accent-gold)]/60 to-transparent" />
+          <span className="font-mono text-xs text-[var(--color-accent-gold)] opacity-70 animate-bounce">▼</span>
         </div>
       </div>
     </section>

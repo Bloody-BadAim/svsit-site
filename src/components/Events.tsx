@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
@@ -60,11 +60,53 @@ type Event = (typeof events)[number];
 
 function EventCard({ event }: { event: Event }) {
   const color = accentMap[event.accent];
+  const cardRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!cardRef.current) return;
+      const rect = cardRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      // 3D tilt — max 6 degrees
+      const rotateX = ((y - centerY) / centerY) * -6;
+      const rotateY = ((x - centerX) / centerX) * 6;
+
+      cardRef.current.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+
+      // Move spotlight glow to cursor
+      if (glowRef.current) {
+        glowRef.current.style.opacity = "1";
+        glowRef.current.style.background = `radial-gradient(circle 200px at ${x}px ${y}px, ${color}15, transparent)`;
+      }
+    },
+    [color]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    if (!cardRef.current) return;
+    cardRef.current.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px)";
+    if (glowRef.current) {
+      glowRef.current.style.opacity = "0";
+    }
+  }, []);
 
   return (
     <div
-      className="group relative w-full border border-[var(--color-border)] transition-all duration-300 hover:border-current hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
-      style={{ background: "var(--color-surface)", color }}
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="group relative w-full border border-[var(--color-border)] hover:border-current hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+      style={{
+        background: "var(--color-surface)",
+        color,
+        transition: "transform 0.15s ease-out, border-color 0.3s, box-shadow 0.3s",
+        willChange: "transform",
+      }}
     >
       {/* Top accent line — grows on hover */}
       <div
@@ -74,8 +116,11 @@ function EventCard({ event }: { event: Event }) {
         }}
       />
 
-      {/* Hover inner glow */}
-      <div className="absolute inset-0 bg-white/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+      {/* Mouse-following spotlight glow */}
+      <div
+        ref={glowRef}
+        className="absolute inset-0 opacity-0 transition-opacity duration-300 pointer-events-none"
+      />
 
       <div className="relative p-8 md:p-10">
         {/* Mobile date — shown only on small screens */}
@@ -250,7 +295,7 @@ export default function Events() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="events" className="relative pt-48 md:pt-64 pb-48 md:pb-64">
+    <section ref={sectionRef} id="events" className="relative pt-24 md:pt-36 pb-24 md:pb-32">
       <div className="px-6 md:px-12 lg:px-24 mb-16 md:mb-24">
         <div className="max-w-[1400px] mx-auto">
           <SectionLabel number="03" label="events" />

@@ -199,7 +199,7 @@ export default function Board() {
     <section
       ref={sectionRef}
       id="bestuur"
-      className="relative pt-48 md:pt-64 pb-48 md:pb-64 px-6 md:px-12 lg:px-24"
+      className="relative pt-56 md:pt-72 pb-64 md:pb-96 px-6 md:px-12 lg:px-24"
     >
       {/* Scanline overlay */}
       <div

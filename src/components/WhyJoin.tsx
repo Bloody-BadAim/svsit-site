@@ -95,7 +95,7 @@ export default function WhyJoin() {
     <section
       ref={sectionRef}
       id="whyjoin"
-      className="relative pt-48 md:pt-64 pb-48 md:pb-64 px-6 md:px-12 lg:px-24"
+      className="relative pt-32 md:pt-44 pb-24 md:pb-32 px-6 md:px-12 lg:px-24"
     >
       <div className="relative max-w-[1400px] mx-auto">
         <SectionLabel number="02" label="waarom lid worden" />

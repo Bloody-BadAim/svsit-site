@@ -37,6 +37,7 @@
 
 html {
   scroll-behavior: auto;
+  background: var(--color-surface);
 }
 
 body {
@@ -44,6 +45,10 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans), system-ui, sans-serif;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* Noise texture overlay */
@@ -95,6 +100,26 @@ body::before {
   50% { opacity: 0.06; }
 }
 
+/* Energy flow animation for background streaks */
+.energy-core {
+  animation: energyFlow linear infinite;
+}
+
+@keyframes energyFlow {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -2000; }
+}
+
+/* Glow pulse for energy stream auras */
+.energy-glow {
+  animation: glowPulse 8s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
 /* Floating code fragments in hero */
 @keyframes floatCode {
   0% { opacity: 0; transform: translateY(0) translateX(0); }
@@ -124,4 +149,27 @@ body::before {
 
 .animate-breathe {
   animation: breathe 3s ease-in-out infinite;
+}
+
+/* Focus-visible styles for keyboard accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-accent-gold);
+  outline-offset: 3px;
+}
+
+/* Remove focus ring for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Accessibility: respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

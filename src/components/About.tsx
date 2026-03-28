@@ -126,7 +126,7 @@ export default function About() {
     <section
       ref={sectionRef}
       id="about"
-      className="relative pt-48 md:pt-64 pb-56 md:pb-80 px-6 md:px-12 lg:px-24"
+      className="relative pt-32 md:pt-44 pb-36 md:pb-48 px-6 md:px-12 lg:px-24"
     >
       {/* Top border accent */}
       <div
@@ -168,7 +168,7 @@ export default function About() {
             </p>
 
             {/* Stats grid */}
-            <div ref={statsRef} className="mt-12 grid grid-cols-2 gap-8">
+            <div ref={statsRef} className="mt-16 grid grid-cols-2 gap-10">
               <div className="stat-item opacity-0">
                 <span
                   className="block font-mono text-4xl md:text-5xl font-bold text-[var(--color-accent-gold)]"

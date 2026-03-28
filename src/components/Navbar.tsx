@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import SitLogo from "@/components/SitLogo";
 
 const jokes = [
   "Geen bugs, alleen features",
@@ -11,10 +12,17 @@ const jokes = [
   "while(true) { study(); code(); borrel(); }",
 ];
 
+const navLinks = [
+  { href: "/#about", label: "over_sit" },
+  { href: "/#events", label: "events" },
+  { href: "/over-ons", label: "over_ons" },
+];
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [joke, setJoke] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -22,71 +30,223 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  // Close on Escape
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   const handleLogoHover = () => {
     setJoke(jokes[Math.floor(Math.random() * jokes.length)]);
     setShowTooltip(true);
   };
 
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-[var(--color-bg)]/80 backdrop-blur-md border-b border-[var(--color-border)]"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="flex items-center justify-between px-6 md:px-12 py-4">
-        <div className="relative">
-          <a
-            href="/"
-            className="group/logo font-mono text-lg tracking-tight text-[var(--color-text)] hover:text-[var(--color-accent-gold)] hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.4)] transition-all duration-300"
-            onMouseEnter={handleLogoHover}
-            onMouseLeave={() => setShowTooltip(false)}
-          >
-            <span className="inline-block text-[var(--color-accent-gold)] transition-transform duration-300 group-hover/logo:-translate-x-1">{"{"}</span>
-            SIT
-            <span className="inline-block text-[var(--color-accent-gold)] transition-transform duration-300 group-hover/logo:translate-x-1">{"}"}</span>
-          </a>
+    <>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled || menuOpen
+            ? "bg-[var(--color-bg)]/95 backdrop-blur-md border-b border-[var(--color-border)]"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="flex items-center justify-between px-6 md:px-12 py-4">
+          {/* Logo */}
+          <div className="relative">
+            <a
+              href="/"
+              className="group/logo hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.4)] transition-all duration-300"
+              onMouseEnter={handleLogoHover}
+              onMouseLeave={() => setShowTooltip(false)}
+            >
+              <SitLogo size={28} />
+            </a>
 
-          {/* Tooltip */}
-          {showTooltip && (
-            <div className="absolute top-full left-0 mt-2 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] font-mono text-[11px] text-[var(--color-accent-gold)] whitespace-nowrap opacity-0 animate-[fadeIn_0.2s_ease_forwards] pointer-events-none">
-              {joke}
-            </div>
-          )}
+            {/* Tooltip */}
+            {showTooltip && (
+              <div className="absolute top-full left-0 mt-2 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] font-mono text-[11px] text-[var(--color-accent-gold)] whitespace-nowrap opacity-0 animate-[fadeIn_0.2s_ease_forwards] pointer-events-none">
+                {joke}
+              </div>
+            )}
+          </div>
+
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-8 font-mono text-sm text-[var(--color-text-muted)]">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="relative hover:text-[var(--color-text)] hover:-translate-y-0.5 transition-all duration-300 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-[var(--color-accent-gold)] after:transition-all after:duration-300 hover:after:w-full"
+              >
+                {link.label}
+              </a>
+            ))}
+            <a
+              href="/#join"
+              className="group/lid relative px-4 py-2 border border-[var(--color-accent-gold)] text-[var(--color-accent-gold)] overflow-hidden hover:text-[var(--color-bg)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(245,158,11,0.25)]"
+            >
+              <div className="absolute inset-0 bg-[var(--color-accent-gold)] translate-y-full group-hover/lid:translate-y-0 transition-transform duration-300" />
+              <span className="relative z-10">
+                <span className="group-hover/lid:opacity-0 transition-opacity duration-200">
+                  word_lid()
+                </span>
+                <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/lid:opacity-100 transition-opacity duration-200">
+                  word_lid(true)
+                </span>
+              </span>
+            </a>
+          </div>
+
+          {/* Hamburger button — mobile only */}
+          <button
+            className="relative md:hidden flex flex-col justify-center items-center w-10 h-10 gap-[6px] cursor-pointer"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label={menuOpen ? "Menu sluiten" : "Menu openen"}
+            aria-expanded={menuOpen}
+          >
+            <span
+              className="block w-6 h-[2px] bg-[var(--color-text)] transition-all duration-300 origin-center"
+              style={{
+                transform: menuOpen
+                  ? "translateY(4px) rotate(45deg)"
+                  : "none",
+                backgroundColor: menuOpen
+                  ? "var(--color-accent-gold)"
+                  : "var(--color-text)",
+              }}
+            />
+            <span
+              className="block w-6 h-[2px] bg-[var(--color-text)] transition-all duration-300"
+              style={{
+                opacity: menuOpen ? 0 : 1,
+                transform: menuOpen ? "scaleX(0)" : "scaleX(1)",
+              }}
+            />
+            <span
+              className="block w-6 h-[2px] bg-[var(--color-text)] transition-all duration-300 origin-center"
+              style={{
+                transform: menuOpen
+                  ? "translateY(-4px) rotate(-45deg)"
+                  : "none",
+                backgroundColor: menuOpen
+                  ? "var(--color-accent-gold)"
+                  : "var(--color-text)",
+              }}
+            />
+          </button>
         </div>
+      </nav>
 
-        <div className="hidden md:flex items-center gap-8 font-mono text-sm text-[var(--color-text-muted)]">
-          <a
-            href="#about"
-            className="relative hover:text-[var(--color-text)] hover:-translate-y-0.5 transition-all duration-300 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-[var(--color-accent-gold)] after:transition-all after:duration-300 hover:after:w-full"
+      {/* Mobile menu overlay — z-45 so it sits behind the nav (z-50) but above page content */}
+      <div
+        className={`fixed inset-0 z-[45] md:hidden transition-all duration-500 ${
+          menuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+        style={{
+          background: "rgba(9, 9, 11, 0.97)",
+          backdropFilter: "blur(20px)",
+        }}
+      >
+        <div className="flex flex-col justify-center items-start h-full px-8">
+          {/* Nav links */}
+          <nav className="flex flex-col gap-8 mb-16">
+            {navLinks.map((link, i) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={closeMenu}
+                className="group/mlink flex flex-col font-mono text-[var(--color-text)] hover:text-[var(--color-accent-gold)] transition-all duration-300"
+                style={{
+                  transform: menuOpen
+                    ? "translateX(0)"
+                    : "translateX(-30px)",
+                  opacity: menuOpen ? 1 : 0,
+                  transition: `all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${
+                    menuOpen ? 0.1 + i * 0.08 : 0
+                  }s`,
+                }}
+              >
+                <span className="text-[var(--color-accent-gold)] opacity-40 text-xs tracking-[0.3em]">
+                  0{i + 1}
+                </span>
+                <span className="text-2xl font-bold mt-1 group-hover/mlink:translate-x-2 transition-transform duration-300">
+                  {link.label}
+                </span>
+              </a>
+            ))}
+
+            {/* Word lid CTA */}
+            <a
+              href="/#join"
+              onClick={closeMenu}
+              className="inline-block mt-4 px-8 py-4 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-lg tracking-wide"
+              style={{
+                transform: menuOpen ? "translateX(0)" : "translateX(-30px)",
+                opacity: menuOpen ? 1 : 0,
+                transition: `all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${
+                  menuOpen ? 0.1 + navLinks.length * 0.08 : 0
+                }s`,
+              }}
+            >
+              WORD LID
+            </a>
+          </nav>
+
+          {/* Contact info */}
+          <div
+            className="flex flex-col gap-3"
+            style={{
+              opacity: menuOpen ? 1 : 0,
+              transition: `opacity 0.4s ease ${menuOpen ? 0.5 : 0}s`,
+            }}
           >
-            over_sit
-          </a>
-          <a
-            href="#events"
-            className="relative hover:text-[var(--color-text)] hover:-translate-y-0.5 transition-all duration-300 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-[var(--color-accent-gold)] after:transition-all after:duration-300 hover:after:w-full"
+            <a
+              href="mailto:bestuur@svsit.nl"
+              className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300"
+            >
+              bestuur@svsit.nl
+            </a>
+            <a
+              href="https://instagram.com/svsit"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300"
+            >
+              @svsit — Instagram
+            </a>
+          </div>
+
+          {/* Decorative code line */}
+          <p
+            className="font-mono text-xs text-[var(--color-text-muted)] opacity-20 absolute bottom-10 left-8"
+            style={{
+              opacity: menuOpen ? 0.2 : 0,
+              transition: `opacity 0.4s ease ${menuOpen ? 0.6 : 0}s`,
+            }}
           >
-            events
-          </a>
-          <a
-            href="#bestuur"
-            className="relative hover:text-[var(--color-text)] hover:-translate-y-0.5 transition-all duration-300 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-[var(--color-accent-gold)] after:transition-all after:duration-300 hover:after:w-full"
-          >
-            bestuur
-          </a>
-          <a
-            href="#join"
-            className="group/lid relative px-4 py-2 border border-[var(--color-accent-gold)] text-[var(--color-accent-gold)] overflow-hidden hover:text-[var(--color-bg)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(245,158,11,0.25)]"
-          >
-            <div className="absolute inset-0 bg-[var(--color-accent-gold)] translate-y-full group-hover/lid:translate-y-0 transition-transform duration-300" />
-            <span className="relative z-10">
-              <span className="group-hover/lid:opacity-0 transition-opacity duration-200">word_lid()</span>
-              <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/lid:opacity-100 transition-opacity duration-200">word_lid(true)</span>
-            </span>
-          </a>
+            {">"} menu.isOpen = true;
+          </p>
         </div>
       </div>
-    </nav>
+    </>
   );
 }

@@ -81,7 +81,7 @@ export default function JoinCta() {
     <section
       ref={sectionRef}
       id="join"
-      className="relative min-h-[80vh] flex items-center px-6 md:px-12 lg:px-24 py-40 md:py-48 overflow-hidden"
+      className="relative min-h-[70vh] flex items-center px-6 md:px-12 lg:px-24 pt-24 md:pt-36 pb-32 md:pb-44 overflow-hidden"
     >
       {/* Background: radial gold glow */}
       <div
@@ -103,7 +103,7 @@ export default function JoinCta() {
       />
 
       <div className="relative z-10 max-w-[1400px] mx-auto w-full">
-        <SectionLabel number="05" label="word lid" />
+        <SectionLabel number="04" label="word lid" />
 
         {/* Heading — ENORMOUS */}
         <h2
@@ -111,9 +111,9 @@ export default function JoinCta() {
           className="invisible text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold leading-[1.0] tracking-tight mt-8"
         >
           Word lid van{" "}
-          <span className="text-[var(--color-accent-gold)]">
-            {"{"}SIT{"}"}
-          </span>
+          <span className="text-[var(--color-accent-gold)]">{"{"}</span>
+          <span className="text-[var(--color-text)]">SIT</span>
+          <span className="text-[var(--color-accent-gold)]">{"}"}</span>
         </h2>
 
         {/* Price + subtext + button row */}
