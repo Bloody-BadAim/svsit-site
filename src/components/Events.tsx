@@ -1,382 +1,451 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import SectionLabel from "@/components/SectionLabel";
+import EventTimeline from "@/components/EventTimeline";
+import EventDetail from "@/components/EventDetail";
+import type { SitEvent } from "@/components/EventList";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const accentMap = {
-  gold: "#F59E0B",
-  blue: "#3B82F6",
-  red: "#EF4444",
-  green: "#22C55E",
-} as const;
-
-const events = [
+// ─── Events data ─────────────────────────────────────────
+const events: SitEvent[] = [
   {
+    id: "alv",
+    title: "ALV Bestuur XI",
+    day: "20",
+    month: "MRT",
+    year: "2026",
+    time: "16:00",
+    location: "WBH 5e verdieping",
+    description: "Het nieuwe bestuur is officieel geinstalleerd.",
+    status: "completed",
+    color: "var(--color-accent-gold)",
+    tags: ["bestuur", "officieel"],
+  },
+  {
+    id: "meetdeoc",
     title: "Meet de OC",
     day: "24",
-    month: "mrt",
+    month: "MRT",
     year: "2026",
     time: "16:00",
     location: "WBH 5e verdieping",
     description:
       "Ontmoet de Opleidingscommissie en praat mee over de opleiding.",
-    status: "DEZE WEEK",
-    accent: "gold" as const,
-    side: "left" as const,
+    status: "completed",
+    color: "var(--color-accent-blue)",
+    tags: ["opleiding", "community"],
   },
   {
+    id: "gettogether",
+    title: "Get Together",
+    day: "27",
+    month: "MRT",
+    year: "2026",
+    time: "17:00",
+    location: "Common Room, dan Fest",
+    description: "Casual borrel met het nieuwe bestuur. Neem gerust iemand mee.",
+    status: "completed",
+    color: "var(--color-accent-green)",
+    tags: ["borrel", "social"],
+  },
+  {
+    id: "kroegentocht",
     title: "Kroegentocht",
     day: "16",
-    month: "apr",
+    month: "APR",
     year: "2026",
     time: "20:00",
     location: "Amsterdam Centrum",
     description:
       "Een avond door de beste kroegen van Amsterdam met je medestudenten.",
-    status: "OPEN",
-    accent: "blue" as const,
-    side: "right" as const,
+    status: "upcoming",
+    color: "var(--color-accent-gold)",
+    tags: ["SVO", "social", "nachtleven"],
   },
   {
+    id: "stagemarkt",
+    title: "Stagemarkt HBO-ICT",
+    day: "17",
+    month: "APR",
+    year: "2026",
+    time: "13:30",
+    location: "Kohnstammhuis",
+    description:
+      "Ontmoet bedrijven en vind je stage. SIT en FemIT zijn aanwezig.",
+    status: "upcoming",
+    color: "var(--color-accent-blue)",
+    tags: ["stage", "carriere", "netwerk"],
+  },
+  {
+    id: "hackathon",
+    title: "Connectie Code Hackathon",
+    day: "10",
+    month: "MEI",
+    year: "2026",
+    time: "09:00",
+    location: "AI House Amsterdam",
+    description:
+      "AI hackathon met 8 studieverenigingen. SIT en FemIT leveren mentoren.",
+    status: "upcoming",
+    color: "var(--color-accent-red)",
+    tags: ["AI", "hackathon", "code"],
+  },
+  {
+    id: "techborrel",
     title: "Tech + Borrel",
-    day: "—",
-    month: "mei",
+    day: "TBA",
+    month: "MEI",
     year: "2026",
     time: "TBA",
     location: "met de opleiding",
     description:
       "Tech talks gecombineerd met een borrel, samen met de opleiding.",
-    status: "COMING SOON",
-    accent: "red" as const,
-    side: "left" as const,
+    status: "coming_soon",
+    color: "var(--color-accent-green)",
+    tags: ["tech", "borrel", "opleiding"],
+  },
+  {
+    id: "cern",
+    title: "CERN Lezing",
+    day: "05",
+    month: "JUN",
+    year: "2026",
+    time: "TBA",
+    location: "HvA Amstelcampus",
+    description:
+      "2-3 sprekers van CERN over techniek en carriere in particle physics.",
+    status: "coming_soon",
+    color: "var(--color-accent-gold)",
+    tags: ["tech", "lezing", "wetenschap"],
   },
 ];
 
-type Event = (typeof events)[number];
+// CSS var → hex for glow effects
+const CSS_TO_HEX: Record<string, string> = {
+  "var(--color-accent-gold)": "#F59E0B",
+  "var(--color-accent-blue)": "#3B82F6",
+  "var(--color-accent-red)": "#EF4444",
+  "var(--color-accent-green)": "#22C55E",
+};
 
-function EventCard({ event }: { event: Event }) {
-  const color = accentMap[event.accent];
-  const cardRef = useRef<HTMLDivElement>(null);
-  const glowRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!cardRef.current) return;
-      const rect = cardRef.current.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-
-      // 3D tilt — max 6 degrees
-      const rotateX = ((y - centerY) / centerY) * -6;
-      const rotateY = ((x - centerX) / centerX) * 6;
-
-      cardRef.current.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
-
-      // Move spotlight glow to cursor
-      if (glowRef.current) {
-        glowRef.current.style.opacity = "1";
-        glowRef.current.style.background = `radial-gradient(circle 200px at ${x}px ${y}px, ${color}15, transparent)`;
-      }
-    },
-    [color]
-  );
-
-  const handleMouseLeave = useCallback(() => {
-    if (!cardRef.current) return;
-    cardRef.current.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px)";
-    if (glowRef.current) {
-      glowRef.current.style.opacity = "0";
-    }
-  }, []);
-
-  return (
-    <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className="group relative w-full border border-[var(--color-border)] hover:border-current hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
-      style={{
-        background: "var(--color-surface)",
-        color,
-        transition: "transform 0.15s ease-out, border-color 0.3s, box-shadow 0.3s",
-        willChange: "transform",
-      }}
-    >
-      {/* Top accent line — grows on hover */}
-      <div
-        className="h-[2px] w-16 group-hover:w-full transition-all duration-500"
-        style={{
-          background: `linear-gradient(to right, ${color}, ${color}66, transparent)`,
-        }}
-      />
-
-      {/* Mouse-following spotlight glow */}
-      <div
-        ref={glowRef}
-        className="absolute inset-0 opacity-0 transition-opacity duration-300 pointer-events-none"
-      />
-
-      <div className="relative p-8 md:p-10">
-        {/* Mobile date — shown only on small screens */}
-        <div className="flex items-baseline gap-3 mb-4 md:hidden">
-          <span
-            className="font-mono text-3xl font-bold"
-            style={{ color }}
-          >
-            {event.day}
-          </span>
-          <span className="font-mono text-sm text-[var(--color-text-muted)] tracking-wide">
-            {event.month} {event.year}
-          </span>
-        </div>
-
-        <span
-          className="inline-block font-mono text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 mb-5 transition-all duration-300"
-          style={{ background: color, color: "#09090B" }}
-        >
-          {event.status}
-        </span>
-
-        <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-[var(--color-text)] mb-3">
-          {event.title}
-        </h3>
-
-        <p className="font-mono text-sm text-[var(--color-text-muted)] leading-relaxed mb-5 max-w-sm">
-          {event.description}
-        </p>
-
-        <div className="flex items-center gap-4 font-mono text-xs text-[var(--color-text-muted)] group-hover:text-[var(--color-text)] transition-colors duration-300">
-          <span className="flex items-center gap-1.5">
-            <span style={{ color }} className="text-sm">&#9679;</span>
-            {event.location}
-          </span>
-          <span className="opacity-40">|</span>
-          <span>{event.time}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DateBlock({ event }: { event: Event }) {
-  const color = accentMap[event.accent];
-
-  return (
-    <div className="hidden md:flex flex-col items-center justify-center h-full">
-      <span
-        className="font-mono text-6xl md:text-8xl font-bold leading-none"
-        style={{ color }}
-      >
-        {event.day}
-      </span>
-      <span className="font-mono text-sm text-[var(--color-text-muted)] tracking-[0.2em] uppercase mt-2">
-        {event.month} {event.year}
-      </span>
-    </div>
-  );
-}
+// Default selected: first upcoming event
+const defaultSelected =
+  events.find((e) => e.status === "upcoming")?.id ?? events[0].id;
 
 export default function Events() {
+  const [selectedId, setSelectedId] = useState(defaultSelected);
+  const [isDesktop, setIsDesktop] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-  const timelineRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const numberRef = useRef<HTMLSpanElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
-  const dotRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const dateRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const connectorRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const detailRef = useRef<HTMLDivElement>(null);
 
+  const selectedEvent = events.find((e) => e.id === selectedId) ?? events[0];
+  const hex = CSS_TO_HEX[selectedEvent.color] || "#F59E0B";
+
+  // Responsive layout — sidebar detail only on wide screens
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1100);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // GSAP header entrance
   useEffect(() => {
     const ctx = gsap.context(() => {
-      dotRefs.current.forEach((el) => el && gsap.set(el, { scale: 0 }));
-      cardRefs.current.forEach((el) => el && gsap.set(el, { autoAlpha: 0 }));
-      dateRefs.current.forEach((el) => el && gsap.set(el, { autoAlpha: 0 }));
-      connectorRefs.current.forEach((el) => el && gsap.set(el, { scaleX: 0 }));
-
-      // Line grows top → bottom with scroll
-      if (lineRef.current) {
+      const headerElements = [
+        numberRef.current,
+        titleRef.current,
+        lineRef.current,
+      ].filter(Boolean);
+      if (headerElements.length) {
         gsap.fromTo(
-          lineRef.current,
-          { scaleY: 0 },
+          headerElements,
+          { autoAlpha: 0, y: 20 },
           {
-            scaleY: 1,
-            ease: "none",
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: "power2.out",
             scrollTrigger: {
-              trigger: timelineRef.current,
+              trigger: headerRef.current,
               start: "top 80%",
-              end: "bottom 20%",
-              scrub: true,
+              toggleActions: "play none none none",
             },
-          }
+          },
         );
       }
 
-      // Per-event: dot → connector → date → card
-      const isMobile = window.innerWidth < 768;
-
-      events.forEach((event, i) => {
-        const dot = dotRefs.current[i];
-        const card = cardRefs.current[i];
-        const date = dateRefs.current[i];
-        const connector = connectorRefs.current[i];
-        const cardDir = isMobile ? 60 : event.side === "left" ? -60 : 60;
-        const dateDir = isMobile ? 0 : event.side === "left" ? 60 : -60;
-
-        if (dot) {
-          gsap.to(dot, {
+      // Detail panel entrance
+      if (detailRef.current) {
+        gsap.fromTo(
+          detailRef.current,
+          { autoAlpha: 0, x: isDesktop ? 30 : 0, scale: isDesktop ? 1 : 0.97 },
+          {
+            autoAlpha: 1,
+            x: 0,
             scale: 1,
-            duration: 0.5,
-            ease: "back.out(1.7)",
+            duration: 0.7,
+            ease: "power3.out",
             scrollTrigger: {
-              trigger: dot,
-              start: "top 75%",
-              toggleActions: "play none none reverse",
+              trigger: detailRef.current,
+              start: "top 85%",
+              toggleActions: "play none none none",
             },
-          });
-        }
-
-        if (connector) {
-          gsap.to(connector, {
-            scaleX: 1,
-            duration: 0.4,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: connector,
-              start: "top 72%",
-              toggleActions: "play none none reverse",
-            },
-          });
-        }
-
-        if (date) {
-          gsap.fromTo(
-            date,
-            { autoAlpha: 0, x: dateDir },
-            {
-              autoAlpha: 1,
-              x: 0,
-              duration: 0.5,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: date,
-                start: "top 72%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
-        }
-
-        if (card) {
-          gsap.fromTo(
-            card,
-            { autoAlpha: 0, x: cardDir },
-            {
-              autoAlpha: 1,
-              x: 0,
-              duration: 0.6,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: card,
-                start: "top 70%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
-        }
-      });
+          },
+        );
+      }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isDesktop]);
 
-  return (
-    <section ref={sectionRef} id="events" className="relative pt-24 md:pt-36 pb-24 md:pb-32">
-      <div className="px-6 md:px-12 lg:px-24 mb-16 md:mb-24">
-        <div className="max-w-[1400px] mx-auto">
-          <SectionLabel number="03" label="events" />
-        </div>
-      </div>
-
-      <div ref={timelineRef} className="relative max-w-[1200px] mx-auto px-6 md:px-12">
-        {/* Vertical line — left on mobile, center on desktop */}
+  // ─── Detail sidebar (shared between layouts) ───
+  const renderDetailPanel = () => (
+    <div
+      ref={detailRef}
+      style={{
+        ...(isDesktop
+          ? {
+              position: "sticky" as const,
+              top: "5rem",
+              alignSelf: "start",
+            }
+          : {
+              marginTop: "3rem",
+            }),
+      }}
+    >
+      {/* ── Signal connection indicator (desktop only) ── */}
+      {isDesktop && (
         <div
-          ref={lineRef}
-          className="absolute w-[2px] origin-top left-6 md:left-1/2 md:-translate-x-px top-0 bottom-0"
           style={{
-            background: "linear-gradient(to bottom, #F59E0B, #3B82F6, #EF4444)",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            marginBottom: "16px",
+          }}
+        >
+          {/* Animated connection dot */}
+          <div
+            style={{
+              width: "8px",
+              height: "8px",
+              borderRadius: "50%",
+              background: selectedEvent.color,
+              boxShadow: `0 0 12px ${hex}80`,
+              animation: "statusPulse 1.5s ease-in-out infinite",
+              flexShrink: 0,
+            }}
+          />
+          {/* Connection line */}
+          <div
+            style={{
+              flex: 1,
+              height: "1px",
+              background: `linear-gradient(90deg, ${hex}40, ${hex}10, transparent)`,
+            }}
+          />
+          <span
+            className="font-mono"
+            style={{
+              fontSize: "10px",
+              color: selectedEvent.color,
+              opacity: 0.6,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+            }}
+          >
+            LINKED
+          </span>
+        </div>
+      )}
+
+      {/* Console header */}
+      <div
+        className="font-mono"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          marginBottom: "12px",
+          fontSize: "11px",
+          color: "var(--color-text-muted)",
+          opacity: 0.6,
+        }}
+      >
+        <span style={{ color: "var(--color-accent-green)" }}>&gt;</span>
+        <span>event.loadDetails(</span>
+        <span style={{ color: selectedEvent.color }}>
+          &quot;{selectedEvent.id}&quot;
+        </span>
+        <span>)</span>
+        <div
+          style={{
+            flex: 1,
+            height: "1px",
+            background:
+              "linear-gradient(90deg, rgba(255,255,255,0.06), transparent)",
+            marginLeft: "8px",
           }}
         />
+      </div>
 
-        <div className="flex flex-col gap-16 md:gap-20">
-          {events.map((event, i) => {
-            const color = accentMap[event.accent];
-            const isLeft = event.side === "left";
+      {/* Glowing left accent border wrapper (desktop) */}
+      <div
+        style={{
+          position: "relative",
+          ...(isDesktop
+            ? {
+                borderLeft: `2px solid ${hex}50`,
+                paddingLeft: "0px",
+              }
+            : {}),
+        }}
+      >
+        {/* Left border glow */}
+        {isDesktop && (
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: "-1px",
+              width: "4px",
+              height: "100%",
+              background: `linear-gradient(to bottom, ${hex}40, ${hex}10, ${hex}40)`,
+              filter: "blur(4px)",
+              pointerEvents: "none",
+            }}
+          />
+        )}
 
-            return (
-              <div
-                key={event.title}
-                className="grid grid-cols-[40px_1fr] md:grid-cols-[1fr_60px_1fr] items-center"
-              >
-                {/* Date block — opposite side of card (desktop only) */}
-                <div
-                  ref={(el) => { dateRefs.current[i] = el; }}
-                  className={`hidden md:block ${
-                    isLeft ? "md:col-start-3" : "md:col-start-1"
-                  } row-start-1`}
-                >
-                  <DateBlock event={event} />
-                </div>
+        <EventDetail event={selectedEvent} transitionKey={selectedId} />
+      </div>
+    </div>
+  );
 
-                {/* Dot column */}
-                <div className="col-start-1 row-start-1 md:col-start-2 flex justify-center pt-6 relative">
-                  <div
-                    ref={(el) => { dotRefs.current[i] = el; }}
-                    className="w-3 h-3 rounded-full z-10 shrink-0"
-                    style={{
-                      background: color,
-                      boxShadow: `0 0 12px ${color}`,
-                    }}
-                  />
-                  {/* Connector line from dot toward card */}
-                  <div
-                    ref={(el) => { connectorRefs.current[i] = el; }}
-                    className={`absolute top-[27px] h-px w-5
-                      left-[calc(50%+8px)] origin-left
-                      ${isLeft
-                        ? "md:right-[calc(50%+8px)] md:left-auto md:origin-right"
-                        : "md:left-[calc(50%+8px)] md:right-auto md:origin-left"
-                      }
-                    `}
-                    style={{ background: color, opacity: 0.4 }}
-                  />
-                </div>
+  return (
+    <section
+      ref={sectionRef}
+      id="events"
+      className="relative"
+      style={{ paddingTop: "6rem", paddingBottom: "6rem" }}
+    >
+      {/* Background glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        aria-hidden="true"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 50% at 50% 40%, rgba(242,158,24,0.04) 0%, transparent 70%)",
+        }}
+      />
 
-                {/* Card */}
-                <div
-                  ref={(el) => { cardRefs.current[i] = el; }}
-                  className={`col-start-2 row-start-1 ${
-                    isLeft ? "md:col-start-1" : "md:col-start-3"
-                  }`}
-                >
-                  <EventCard event={event} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+      <div
+        style={{ paddingLeft: "1.5rem", paddingRight: "1.5rem" }}
+        className="md:px-12 lg:px-24"
+      >
+        <div className="max-w-[1400px] mx-auto">
+          {/* ─── Section header ─── */}
+          <div ref={headerRef} style={{ marginBottom: "3rem" }}>
+            <span
+              ref={numberRef}
+              style={{
+                fontFamily: "'Big Shoulders Display', sans-serif",
+                fontWeight: 800,
+                fontSize: "48px",
+                color: "var(--color-accent-gold)",
+                opacity: 0.5,
+                display: "block",
+                lineHeight: 1,
+              }}
+            >
+              04
+            </span>
+            <h2
+              ref={titleRef}
+              style={{
+                fontFamily: "'Big Shoulders Display', sans-serif",
+                fontWeight: 800,
+                fontSize: "clamp(48px, 8vw, 80px)",
+                color: "var(--color-text)",
+                lineHeight: 0.9,
+                letterSpacing: "0.02em",
+                marginTop: "4px",
+              }}
+            >
+              EVENTS
+            </h2>
+            <div
+              ref={lineRef}
+              style={{
+                width: "80px",
+                height: "4px",
+                background: "var(--color-accent-gold)",
+                marginTop: "16px",
+              }}
+            />
+          </div>
 
-        <div className="text-center mt-16 md:mt-20 space-y-2">
-          <p className="font-mono text-sm text-[var(--color-accent-green)] opacity-60">
-            {"// meer events coming soon..."}
-          </p>
-          <p className="font-mono text-xs text-[var(--color-accent-red)] opacity-40">
-            {"// TODO: fix bug waar events.length altijd te laag is"}
-          </p>
+          {/* ═══════════ DESKTOP: two-column layout ═══════════ */}
+          {isDesktop ? (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 380px",
+                gap: "2.5rem",
+                alignItems: "start",
+              }}
+            >
+              {/* Left: Glitch Energy Timeline */}
+              <EventTimeline
+                events={events}
+                activeId={selectedId}
+                onSelect={setSelectedId}
+              />
+
+              {/* Right: Sticky Mission Brief Console */}
+              {renderDetailPanel()}
+            </div>
+          ) : (
+            /* ═══════════ MOBILE/TABLET: stacked layout ═══════════ */
+            <>
+              <EventTimeline
+                events={events}
+                activeId={selectedId}
+                onSelect={setSelectedId}
+              />
+              {renderDetailPanel()}
+            </>
+          )}
+
+          {/* Bottom comment lines */}
+          <div style={{ textAlign: "center", marginTop: "4rem" }}>
+            <p
+              className="font-mono text-sm"
+              style={{ color: "var(--color-accent-green)", opacity: 0.6 }}
+            >
+              {"// meer events coming soon..."}
+            </p>
+            <p
+              className="font-mono text-xs"
+              style={{
+                color: "var(--color-accent-red)",
+                opacity: 0.4,
+                marginTop: "0.5rem",
+              }}
+            >
+              {"// TODO: fix bug waar events.length altijd te laag is"}
+            </p>
+          </div>
         </div>
       </div>
     </section>

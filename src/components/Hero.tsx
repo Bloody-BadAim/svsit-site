@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { GlowEffect } from "@/components/ui/GlowEffect";
+import HeroBackground from "@/components/HeroBackground";
 
 const codeLines = [
   "import { SIT } from '@hva/verenigingen';",
@@ -109,7 +110,6 @@ export default function Hero() {
   const [typedText, setTypedText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
   const [phase, setPhase] = useState<"typing" | "done">("typing");
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
   const fullText = "{SIT}";
@@ -138,178 +138,13 @@ export default function Hero() {
     return () => clearInterval(blinkInterval);
   }, []);
 
-  // Particle network with code characters
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animationId: number;
-    let mouseX = -1000;
-    let mouseY = -1000;
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const onMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    };
-    window.addEventListener("mousemove", onMouseMove);
-
-    const chars = ["{", "}", "[", "]", ";", "/", "*", "<", ">", "=", "(", ")", "0", "1", "//", "=>", "&&", "||", "<?", "/>", "++", "!=", "AI", "GG", "#", ">>", "01"];
-    const particleCount = 140;
-    const connectionDist = 180;
-    const mousePushDist = 250;
-
-    interface Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      char: string;
-      size: number;
-      baseOpacity: number;
-    }
-
-    const particles: Particle[] = Array.from({ length: particleCount }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
-      char: chars[Math.floor(Math.random() * chars.length)],
-      size: 11 + Math.random() * 7,
-      baseOpacity: 0.15 + Math.random() * 0.2,
-    }));
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Update & draw particles
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-
-        // Mouse repulsion
-        const dx = p.x - mouseX;
-        const dy = p.y - mouseY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < mousePushDist && dist > 0) {
-          const force = (1 - dist / mousePushDist) * 2;
-          p.vx += (dx / dist) * force;
-          p.vy += (dy / dist) * force;
-        }
-
-        // Friction
-        p.vx *= 0.98;
-        p.vy *= 0.98;
-
-        // Drift back to base speed
-        p.vx += (Math.random() - 0.5) * 0.02;
-        p.vy += (Math.random() - 0.5) * 0.02;
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Wrap around edges
-        if (p.x < -20) p.x = canvas.width + 20;
-        if (p.x > canvas.width + 20) p.x = -20;
-        if (p.y < -20) p.y = canvas.height + 20;
-        if (p.y > canvas.height + 20) p.y = -20;
-
-        // Brightness boost near mouse
-        const mouseDist = Math.sqrt((p.x - mouseX) ** 2 + (p.y - mouseY) ** 2);
-        const mouseGlow = mouseDist < 350 ? (1 - mouseDist / 350) * 0.5 : 0;
-        const opacity = p.baseOpacity + mouseGlow;
-
-        // Draw character
-        ctx.font = `${p.size}px "JetBrains Mono", monospace`;
-        ctx.fillStyle = `rgba(245, 158, 11, ${opacity})`;
-        ctx.fillText(p.char, p.x, p.y);
-
-        // Draw connection lines to nearby particles
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const cdx = p.x - p2.x;
-          const cdy = p.y - p2.y;
-          const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
-          if (cdist < connectionDist) {
-            const lineOpacity = (1 - cdist / connectionDist) * 0.12;
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(245, 158, 11, ${lineOpacity})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-
-      animationId = requestAnimationFrame(draw);
-    };
-
-    draw();
-
-    return () => {
-      cancelAnimationFrame(animationId);
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", onMouseMove);
-    };
-  }, []);
-
   return (
     <section
       ref={heroRef}
       className="relative flex items-center justify-center min-h-screen overflow-hidden"
     >
-      {/* Animated grid canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 z-0"
-        aria-hidden="true"
-      />
-
-      {/* Radial gradient overlay */}
-      <div
-        className="absolute inset-0 z-[1]"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, transparent 0%, var(--color-bg) 70%)",
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Floating code fragments — fill the upper dead space */}
-      <div className="absolute inset-0 z-[2] pointer-events-none overflow-hidden" aria-hidden="true">
-        {[
-          { text: "// TODO: meer pizza bij events", top: "8%", left: "12%", delay: "0s", duration: "18s", color: "var(--color-accent-green)" },
-          { text: "> nmap -sV svsit.nl", top: "14%", left: "65%", delay: "2s", duration: "22s", color: "var(--color-accent-red)" },
-          { text: "player.score += 100; // GG", top: "22%", left: "38%", delay: "5s", duration: "20s", color: "var(--color-accent-blue)" },
-          { text: "$ npm run borrel", top: "6%", left: "82%", delay: "8s", duration: "24s", color: "var(--color-text-muted)" },
-          { text: "ai.generate('study_tips')", top: "18%", left: "5%", delay: "3s", duration: "19s", color: "var(--color-accent-gold)" },
-          { text: "SELECT * FROM studenten WHERE motivation = 'high'", top: "12%", left: "48%", delay: "6s", duration: "21s", color: "var(--color-text-muted)" },
-          { text: "ERR: cannot read property 'sleep' of student", top: "26%", left: "70%", delay: "10s", duration: "23s", color: "var(--color-accent-red)" },
-        ].map((frag, i) => (
-          <span
-            key={i}
-            className="absolute font-mono text-[10px] md:text-[11px] whitespace-nowrap"
-            style={{
-              top: frag.top,
-              left: frag.left,
-              color: frag.color,
-              opacity: 0,
-              animation: `floatCode ${frag.duration} ease-in-out ${frag.delay} infinite`,
-            }}
-          >
-            {frag.text}
-          </span>
-        ))}
-      </div>
+      {/* Epic animated background */}
+      <HeroBackground />
 
       {/* Content — shifted above dead center */}
       <div className="relative z-10 flex flex-col items-start px-6 md:px-12 lg:px-24 w-full max-w-[1400px] mb-[8vh]">

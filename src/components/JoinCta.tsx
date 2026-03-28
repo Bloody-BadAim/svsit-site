@@ -81,7 +81,8 @@ export default function JoinCta() {
     <section
       ref={sectionRef}
       id="join"
-      className="relative min-h-[70vh] flex items-center px-6 md:px-12 lg:px-24 pt-24 md:pt-36 pb-32 md:pb-44 overflow-hidden"
+      className="relative min-h-[70vh] flex items-center overflow-hidden"
+      style={{ paddingTop: "9rem", paddingBottom: "11rem", paddingLeft: "1.5rem", paddingRight: "1.5rem" }}
     >
       {/* Background: radial gold glow */}
       <div
@@ -108,7 +109,8 @@ export default function JoinCta() {
         {/* Heading — ENORMOUS */}
         <h2
           ref={headingRef}
-          className="invisible text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold leading-[1.0] tracking-tight mt-8"
+          className="invisible text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold leading-[1.0] tracking-tight"
+          style={{ marginTop: "2rem" }}
         >
           Word lid van{" "}
           <span className="text-[var(--color-accent-gold)]">{"{"}</span>
@@ -117,24 +119,24 @@ export default function JoinCta() {
         </h2>
 
         {/* Price + subtext + button row */}
-        <div className="mt-20 md:mt-28 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-0 items-end">
+        <div className="grid grid-cols-1 md:grid-cols-12 items-end" style={{ marginTop: "7rem", gap: "3rem" }}>
           {/* Left: giant price */}
           <div ref={priceRef} className="invisible md:col-span-5">
-            <div className="flex items-baseline gap-4">
+            <div className="flex items-baseline" style={{ gap: "1rem" }}>
               <span className="font-mono text-7xl md:text-8xl lg:text-9xl font-bold text-[var(--color-accent-gold)]">
                 &euro;10
               </span>
             </div>
-            <span className="font-mono text-sm text-[var(--color-text-muted)] mt-2 block">
+            <span className="font-mono text-sm text-[var(--color-text-muted)] block" style={{ marginTop: "0.5rem" }}>
               eenmalig — lid voor je hele studiejaar
             </span>
-            <span className="font-mono text-[10px] text-[var(--color-accent-red)] mt-2 block opacity-50">
+            <span className="font-mono text-[10px] text-[var(--color-accent-red)] block opacity-50" style={{ marginTop: "0.5rem" }}>
               {"// RangeError: price too low to be real"}
             </span>
           </div>
 
           {/* Right: subtext + button */}
-          <div className="md:col-span-5 md:col-start-8 flex flex-col gap-14">
+          <div className="md:col-span-5 md:col-start-8 flex flex-col" style={{ gap: "3.5rem" }}>
             <p
               ref={subtextRef}
               className="invisible font-mono text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed max-w-md"

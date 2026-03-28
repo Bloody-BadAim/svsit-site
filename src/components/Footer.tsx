@@ -2,10 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SitLogo from "@/components/SitLogo";
-
-gsap.registerPlugin(ScrollTrigger);
 
 /* ─── SVG Icons ─── */
 
@@ -68,94 +65,55 @@ export default function Footer() {
     ).matches;
     if (prefersReducedMotion) return;
 
-    const ctx = gsap.context(() => {
-      /* ── Return 0 animation ── */
-      if (returnRef.current) {
-        const text = returnRef.current.querySelector(".return-text");
-        const comment = returnRef.current.querySelector(".return-comment");
-        const footerRect = returnRef.current.getBoundingClientRect();
-        const alreadyVisible = footerRect.top < window.innerHeight;
+    /* Use IntersectionObserver instead of ScrollTrigger for footer.
+       Lenis smooth scroll can prevent ScrollTrigger from firing at the
+       bottom of the page, leaving content invisible (opacity: 0). */
+    const elements: { el: Element; delay: number }[] = [];
 
-        if (alreadyVisible) {
-          gsap.set([text, comment], { opacity: 1, y: 0 });
-        } else {
-          gsap.fromTo(
-            text,
-            { opacity: 0, y: 60 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: returnRef.current,
-                start: "top 90%",
-                toggleActions: "play none none none",
-              },
-            }
-          );
-          gsap.fromTo(
-            comment,
-            { opacity: 0, y: 20 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.6,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: returnRef.current,
-                start: "top 80%",
-                toggleActions: "play none none none",
-              },
-            }
-          );
-        }
-      }
+    if (returnRef.current) {
+      const text = returnRef.current.querySelector(".return-text");
+      const comment = returnRef.current.querySelector(".return-comment");
+      if (text) elements.push({ el: text, delay: 0 });
+      if (comment) elements.push({ el: comment, delay: 0.15 });
+    }
 
-      /* ── Content columns animation ── */
-      if (contentRef.current) {
-        const cols = contentRef.current.querySelectorAll(".footer-col");
-        const contentRect = contentRef.current.getBoundingClientRect();
-        const contentVisible = contentRect.top < window.innerHeight;
+    if (contentRef.current) {
+      const cols = contentRef.current.querySelectorAll(".footer-col");
+      cols.forEach((col, i) => {
+        elements.push({ el: col, delay: 0.3 + i * 0.1 });
+      });
+    }
 
-        if (contentVisible) {
-          gsap.set(cols, { opacity: 1, y: 0 });
-        } else {
-          gsap.fromTo(
-            cols,
-            { opacity: 0, y: 20 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.6,
-              stagger: 0.1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: contentRef.current,
-                start: "top 90%",
-                toggleActions: "play none none none",
-              },
-            }
-          );
-        }
-      }
+    // Set initial state
+    elements.forEach(({ el }) => {
+      gsap.set(el, { opacity: 0, y: 24 });
+    });
 
-      /* ── Diagonal streaks subtle parallax ── */
-      if (streaksRef.current) {
-        gsap.to(streaksRef.current, {
-          y: -30,
-          ease: "none",
-          scrollTrigger: {
-            trigger: streaksRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          },
+    // Observe footer entering viewport
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            elements.forEach(({ el, delay }) => {
+              gsap.to(el, {
+                opacity: 1,
+                y: 0,
+                duration: 0.7,
+                delay,
+                ease: "power3.out",
+              });
+            });
+            observer.disconnect();
+          }
         });
-      }
-    }, returnRef);
+      },
+      { threshold: 0.05 }
+    );
 
-    return () => ctx.revert();
+    const footerEl = returnRef.current?.closest("footer");
+    if (footerEl) observer.observe(footerEl);
+
+    return () => observer.disconnect();
   }, []);
 
   const scrollToTop = () => {
@@ -165,9 +123,10 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="relative z-[1] mt-16 md:mt-24 overflow-hidden"
+      className="relative z-[1] overflow-hidden"
       style={{
         background: "var(--color-surface)",
+        marginTop: "6rem",
       }}
     >
       {/* ── Gradient top border ── */}
@@ -211,7 +170,7 @@ export default function Footer() {
       </div>
 
       {/* ── "return 0;" statement ── */}
-      <div className="relative z-10 py-16 md:py-24 px-6 md:px-12 lg:px-24">
+      <div className="relative z-10" style={{ paddingTop: "4rem", paddingBottom: "6rem", paddingLeft: "1.5rem", paddingRight: "1.5rem" }}>
         <div ref={returnRef} className="max-w-[1400px] mx-auto">
           <span className="return-text block font-mono text-5xl md:text-7xl lg:text-8xl font-bold leading-none">
             <span className="text-[var(--color-accent-blue)] opacity-50">
@@ -220,7 +179,7 @@ export default function Footer() {
             <span className="text-[var(--color-accent-gold)]">0</span>
             <span className="text-[var(--color-text-muted)] opacity-40">;</span>
           </span>
-          <p className="return-comment font-mono text-sm text-[var(--color-accent-green)] mt-3 opacity-50">
+          <p className="return-comment font-mono text-sm text-[var(--color-accent-green)] opacity-50" style={{ marginTop: "0.75rem" }}>
             {joke}
           </p>
         </div>
@@ -228,7 +187,8 @@ export default function Footer() {
 
       {/* ── Divider ── */}
       <div
-        className="relative z-10 h-px mx-6 md:mx-12 lg:mx-24"
+        className="relative z-10 h-px"
+        style={{ marginLeft: "1.5rem", marginRight: "1.5rem" }}
         style={{
           background:
             "linear-gradient(to right, var(--color-border), var(--color-border), transparent)",
@@ -238,28 +198,29 @@ export default function Footer() {
       {/* ── Main footer content ── */}
       <div
         ref={contentRef}
-        className="relative z-10 px-6 md:px-12 lg:px-24 py-12 md:py-16"
+        className="relative z-10"
+        style={{ paddingLeft: "1.5rem", paddingRight: "1.5rem", paddingTop: "3rem", paddingBottom: "4rem" }}
       >
         <div className="max-w-[1400px] mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-12" style={{ gap: "2.5rem" }}>
             {/* ── Logo + tagline ── */}
             <div className="footer-col md:col-span-4">
               <SitLogo size={36} showCrosses />
-              <p className="font-mono text-sm text-[var(--color-text-muted)] mt-4 leading-relaxed max-w-xs">
+              <p className="font-mono text-sm text-[var(--color-text-muted)] leading-relaxed max-w-xs" style={{ marginTop: "1rem" }}>
                 De studievereniging voor HBO-ICT studenten aan de Hogeschool van
                 Amsterdam.
               </p>
-              <p className="font-mono text-xs text-[var(--color-text-muted)] opacity-40 mt-2">
+              <p className="font-mono text-xs text-[var(--color-text-muted)] opacity-40" style={{ marginTop: "0.5rem" }}>
                 Onderdeel van FDMCI · KvK geregistreerd · Sinds 2015
               </p>
             </div>
 
             {/* ── Navigation ── */}
             <div className="footer-col md:col-span-2 md:col-start-6">
-              <span className="font-mono text-[10px] text-[var(--color-accent-gold)] tracking-[0.3em] uppercase mb-5 block">
+              <span className="font-mono text-[10px] text-[var(--color-accent-gold)] tracking-[0.3em] uppercase block" style={{ marginBottom: "1.25rem" }}>
                 NAVIGATIE
               </span>
-              <nav className="flex flex-col gap-3">
+              <nav className="flex flex-col" style={{ gap: "0.75rem" }}>
                 {[
                   { href: "/#about", label: "over sit" },
                   { href: "/#events", label: "events" },
@@ -275,11 +236,11 @@ export default function Footer() {
                         : "text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
                     }`}
                   >
-                    <span className="text-[var(--color-accent-gold)] opacity-0 group-hover/link:opacity-60 transition-opacity duration-300 mr-1">
+                    <span className="text-[var(--color-accent-gold)] opacity-0 group-hover/link:opacity-60 transition-opacity duration-300" style={{ marginRight: "0.25rem" }}>
                       {link.accent ? ">" : "//"}
                     </span>
                     {link.label}
-                    {link.accent && <span className="ml-1">()</span>}
+                    {link.accent && <span style={{ marginLeft: "0.25rem" }}>()</span>}
                   </a>
                 ))}
               </nav>
@@ -287,17 +248,17 @@ export default function Footer() {
 
             {/* ── Contact ── */}
             <div className="footer-col md:col-span-2">
-              <span className="font-mono text-[10px] text-[var(--color-accent-gold)] tracking-[0.3em] uppercase mb-5 block">
+              <span className="font-mono text-[10px] text-[var(--color-accent-gold)] tracking-[0.3em] uppercase block" style={{ marginBottom: "1.25rem" }}>
                 CONTACT
               </span>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col" style={{ gap: "0.75rem" }}>
                 <a
                   href="mailto:bestuur@svsit.nl"
                   className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] hover:translate-x-1 transition-all duration-300"
                 >
                   bestuur@svsit.nl
                 </a>
-                <span className="font-mono text-xs text-[var(--color-text-muted)] opacity-40 mt-2">
+                <span className="font-mono text-xs text-[var(--color-text-muted)] opacity-40" style={{ marginTop: "0.5rem" }}>
                   WBH · Wibautstraat 3b
                 </span>
                 <span className="font-mono text-xs text-[var(--color-text-muted)] opacity-40">
@@ -308,16 +269,16 @@ export default function Footer() {
 
             {/* ── Social Media — PROMINENT social cards ── */}
             <div className="footer-col md:col-span-3 md:col-start-10">
-              <span className="font-mono text-[10px] text-[var(--color-accent-gold)] tracking-[0.3em] uppercase mb-5 block">
+              <span className="font-mono text-[10px] text-[var(--color-accent-gold)] tracking-[0.3em] uppercase block" style={{ marginBottom: "1.25rem" }}>
                 VOLG ONS
               </span>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col" style={{ gap: "0.75rem" }}>
                 {/* Instagram card */}
                 <a
                   href="https://instagram.com/svsit"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group/social flex items-center gap-3 px-4 py-3 border border-[var(--color-border)] hover:border-[var(--color-accent-gold)] hover:bg-[var(--color-accent-gold)]/5 transition-all duration-300"
+                  style={{ gap: "0.75rem", padding: "0.75rem 1rem" }} className="group/social flex items-center border border-[var(--color-border)] hover:border-[var(--color-accent-gold)] hover:bg-[var(--color-accent-gold)]/5 transition-all duration-300"
                 >
                   <span className="text-[var(--color-text-muted)] group-hover/social:text-[var(--color-accent-gold)] transition-colors duration-300">
                     <InstagramIcon />
@@ -340,7 +301,7 @@ export default function Footer() {
                   href="https://linkedin.com/company/svsit"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group/social flex items-center gap-3 px-4 py-3 border border-[var(--color-border)] hover:border-[var(--color-accent-blue)] hover:bg-[var(--color-accent-blue)]/5 transition-all duration-300"
+                  style={{ gap: "0.75rem", padding: "0.75rem 1rem" }} className="group/social flex items-center border border-[var(--color-border)] hover:border-[var(--color-accent-blue)] hover:bg-[var(--color-accent-blue)]/5 transition-all duration-300"
                 >
                   <span className="text-[var(--color-text-muted)] group-hover/social:text-[var(--color-accent-blue)] transition-colors duration-300">
                     <LinkedInIcon />
@@ -361,7 +322,7 @@ export default function Footer() {
                 {/* Email card */}
                 <a
                   href="mailto:bestuur@svsit.nl"
-                  className="group/social flex items-center gap-3 px-4 py-3 border border-[var(--color-border)] hover:border-[var(--color-accent-green)] hover:bg-[var(--color-accent-green)]/5 transition-all duration-300"
+                  style={{ gap: "0.75rem", padding: "0.75rem 1rem" }} className="group/social flex items-center border border-[var(--color-border)] hover:border-[var(--color-accent-green)] hover:bg-[var(--color-accent-green)]/5 transition-all duration-300"
                 >
                   <span className="text-[var(--color-text-muted)] group-hover/social:text-[var(--color-accent-green)] transition-colors duration-300">
                     <MailIcon />
@@ -383,8 +344,8 @@ export default function Footer() {
           </div>
 
           {/* ── Bottom bar ── */}
-          <div className="mt-12 pt-6 border-t border-[var(--color-border)]">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <div className="border-t border-[var(--color-border)]" style={{ marginTop: "3rem", paddingTop: "1.5rem" }}>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center" style={{ gap: "0.75rem" }}>
               <span className="font-mono text-xs text-[var(--color-text-muted)] opacity-40">
                 &copy; {new Date().getFullYear()} SIT — Studievereniging ICT
               </span>
@@ -413,8 +374,9 @@ export default function Footer() {
 
       {/* ── Scroll to top ── */}
       <div
-        className="relative z-10 py-4 px-6"
+        className="relative z-10"
         style={{
+          padding: "1rem 1.5rem",
           background:
             "linear-gradient(to right, transparent 10%, rgba(245, 158, 11, 0.03) 50%, transparent 90%)",
         }}
@@ -422,13 +384,14 @@ export default function Footer() {
         <div className="flex justify-center">
           <button
             onClick={scrollToTop}
-            className="group font-mono text-xs text-[var(--color-text-muted)] opacity-40 hover:opacity-100 hover:text-[var(--color-accent-gold)] transition-all duration-300 cursor-pointer py-2 px-4"
+            className="group font-mono text-xs text-[var(--color-text-muted)] opacity-40 hover:opacity-100 hover:text-[var(--color-accent-gold)] transition-all duration-300 cursor-pointer"
+            style={{ padding: "0.5rem 1rem" }}
           >
             <span className="text-[var(--color-accent-gold)] opacity-60">
               {"$ "}
             </span>
             scroll --to-top
-            <span className="ml-2 inline-block group-hover:-translate-y-1 transition-transform duration-300">
+            <span className="inline-block group-hover:-translate-y-1 transition-transform duration-300" style={{ marginLeft: "0.5rem" }}>
               ↑
             </span>
           </button>

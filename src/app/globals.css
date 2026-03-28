@@ -11,6 +11,7 @@
   --color-accent-blue: #3B82F6;
   --color-accent-red: #EF4444;
   --color-accent-green: #22C55E;
+  --font-big-shoulders: 'Big Shoulders Display', sans-serif;
 }
 
 @theme inline {
@@ -27,6 +28,7 @@
   --font-sans: var(--font-geist-sans);
   --font-display: var(--font-outfit);
   --font-mono: var(--font-jetbrains-mono);
+  --font-display-alt: var(--font-big-shoulders);
 }
 
 * {
@@ -160,6 +162,63 @@ body::before {
 /* Remove focus ring for mouse users */
 :focus:not(:focus-visible) {
   outline: none;
+}
+
+/* ─── Events Section: Gaming UI Animations ─── */
+
+/* Glitch flicker — EventList hover (50ms, 2 frames) */
+@keyframes glitchFlicker {
+  0% { transform: translate(-2px, 0); text-shadow: 2px 0 #F59E0B, -2px 0 #3B82F6; }
+  50% { transform: translate(2px, 0); text-shadow: -2px 0 #EF4444, 2px 0 #22C55E; }
+  100% { transform: translate(0, 0); text-shadow: none; }
+}
+
+.glitch-flicker {
+  animation: glitchFlicker 50ms steps(2) forwards;
+}
+
+/* Glitch out — EventDetail exit transition (150ms) */
+@keyframes glitchOut {
+  0% { opacity: 1; transform: translate(0); clip-path: inset(0); }
+  33% { opacity: 0.8; transform: translate(4px, -2px); clip-path: inset(5% 0 10% 0); text-shadow: 3px 0 #EF4444, -3px 0 #3B82F6; }
+  66% { opacity: 0.4; transform: translate(-3px, 1px); clip-path: inset(15% 0 5% 0); text-shadow: -2px 0 #F59E0B, 2px 0 #22C55E; }
+  100% { opacity: 0; transform: translate(0); clip-path: inset(0); }
+}
+
+/* Scan reveal — EventDetail entrance (300ms) */
+@keyframes scanReveal {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+/* Ambient scanline — persistent on detail panel (8s) */
+@keyframes ambientScan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(calc(100vh)); }
+}
+
+/* Status indicator pulse — upcoming events (1.5s) */
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Horizontal blip — EventList hover feedback (100ms) */
+@keyframes hBlip {
+  0% { transform: scaleX(0); opacity: 1; }
+  50% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(0); opacity: 0; }
+}
+
+/* Ticker scroll — EventTicker pure CSS animation */
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes tickerScrollReverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
 }
 
 /* Accessibility: respect user motion preferences */

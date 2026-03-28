@@ -69,7 +69,18 @@ src/app/over-ons/page.tsx       — bestuur pagina (Board component)
 src/app/globals.css             — CSS vars, tailwind config, textures
 src/components/*.tsx            — page secties als losse componenten
 src/components/SitLogo.tsx      — officieel SIT logo SVG (van Figma brand kit)
+src/components/HeroStreaks.tsx    — 4 diagonale brand-color streaks (forwardRef)
+src/components/HeroCodeBlock.tsx — decoratief sit.config.ts terminal code block
+src/components/HeroScrollIndicator.tsx — $ scroll down indicator
+src/components/HeroBackground.tsx — epic animated hero background (5 depth layers, CSS-only)
 src/components/BackgroundStreaks.tsx — animated diagonal color streaks (brand kit)
+src/components/Events.tsx       — events orchestrator (8 events inline, header + timeline + sticky detail sidebar)
+src/components/EventTimeline.tsx — glitch timeline met gebogen SVG energie lijn, alternerende blokken, expand/collapse
+src/components/EventList.tsx    — (legacy) event list met status indicators, hover effects, keyboard nav
+src/components/EventDetail.tsx  — detail panel met glitch/scan transitions, typewriter, 3D tilt (sticky sidebar op desktop)
+src/components/EventTicker.tsx  — dual-track CSS ticker (vervangt SocialMarquee)
+src/components/KonamiGame.tsx   — canvas easter egg mini-game (Konami Code activated)
+src/hooks/useKonamiCode.ts      — Konami Code sequence detection hook
 src/lib/theme.ts                — kleur constants
 ```
 
@@ -111,11 +122,69 @@ src/lib/theme.ts                — kleur constants
 - [x] 3D tilt effect op event cards: mouse-following perspective tilt (max 6°) met cursor spotlight glow op hover, premium interactief gevoel
 - [x] Tailwind v4 workaround: inline styles voor padding/margin waar TW4 utility classes niet compileren
 
-### Fase 2: Data Layer
+### Fase 1.9: Epic Cinematic Hero (DONE)
+- [x] Hero volledig herschreven: 200vh pinned scroll sectie met 3 fases (Arrival, Atmosphere, Scroll Exit)
+- [x] GSAP entrance timeline: 4 lichtstralen schieten over scherm, gold flash, {SIT} logo assembleert (braces schuiven in), × marks droppen met elastic bounce, subtitle typt character-by-character, tagline word-by-word fade-in, CTAs slide up
+- [x] 6 depth layers: gradient mesh (D0), glow blobs (D1), 4 diagonale streaks (D2), {SIT} logo (D3), content (D4), code block (D5)
+- [x] Idle animations: streak breathing (8s cycle), code line highlight cycle (3s), tagline glow cycle, logo breathing scale
+- [x] Scroll exit: logo scale 1→1.8x + fade, streaks accelereren off-screen, code block schuift rechts weg, content fades
+- [x] HeroStreaks component: 4 brand-color diagonale streaks met forwardRef/useImperativeHandle
+- [x] HeroCodeBlock component: decoratief sit.config.ts terminal met syntax highlighting
+- [x] HeroScrollIndicator component: terminal-style $ scroll down met blinkende pipe en bouncende ▼
+- [x] Geen custom cursor, geen particles, geen dots — clean en bold
+- [x] Mobile: geen pinned scroll, geen code block, snellere entrance (0.6x)
+- [x] Prefers-reduced-motion: toont eindstaat direct, skipt alle animaties
+
+### Fase 2.0: Gaming Events UI (DONE)
+- [x] Events sectie volledig herschreven als arcade EVENT SELECT screen
+- [x] Twee-kolom layout: EventList (links) + EventDetail (rechts) op desktop, accordion op mobile
+- [x] 8 events inline: ALV, Meet de OC, Get Together, Kroegentocht, Stagemarkt, Hackathon, Tech+Borrel, CERN
+- [x] EventList: status indicators (completed=gevuld, upcoming=pulsend, coming_soon=dashed), hover glitch flicker, background slide-in, horizontal blip, keyboard nav (arrow/enter/home/end)
+- [x] EventDetail: transition state machine (glitchOut→black→scanIn→typewriter), terminal code block met syntax highlighting, 3D tilt effect (max 4°), ambient scanline, tags, CTA per status
+- [x] EventTicker: dual-track pure CSS ticker (vervangt SocialMarquee), @svsit Instagram link, event types, brand × separators
+- [x] KonamiGame: canvas easter egg mini-game (15s, WASD/arrows, vallende objecten, score), desktop only
+- [x] useKonamiCode hook: sequence detection, skip op touch devices
+- [x] Big Shoulders Display font via Google Fonts link tags (niet next/font — niet in registry)
+- [x] 8 CSS keyframe animaties: glitchFlicker, glitchOut, scanReveal, ambientScan, statusPulse, hBlip, tickerScroll, tickerScrollReverse
+- [x] GSAP ScrollTrigger entrance: header stagger, list slide-in, detail fade+scale
+- [x] Prefers-reduced-motion respecteert alle animaties
+- [x] Contrast boost: ticker tag opacity 0.3→0.6, separator 0.5→0.7, responsive edge fades
+
+### Fase 2.1: Glitch Energy Timeline (DONE)
+- [x] EventTimeline component: vervangt twee-kolom EventList + EventDetail layout
+- [x] Gebogen SVG energie lijn (Catmull-Rom → Cubic Bezier) door alle event nodes
+- [x] 4-layer glow: deep ambient (blur 20px), mid glow (blur 6px), core dashed line (animated flow), bright inner line
+- [x] Gradient kleurtransities langs de lijn: goud → blauw → rood → groen (per event)
+- [x] Alternerende links/rechts blokken met gevarieerde horizontale offsets en verticale spacing
+- [x] Branch lines (horizontale connectors) van nodes naar blokken
+- [x] Compact blocks (geen expand/collapse): fixed height voorkomt wobble bij selectie
+- [x] Glitch hover: RGB split flash (80ms), translateY lift, box-shadow
+- [x] Status nodes: completed (filled), upcoming (pulsing border), coming_soon (dashed, 50% opacity)
+- [x] Active node: larger dot (18px), outer pulse ring, intensified glow
+- [x] Desktop: 3-kolom grid (1fr 80px 1fr), nodes alterneren links/rechts in center kolom
+- [x] Mobile: single column, nodes links, blocks rechts
+- [x] GSAP ScrollTrigger: staggered block entrance + SVG line draw-on animatie
+- [x] ResizeObserver: SVG path herberekent bij layout changes
+- [x] Ambient scanline op actief block, status badges (✓ DONE, ● NEXT, ○ TBA)
+- [x] CSS mask-image fade op SVG lijn endpoints (geen abrupte start/einde meer)
+
+### Fase 2.2: Sticky Detail Sidebar (DONE)
+- [x] Events.tsx herschreven: twee-kolom layout op desktop (1fr 380px grid)
+- [x] EventDetail verplaatst van onder timeline naar sticky sidebar rechts (position: sticky, top: 5rem)
+- [x] Detail panel direct zichtbaar bij klikken op timeline block — geen verborgen panel meer
+- [x] "LINKED" signal indicator: pulsende dot + gradient lijn + label bovenaan detail panel
+- [x] Glowing left accent border op detail panel (event kleur, blur glow)
+- [x] Console header behouden: `> event.loadDetails("eventId")` met event kleur
+- [x] Glitch transitions werken in sidebar: glitchOut → black → scanIn → typewriter
+- [x] GSAP entrance: desktop slide-in van rechts (x: 30→0), mobile scale (0.97→1)
+- [x] Responsive breakpoints: ≥1100px twee-kolom, 768-1099px stacked alternating, <768px mobile single column
+- [x] Mobile/tablet: detail panel onder timeline (stacked layout)
+
+### Fase 3: Data Layer
 - Notion als CMS voor events, bestuur data
 - Database (PostgreSQL/Supabase) voor leden
 
-### Fase 3: Functionaliteit
+### Fase 4: Functionaliteit
 - Lid worden flow op dezelfde site
 - Leden dashboard
 - Alles mobile-first

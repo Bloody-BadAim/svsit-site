@@ -10,9 +10,9 @@ import PageScrollProgress from "@/components/PageScrollProgress";
 // import EventPhotoSlider from "@/components/EventPhotoSlider";
 import ConsoleEasterEgg from "@/components/ConsoleEasterEgg";
 import CustomCursor from "@/components/CustomCursor";
-import KonamiCode from "@/components/KonamiCode";
+import KonamiGame from "@/components/KonamiGame";
 import SmoothScroll from "@/components/SmoothScroll";
-import SocialMarquee from "@/components/SocialMarquee";
+import EventTicker from "@/components/EventTicker";
 
 export default function Home() {
   return (
@@ -20,7 +20,7 @@ export default function Home() {
       <BackgroundStreaks />
       <CustomCursor />
       <ConsoleEasterEgg />
-      <KonamiCode />
+      <KonamiGame />
       <PageScrollProgress />
       {/* <EventPhotoSlider /> */}
       <Navbar />
@@ -58,7 +58,7 @@ export default function Home() {
           }}
         />
         <Events />
-        <SocialMarquee />
+        <EventTicker />
         <JoinCta />
       </main>
       <Footer />
