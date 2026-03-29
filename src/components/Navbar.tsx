@@ -41,11 +41,10 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled || menuOpen
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || menuOpen
             ? "bg-[var(--color-bg)]/95 backdrop-blur-md border-b border-[var(--color-border)]"
             : "bg-transparent"
-        }`}
+          }`}
       >
         <div className="flex items-center justify-between px-6 md:px-12 py-4">
           {/* Logo with blinking cursor */}
@@ -110,9 +109,8 @@ export default function Navbar() {
 
       {/* Mobile menu overlay */}
       <div
-        className={`fixed inset-0 z-[45] md:hidden transition-all duration-500 ${
-          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 z-[45] md:hidden transition-all duration-500 ${menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
         style={{ background: "rgba(9, 9, 11, 0.97)", backdropFilter: "blur(20px)" }}
       >
         <div className="flex flex-col justify-center items-start h-full px-8">

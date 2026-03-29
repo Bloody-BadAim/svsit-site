@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
-import { JetBrains_Mono } from "next/font/google";
+import { Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -9,7 +9,7 @@ const geistSans = Geist({
 });
 
 const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
@@ -20,6 +20,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "{SIT} — Studievereniging ICT",
+  metadataBase: "https://svsit.nl",
   description:
     "De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Door studenten. Voor studenten. In tech.",
   icons: {
@@ -50,7 +51,7 @@ export default function RootLayout({
   return (
     <html
       lang="nl"
-      className={`${geistSans.variable} ${jetbrainsMono.variable} antialiased`}
+      className={cn("antialiased", geistSans.variable, "font-mono", jetbrainsMono.variable)}
       suppressHydrationWarning
     >
       <head>

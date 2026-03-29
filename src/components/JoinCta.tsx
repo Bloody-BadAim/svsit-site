@@ -3,70 +3,63 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { motion } from "motion/react";
 import SectionLabel from "@/components/SectionLabel";
 import HoldToJoinButton from "@/components/HoldToJoinButton";
+import MemberCard from "@/components/MemberCard";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function JoinCta() {
   const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const priceRef = useRef<HTMLDivElement>(null);
-  const subtextRef = useRef<HTMLParagraphElement>(null);
-  const buttonRef = useRef<HTMLDivElement>(null);
+  const leftRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     const ctx = gsap.context(() => {
+      if (prefersReducedMotion) return;
+
       const sectionTrigger = {
         trigger: sectionRef.current,
         start: "top 80%",
         toggleActions: "play none none none" as const,
       };
 
-      if (headingRef.current) {
+      // Left column stagger entrance
+      if (leftRef.current) {
+        const els = leftRef.current.querySelectorAll("[data-animate]");
         gsap.fromTo(
-          headingRef.current,
-          { autoAlpha: 0, y: 30 },
+          Array.from(els),
+          { autoAlpha: 0, y: 24 },
           {
             autoAlpha: 1,
             y: 0,
-            duration: 0.8,
+            duration: 0.7,
             ease: "power3.out",
+            stagger: 0.1,
             scrollTrigger: sectionTrigger,
           }
         );
       }
 
-      if (priceRef.current) {
+      // Card entrance
+      if (cardRef.current) {
         gsap.fromTo(
-          priceRef.current,
-          { autoAlpha: 0, y: 30 },
+          cardRef.current,
+          { autoAlpha: 0, y: 40, scale: 0.96 },
           {
             autoAlpha: 1,
             y: 0,
-            duration: 0.8,
+            scale: 1,
+            duration: 1,
             ease: "power3.out",
             scrollTrigger: sectionTrigger,
-            delay: 0.15,
+            delay: 0.2,
           }
         );
       }
-
-      [subtextRef.current, buttonRef.current].forEach((el, i) => {
-        if (!el) return;
-        gsap.fromTo(
-          el,
-          { autoAlpha: 0, y: 30 },
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: sectionTrigger,
-            delay: 0.3 + i * 0.15,
-          }
-        );
-      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -78,57 +71,95 @@ export default function JoinCta() {
       id="join"
       className="relative min-h-[70vh] flex items-center overflow-hidden py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24"
     >
-      {/* Background shield + gold glow */}
-      <div className="absolute inset-0 bg-[var(--color-bg)]/70" />
+      {/* Background layers */}
       <div
+        aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
         style={{
-          background:
-            "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(245, 158, 11, 0.06) 0%, transparent 70%)",
+          backgroundImage:
+            "linear-gradient(rgba(245, 158, 11, 0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(245, 158, 11, 0.015) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+          maskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 80%)",
+          WebkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 80%)",
         }}
       />
 
+      <motion.div
+        aria-hidden="true"
+        animate={{ scale: [1, 1.15, 1] }}
+        transition={{ duration: 6, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+        className="absolute pointer-events-none"
+        style={{
+          top: "20%",
+          left: "20%",
+          width: "60%",
+          height: "60%",
+          background: "radial-gradient(ellipse at center, rgba(245, 158, 11, 0.08) 0%, transparent 70%)",
+          filter: "blur(80px)",
+        }}
+      />
+
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[var(--color-bg)]/70 pointer-events-none"
+      />
+
+      {/* Content */}
       <div className="relative z-10 max-w-[1400px] mx-auto w-full">
         <SectionLabel number="04" label="word lid" />
 
-        {/* Heading */}
-        <h2
-          ref={headingRef}
-          className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight uppercase mt-8"
-        >
-          Word lid van{" "}
-          <span className="text-[var(--color-accent-gold)]">{"{"}</span>
-          <span className="text-[var(--color-text)]">SIT</span>
-          <span className="text-[var(--color-accent-gold)]">{"}"}</span>
-        </h2>
-
-        {/* Price + subtext + button */}
-        <div className="grid grid-cols-1 md:grid-cols-12 items-end mt-16 md:mt-28 gap-12">
-          {/* Left: giant price */}
-          <div ref={priceRef} className="md:col-span-5">
-            <div className="flex items-baseline gap-4">
-              <span className="font-mono text-7xl md:text-8xl lg:text-9xl font-bold text-[var(--color-accent-gold)]">
-                &euro;10
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center mt-8">
+          {/* Left: pitch — clean vertical flow */}
+          <div ref={leftRef}>
+            {/* Active indicator */}
+            <div data-animate className="flex items-center gap-2 mb-8">
+              <span
+                className="w-2 h-2 rounded-full bg-[var(--color-accent-green)]"
+                style={{ animation: "statusPulse 1.5s ease-in-out infinite" }}
+              />
+              <span className="font-mono text-xs text-[var(--color-text-muted)]">
+                SIT is actief — Bestuur XI
               </span>
             </div>
-            <span className="font-mono text-sm text-[var(--color-text-muted)] block mt-2">
-              eenmalig — lid voor je hele studiejaar
-            </span>
-          </div>
 
-          {/* Right: subtext + button */}
-          <div className="md:col-span-5 md:col-start-8 flex flex-col gap-10">
-            <p
-              ref={subtextRef}
-              className="font-mono text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed max-w-md"
-            >
-              <span className="text-[var(--color-accent-blue)]">Geen</span> maandelijkse kosten. Toegang tot alle <span className="text-[var(--color-accent-blue)]">events</span>, workshops, borrels en de SIT community.
-            </p>
-
-            <div ref={buttonRef}>
-              <HoldToJoinButton href="https://sitlid.nl" />
+            {/* Heading */}
+            <div data-animate>
+              <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight uppercase">
+                Start Je
+                <br />
+                <span className="text-[var(--color-accent-gold)]">Avontuur</span>
+              </h2>
             </div>
 
+            {/* Description */}
+            <p data-animate className="font-mono text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed mt-6 max-w-lg">
+              Word lid en ontvang je eigen digitale
+              <br />
+              <span className="text-[var(--color-text)]">SIT member card</span>.
+              {" "}Toegang tot alle events, workshops en de community.
+            </p>
+
+            {/* Price */}
+            <div data-animate className="mt-10">
+              <div className="flex items-baseline gap-3">
+                <span className="font-mono text-5xl md:text-6xl font-bold text-[var(--color-accent-gold)]">
+                  &euro;10
+                </span>
+                <span className="font-mono text-sm text-[var(--color-text-muted)]">
+                  eenmalig — lid voor je hele studiejaar
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: member card */}
+          <div ref={cardRef} className="flex justify-center lg:justify-end">
+            <MemberCard className="w-full max-w-[400px]">
+              <HoldToJoinButton href="https://sitlid.nl" />
+              <p className="font-mono text-[11px] text-[var(--color-text-muted)] opacity-40 mt-3 text-center">
+                200+ studenten gingen je voor
+              </p>
+            </MemberCard>
           </div>
         </div>
       </div>

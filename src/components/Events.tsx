@@ -4,6 +4,7 @@ import { Fragment, useEffect, useRef, useState, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
+import { BorderTrail } from "@/components/ui/BorderTrail";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -394,6 +395,16 @@ function EventCard({
       aria-pressed={isActive}
       aria-label={`${event.title}, ${fDay(event.date)} ${fMonth(event.date)} ${fYear(event.date)}, ${event.status}`}
     >
+      {/* BorderTrail on active card */}
+      {isActive && (
+        <BorderTrail
+          className="bg-[var(--color-accent-gold)]"
+          size={40}
+          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          style={{ opacity: 0.6 }}
+        />
+      )}
+
       {/* Glitch flash on hover */}
       {isGlitching && (
         <div
@@ -461,7 +472,7 @@ function EventCard({
       </div>
 
       {/* Card body */}
-      <div style={{ padding: "14px 16px 16px" }}>
+      <div style={{ padding: "16px 20px 20px" }}>
         <div className="flex items-baseline gap-2" style={{ marginBottom: 6 }}>
           <span
             className="font-display text-[26px] font-extrabold leading-none"
@@ -802,7 +813,7 @@ export default function Events() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const ctx = gsap.context(() => {
-      // Energy lines fade in
+      // Energy lines fade in + breathing
       const lines = sectionRef.current?.querySelectorAll(".energy-line");
       if (lines?.length) {
         gsap.fromTo(
@@ -817,6 +828,19 @@ export default function Events() {
               trigger: sectionRef.current,
               start: "top 80%",
               toggleActions: "play none none none",
+            },
+            onComplete: () => {
+              // Breathing animation after entrance
+              Array.from(lines).forEach((line, i) => {
+                const target = ENERGY_LINES[i]?.targetOpacity ?? 0.15;
+                gsap.to(line, {
+                  opacity: target * 1.3,
+                  duration: 4 + i * 0.5,
+                  ease: "sine.inOut",
+                  yoyo: true,
+                  repeat: -1,
+                });
+              });
             },
           },
         );
@@ -870,12 +894,12 @@ export default function Events() {
     <section
       ref={sectionRef}
       id="events"
-      className="relative py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24"
+      className="relative min-h-[70vh] py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24"
     >
       {/* Background overlay */}
       <div
         className="absolute inset-0"
-        style={{ background: "rgba(9,9,11,0.85)" }}
+        style={{ background: "rgba(9, 9, 11, 0.7)" }}
       />
 
       {/* ── Energy Lines (converging diagonals) ── */}
@@ -906,6 +930,20 @@ export default function Events() {
         <div className="max-w-[1400px] mx-auto">
           <SectionLabel number="03" label="events" />
 
+          {/* Section header */}
+          <div className="mb-12 md:mb-16">
+            <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tight leading-[1.1]">
+              Season<br />
+              <span className="text-[var(--color-accent-gold)]">2025—2026</span>
+            </h2>
+            <div className="flex items-center gap-3 mt-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-gold)]" />
+              <p className="font-mono text-sm text-[var(--color-text-muted)]">
+                Van borrels tot hackathons. Kies je quest.
+              </p>
+            </div>
+          </div>
+
           {isDesktop ? (
             /* ═══ DESKTOP: 2-col card grid + sticky detail sidebar ═══ */
             <div
@@ -916,7 +954,7 @@ export default function Events() {
                 alignItems: "start",
               }}
             >
-              <div className="grid grid-cols-2" style={{ gap: 12 }}>
+              <div className="grid grid-cols-2" style={{ gap: 16 }}>
                 {events.map((event, i) => {
                   const c = eHex(event.id);
                   const isLeft = i % 2 === 0;

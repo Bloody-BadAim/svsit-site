@@ -2,24 +2,65 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { Instagram, Linkedin, Mail, MapPin, ArrowUp } from "lucide-react";
+import SitLogo from "@/components/SitLogo";
+
+const NAV_LINKS = [
+  { href: "/#about", label: "Over SIT" },
+  { href: "/#events", label: "Events" },
+  { href: "/over-ons", label: "Het Bestuur" },
+  { href: "/#join", label: "Word Lid" },
+];
+
+const SOCIALS = [
+  {
+    href: "https://www.instagram.com/sv.sit",
+    ariaLabel: "Instagram: @svsit",
+    Icon: Instagram,
+    hoverBorder: "#F59E0B",
+    hoverGlow: "0 0 16px rgba(245, 158, 11, 0.2)",
+  },
+  {
+    href: "https://linkedin.com/company/svsit-hbo-ict",
+    ariaLabel: "LinkedIn: /company/svsit",
+    Icon: Linkedin,
+    hoverBorder: "#3B82F6",
+    hoverGlow: "0 0 16px rgba(59, 130, 246, 0.2)",
+  },
+  {
+    href: "mailto:bestuur@svsit.nl",
+    ariaLabel: "E-mail: bestuur@svsit.nl",
+    Icon: Mail,
+    hoverBorder: "#22C55E",
+    hoverGlow: "0 0 16px rgba(34, 197, 94, 0.2)",
+  },
+];
 
 export default function Footer() {
-  const preRef = useRef<HTMLPreElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-    if (prefersReducedMotion || !preRef.current) return;
+    if (prefersReducedMotion || !contentRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && preRef.current) {
+          if (entry.isIntersecting && contentRef.current) {
+            const sections =
+              contentRef.current.querySelectorAll("[data-footer-zone]");
             gsap.fromTo(
-              preRef.current,
-              { opacity: 0, y: 24 },
-              { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+              Array.from(sections),
+              { opacity: 0, y: 20 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                stagger: 0.12,
+                ease: "power3.out",
+              }
             );
             observer.disconnect();
           }
@@ -28,7 +69,7 @@ export default function Footer() {
       { threshold: 0.1 }
     );
 
-    const footerEl = preRef.current.closest("footer");
+    const footerEl = contentRef.current.closest("footer");
     if (footerEl) observer.observe(footerEl);
 
     return () => observer.disconnect();
@@ -36,80 +77,203 @@ export default function Footer() {
 
   const year = new Date().getFullYear();
 
-  // Link style: underline + brighter color + cursor pointer
-  const linkClass = "text-[var(--color-text)] underline decoration-[var(--color-accent-gold)]/40 underline-offset-2 hover:decoration-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold)] transition-colors duration-200 cursor-pointer";
-
   return (
-    <footer
-      id="footer"
-      className="relative z-[1] border-t border-[var(--color-border)] bg-[var(--color-bg)]"
-    >
-      <div className="max-w-5xl mx-auto px-6 md:px-12 py-16 md:py-20">
-        <pre
-          ref={preRef}
-          className="font-mono text-sm md:text-base leading-loose overflow-x-auto"
+    <footer id="footer" className="relative z-[1] bg-[var(--color-bg)]">
+      {/* Gradient accent top border */}
+      <div
+        aria-hidden="true"
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          background:
+            "linear-gradient(to right, var(--color-accent-gold) 0%, var(--color-accent-blue) 40%, var(--color-accent-red) 70%, transparent 100%)",
+          opacity: 0.4,
+        }}
+      />
+
+      <div
+        ref={contentRef}
+        className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24 py-16 md:py-20"
+      >
+        {/* ═══ Zone 1: Brand + Social icons ═══ */}
+        <div
+          data-footer-zone
+          className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 pb-12 mb-12 border-b border-[var(--color-border)]"
         >
-          <span className="text-[var(--color-text-muted)]">{"{"}</span>{"\n"}
+          {/* Logo + description */}
+          <div className="max-w-sm">
+            <div className="mb-4">
+              <SitLogo size={40} showCrosses={false} />
+            </div>
+            <p className="font-mono text-sm text-[var(--color-text-muted)] leading-relaxed">
+              Studievereniging voor alle{" "}
+              <span className="text-[var(--color-accent-blue)]">HBO-ICT</span>{" "}
+              studenten aan de HvA. Van{" "}
+              <span className="text-[var(--color-accent-gold)]">
+                Software Engineering
+              </span>{" "}
+              tot{" "}
+              <span className="text-[var(--color-accent-red)]">
+                Cyber Security
+              </span>
+              .
+            </p>
+          </div>
 
-          <span className="text-[var(--color-text-muted)]">{"  "}</span>
-          <span className="text-[var(--color-accent-blue)]">&quot;name&quot;</span>
-          <span className="text-[var(--color-text-muted)]">: </span>
-          <span className="text-[var(--color-accent-gold)]">&quot;@hva/sit&quot;</span>
-          <span className="text-[var(--color-text-muted)]">,</span>{"\n"}
+          {/* Social icon buttons — ONLY place socials appear */}
+          <div className="flex items-center gap-3">
+            {SOCIALS.map((s) => (
+              <a
+                key={s.ariaLabel}
+                href={s.href}
+                target={s.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel={
+                  s.href.startsWith("mailto:")
+                    ? undefined
+                    : "noopener noreferrer"
+                }
+                aria-label={s.ariaLabel}
+                className="group flex items-center justify-center w-11 h-11 border border-[var(--color-border)] bg-[var(--color-surface)] transition-all duration-200"
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget;
+                  el.style.borderColor = s.hoverBorder;
+                  el.style.boxShadow = s.hoverGlow;
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget;
+                  el.style.borderColor = "";
+                  el.style.boxShadow = "none";
+                }}
+              >
+                <s.Icon
+                  size={18}
+                  className="text-[var(--color-text-muted)] group-hover:text-[var(--color-text)] transition-colors duration-200"
+                />
+              </a>
+            ))}
+          </div>
+        </div>
 
-          <span className="text-[var(--color-text-muted)]">{"  "}</span>
-          <span className="text-[var(--color-accent-blue)]">&quot;version&quot;</span>
-          <span className="text-[var(--color-text-muted)]">: </span>
-          <span className="text-[var(--color-accent-gold)]">&quot;11.0.0&quot;</span>
-          <span className="text-[var(--color-text-muted)]">,</span>{"\n"}
+        {/* ═══ Zone 2: Info grid (2 columns, no duplicate socials) ═══ */}
+        <div
+          data-footer-zone
+          className="grid grid-cols-1 sm:grid-cols-2 gap-10 md:gap-16 pb-12 mb-8 border-b border-[var(--color-border)]"
+        >
+          {/* Column 1: Navigation */}
+          <div>
+            <h3 className="font-mono text-[11px] text-[var(--color-accent-gold)] uppercase tracking-[0.2em] mb-5">
+              Pagina&apos;s
+            </h3>
+            <nav className="flex flex-col gap-3">
+              {NAV_LINKS.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:translate-x-1 transition-all duration-200 w-fit"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+          </div>
 
-          <span className="text-[var(--color-text-muted)]">{"  "}</span>
-          <span className="text-[var(--color-accent-blue)]">&quot;description&quot;</span>
-          <span className="text-[var(--color-text-muted)]">: </span>
-          <span className="text-[var(--color-accent-gold)]">&quot;Studievereniging ICT — Hogeschool van Amsterdam&quot;</span>
-          <span className="text-[var(--color-text-muted)]">,</span>{"\n"}
+          {/* Column 2: Contact & Location */}
+          <div>
+            <h3 className="font-mono text-[11px] text-[var(--color-accent-gold)] uppercase tracking-[0.2em] mb-5">
+              Contact
+            </h3>
+            <div className="flex flex-col gap-4">
+              {/* Email */}
+              <a
+                href="mailto:bestuur@svsit.nl"
+                className="flex items-center gap-2.5 font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors duration-200 w-fit"
+              >
+                <Mail
+                  size={14}
+                  className="text-[var(--color-accent-green)] shrink-0"
+                  style={{ opacity: 0.7 }}
+                />
+                bestuur@svsit.nl
+              </a>
 
-          <span className="text-[var(--color-text-muted)]">{"  "}</span>
-          <span className="text-[var(--color-accent-blue)]">&quot;homepage&quot;</span>
-          <span className="text-[var(--color-text-muted)]">: </span>
-          <a href="https://svsit.nl" className={linkClass}>&quot;svsit.nl&quot;</a>
-          <span className="text-[var(--color-text-muted)]">,</span>{"\n"}
+              {/* Location */}
+              <div className="flex items-start gap-2.5 font-mono text-sm text-[var(--color-text-muted)]">
+                <MapPin
+                  size={14}
+                  className="text-[var(--color-accent-red)] mt-0.5 shrink-0"
+                  style={{ opacity: 0.7 }}
+                />
+                <span>
+                  Wibauthuis, Wibautstraat 3b
+                  <br />
+                  <span className="opacity-50">1091 GH Amsterdam</span>
+                </span>
+              </div>
 
-          <span className="text-[var(--color-text-muted)]">{"  "}</span>
-          <span className="text-[var(--color-accent-blue)]">&quot;contact&quot;</span>
-          <span className="text-[var(--color-text-muted)]">: </span>
-          <a href="mailto:bestuur@svsit.nl" className={linkClass}>&quot;bestuur@svsit.nl&quot;</a>
-          <span className="text-[var(--color-text-muted)]">,</span>{"\n"}
+              {/* Faculty */}
+              <p className="font-mono text-sm text-[var(--color-text-muted)] opacity-50 ml-[22.5px]">
+                FDMCI — Hogeschool van Amsterdam
+              </p>
+            </div>
+          </div>
+        </div>
 
-          <span className="text-[var(--color-text-muted)]">{"  "}</span>
-          <span className="text-[var(--color-accent-blue)]">&quot;socials&quot;</span>
-          <span className="text-[var(--color-text-muted)]">: {"{"}</span>{"\n"}
+        {/* ═══ Zone 3: Terminal signature + Copyright + Back-to-top ═══ */}
+        <div data-footer-zone>
+          {/* Terminal one-liner */}
+          <p
+            className="font-mono text-xs text-[var(--color-text-muted)] opacity-25 mb-5"
+            aria-hidden="true"
+          >
+            <span className="text-[var(--color-accent-green)]">{"$"}</span>
+            {" cat package.json | "}
+            <span className="text-[var(--color-accent-blue)]">{"jq"}</span>
+            {" '.name, .version'  "}
+            <span className="opacity-40">{"\u2192"}</span>
+            {"  "}
+            <span className="text-[var(--color-accent-gold)]">
+              {'"@hva/sit"'}
+            </span>
+            {"  "}
+            <span className="text-[var(--color-accent-gold)]">
+              {'"11.0.0"'}
+            </span>
+          </p>
 
-          <span className="text-[var(--color-text-muted)]">{"    "}</span>
-          <span className="text-[var(--color-accent-blue)]">&quot;instagram&quot;</span>
-          <span className="text-[var(--color-text-muted)]">: </span>
-          <a href="https://www.instagram.com/sv.sit?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className={linkClass}>&quot;@svsit&quot;</a>
-          <span className="text-[var(--color-text-muted)]">,</span>{"\n"}
+          {/* Copyright + back-to-top */}
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <p className="font-mono text-xs text-[var(--color-text-muted)] opacity-40 flex items-center gap-2">
+              <span>&copy; {year} SIT — Hogeschool van Amsterdam</span>
+              <span
+                className="inline-flex items-center gap-1.5"
+                aria-hidden="true"
+              >
+                <span className="text-[var(--color-accent-red)] font-bold">
+                  ×
+                </span>
+                <span className="text-[var(--color-accent-green)] font-bold">
+                  ×
+                </span>
+                <span className="text-[var(--color-accent-blue)] font-bold">
+                  ×
+                </span>
+              </span>
+            </p>
 
-          <span className="text-[var(--color-text-muted)]">{"    "}</span>
-          <span className="text-[var(--color-accent-blue)]">&quot;linkedin&quot;</span>
-          <span className="text-[var(--color-text-muted)]">: </span>
-          <a href="https://linkedin.com/company/svsit-hbo-ict" target="_blank" rel="noopener noreferrer" className={linkClass}>&quot;/company/svsit&quot;</a>{"\n"}
-
-          <span className="text-[var(--color-text-muted)]">{"  }"}</span>
-          <span className="text-[var(--color-text-muted)]">,</span>{"\n"}
-
-          <span className="text-[var(--color-text-muted)]">{"  "}</span>
-          <span className="text-[var(--color-accent-blue)]">&quot;license&quot;</span>
-          <span className="text-[var(--color-text-muted)]">: </span>
-          <span className="text-[var(--color-accent-gold)]">&quot;FDMCI&quot;</span>{"\n"}
-
-          <span className="text-[var(--color-text-muted)]">{"}"}</span>
-        </pre>
-
-        <p className="font-mono text-xs text-[var(--color-text-muted)] opacity-40 mt-8">
-          &copy; {year} SIT — Hogeschool van Amsterdam — FDMCI
-        </p>
+            <button
+              onClick={() =>
+                window.scrollTo({ top: 0, behavior: "smooth" })
+              }
+              aria-label="Terug naar boven"
+              className="group flex items-center gap-2 font-mono text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-200 cursor-pointer"
+            >
+              <span className="hidden sm:inline">scroll.toTop()</span>
+              <ArrowUp
+                size={14}
+                className="group-hover:-translate-y-0.5 transition-transform duration-200"
+              />
+            </button>
+          </div>
+        </div>
       </div>
     </footer>
   );
