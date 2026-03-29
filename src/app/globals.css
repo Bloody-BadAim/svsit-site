@@ -185,6 +185,29 @@ body::before {
   100% { transform: scaleX(0); opacity: 0; }
 }
 
+/* Energy flow animation for timeline SVG */
+@keyframes energyFlow {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -52; }
+}
+
+/* Detail panel slide-in (mobile events) */
+@keyframes detailSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero code rain — pure CSS falling characters */
+.code-rain-column {
+  animation: rain-fall linear infinite;
+  will-change: transform;
+}
+
+@keyframes rain-fall {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(100vh); }
+}
+
 /* Accessibility: respect user motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,

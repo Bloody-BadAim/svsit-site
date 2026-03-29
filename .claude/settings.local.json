@@ -22,7 +22,12 @@
       "Bash(where python3:*)",
       "Bash(where python:*)",
       "Bash(xargs grep:*)",
-      "mcp__magic__21st_magic_component_builder"
+      "mcp__magic__21st_magic_component_builder",
+      "Bash(ls -1 /c/Users/matin/Desktop/PROJECTS/svsit-site/src/components/*.tsx)",
+      "Bash(npx next:*)",
+      "Bash(ls:*)",
+      "Bash(find /c/Users/matin/Desktop/PROJECTS/svsit-site -type f -name *.md -o -type f -name *.json -o -type f -name *.ts -o -type f -name *.tsx)",
+      "WebFetch(domain:localhost)"
     ]
   }
 }

@@ -19,19 +19,15 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll when menu is open
   useEffect(() => {
     if (menuOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
-  // Close on Escape
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setMenuOpen(false);
@@ -52,12 +48,15 @@ export default function Navbar() {
         }`}
       >
         <div className="flex items-center justify-between px-6 md:px-12 py-4">
-          {/* Logo */}
+          {/* Logo with blinking cursor */}
           <a
             href="/"
-            className="hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.4)] transition-all duration-300"
+            className="font-mono font-bold text-lg hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.4)] transition-all duration-300"
           >
-            <SitLogo size={28} />
+            <span className="text-[var(--color-accent-gold)]">{"{"}</span>
+            <span className="text-[var(--color-text)]">SIT</span>
+            <span className="text-[var(--color-accent-gold)]">{"}"}</span>
+            <span className="inline-block w-[2px] h-[1em] bg-[var(--color-accent-gold)] ml-0.5 align-middle animate-pulse" />
           </a>
 
           {/* Desktop nav */}
@@ -76,18 +75,11 @@ export default function Navbar() {
               className="group/lid relative px-4 py-2 border border-[var(--color-accent-gold)] text-[var(--color-accent-gold)] overflow-hidden hover:text-[var(--color-bg)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(245,158,11,0.25)]"
             >
               <div className="absolute inset-0 bg-[var(--color-accent-gold)] translate-y-full group-hover/lid:translate-y-0 transition-transform duration-300" />
-              <span className="relative z-10">
-                <span className="group-hover/lid:opacity-0 transition-opacity duration-200">
-                  word_lid()
-                </span>
-                <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/lid:opacity-100 transition-opacity duration-200">
-                  word_lid(true)
-                </span>
-              </span>
+              <span className="relative z-10">$ join --now</span>
             </a>
           </div>
 
-          {/* Hamburger button — mobile only */}
+          {/* Hamburger */}
           <button
             className="relative md:hidden flex flex-col justify-center items-center w-10 h-10 gap-[6px] cursor-pointer"
             onClick={() => setMenuOpen((prev) => !prev)}
@@ -97,30 +89,19 @@ export default function Navbar() {
             <span
               className="block w-6 h-[2px] bg-[var(--color-text)] transition-all duration-300 origin-center"
               style={{
-                transform: menuOpen
-                  ? "translateY(4px) rotate(45deg)"
-                  : "none",
-                backgroundColor: menuOpen
-                  ? "var(--color-accent-gold)"
-                  : "var(--color-text)",
+                transform: menuOpen ? "translateY(4px) rotate(45deg)" : "none",
+                backgroundColor: menuOpen ? "var(--color-accent-gold)" : "var(--color-text)",
               }}
             />
             <span
               className="block w-6 h-[2px] bg-[var(--color-text)] transition-all duration-300"
-              style={{
-                opacity: menuOpen ? 0 : 1,
-                transform: menuOpen ? "scaleX(0)" : "scaleX(1)",
-              }}
+              style={{ opacity: menuOpen ? 0 : 1, transform: menuOpen ? "scaleX(0)" : "scaleX(1)" }}
             />
             <span
               className="block w-6 h-[2px] bg-[var(--color-text)] transition-all duration-300 origin-center"
               style={{
-                transform: menuOpen
-                  ? "translateY(-4px) rotate(-45deg)"
-                  : "none",
-                backgroundColor: menuOpen
-                  ? "var(--color-accent-gold)"
-                  : "var(--color-text)",
+                transform: menuOpen ? "translateY(-4px) rotate(-45deg)" : "none",
+                backgroundColor: menuOpen ? "var(--color-accent-gold)" : "var(--color-text)",
               }}
             />
           </button>
@@ -130,17 +111,11 @@ export default function Navbar() {
       {/* Mobile menu overlay */}
       <div
         className={`fixed inset-0 z-[45] md:hidden transition-all duration-500 ${
-          menuOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
-        style={{
-          background: "rgba(9, 9, 11, 0.97)",
-          backdropFilter: "blur(20px)",
-        }}
+        style={{ background: "rgba(9, 9, 11, 0.97)", backdropFilter: "blur(20px)" }}
       >
         <div className="flex flex-col justify-center items-start h-full px-8">
-          {/* Nav links */}
           <nav className="flex flex-col gap-8 mb-16">
             {navLinks.map((link, i) => (
               <a
@@ -149,13 +124,9 @@ export default function Navbar() {
                 onClick={closeMenu}
                 className="group/mlink flex flex-col text-[var(--color-text)] hover:text-[var(--color-accent-gold)] transition-all duration-300"
                 style={{
-                  transform: menuOpen
-                    ? "translateX(0)"
-                    : "translateX(-30px)",
+                  transform: menuOpen ? "translateX(0)" : "translateX(-30px)",
                   opacity: menuOpen ? 1 : 0,
-                  transition: `all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${
-                    menuOpen ? 0.1 + i * 0.08 : 0
-                  }s`,
+                  transition: `all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${menuOpen ? 0.1 + i * 0.08 : 0}s`,
                 }}
               >
                 <span className="text-[var(--color-accent-gold)] opacity-40 text-xs tracking-[0.3em]">
@@ -167,43 +138,28 @@ export default function Navbar() {
               </a>
             ))}
 
-            {/* Word lid CTA */}
             <a
               href="/#join"
               onClick={closeMenu}
-              className="inline-block mt-4 px-8 py-4 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-bold text-lg tracking-wide"
+              className="inline-block mt-4 px-8 py-4 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-lg tracking-wide"
               style={{
                 transform: menuOpen ? "translateX(0)" : "translateX(-30px)",
                 opacity: menuOpen ? 1 : 0,
-                transition: `all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${
-                  menuOpen ? 0.1 + navLinks.length * 0.08 : 0
-                }s`,
+                transition: `all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${menuOpen ? 0.1 + navLinks.length * 0.08 : 0}s`,
               }}
             >
-              Word lid
+              $ join --now
             </a>
           </nav>
 
-          {/* Contact info */}
           <div
             className="flex flex-col gap-3"
-            style={{
-              opacity: menuOpen ? 1 : 0,
-              transition: `opacity 0.4s ease ${menuOpen ? 0.5 : 0}s`,
-            }}
+            style={{ opacity: menuOpen ? 1 : 0, transition: `opacity 0.4s ease ${menuOpen ? 0.5 : 0}s` }}
           >
-            <a
-              href="mailto:bestuur@svsit.nl"
-              className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300"
-            >
+            <a href="mailto:bestuur@svsit.nl" className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300">
               bestuur@svsit.nl
             </a>
-            <a
-              href="https://instagram.com/svsit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300"
-            >
+            <a href="https://instagram.com/svsit" target="_blank" rel="noopener noreferrer" className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300">
               @svsit — Instagram
             </a>
           </div>

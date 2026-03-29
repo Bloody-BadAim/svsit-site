@@ -7,79 +7,151 @@ import SectionLabel from "@/components/SectionLabel";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const reasons = [
+/**
+ * WhyJoin — Achievement Unlock Cards
+ *
+ * Styled like gaming achievement notifications. Each reason is an
+ * "achievement" you unlock by joining SIT. Large achievement ring
+ * with number, title, description, and XP value. Scroll-triggered
+ * slide-in from left with glow pulse.
+ */
+
+const achievements = [
   {
-    number: "01",
-    title: "Events en activiteiten",
-    description:
-      "Van borrels en kroegentochten tot hackathons, game nights, CTF challenges en tech talks. Of je nu wil netwerken of gewoon een biertje drinken met je medestudenten.",
-    accent: "var(--color-accent-gold)",
-    code: "await sit.events.join('borrel');",
+    title: "Events & Activiteiten",
+    desc: "Van borrels en kroegentochten tot hackathons, game nights, CTF challenges en tech talks. Of je nu wil netwerken of gewoon een biertje drinken.",
+    stat: "20+",
+    statLabel: "per jaar",
+    color: "#F59E0B",
+    colorVar: "var(--color-accent-gold)",
+    ring: 100,
   },
   {
-    number: "02",
-    title: "Netwerk opbouwen",
-    description:
-      "Leer studenten uit alle richtingen kennen: Software Engineering, Cyber Security, Game Dev, Business IT en Technische Informatica. Plus alumni en bedrijven.",
-    accent: "var(--color-accent-blue)",
-    code: "const connections = await network.expand();",
+    title: "Netwerk Opbouwen",
+    desc: "Leer studenten uit alle richtingen kennen: Software Engineering, Cyber Security, Game Dev, Business IT en Technische Informatica. Plus alumni en bedrijven.",
+    stat: "5",
+    statLabel: "specialisaties",
+    color: "#3B82F6",
+    colorVar: "var(--color-accent-blue)",
+    ring: 100,
   },
   {
-    number: "03",
-    title: "Skills ontwikkelen",
-    description:
-      "Win een CTF, bouw een AI project, pitch je startup idee, of organiseer een event. Dingen die op je CV knallen.",
-    accent: "var(--color-accent-red)",
-    code: "student.skills.push(...newSkills);",
+    title: "Skills Ontwikkelen",
+    desc: "Win een CTF, bouw een AI project, pitch je startup idee, of organiseer een event. Dingen die op je CV knallen.",
+    stat: "∞",
+    statLabel: "mogelijkheden",
+    color: "#EF4444",
+    colorVar: "var(--color-accent-red)",
+    ring: 100,
   },
   {
-    number: "04",
-    title: "Maar 10 euro",
-    description:
-      "Eenmalig. Geen maandelijkse kosten. Lid voor het hele jaar. Inclusief toegang tot alle events en de SIT community.",
-    accent: "var(--color-accent-green)",
-    code: "const price = 10; // that's it",
+    title: "Maar 10 Euro",
+    desc: "Eenmalig. Geen maandelijkse kosten. Lid voor het hele jaar. Inclusief toegang tot alle events en de volledige SIT community.",
+    stat: "€10",
+    statLabel: "that's it",
+    color: "#22C55E",
+    colorVar: "var(--color-accent-green)",
+    ring: 100,
   },
 ];
 
+function AchievementRing({ number, color, size = 72 }: { number: number; color: string; size?: number }) {
+  const r = (size - 8) / 2;
+  const circ = 2 * Math.PI * r;
+
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      {/* Glow */}
+      <div
+        className="absolute inset-0 rounded-full"
+        style={{
+          boxShadow: `0 0 20px ${color}30, 0 0 40px ${color}15`,
+        }}
+      />
+      <svg width={size} height={size} className="rotate-[-90deg]">
+        {/* Track */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke="rgba(255,255,255,0.06)"
+          strokeWidth={4}
+        />
+        {/* Progress */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth={4}
+          strokeLinecap="round"
+          strokeDasharray={circ}
+          strokeDashoffset={0}
+          className="achievement-ring"
+        />
+      </svg>
+      {/* Number */}
+      <span
+        className="absolute inset-0 flex items-center justify-center font-display text-xl font-bold"
+        style={{ color }}
+      >
+        {String(number).padStart(2, "0")}
+      </span>
+    </div>
+  );
+}
+
 export default function WhyJoin() {
   const sectionRef = useRef<HTMLElement>(null);
-  const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const cardsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      rowRefs.current.forEach((row) => {
-        if (!row) return;
+      if (!cardsRef.current) return;
+      const cards = cardsRef.current.querySelectorAll(".achievement-card");
 
-        const line = row.querySelector(".accent-line");
-        const title = row.querySelector(".reason-title");
-        const desc = row.querySelector(".reason-desc");
+      cards.forEach((card, i) => {
+        // Card slides in from left
+        gsap.fromTo(
+          card,
+          { opacity: 0, x: -60 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.7,
+            ease: "back.out(1.2)",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+            delay: i * 0.1,
+          }
+        );
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: row,
-            start: "top 82%",
-            toggleActions: "play none none none",
-          },
-        });
-
-        tl.fromTo(
-          line,
-          { scaleX: 0 },
-          { scaleX: 1, duration: 0.8, ease: "power3.out" }
-        )
-          .fromTo(
-            title,
-            { opacity: 0, y: 30 },
-            { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
-            0.2
-          )
-          .fromTo(
-            desc,
-            { opacity: 0, y: 15 },
-            { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
-            0.35
+        // Ring fills on scroll
+        const ring = card.querySelector(".achievement-ring");
+        if (ring) {
+          const r = 32;
+          const circ = 2 * Math.PI * r;
+          gsap.fromTo(
+            ring,
+            { strokeDashoffset: circ },
+            {
+              strokeDashoffset: 0,
+              duration: 1.2,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 85%",
+                toggleActions: "play none none none",
+              },
+              delay: 0.3 + i * 0.1,
+            }
           );
+        }
       });
     }, sectionRef);
 
@@ -92,113 +164,81 @@ export default function WhyJoin() {
       id="whyjoin"
       className="relative py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24"
     >
+      <div className="absolute inset-0 bg-[var(--color-bg)]/70" />
+
       <div className="relative max-w-[1400px] mx-auto">
         <SectionLabel number="02" label="waarom lid worden" />
 
-        <div className="flex flex-col">
-          {reasons.map((reason, i) => {
-            const isEven = i % 2 === 1;
+        {/* Header */}
+        <div className="mb-12 md:mb-16">
+          <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tight leading-[1.1]">
+            Achievements<br />
+            <span className="text-[var(--color-accent-gold)]">Unlocked</span>
+          </h2>
+          <p className="font-mono text-sm text-[var(--color-text-muted)] mt-4">
+            Wat je krijgt als SIT lid. Allemaal inbegrepen.
+          </p>
+        </div>
 
-            return (
+        {/* Achievement cards */}
+        <div ref={cardsRef} className="flex flex-col gap-4">
+          {achievements.map((a, i) => (
+            <div
+              key={i}
+              className="achievement-card group relative overflow-hidden"
+            >
+              {/* Left color bar */}
               <div
-                key={reason.number}
-                ref={(el) => { rowRefs.current[i] = el; }}
-                className="group relative cursor-default"
+                className="absolute left-0 top-0 bottom-0 w-1"
+                style={{ background: a.color }}
+              />
+
+              <div
+                className="bg-[var(--color-surface)] border border-[var(--color-border)] border-l-0 transition-all duration-300"
+                style={{
+                  borderColor: "var(--color-border)",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = `${a.color}30`;
+                  (e.currentTarget as HTMLElement).style.boxShadow = `inset 0 0 60px ${a.color}05, 0 0 30px ${a.color}08`;
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = "var(--color-border)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                }}
               >
-                <div
-                  className="accent-line h-[2px] w-3/5 group-hover:w-full origin-left transition-all duration-500"
-                  style={{
-                    background: `linear-gradient(to right, ${reason.accent} 0%, ${reason.accent}66 50%, transparent 100%)`,
-                  }}
-                />
+                <div className="flex items-center gap-6 md:gap-8 p-6 md:p-8">
+                  {/* Achievement ring */}
+                  <AchievementRing number={i + 1} color={a.color} />
 
-                <div
-                  className="absolute left-0 top-0 w-[2px] h-0 group-hover:h-full transition-all duration-500"
-                  style={{ background: reason.accent }}
-                />
-
-                <div className="relative py-16 md:py-20 lg:py-24 overflow-hidden">
-                  <div
-                    className="big-number absolute top-1/2 -translate-y-[60%] font-display font-bold leading-none pointer-events-none select-none transition-all duration-500"
-                    style={{
-                      fontSize: "clamp(180px, 22vw, 320px)",
-                      color: reason.accent,
-                      opacity: 0.15,
-                      ...(isEven ? { left: "-2%" } : { right: "-2%" }),
-                    }}
-                    data-side={isEven ? "left" : "right"}
-                  >
-                    {reason.number}
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-display text-xl md:text-2xl font-bold uppercase tracking-tight leading-tight mb-2 group-hover:translate-x-1 transition-transform duration-300">
+                      {a.title}
+                    </h3>
+                    <p className="font-mono text-sm leading-relaxed text-[var(--color-text-muted)] group-hover:text-[var(--color-text)]/70 transition-colors duration-300">
+                      {a.desc}
+                    </p>
                   </div>
 
-                  <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
-                    <div
-                      className={`flex flex-col gap-5 ${isEven
-                          ? "md:col-span-6 md:col-start-7"
-                          : "md:col-span-6 md:col-start-1"
-                        }`}
+                  {/* Stat badge */}
+                  <div className="hidden sm:flex flex-col items-end shrink-0">
+                    <span
+                      className="font-mono text-3xl md:text-4xl font-bold leading-none"
+                      style={{ color: a.color }}
                     >
-                      <h3 className="reason-title font-display text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1] uppercase transition-transform duration-300 group-hover:translate-x-2">
-                        {reason.title}
-                      </h3>
-
-                      <p className="reason-desc font-mono text-sm md:text-base leading-relaxed text-[var(--color-text-muted)] group-hover:text-[var(--color-text)] transition-colors duration-300 max-w-lg">
-                        {reason.description}
-                      </p>
-
-                      {/* Code line — appears on hover */}
-                      <div
-                        className="font-mono text-xs mt-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
-                        style={{ color: reason.accent }}
-                      >
-                        <span className="text-[var(--color-text-muted)] opacity-40">
-                          {">"}{" "}
-                        </span>
-                        {reason.code}
-                        <span
-                          className="inline-block w-[6px] h-[12px] ml-1 align-middle animate-pulse"
-                          style={{ background: reason.accent }}
-                        />
-                      </div>
-                    </div>
+                      {a.stat}
+                    </span>
+                    <span className="font-mono text-[10px] text-[var(--color-text-muted)] mt-1 uppercase tracking-wider">
+                      {a.statLabel}
+                    </span>
                   </div>
                 </div>
               </div>
-            );
-          })}
-
-          <div className="h-px w-full bg-[var(--color-border)]" />
-
-          <p className="font-mono text-xs text-[var(--color-accent-red)] opacity-30 mt-6">
-            {"// FIXME: waarom is iedereen zo gemotiveerd"}
-          </p>
+            </div>
+          ))}
         </div>
       </div>
-
-      <style>{`
-        .big-number {
-          text-shadow: none;
-          transition: text-shadow 0.3s ease, opacity 0.5s ease;
-        }
-        .group:hover .big-number {
-          text-shadow: 0 0 40px currentColor;
-          opacity: 0.25 !important;
-        }
-        .big-number[data-side="right"] {
-          right: -2%;
-        }
-        .big-number[data-side="left"] {
-          left: -2%;
-        }
-        @media (min-width: 768px) {
-          .big-number[data-side="right"] {
-            right: 0;
-          }
-          .big-number[data-side="left"] {
-            left: 0;
-          }
-        }
-      `}</style>
     </section>
   );
 }

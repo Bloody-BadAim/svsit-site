@@ -19,21 +19,35 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       return;
     }
 
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-    lenisRef.current = lenis;
+    let lenis: Lenis | null = null;
+    try {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+      });
+      lenisRef.current = lenis;
 
-    // Connect Lenis to GSAP ScrollTrigger
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(0);
+      // Connect Lenis to GSAP ScrollTrigger
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis!.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    } catch {
+      // Lenis failed — fall back to native scroll (ScrollTrigger still works)
+    }
+
+    // Force ScrollTrigger to recalculate after layout settles
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+      });
+    });
 
     return () => {
-      lenis.destroy();
-      lenisRef.current = null;
+      if (lenis) {
+        lenis.destroy();
+        lenisRef.current = null;
+      }
     };
   }, []);
 

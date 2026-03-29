@@ -78,7 +78,8 @@ export default function JoinCta() {
       id="join"
       className="relative min-h-[70vh] flex items-center overflow-hidden py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24"
     >
-      {/* Background: radial gold glow */}
+      {/* Background shield + gold glow */}
+      <div className="absolute inset-0 bg-[var(--color-bg)]/70" />
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -93,7 +94,7 @@ export default function JoinCta() {
         {/* Heading */}
         <h2
           ref={headingRef}
-          className="invisible font-display text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold leading-[1.0] tracking-tight uppercase mt-8"
+          className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight uppercase mt-8"
         >
           Word lid van{" "}
           <span className="text-[var(--color-accent-gold)]">{"{"}</span>
@@ -104,7 +105,7 @@ export default function JoinCta() {
         {/* Price + subtext + button */}
         <div className="grid grid-cols-1 md:grid-cols-12 items-end mt-16 md:mt-28 gap-12">
           {/* Left: giant price */}
-          <div ref={priceRef} className="invisible md:col-span-5">
+          <div ref={priceRef} className="md:col-span-5">
             <div className="flex items-baseline gap-4">
               <span className="font-mono text-7xl md:text-8xl lg:text-9xl font-bold text-[var(--color-accent-gold)]">
                 &euro;10
@@ -113,33 +114,21 @@ export default function JoinCta() {
             <span className="font-mono text-sm text-[var(--color-text-muted)] block mt-2">
               eenmalig — lid voor je hele studiejaar
             </span>
-            <span className="font-mono text-[10px] text-[var(--color-accent-red)] block opacity-50 mt-2">
-              {"// RangeError: price too low to be real"}
-            </span>
           </div>
 
           {/* Right: subtext + button */}
           <div className="md:col-span-5 md:col-start-8 flex flex-col gap-10">
             <p
               ref={subtextRef}
-              className="invisible font-mono text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed max-w-md"
+              className="font-mono text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed max-w-md"
             >
               <span className="text-[var(--color-accent-blue)]">Geen</span> maandelijkse kosten. Toegang tot alle <span className="text-[var(--color-accent-blue)]">events</span>, workshops, borrels en de SIT community.
             </p>
 
-            <div ref={buttonRef} className="invisible">
+            <div ref={buttonRef}>
               <HoldToJoinButton href="https://sitlid.nl" />
             </div>
 
-            {/* Code decoration */}
-            <div className="font-mono text-xs text-[var(--color-text-muted)] opacity-40">
-              <span className="text-[var(--color-accent-blue)]">await</span>{" "}
-              <span className="text-[var(--color-text)]">sit</span>
-              <span className="text-[var(--color-accent-blue)]">.join</span>
-              <span className="text-[var(--color-text-muted)]">(</span>
-              <span className="text-[var(--color-accent-gold)]">&apos;jij&apos;</span>
-              <span className="text-[var(--color-text-muted)]">);</span>
-            </div>
           </div>
         </div>
       </div>

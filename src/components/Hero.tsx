@@ -194,6 +194,31 @@ export default function Hero() {
         </motion.div>
       </div>
 
+      {/* ── Layer 0.5: Code rain (pure CSS) ── */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        {[
+          { left: "8%", dur: "25s", delay: "0s", chars: "{ } < > ; 0 1 = ( )\n[ ] / * + - _ . # @\n! & | : 0x1F 0b10\nconst let var =>\nif else while for\n{ } ( ) => { }\nimport export from\nasync await return" },
+          { left: "22%", dur: "30s", delay: "-8s", chars: "0 1 1 0 1 0 0 1\nfunction class new\n[] {} () => void\nnull undefined NaN\ntrue false 0xFF\nfor of in delete\nswitch case break\ncontinue throw try" },
+          { left: "38%", dur: "22s", delay: "-15s", chars: "# include define\n< > / = ! & | ^\n++ -- ** // %%\nstruct enum union\nmalloc free sizeof\npush pop shift map\nfilter reduce find\nslice splice sort" },
+          { left: "53%", dur: "28s", delay: "-5s", chars: "git add commit push\nnpm run dev build\nsudo chmod mkdir\nping localhost:3000\ncurl POST GET PUT\ndocker compose up\nkubectl apply -f\nssh deploy@prod" },
+          { left: "68%", dur: "26s", delay: "-12s", chars: "10 42 FF 0B 3B 82\nF6 EF 44 22 C5 5E\n01 00 11 10 01 11\nACK SYN FIN RST\nHTTP 200 301 404\nTCP UDP DNS SSL\nAPI REST GraphQL\nJSON XML YAML CSV" },
+          { left: "83%", dur: "32s", delay: "-20s", chars: "λ → ∀ ∃ ≡ ≢ ∅\nconsole.log debug\nprocess.env NODE\nwindow document\naddEventListener\nquerySelector All\nsetTimeout async\npromise resolve ok" },
+        ].map((col, i) => (
+          <div
+            key={i}
+            className="code-rain-column absolute font-mono text-[14px] text-[var(--color-accent-gold)] whitespace-pre leading-[1.8]"
+            style={{
+              left: col.left,
+              opacity: 0.04,
+              animationDuration: col.dur,
+              animationDelay: col.delay,
+            }}
+          >
+            {col.chars}
+          </div>
+        ))}
+      </div>
+
       {/* ── Layer 1: CSS Grid background ── */}
       <div className="hero-grid" aria-hidden="true" />
       <div className="hero-glow-dots" aria-hidden="true" />
