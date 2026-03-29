@@ -148,7 +148,6 @@ export default function Events() {
   const selectedEvent = events.find((e) => e.id === selectedId) ?? events[0];
   const hex = CSS_TO_HEX[selectedEvent.color] || "#F59E0B";
 
-  // Responsive layout — sidebar detail only on wide screens
   useEffect(() => {
     const check = () => setIsDesktop(window.innerWidth >= 1100);
     check();
@@ -183,7 +182,6 @@ export default function Events() {
         );
       }
 
-      // Detail panel entrance
       if (detailRef.current) {
         gsap.fromTo(
           detailRef.current,
@@ -207,7 +205,6 @@ export default function Events() {
     return () => ctx.revert();
   }, [isDesktop]);
 
-  // ─── Detail sidebar (shared between layouts) ───
   const renderDetailPanel = () => (
     <div
       ref={detailRef}
@@ -223,7 +220,7 @@ export default function Events() {
             }),
       }}
     >
-      {/* ── Signal connection indicator (desktop only) ── */}
+      {/* Signal connection indicator (desktop only) */}
       {isDesktop && (
         <div
           style={{
@@ -233,7 +230,6 @@ export default function Events() {
             marginBottom: "16px",
           }}
         >
-          {/* Animated connection dot */}
           <div
             style={{
               width: "8px",
@@ -245,7 +241,6 @@ export default function Events() {
               flexShrink: 0,
             }}
           />
-          {/* Connection line */}
           <div
             style={{
               flex: 1,
@@ -305,12 +300,10 @@ export default function Events() {
           ...(isDesktop
             ? {
                 borderLeft: `2px solid ${hex}50`,
-                paddingLeft: "0px",
               }
             : {}),
         }}
       >
-        {/* Left border glow */}
         {isDesktop && (
           <div
             aria-hidden="true"
@@ -336,8 +329,7 @@ export default function Events() {
     <section
       ref={sectionRef}
       id="events"
-      className="relative"
-      style={{ paddingTop: "6rem", paddingBottom: "6rem" }}
+      className="relative py-24 md:py-32 lg:py-40"
     >
       {/* Background glow */}
       <div
@@ -349,17 +341,14 @@ export default function Events() {
         }}
       />
 
-      <div
-        style={{ paddingLeft: "1.5rem", paddingRight: "1.5rem" }}
-        className="md:px-12 lg:px-24"
-      >
+      <div className="px-6 md:px-12 lg:px-24">
         <div className="max-w-[1400px] mx-auto">
-          {/* ─── Section header ─── */}
-          <div ref={headerRef} style={{ marginBottom: "3rem" }}>
+          {/* Section header */}
+          <div ref={headerRef} className="mb-12 md:mb-16">
             <span
               ref={numberRef}
+              className="font-display"
               style={{
-                fontFamily: "'Big Shoulders Display', sans-serif",
                 fontWeight: 800,
                 fontSize: "48px",
                 color: "var(--color-accent-gold)",
@@ -368,12 +357,12 @@ export default function Events() {
                 lineHeight: 1,
               }}
             >
-              04
+              03
             </span>
             <h2
               ref={titleRef}
+              className="font-display"
               style={{
-                fontFamily: "'Big Shoulders Display', sans-serif",
                 fontWeight: 800,
                 fontSize: "clamp(48px, 8vw, 80px)",
                 color: "var(--color-text)",
@@ -395,7 +384,7 @@ export default function Events() {
             />
           </div>
 
-          {/* ═══════════ DESKTOP: two-column layout ═══════════ */}
+          {/* Desktop: two-column layout */}
           {isDesktop ? (
             <div
               style={{
@@ -405,18 +394,14 @@ export default function Events() {
                 alignItems: "start",
               }}
             >
-              {/* Left: Glitch Energy Timeline */}
               <EventTimeline
                 events={events}
                 activeId={selectedId}
                 onSelect={setSelectedId}
               />
-
-              {/* Right: Sticky Mission Brief Console */}
               {renderDetailPanel()}
             </div>
           ) : (
-            /* ═══════════ MOBILE/TABLET: stacked layout ═══════════ */
             <>
               <EventTimeline
                 events={events}
@@ -426,8 +411,7 @@ export default function Events() {
               {renderDetailPanel()}
             </>
           )}
-
-          {/* Bottom comment lines */}
+          {/* Bottom code comments */}
           <div style={{ textAlign: "center", marginTop: "4rem" }}>
             <p
               className="font-mono text-sm"

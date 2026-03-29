@@ -1,121 +1,34 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
 import { GlowEffect } from "@/components/ui/GlowEffect";
-import HeroBackground from "@/components/HeroBackground";
-
-const codeLines = [
-  "import { SIT } from '@hva/verenigingen';",
-  "",
-  "const sit = new Vereniging({",
-  "  naam: 'Studievereniging HBO-ICT',",
-  "  bestuur: 'XI',",
-  "  missie: 'tech + fun',",
-  "});",
-  "",
-  "sit.events = [",
-  "  'borrels', 'hackathons',",
-  "  'workshops', 'kroegentochten',",
-  "  'game nights', 'tech talks',",
-  "];",
-  "",
-  "sit.voor = [",
-  "  'software engineers',",
-  "  'cyber security',",
-  "  'game developers',",
-  "  'business IT',",
-  "  'technische informatica',",
-  "];",
-  "",
-  "await sit.launch();",
-];
-
-function colorize(line: string) {
-  return line
-    .replace(
-      /\b(import|from|const|new|await)\b/g,
-      '<span style="color: var(--color-accent-blue)">$1</span>'
-    )
-    .replace(
-      /('[^']*'|`[^`]*`)/g,
-      '<span style="color: var(--color-accent-gold)">$1</span>'
-    )
-    .replace(
-      /(\/\/.*$)/,
-      '<span style="color: var(--color-accent-green)">$1</span>'
-    )
-    .replace(
-      /(\.\w+)/g,
-      '<span style="color: var(--color-accent-red)">$1</span>'
-    );
-}
-
-function CodeSnippet({ phase }: { phase: "typing" | "done" }) {
-  const [visibleLines, setVisibleLines] = useState(0);
-
-  useEffect(() => {
-    if (phase !== "done") return;
-    let i = 0;
-    const interval = setInterval(() => {
-      i++;
-      setVisibleLines(i);
-      if (i >= codeLines.length) clearInterval(interval);
-    }, 180);
-    return () => clearInterval(interval);
-  }, [phase]);
-
-  return (
-    <div className="hidden lg:block absolute right-12 xl:right-24 top-1/2 -translate-y-1/2 z-10 w-[420px] opacity-0 animate-[fadeIn_1s_ease_1.5s_forwards]">
-      {/* Terminal window chrome */}
-      <div className="flex items-center gap-2 px-4 py-3 border border-[var(--color-border)] border-b-0 bg-[var(--color-surface)]">
-        <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-accent-red)] opacity-60" />
-        <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-accent-gold)] opacity-60" />
-        <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-accent-green)] opacity-60" />
-        <span className="ml-3 font-mono text-[10px] text-[var(--color-text-muted)]">
-          sit.config.ts
-        </span>
-      </div>
-      {/* Code content */}
-      <div className="bg-[var(--color-surface)]/50 backdrop-blur-sm border border-[var(--color-border)] p-5 font-mono text-xs leading-[1.9]">
-        {codeLines.map((line, i) => (
-          <div
-            key={i}
-            className="flex gap-4 transition-all duration-300"
-            style={{
-              opacity: i < visibleLines ? 1 : 0,
-              transform: i < visibleLines ? "translateX(0)" : "translateX(10px)",
-            }}
-          >
-            <span className="text-[var(--color-text-muted)] opacity-30 select-none w-5 text-right shrink-0">
-              {i + 1}
-            </span>
-            <span
-              dangerouslySetInnerHTML={{ __html: colorize(line) }}
-              className="text-[var(--color-text)] opacity-80"
-            />
-          </div>
-        ))}
-        {visibleLines > 0 && visibleLines < codeLines.length && (
-          <div className="flex gap-4">
-            <span className="w-5 shrink-0" />
-            <span className="inline-block w-[7px] h-[14px] bg-[var(--color-accent-gold)] animate-pulse" />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+import gsap from "gsap";
 
 export default function Hero() {
   const [typedText, setTypedText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
   const [phase, setPhase] = useState<"typing" | "done">("typing");
+  const [reducedMotion, setReducedMotion] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
+  const glowDotsRef = useRef<HTMLDivElement>(null);
 
   const fullText = "{SIT}";
 
-  // Typing animation
+  // Check reduced motion once
   useEffect(() => {
+    setReducedMotion(
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    );
+  }, []);
+
+  // Typing animation (skip if reduced motion)
+  useEffect(() => {
+    if (reducedMotion) {
+      setTypedText(fullText);
+      setPhase("done");
+      return;
+    }
     let i = 0;
     const typeInterval = setInterval(() => {
       if (i < fullText.length) {
@@ -128,7 +41,7 @@ export default function Hero() {
     }, 180);
 
     return () => clearInterval(typeInterval);
-  }, []);
+  }, [reducedMotion]);
 
   // Cursor blink
   useEffect(() => {
@@ -138,17 +51,167 @@ export default function Hero() {
     return () => clearInterval(blinkInterval);
   }, []);
 
+  // GSAP: subtle glow dot pulse on grid intersections
+  useEffect(() => {
+    if (reducedMotion || !glowDotsRef.current) return;
+
+    const container = glowDotsRef.current;
+    const dots: HTMLDivElement[] = [];
+
+    for (let i = 0; i < 5; i++) {
+      const dot = document.createElement("div");
+      const col = Math.floor(Math.random() * 12) + 2;
+      const row = Math.floor(Math.random() * 8) + 2;
+      dot.style.cssText = `
+        position: absolute;
+        left: ${col * 60}px;
+        top: ${row * 60}px;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: rgba(245, 158, 11, 0.4);
+        box-shadow: 0 0 12px rgba(245, 158, 11, 0.3), 0 0 24px rgba(245, 158, 11, 0.15);
+        opacity: 0;
+        will-change: opacity;
+      `;
+      container.appendChild(dot);
+      dots.push(dot);
+    }
+
+    const tl = gsap.timeline({ repeat: -1 });
+    dots.forEach((dot, i) => {
+      tl.to(
+        dot,
+        {
+          opacity: 1,
+          duration: 2,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: 1,
+        },
+        i * 1.5
+      );
+    });
+
+    return () => {
+      tl.kill();
+      dots.forEach((d) => d.remove());
+    };
+  }, [reducedMotion]);
+
   return (
     <section
       ref={heroRef}
       className="relative flex items-center justify-center min-h-screen overflow-hidden"
     >
-      {/* Epic animated background */}
-      <HeroBackground />
+      {/* ── Layer 0: Aurora brand color blobs ── */}
+      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+        <motion.div
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+        >
+          {/* Gold blob — top left */}
+          <motion.div
+            className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[120px]"
+            style={{ background: "rgba(245, 158, 11, 0.12)" }}
+            animate={
+              reducedMotion
+                ? {}
+                : {
+                    x: [-40, 60, -40],
+                    y: [-20, 30, -20],
+                    scale: [1, 1.2, 1],
+                  }
+            }
+            transition={{
+              duration: 30,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut",
+            }}
+          />
+          {/* Blue blob — bottom right */}
+          <motion.div
+            className="absolute -bottom-[15%] -right-[10%] w-[45%] h-[45%] rounded-full blur-[120px]"
+            style={{ background: "rgba(59, 130, 246, 0.10)" }}
+            animate={
+              reducedMotion
+                ? {}
+                : {
+                    x: [40, -50, 40],
+                    y: [20, -30, 20],
+                    scale: [1, 1.3, 1],
+                  }
+            }
+            transition={{
+              duration: 35,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut",
+            }}
+          />
+          {/* Red blob — center left */}
+          <motion.div
+            className="absolute top-[30%] left-[15%] w-[30%] h-[30%] rounded-full blur-[100px]"
+            style={{ background: "rgba(239, 68, 68, 0.08)" }}
+            animate={
+              reducedMotion
+                ? {}
+                : {
+                    x: [20, -30, 20],
+                    y: [-25, 25, -25],
+                  }
+            }
+            transition={{
+              duration: 40,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut",
+            }}
+          />
+          {/* Green blob — bottom center */}
+          <motion.div
+            className="absolute bottom-[10%] right-[25%] w-[25%] h-[25%] rounded-full blur-[100px]"
+            style={{ background: "rgba(34, 197, 94, 0.07)" }}
+            animate={
+              reducedMotion
+                ? {}
+                : {
+                    x: [-30, 30, -30],
+                    y: [15, -15, 15],
+                    scale: [1, 1.15, 1],
+                  }
+            }
+            transition={{
+              duration: 32,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut",
+            }}
+          />
+        </motion.div>
+      </div>
 
-      {/* Content — shifted above dead center */}
+      {/* ── Layer 1: CSS Grid background ── */}
+      <div className="hero-grid" aria-hidden="true" />
+      <div className="hero-glow-dots" aria-hidden="true" />
+      <div ref={glowDotsRef} className="absolute inset-0 pointer-events-none" aria-hidden="true" />
+
+      {/* ── Layer 2: Noise overlay ── */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        aria-hidden="true"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+          backgroundRepeat: "repeat",
+          backgroundSize: "256px 256px",
+        }}
+      />
+
+      {/* ── Layer 3: Content ── */}
       <div className="relative z-10 flex flex-col items-start px-6 md:px-12 lg:px-24 w-full max-w-[1400px] mb-[8vh]">
-        {/* Terminal-style line number gutter */}
         <div className="flex items-start gap-4 md:gap-8">
           <div className="hidden md:flex flex-col font-mono text-[var(--color-text-muted)] text-sm leading-[1.8] select-none opacity-30">
             <span>01</span>
@@ -160,7 +223,7 @@ export default function Hero() {
           </div>
 
           <div className="flex flex-col">
-            {/* Comment line */}
+            {/* Comment line — kept in hero */}
             <p className="font-mono text-[11px] sm:text-sm md:text-base text-[var(--color-accent-green)] mb-2 opacity-0 animate-[fadeIn_0.5s_ease_0.8s_forwards]">
               <span className="hidden sm:inline">{"// "}studievereniging HBO-ICT — Hogeschool van Amsterdam</span>
               <span className="sm:hidden">{"// "}studievereniging HBO-ICT — HvA</span>
@@ -168,7 +231,7 @@ export default function Hero() {
 
             {/* Main logo */}
             <h1
-              className={`font-mono text-[clamp(4rem,15vw,12rem)] font-bold leading-none tracking-tighter mb-6 transition-opacity duration-500`}
+              className="font-mono text-[clamp(4rem,15vw,12rem)] font-bold leading-none tracking-tighter mb-6 transition-opacity duration-500"
             >
               <span className="text-[var(--color-accent-gold)]">
                 {typedText.slice(0, 1)}
@@ -224,7 +287,7 @@ export default function Hero() {
               </a>
             </div>
 
-            {/* Amsterdam × marks — brand identity (red, green, blue) */}
+            {/* Amsterdam x marks — brand identity */}
             <div
               className={`flex items-center gap-3 mt-16 font-mono text-sm opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.8s_forwards]" : ""
                 }`}
@@ -239,17 +302,13 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Floating code snippet on the right */}
-      <CodeSnippet phase={phase} />
-
-      {/* Scroll indicator — terminal style */}
+      {/* Scroll indicator */}
       <div
         className={`absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_1.2s_forwards]" : ""
           }`}
       >
-        <span className="font-mono text-xs text-[var(--color-text-muted)] tracking-wider">
-          <span className="text-[var(--color-accent-gold)]">{"$ "}</span>
-          <span className="opacity-70">scroll down</span>
+        <span className="font-mono text-xs text-[var(--color-text-muted)] tracking-wider opacity-70">
+          scroll down
         </span>
         <div className="flex flex-col items-center gap-1">
           <div className="w-px h-6 bg-gradient-to-b from-[var(--color-accent-gold)]/60 to-transparent" />

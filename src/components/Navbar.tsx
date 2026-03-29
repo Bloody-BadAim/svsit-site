@@ -3,25 +3,14 @@
 import { useEffect, useState, useCallback } from "react";
 import SitLogo from "@/components/SitLogo";
 
-const jokes = [
-  "Geen bugs, alleen features",
-  "Works on my machine \u00AF\\_(\u30C4)_/\u00AF",
-  "// dit is geen comment, dit is een schreeuw om hulp",
-  "git commit -m 'fix: everything'",
-  "404: social_life not found",
-  "while(true) { study(); code(); borrel(); }",
-];
-
 const navLinks = [
-  { href: "/#about", label: "over_sit" },
-  { href: "/#events", label: "events" },
-  { href: "/over-ons", label: "over_ons" },
+  { href: "/#about", label: "Over SIT" },
+  { href: "/#events", label: "Events" },
+  { href: "/over-ons", label: "Over ons" },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [joke, setJoke] = useState("");
-  const [showTooltip, setShowTooltip] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -51,11 +40,6 @@ export default function Navbar() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  const handleLogoHover = () => {
-    setJoke(jokes[Math.floor(Math.random() * jokes.length)]);
-    setShowTooltip(true);
-  };
-
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   return (
@@ -69,23 +53,12 @@ export default function Navbar() {
       >
         <div className="flex items-center justify-between px-6 md:px-12 py-4">
           {/* Logo */}
-          <div className="relative">
-            <a
-              href="/"
-              className="group/logo hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.4)] transition-all duration-300"
-              onMouseEnter={handleLogoHover}
-              onMouseLeave={() => setShowTooltip(false)}
-            >
-              <SitLogo size={28} />
-            </a>
-
-            {/* Tooltip */}
-            {showTooltip && (
-              <div className="absolute top-full left-0 mt-2 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] font-mono text-[11px] text-[var(--color-accent-gold)] whitespace-nowrap opacity-0 animate-[fadeIn_0.2s_ease_forwards] pointer-events-none">
-                {joke}
-              </div>
-            )}
-          </div>
+          <a
+            href="/"
+            className="hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.4)] transition-all duration-300"
+          >
+            <SitLogo size={28} />
+          </a>
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-8 font-mono text-sm text-[var(--color-text-muted)]">
@@ -154,7 +127,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu overlay — z-45 so it sits behind the nav (z-50) but above page content */}
+      {/* Mobile menu overlay */}
       <div
         className={`fixed inset-0 z-[45] md:hidden transition-all duration-500 ${
           menuOpen
@@ -174,7 +147,7 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={closeMenu}
-                className="group/mlink flex flex-col font-mono text-[var(--color-text)] hover:text-[var(--color-accent-gold)] transition-all duration-300"
+                className="group/mlink flex flex-col text-[var(--color-text)] hover:text-[var(--color-accent-gold)] transition-all duration-300"
                 style={{
                   transform: menuOpen
                     ? "translateX(0)"
@@ -198,7 +171,7 @@ export default function Navbar() {
             <a
               href="/#join"
               onClick={closeMenu}
-              className="inline-block mt-4 px-8 py-4 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-lg tracking-wide"
+              className="inline-block mt-4 px-8 py-4 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-bold text-lg tracking-wide"
               style={{
                 transform: menuOpen ? "translateX(0)" : "translateX(-30px)",
                 opacity: menuOpen ? 1 : 0,
@@ -207,7 +180,7 @@ export default function Navbar() {
                 }s`,
               }}
             >
-              WORD LID
+              Word lid
             </a>
           </nav>
 
@@ -221,7 +194,7 @@ export default function Navbar() {
           >
             <a
               href="mailto:bestuur@svsit.nl"
-              className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300"
+              className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300"
             >
               bestuur@svsit.nl
             </a>
@@ -229,22 +202,11 @@ export default function Navbar() {
               href="https://instagram.com/svsit"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300"
+              className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300"
             >
               @svsit — Instagram
             </a>
           </div>
-
-          {/* Decorative code line */}
-          <p
-            className="font-mono text-xs text-[var(--color-text-muted)] opacity-20 absolute bottom-10 left-8"
-            style={{
-              opacity: menuOpen ? 0.2 : 0,
-              transition: `opacity 0.4s ease ${menuOpen ? 0.6 : 0}s`,
-            }}
-          >
-            {">"} menu.isOpen = true;
-          </p>
         </div>
       </div>
     </>

@@ -17,46 +17,41 @@ export default function JoinCta() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Use the section as trigger for all animations — more reliable after pins
       const sectionTrigger = {
         trigger: sectionRef.current,
         start: "top 80%",
         toggleActions: "play none none none" as const,
       };
 
-      // Heading: fast scale-up entrance
       if (headingRef.current) {
         gsap.fromTo(
           headingRef.current,
-          { autoAlpha: 0, scale: 0.85, y: 60 },
+          { autoAlpha: 0, y: 30 },
           {
             autoAlpha: 1,
-            scale: 1,
             y: 0,
-            duration: 0.7,
-            ease: "back.out(1.4)",
+            duration: 0.8,
+            ease: "power3.out",
             scrollTrigger: sectionTrigger,
           }
         );
       }
 
-      // Price: slide in from right
       if (priceRef.current) {
         gsap.fromTo(
           priceRef.current,
-          { autoAlpha: 0, x: 80 },
+          { autoAlpha: 0, y: 30 },
           {
             autoAlpha: 1,
-            x: 0,
-            duration: 0.6,
+            y: 0,
+            duration: 0.8,
             ease: "power3.out",
             scrollTrigger: sectionTrigger,
-            delay: 0.2,
+            delay: 0.15,
           }
         );
       }
 
-      // Subtext + button: fade up
       [subtextRef.current, buttonRef.current].forEach((el, i) => {
         if (!el) return;
         gsap.fromTo(
@@ -65,10 +60,10 @@ export default function JoinCta() {
           {
             autoAlpha: 1,
             y: 0,
-            duration: 0.6,
+            duration: 0.8,
             ease: "power3.out",
             scrollTrigger: sectionTrigger,
-            delay: 0.35 + i * 0.15,
+            delay: 0.3 + i * 0.15,
           }
         );
       });
@@ -81,8 +76,7 @@ export default function JoinCta() {
     <section
       ref={sectionRef}
       id="join"
-      className="relative min-h-[70vh] flex items-center overflow-hidden"
-      style={{ paddingTop: "9rem", paddingBottom: "11rem", paddingLeft: "1.5rem", paddingRight: "1.5rem" }}
+      className="relative min-h-[70vh] flex items-center overflow-hidden py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24"
     >
       {/* Background: radial gold glow */}
       <div
@@ -93,24 +87,13 @@ export default function JoinCta() {
         }}
       />
 
-      {/* Subtle noise overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
-          backgroundRepeat: "repeat",
-          backgroundSize: "256px 256px",
-        }}
-      />
-
       <div className="relative z-10 max-w-[1400px] mx-auto w-full">
         <SectionLabel number="04" label="word lid" />
 
-        {/* Heading — ENORMOUS */}
+        {/* Heading */}
         <h2
           ref={headingRef}
-          className="invisible text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold leading-[1.0] tracking-tight"
-          style={{ marginTop: "2rem" }}
+          className="invisible font-display text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold leading-[1.0] tracking-tight uppercase mt-8"
         >
           Word lid van{" "}
           <span className="text-[var(--color-accent-gold)]">{"{"}</span>
@@ -118,30 +101,29 @@ export default function JoinCta() {
           <span className="text-[var(--color-accent-gold)]">{"}"}</span>
         </h2>
 
-        {/* Price + subtext + button row */}
-        <div className="grid grid-cols-1 md:grid-cols-12 items-end" style={{ marginTop: "7rem", gap: "3rem" }}>
+        {/* Price + subtext + button */}
+        <div className="grid grid-cols-1 md:grid-cols-12 items-end mt-16 md:mt-28 gap-12">
           {/* Left: giant price */}
           <div ref={priceRef} className="invisible md:col-span-5">
-            <div className="flex items-baseline" style={{ gap: "1rem" }}>
+            <div className="flex items-baseline gap-4">
               <span className="font-mono text-7xl md:text-8xl lg:text-9xl font-bold text-[var(--color-accent-gold)]">
                 &euro;10
               </span>
             </div>
-            <span className="font-mono text-sm text-[var(--color-text-muted)] block" style={{ marginTop: "0.5rem" }}>
+            <span className="font-mono text-sm text-[var(--color-text-muted)] block mt-2">
               eenmalig — lid voor je hele studiejaar
             </span>
-            <span className="font-mono text-[10px] text-[var(--color-accent-red)] block opacity-50" style={{ marginTop: "0.5rem" }}>
+            <span className="font-mono text-[10px] text-[var(--color-accent-red)] block opacity-50 mt-2">
               {"// RangeError: price too low to be real"}
             </span>
           </div>
 
           {/* Right: subtext + button */}
-          <div className="md:col-span-5 md:col-start-8 flex flex-col" style={{ gap: "3.5rem" }}>
+          <div className="md:col-span-5 md:col-start-8 flex flex-col gap-10">
             <p
               ref={subtextRef}
               className="invisible font-mono text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed max-w-md"
             >
-
               <span className="text-[var(--color-accent-blue)]">Geen</span> maandelijkse kosten. Toegang tot alle <span className="text-[var(--color-accent-blue)]">events</span>, workshops, borrels en de SIT community.
             </p>
 

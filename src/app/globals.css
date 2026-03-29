@@ -6,12 +6,11 @@
   --color-surface-hover: #1A1A1D;
   --color-border: rgba(255, 255, 255, 0.06);
   --color-text: #FAFAFA;
-  --color-text-muted: #71717A;
+  --color-text-muted: #888891;
   --color-accent-gold: #F59E0B;
   --color-accent-blue: #3B82F6;
   --color-accent-red: #EF4444;
   --color-accent-green: #22C55E;
-  --font-big-shoulders: 'Big Shoulders Display', sans-serif;
 }
 
 @theme inline {
@@ -26,9 +25,8 @@
   --color-red: var(--color-accent-red);
   --color-green: var(--color-accent-green);
   --font-sans: var(--font-geist-sans);
-  --font-display: var(--font-outfit);
+  --font-display: 'Big Shoulders Display', sans-serif;
   --font-mono: var(--font-jetbrains-mono);
-  --font-display-alt: var(--font-big-shoulders);
 }
 
 * {
@@ -96,41 +94,6 @@ body::before {
   51%, 100% { opacity: 0; }
 }
 
-/* Grid fade animation */
-@keyframes gridPulse {
-  0%, 100% { opacity: 0.03; }
-  50% { opacity: 0.06; }
-}
-
-/* Energy flow animation for background streaks */
-.energy-core {
-  animation: energyFlow linear infinite;
-}
-
-@keyframes energyFlow {
-  from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: -2000; }
-}
-
-/* Glow pulse for energy stream auras */
-.energy-glow {
-  animation: glowPulse 8s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-/* Floating code fragments in hero */
-@keyframes floatCode {
-  0% { opacity: 0; transform: translateY(0) translateX(0); }
-  10% { opacity: 0.15; }
-  50% { opacity: 0.08; transform: translateY(-20px) translateX(10px); }
-  90% { opacity: 0.15; }
-  100% { opacity: 0; transform: translateY(0) translateX(0); }
-}
-
 /* Fade in animation */
 @keyframes fadeIn {
   from {
@@ -143,14 +106,26 @@ body::before {
   }
 }
 
-/* Board character select breathing */
-@keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.01); }
+/* Hero grid background */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(245, 158, 11, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245, 158, 11, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 70%);
 }
 
-.animate-breathe {
-  animation: breathe 3s ease-in-out infinite;
+.hero-glow-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle 2px, rgba(245, 158, 11, 0.15) 0%, transparent 100%);
+  background-size: 60px 60px;
+  background-position: -0.5px -0.5px;
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black 10%, transparent 60%);
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black 10%, transparent 60%);
 }
 
 /* Focus-visible styles for keyboard accessibility */
@@ -208,17 +183,6 @@ body::before {
   0% { transform: scaleX(0); opacity: 1; }
   50% { transform: scaleX(1); opacity: 1; }
   100% { transform: scaleX(0); opacity: 0; }
-}
-
-/* Ticker scroll — EventTicker pure CSS animation */
-@keyframes tickerScroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-@keyframes tickerScrollReverse {
-  from { transform: translateX(-50%); }
-  to { transform: translateX(0); }
 }
 
 /* Accessibility: respect user motion preferences */

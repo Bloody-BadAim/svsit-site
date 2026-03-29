@@ -1,18 +1,11 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { Outfit } from "next/font/google";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-});
-
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -52,31 +45,24 @@ export default function RootLayout({
   return (
     <html
       lang="nl"
-      className={`${geistSans.variable} ${outfit.variable} ${jetbrainsMono.variable} antialiased`}
+      className={`${geistSans.variable} ${jetbrainsMono.variable} antialiased`}
       suppressHydrationWarning
     >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;700;800;900&display=swap" rel="stylesheet" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-// {SIT} — Studievereniging ICT
-// Hogeschool van Amsterdam
-//
-// Door studenten. Voor studenten. In code.
-//
-// TODO: meer events toevoegen
-// TODO: dark mode is de enige mode
-// FIXME: te weinig pizza bij events
-//
-// Wil je meehelpen? bestuur@svsit.nl
-`,
-          }}
-        />
+        <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&display=swap" rel="stylesheet" />
       </head>
-      <body>{children}</body>
+      <body>
+        {/* Skip link for keyboard navigation */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--color-accent-gold)] focus:text-[var(--color-bg)] focus:font-bold focus:text-sm"
+        >
+          Ga naar hoofdinhoud
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

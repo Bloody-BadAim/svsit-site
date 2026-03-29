@@ -41,7 +41,7 @@ export default function SectionLabel({
       {/* Section title — large and readable */}
       <TextScramble
         as="h2"
-        className="font-mono text-2xl md:text-3xl font-bold text-[var(--color-text)] tracking-tight uppercase"
+        className="font-display text-2xl md:text-3xl font-bold text-[var(--color-text)] tracking-tight uppercase"
         trigger={inView}
         duration={0.6}
         speed={0.03}

@@ -25,7 +25,7 @@ export default function OverOns() {
     <SmoothScroll>
       <CustomCursor />
       <Navbar />
-      <main style={{ paddingTop: "5rem" }}>
+      <main id="main-content" style={{ paddingTop: "5rem" }}>
         <Board />
       </main>
       <Footer />

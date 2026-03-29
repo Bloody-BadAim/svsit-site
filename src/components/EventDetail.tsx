@@ -2,122 +2,36 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import type { SitEvent } from "@/components/EventList";
+import { generateICSFile } from "@/lib/calendar";
 
 interface EventDetailProps {
   event: SitEvent;
   transitionKey: string;
 }
 
-type TransitionPhase = "idle" | "glitchOut" | "black" | "scanIn" | "typewriter";
+type TransitionPhase = "idle" | "glitchOut" | "black" | "scanIn";
 
-/* ── Build the terminal code string for a given event ── */
-function buildCodeString(event: SitEvent): string {
-  return [
-    `const event = {`,
-    `  naam: "${event.title}",`,
-    `  tijd: "${event.time}",`,
-    `  locatie: "${event.location}",`,
-    `  status: "${event.status}",`,
-    `};`,
-  ].join("\n");
-}
-
-/* ── Syntax-highlighted code renderer ────────────────── */
-function HighlightedCode({ code }: { code: string }) {
-  const nodes: React.ReactNode[] = [];
-
-  // Tokenize line-by-line for readability
-  const lines = code.split("\n");
-  lines.forEach((line, li) => {
-    const lineNodes: React.ReactNode[] = [];
-    let remaining = line;
-
-    // keyword: const
-    if (remaining.startsWith("const ")) {
-      lineNodes.push(
-        <span key={`kw-${li}`} style={{ color: "var(--color-accent-blue)" }}>
-          const
-        </span>
-      );
-      remaining = remaining.slice(5); // keep the space
-    }
-
-    // string values: "..."
-    const parts = remaining.split(/("(?:[^"\\]|\\.)*")/g);
-    parts.forEach((part, pi) => {
-      if (part.startsWith('"') && part.endsWith('"')) {
-        lineNodes.push(
-          <span key={`s-${li}-${pi}`} style={{ color: "var(--color-accent-gold)" }}>
-            {part}
-          </span>
-        );
-      } else {
-        // Punctuation in muted, identifiers in text color
-        const subParts = part.split(/([{}:,;=])/g);
-        subParts.forEach((sub, si) => {
-          if (/^[{}:,;=]$/.test(sub)) {
-            lineNodes.push(
-              <span key={`p-${li}-${pi}-${si}`} style={{ color: "var(--color-text-muted)" }}>
-                {sub}
-              </span>
-            );
-          } else if (sub.trim()) {
-            lineNodes.push(
-              <span key={`t-${li}-${pi}-${si}`} style={{ color: "var(--color-text)", opacity: 0.9 }}>
-                {sub}
-              </span>
-            );
-          } else {
-            lineNodes.push(<span key={`w-${li}-${pi}-${si}`}>{sub}</span>);
-          }
-        });
-      }
-    });
-
-    nodes.push(<span key={`line-${li}`}>{lineNodes}</span>);
-    if (li < lines.length - 1) nodes.push(<br key={`br-${li}`} />);
-  });
-
-  return <>{nodes}</>;
-}
-
-/* ── Main component ──────────────────────────────────── */
 export default function EventDetail({ event, transitionKey }: EventDetailProps) {
-  /* Displayed event — swapped during "black" phase */
   const [displayedEvent, setDisplayedEvent] = useState<SitEvent>(event);
   const [phase, setPhase] = useState<TransitionPhase>("idle");
-  const [typedLength, setTypedLength] = useState<number>(0);
   const [isHovered, setIsHovered] = useState(false);
 
-  /* Refs for tilt */
   const panelRef = useRef<HTMLDivElement>(null);
   const tiltRef = useRef({ rx: 0, ry: 0 });
-
-  /* Refs for cleanup */
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const color = displayedEvent.color;
-  const codeString = buildCodeString(displayedEvent);
 
-  /* ── Clear all running timers ─────────────────────── */
   const clearTimers = useCallback(() => {
     timeoutsRef.current.forEach(clearTimeout);
     timeoutsRef.current = [];
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
   }, []);
 
-  /* ── Transition state machine ─────────────────────── */
+  /* Transition state machine */
   useEffect(() => {
-    // Skip initial render
     if (phase === "idle" && displayedEvent === event) return;
 
-    // Only fire when transitionKey actually changes and we're idle or re-entering
     clearTimers();
-
     setPhase("glitchOut");
 
     const t1 = setTimeout(() => {
@@ -126,10 +40,9 @@ export default function EventDetail({ event, transitionKey }: EventDetailProps) 
 
       const t2 = setTimeout(() => {
         setPhase("scanIn");
-        setTypedLength(0);
 
         const t3 = setTimeout(() => {
-          setPhase("typewriter");
+          setPhase("idle");
         }, 300);
         timeoutsRef.current.push(t3);
       }, 50);
@@ -141,44 +54,14 @@ export default function EventDetail({ event, transitionKey }: EventDetailProps) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transitionKey]);
 
-  /* ── Typewriter interval ──────────────────────────── */
-  useEffect(() => {
-    if (phase !== "typewriter") return;
-
-    const fullLength = buildCodeString(displayedEvent).length;
-    setTypedLength(0);
-
-    intervalRef.current = setInterval(() => {
-      setTypedLength((prev) => {
-        if (prev >= fullLength) {
-          if (intervalRef.current) clearInterval(intervalRef.current);
-          intervalRef.current = null;
-          setPhase("idle");
-          return fullLength;
-        }
-        return prev + 1;
-      });
-    }, 30);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [phase, displayedEvent]);
-
-  /* ── Initialize displayedEvent on first mount ─────── */
   useEffect(() => {
     setDisplayedEvent(event);
-    setTypedLength(buildCodeString(event).length);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ── Cleanup on unmount ───────────────────────────── */
   useEffect(() => clearTimers, [clearTimers]);
 
-  /* ── 3D tilt handlers ─────────────────────────────── */
+  /* 3D tilt */
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!panelRef.current) return;
     const rect = panelRef.current.getBoundingClientRect();
@@ -205,7 +88,6 @@ export default function EventDetail({ event, transitionKey }: EventDetailProps) 
     setIsHovered(true);
   }, []);
 
-  /* ── Animation style for container ────────────────── */
   const containerAnimation = (): React.CSSProperties => {
     switch (phase) {
       case "glitchOut":
@@ -219,83 +101,54 @@ export default function EventDetail({ event, transitionKey }: EventDetailProps) 
     }
   };
 
-  /* ── Determine code to show ───────────────────────── */
-  const visibleCode =
-    phase === "typewriter" ? codeString.slice(0, typedLength) : codeString;
-
-  const showCursor = phase === "typewriter";
-
-  /* ── CTA button ───────────────────────────────────── */
-  function renderCta() {
-    const baseStyle: React.CSSProperties = {
-      padding: "12px 28px",
-      fontFamily: "var(--font-mono, monospace)",
-      fontSize: "13px",
-      fontWeight: 700,
-      letterSpacing: "0.1em",
-      textTransform: "uppercase",
-      transition: "all 0.2s ease",
-      display: "inline-flex",
-      alignItems: "center",
-      gap: "8px",
+  /* Calendar download */
+  const handleCalendarDownload = () => {
+    const year = parseInt(displayedEvent.year);
+    const monthMap: Record<string, number> = {
+      JAN: 0, FEB: 1, MRT: 2, APR: 3, MEI: 4, JUN: 5,
+      JUL: 6, AUG: 7, SEP: 8, OKT: 9, NOV: 10, DEC: 11,
     };
+    const month = monthMap[displayedEvent.month] ?? 0;
+    const day = parseInt(displayedEvent.day) || 1;
+    const [hours, minutes] = (displayedEvent.time !== "TBA" ? displayedEvent.time : "12:00").split(":").map(Number);
+
+    generateICSFile({
+      title: displayedEvent.title,
+      date: new Date(year, month, day, hours, minutes),
+      location: displayedEvent.location,
+      description: displayedEvent.description,
+    });
+  };
+
+  /* CTA button */
+  function renderCta() {
+    const baseClass = "inline-flex items-center gap-2 px-7 py-3 font-mono text-[13px] font-bold tracking-wider uppercase transition-all duration-200";
 
     switch (displayedEvent.status) {
       case "completed":
         return (
           <button
             disabled
-            className="font-mono"
-            style={{
-              ...baseStyle,
-              background: "var(--color-surface)",
-              color: "var(--color-text-muted)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              opacity: 0.5,
-              cursor: "not-allowed",
-            }}
+            className={`${baseClass} bg-[var(--color-surface)] text-[var(--color-text-muted)] border border-white/10 opacity-50 cursor-not-allowed`}
           >
-            AFGEROND <span style={{ fontSize: "16px" }}>&#10003;</span>
+            AFGEROND &#10003;
           </button>
         );
       case "upcoming":
         return (
           <button
-            className="font-mono"
-            style={{
-              ...baseStyle,
-              background: "var(--color-accent-gold)",
-              color: "#09090B",
-              border: "none",
-              cursor: "pointer",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "scale(1.02)";
-              e.currentTarget.style.boxShadow = "0 0 24px rgba(245,158,11,0.4)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
+            className={`${baseClass} bg-[var(--color-accent-gold)] text-[#09090B] border-none cursor-pointer hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(245,158,11,0.4)]`}
           >
-            RSVP <span>&rarr;</span>
+            RSVP &rarr;
           </button>
         );
       case "coming_soon":
         return (
           <button
             disabled
-            className="font-mono"
-            style={{
-              ...baseStyle,
-              background: "transparent",
-              color: "var(--color-text-muted)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              cursor: "default",
-            }}
+            className={`${baseClass} bg-transparent text-[var(--color-text-muted)] border border-white/10 cursor-default`}
           >
-            COMING SOON{" "}
-            <span style={{ animation: "statusPulse 1.5s ease-in-out infinite" }}>_</span>
+            COMING SOON <span style={{ animation: "statusPulse 1.5s ease-in-out infinite" }}>_</span>
           </button>
         );
       default:
@@ -335,41 +188,11 @@ export default function EventDetail({ event, transitionKey }: EventDetailProps) 
       />
 
       <div style={{ padding: "32px", position: "relative", zIndex: 2 }}>
-        {/* 1. Comment line with colored dot */}
-        <div
-          className="font-mono"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "24px",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "12px",
-              color: "var(--color-text-muted)",
-              opacity: 0.9,
-            }}
-          >
-            {"// event.details"}
-          </span>
-          <span
-            style={{
-              width: "8px",
-              height: "8px",
-              borderRadius: "50%",
-              background: color,
-              flexShrink: 0,
-            }}
-          />
-        </div>
-
-        {/* 2. Large date block */}
+        {/* Date block */}
         <div style={{ marginBottom: "20px" }}>
           <span
+            className="font-display"
             style={{
-              fontFamily: "var(--font-big-shoulders)",
               fontWeight: 800,
               fontSize: "72px",
               lineHeight: 1,
@@ -395,9 +218,9 @@ export default function EventDetail({ event, transitionKey }: EventDetailProps) 
           </span>
         </div>
 
-        {/* 3. Event title */}
+        {/* Event title */}
         <h2
-          className="font-mono"
+          className="font-display"
           style={{
             fontSize: "clamp(24px, 3vw, 30px)",
             fontWeight: 700,
@@ -405,13 +228,12 @@ export default function EventDetail({ event, transitionKey }: EventDetailProps) 
             color: "var(--color-text)",
             lineHeight: 1.2,
             marginBottom: "16px",
-            opacity: 0.95,
           }}
         >
           {displayedEvent.title}
         </h2>
 
-        {/* 4. Accent line (grows on hover) */}
+        {/* Accent line */}
         <div
           style={{
             width: isHovered ? "120px" : "80px",
@@ -422,108 +244,20 @@ export default function EventDetail({ event, transitionKey }: EventDetailProps) 
           }}
         />
 
-        {/* 5. Description */}
+        {/* Description */}
         <p
-          className="font-mono"
           style={{
             fontSize: "14px",
             lineHeight: 1.7,
             color: "var(--color-text-muted)",
             maxWidth: "32rem",
-            marginBottom: "28px",
-            opacity: 0.9,
+            marginBottom: "24px",
           }}
         >
           {displayedEvent.description}
         </p>
 
-        {/* 6. Code block (terminal style) */}
-        <div
-          style={{
-            background: "var(--color-bg)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            borderRadius: "4px",
-            overflow: "hidden",
-            marginBottom: "24px",
-          }}
-        >
-          {/* Terminal chrome bar */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              padding: "10px 14px",
-              borderBottom: "1px solid rgba(255,255,255,0.06)",
-            }}
-          >
-            <span
-              style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                background: "var(--color-accent-red)",
-              }}
-            />
-            <span
-              style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                background: "var(--color-accent-gold)",
-              }}
-            />
-            <span
-              style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                background: "var(--color-accent-green)",
-              }}
-            />
-            <span
-              className="font-mono"
-              style={{
-                fontSize: "11px",
-                color: "var(--color-text-muted)",
-                marginLeft: "8px",
-                opacity: 0.7,
-              }}
-            >
-              event.ts
-            </span>
-          </div>
-
-          {/* Code content */}
-          <pre
-            className="font-mono"
-            style={{
-              padding: "16px",
-              fontSize: "13px",
-              lineHeight: 1.7,
-              margin: 0,
-              whiteSpace: "pre-wrap",
-              wordBreak: "break-word",
-            }}
-          >
-            <code>
-              <HighlightedCode code={visibleCode} />
-              {showCursor && (
-                <span
-                  style={{
-                    color: "var(--color-accent-gold)",
-                    animation: "statusPulse 1s ease-in-out infinite",
-                    fontWeight: 400,
-                  }}
-                >
-                  |
-                </span>
-              )}
-            </code>
-          </pre>
-        </div>
-
-        {/* 7. Tags row */}
+        {/* Tags */}
         {displayedEvent.tags && displayedEvent.tags.length > 0 && (
           <div
             style={{
@@ -540,7 +274,7 @@ export default function EventDetail({ event, transitionKey }: EventDetailProps) 
                 style={{
                   fontSize: "11px",
                   color,
-                  border: `1px solid`,
+                  border: "1px solid",
                   borderColor: `color-mix(in srgb, ${color} 20%, transparent)`,
                   background: `color-mix(in srgb, ${color} 5%, transparent)`,
                   borderRadius: "4px",
@@ -555,7 +289,7 @@ export default function EventDetail({ event, transitionKey }: EventDetailProps) 
           </div>
         )}
 
-        {/* 8. Location + time row */}
+        {/* Location + time */}
         <div
           className="font-mono"
           style={{
@@ -565,7 +299,6 @@ export default function EventDetail({ event, transitionKey }: EventDetailProps) 
             fontSize: "12px",
             color: "var(--color-text-muted)",
             marginBottom: "28px",
-            opacity: 0.9,
           }}
         >
           <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -584,8 +317,18 @@ export default function EventDetail({ event, transitionKey }: EventDetailProps) 
           <span>{displayedEvent.time}</span>
         </div>
 
-        {/* 9. CTA button */}
-        {renderCta()}
+        {/* CTA + Calendar */}
+        <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+          {renderCta()}
+          {displayedEvent.status !== "coming_soon" && (
+            <button
+              onClick={handleCalendarDownload}
+              className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors cursor-pointer"
+            >
+              + Toevoegen aan agenda
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

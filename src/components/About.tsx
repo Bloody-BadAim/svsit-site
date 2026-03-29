@@ -17,24 +17,21 @@ export default function About() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Stagger reveal each line
       const lines = [line1Ref.current, line2Ref.current, line3Ref.current];
 
       lines.forEach((line, i) => {
         if (!line) return;
         gsap.fromTo(
           line,
-          { opacity: 0, y: 40, skewY: 2 },
+          { opacity: 0, y: 30 },
           {
             opacity: 1,
             y: 0,
-            skewY: 0,
             duration: 0.8,
             ease: "power3.out",
             scrollTrigger: {
               trigger: line,
               start: "top 85%",
-              end: "top 60%",
               toggleActions: "play none none none",
             },
             delay: i * 0.15,
@@ -42,7 +39,6 @@ export default function About() {
         );
       });
 
-      // Accent line grows in
       if (accentRef.current) {
         gsap.fromTo(
           accentRef.current,
@@ -83,7 +79,6 @@ export default function About() {
           });
         });
 
-        // Fade in stat items
         const items = statsRef.current.querySelectorAll(".stat-item");
         gsap.fromTo(
           items,
@@ -102,21 +97,6 @@ export default function About() {
           }
         );
       }
-
-      // Parallax: right column drifts up slowly
-      const rightCol = sectionRef.current?.querySelector('.about-right-col');
-      if (rightCol) {
-        gsap.to(rightCol, {
-          y: -40,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          },
-        });
-      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -126,9 +106,8 @@ export default function About() {
     <section
       ref={sectionRef}
       id="about"
-      className="relative pt-32 md:pt-44 pb-36 md:pb-48 px-6 md:px-12 lg:px-24"
+      className="relative py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24"
     >
-      {/* Top border accent */}
       <div
         ref={accentRef}
         className="absolute top-0 left-6 md:left-12 lg:left-24 right-6 md:right-12 lg:right-24 h-px bg-gradient-to-r from-[var(--color-accent-gold)] via-[var(--color-accent-gold)] to-transparent origin-left"
@@ -137,11 +116,9 @@ export default function About() {
       <div className="max-w-[1400px] mx-auto">
         <SectionLabel number="01" label="over sit" />
 
-        {/* Main text — large, bold, asymmetric */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16">
-          {/* Left column: big statement */}
           <div className="md:col-span-7 md:col-start-1">
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
+            <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight uppercase">
               <span ref={line1Ref} className="block opacity-0">
                 De studievereniging voor
               </span>
@@ -151,18 +128,15 @@ export default function About() {
             </h2>
           </div>
 
-          {/* Right column: supporting text, offset down */}
-          <div className="about-right-col md:col-span-4 md:col-start-9 md:pt-16 lg:pt-24">
+          <div className="md:col-span-4 md:col-start-9 md:pt-16 lg:pt-24">
             <p
               ref={line3Ref}
               className="opacity-0 font-mono text-base md:text-lg leading-relaxed text-[var(--color-text-muted)]"
             >
-
-              We organiseren <span className="text-[var(--color-accent-blue)]">events</span>, bouwen een community, en maken je studietijd
-              beter. Of je nu <span className="text-[var(--color-accent-blue)]">codeert</span>, hackt, gamet, of onderneemt.
+              We organiseren <span className="text-[var(--color-accent-blue)]">events</span>, bouwen een <span className="text-[var(--color-accent-green)]">community</span>, en maken je studietijd
+              beter. Of je nu <span className="text-[var(--color-accent-blue)]">codeert</span>, <span className="text-[var(--color-accent-red)]">hackt</span>, gamet, of onderneemt.
             </p>
 
-            {/* Error comment */}
             <p className="font-mono text-xs text-[var(--color-accent-red)] opacity-50 mt-3">
               {"// ERROR: te weinig pizza bij events"}
             </p>
@@ -180,7 +154,7 @@ export default function About() {
                   <span className="text-[var(--color-accent-blue)] opacity-60">const</span> sinds
                 </span>
               </div>
-              <div className="stat-item opacity-0 group/spec cursor-default">
+              <div className="stat-item opacity-0">
                 <span
                   className="block font-mono text-4xl md:text-5xl font-bold text-[var(--color-accent-blue)]"
                   data-target="5"
@@ -191,15 +165,6 @@ export default function About() {
                 <span className="font-mono text-sm text-[var(--color-text-muted)] mt-1 block">
                   specialisaties
                 </span>
-                <div className="overflow-hidden max-h-0 group-hover/spec:max-h-40 transition-all duration-500 ease-out">
-                  <div className="flex flex-wrap gap-1.5 pt-3 font-mono text-[10px] text-[var(--color-text-muted)]">
-                    <span className="px-1.5 py-0.5 border border-[var(--color-border)]">SE</span>
-                    <span className="px-1.5 py-0.5 border border-[var(--color-border)]">Cyber</span>
-                    <span className="px-1.5 py-0.5 border border-[var(--color-border)]">Game Dev</span>
-                    <span className="px-1.5 py-0.5 border border-[var(--color-border)]">Business IT</span>
-                    <span className="px-1.5 py-0.5 border border-[var(--color-border)]">TI</span>
-                  </div>
-                </div>
               </div>
               <div className="stat-item opacity-0">
                 <span

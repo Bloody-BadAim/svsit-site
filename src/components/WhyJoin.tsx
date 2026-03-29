@@ -52,7 +52,6 @@ export default function WhyJoin() {
         if (!row) return;
 
         const line = row.querySelector(".accent-line");
-        const bigNum = row.querySelector(".big-number");
         const title = row.querySelector(".reason-title");
         const desc = row.querySelector(".reason-desc");
 
@@ -64,20 +63,17 @@ export default function WhyJoin() {
           },
         });
 
-        // Line grows in
         tl.fromTo(
           line,
           { scaleX: 0 },
           { scaleX: 1, duration: 0.8, ease: "power3.out" }
         )
-          // Title slides up
           .fromTo(
             title,
             { opacity: 0, y: 30 },
             { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
             0.2
           )
-          // Description fades in
           .fromTo(
             desc,
             { opacity: 0, y: 15 },
@@ -85,7 +81,6 @@ export default function WhyJoin() {
             0.35
           );
       });
-
     }, sectionRef);
 
     return () => ctx.revert();
@@ -95,7 +90,7 @@ export default function WhyJoin() {
     <section
       ref={sectionRef}
       id="whyjoin"
-      className="relative pt-32 md:pt-44 pb-24 md:pb-32 px-6 md:px-12 lg:px-24"
+      className="relative py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24"
     >
       <div className="relative max-w-[1400px] mx-auto">
         <SectionLabel number="02" label="waarom lid worden" />
@@ -110,7 +105,6 @@ export default function WhyJoin() {
                 ref={(el) => { rowRefs.current[i] = el; }}
                 className="group relative cursor-default"
               >
-                {/* Accent gradient divider */}
                 <div
                   className="accent-line h-[2px] w-3/5 group-hover:w-full origin-left transition-all duration-500"
                   style={{
@@ -118,32 +112,25 @@ export default function WhyJoin() {
                   }}
                 />
 
-                {/* Left accent bar — grows on hover */}
                 <div
                   className="absolute left-0 top-0 w-[2px] h-0 group-hover:h-full transition-all duration-500"
                   style={{ background: reason.accent }}
                 />
 
-                {/* Row content */}
                 <div className="relative py-16 md:py-20 lg:py-24 overflow-hidden">
-                  {/* Giant background number */}
                   <div
-                    className="big-number absolute top-1/2 -translate-y-[60%] font-mono font-bold leading-none pointer-events-none select-none transition-all duration-500"
+                    className="big-number absolute top-1/2 -translate-y-[60%] font-display font-bold leading-none pointer-events-none select-none transition-all duration-500"
                     style={{
                       fontSize: "clamp(180px, 22vw, 320px)",
                       color: reason.accent,
                       opacity: 0.15,
-                      ...(isEven
-                        ? { left: "-2%" }
-                        : { right: "-2%" }),
+                      ...(isEven ? { left: "-2%" } : { right: "-2%" }),
                     }}
-                    // Use className for left/right positioning since inline style objects don't support responsive
                     data-side={isEven ? "left" : "right"}
                   >
                     {reason.number}
                   </div>
 
-                  {/* Content grid — alternating sides */}
                   <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
                     <div
                       className={`flex flex-col gap-5 ${isEven
@@ -151,12 +138,10 @@ export default function WhyJoin() {
                           : "md:col-span-6 md:col-start-1"
                         }`}
                     >
-                      {/* Title */}
-                      <h3 className="reason-title text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1] transition-transform duration-300 group-hover:translate-x-2">
+                      <h3 className="reason-title font-display text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1] uppercase transition-transform duration-300 group-hover:translate-x-2">
                         {reason.title}
                       </h3>
 
-                      {/* Description */}
                       <p className="reason-desc font-mono text-sm md:text-base leading-relaxed text-[var(--color-text-muted)] group-hover:text-[var(--color-text)] transition-colors duration-300 max-w-lg">
                         {reason.description}
                       </p>
@@ -182,17 +167,14 @@ export default function WhyJoin() {
             );
           })}
 
-          {/* Bottom line */}
           <div className="h-px w-full bg-[var(--color-border)]" />
 
-          {/* Error decoration */}
           <p className="font-mono text-xs text-[var(--color-accent-red)] opacity-30 mt-6">
             {"// FIXME: waarom is iedereen zo gemotiveerd"}
           </p>
         </div>
       </div>
 
-      {/* CSS for number positioning since Tailwind can't do responsive inline styles */}
       <style>{`
         .big-number {
           text-shadow: none;
