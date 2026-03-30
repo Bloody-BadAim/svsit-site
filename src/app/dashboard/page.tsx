@@ -1,9 +1,11 @@
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
+import { getRank } from '@/lib/constants'
 import StatsGrid from '@/components/dashboard/StatsGrid'
 import RecentActivity from '@/components/dashboard/RecentActivity'
 import Link from 'next/link'
+import { ArrowRight, CreditCard, Sparkles } from 'lucide-react'
 
 export const metadata = {
   title: 'Dashboard — SIT',
@@ -35,71 +37,119 @@ export default async function DashboardPage({
     .order('created_at', { ascending: false })
     .limit(10)
 
+  const points = (member?.points as number) || 0
+  const rank = getRank(points)
+  const username = (member?.email as string)?.split('@')[0] || 'lid'
+
   return (
-    <div className="max-w-4xl space-y-8">
+    <div className="max-w-4xl space-y-6">
       {/* Welcome banner */}
       {isWelcome && (
         <div
-          className="p-4 rounded-lg"
+          className="relative p-5 rounded-xl overflow-hidden"
           style={{
-            backgroundColor: 'rgba(242, 158, 24, 0.1)',
-            border: '1px solid var(--color-accent-gold)',
+            backgroundColor: 'rgba(242, 158, 24, 0.06)',
+            border: '1px solid rgba(242, 158, 24, 0.2)',
           }}
         >
-          <p className="font-semibold" style={{ color: 'var(--color-accent-gold)' }}>
-            Welkom bij SIT! 🎉
-          </p>
-          <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>
-            Je lidmaatschap is geactiveerd. Check je ledenpas en verdien punten bij events.
-          </p>
+          <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, var(--color-accent-gold), var(--color-accent-blue), var(--color-accent-red))' }} />
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(242, 158, 24, 0.15)' }}>
+              <Sparkles size={20} style={{ color: 'var(--color-accent-gold)' }} />
+            </div>
+            <div>
+              <p className="font-bold" style={{ color: 'var(--color-accent-gold)' }}>
+                Welkom bij SIT!
+              </p>
+              <p className="text-sm mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+                Je lidmaatschap is geactiveerd. Check je ledenpas en verdien punten bij events.
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text)' }}>
-          Hey, {member?.email?.split('@')[0] || 'lid'}
+      <div className="pt-2">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-[11px] uppercase tracking-[0.15em] font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+            {'>'} dashboard
+          </span>
+          <span
+            className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+            style={{
+              backgroundColor: member?.membership_active ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+              color: member?.membership_active ? 'var(--color-accent-green)' : 'var(--color-accent-red)',
+            }}
+          >
+            {member?.membership_active ? 'ACTIEF' : 'INACTIEF'}
+          </span>
+        </div>
+        <h1
+          className="text-3xl sm:text-4xl font-bold tracking-tight"
+          style={{
+            color: 'var(--color-text)',
+            fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
+          }}
+        >
+          HEY, {username.toUpperCase()}
         </h1>
-        <p className="mt-1" style={{ color: 'var(--color-text-muted)' }}>
-          {member?.membership_active
-            ? 'Je lidmaatschap is actief'
-            : 'Je lidmaatschap is niet actief'}
-        </p>
       </div>
 
-      {/* Mini ledenpas preview */}
+      {/* Ledenpas preview card */}
       <Link
         href="/dashboard/ledenpas"
-        className="block p-5 rounded-lg transition-all duration-200 group"
+        className="block relative rounded-xl overflow-hidden transition-all duration-300 group cursor-pointer"
         style={{
           backgroundColor: 'var(--color-surface)',
           border: '1px solid var(--color-border)',
         }}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        {/* Gradient top accent */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{ background: 'linear-gradient(90deg, var(--color-accent-gold), transparent 60%)' }}
+        />
+
+        <div className="p-5 flex items-center gap-5">
+          {/* Mini card visual */}
+          <div
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex flex-col items-center justify-center shrink-0 relative"
+            style={{
+              background: 'linear-gradient(135deg, var(--color-surface) 0%, rgba(242, 158, 24, 0.05) 100%)',
+              border: '1px solid rgba(242, 158, 24, 0.2)',
+            }}
+          >
             <span
               className="text-lg font-bold"
               style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-accent-gold)' }}
             >
-              {'{'}<span style={{ color: 'var(--color-text)' }}>SIT</span>{'}'}
+              {'{'}<span style={{ color: 'var(--color-text)' }}>S</span>{'}'}
             </span>
-            <div>
-              <p className="font-semibold" style={{ color: 'var(--color-text)' }}>
-                Digitale Ledenpas
-              </p>
-              <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                Tik om je QR code te openen
-              </p>
-            </div>
+            <CreditCard size={12} className="mt-0.5" style={{ color: 'var(--color-text-muted)' }} />
           </div>
-          <span className="text-xl" style={{ color: 'var(--color-text-muted)' }}>→</span>
+
+          <div className="flex-1 min-w-0">
+            <p className="font-bold text-lg" style={{ color: 'var(--color-text)' }}>
+              Digitale Ledenpas
+            </p>
+            <p className="text-sm mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+              {username} &middot; <span style={{ color: rank.kleur }}>{rank.naam}</span> &middot; {points} punten
+            </p>
+          </div>
+
+          <div
+            className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:translate-x-1"
+            style={{ backgroundColor: 'rgba(242, 158, 24, 0.08)' }}
+          >
+            <ArrowRight size={16} style={{ color: 'var(--color-accent-gold)' }} />
+          </div>
         </div>
       </Link>
 
       {/* Stats */}
       <StatsGrid
-        points={(member?.points as number) || 0}
+        points={points}
         role={(member?.role as string) || 'member'}
         commissie={member?.commissie as string | null}
         memberSince={member?.membership_started_at as string | null}

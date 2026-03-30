@@ -155,7 +155,7 @@ export default function JoinCta() {
           {/* Right: member card */}
           <div ref={cardRef} className="flex justify-center lg:justify-end">
             <MemberCard className="w-full max-w-[400px]">
-              <HoldToJoinButton href="https://sitlid.nl" />
+              <HoldToJoinButton href="https://svsit-site-okbax6g7l-bloody-badaims-projects.vercel.app/lid-worden" />
               <p className="font-mono text-[11px] text-[var(--color-text-muted)] opacity-40 mt-3 text-center">
                 200+ studenten gingen je voor
               </p>

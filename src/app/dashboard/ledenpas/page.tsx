@@ -3,6 +3,7 @@ import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
 import MemberCard from '@/components/dashboard/MemberCard'
 import type { Role } from '@/types/database'
+import { QrCode } from 'lucide-react'
 
 export const metadata = {
   title: 'Ledenpas — SIT',
@@ -22,14 +23,28 @@ export default async function LedenpasPage() {
   if (!member) redirect('/dashboard')
 
   return (
-    <div className="max-w-4xl space-y-8">
+    <div className="max-w-4xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text)' }}>
-          Digitale Ledenpas
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-[11px] uppercase tracking-[0.15em] font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+            {'>'} ledenpas
+          </span>
+        </div>
+        <h1
+          className="text-3xl sm:text-4xl font-bold tracking-tight"
+          style={{
+            color: 'var(--color-text)',
+            fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
+          }}
+        >
+          DIGITALE LEDENPAS
         </h1>
-        <p className="mt-1" style={{ color: 'var(--color-text-muted)' }}>
-          Toon deze QR code bij events om punten te verdienen
-        </p>
+        <div className="flex items-center gap-2 mt-2">
+          <QrCode size={14} style={{ color: 'var(--color-accent-gold)' }} />
+          <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+            Toon deze QR code bij events om punten te verdienen
+          </p>
+        </div>
       </div>
 
       <MemberCard

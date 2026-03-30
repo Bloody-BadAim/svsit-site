@@ -13,7 +13,7 @@ export default function DashboardLayout({
         style={{ backgroundColor: 'var(--color-bg)' }}
       >
         <DashboardNav />
-        <main className="lg:ml-56 pb-20 lg:pb-0 px-4 sm:px-6 lg:px-8 py-8">
+        <main className="pt-16 lg:pt-0 lg:ml-64 pb-20 lg:pb-0 px-4 sm:px-6 lg:px-8 py-8">
           {children}
         </main>
       </div>

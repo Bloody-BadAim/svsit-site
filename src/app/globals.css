@@ -101,17 +101,19 @@
 }
 
 * {
-  margin: 0.1;
-  padding: 0.5;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
 html {
+
   scroll-behavior: auto;
   background: var(--color-surface);
 }
 
 body {
+
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans), system-ui, sans-serif;
