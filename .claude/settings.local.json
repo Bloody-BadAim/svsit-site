@@ -27,7 +27,12 @@
       "Bash(npx next:*)",
       "Bash(ls:*)",
       "Bash(find /c/Users/matin/Desktop/PROJECTS/svsit-site -type f -name *.md -o -type f -name *.json -o -type f -name *.ts -o -type f -name *.tsx)",
-      "WebFetch(domain:localhost)"
+      "WebFetch(domain:localhost)",
+      "mcp__claude_ai_Figma__get_screenshot",
+      "Bash(npm ls:*)",
+      "Bash(grep ApiVersion /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/node_modules/stripe/types/*.d.ts)"
     ]
-  }
+  },
+  "outputStyle": "default",
+  "prefersReducedMotion": false
 }

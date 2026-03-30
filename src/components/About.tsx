@@ -39,15 +39,15 @@ function colorize(line: string) {
     );
 }
 
-const HEADING_WORDS_1 = ["De", "studievereniging", "voor"];
+const HEADING_WORDS_1 = ["DE studievereniging voor"];
 const HEADING_GOLD = "ICT studenten";
-const HEADING_WORDS_2_POST = "aan de HvA.";
+const HEADING_WORDS_2_POST = "aan de HvA";
 
-const STATS = [
-  { value: 50, suffix: "+", label: "leden", color: "var(--color-accent-gold)" },
-  { value: 20, suffix: "+", label: "events per jaar", color: "var(--color-accent-blue)" },
-  { value: 2016, suffix: "", label: "opgericht", color: "var(--color-accent-green)" },
-];
+// const STATS = [
+//   { value: 50, suffix: "+", label: "leden", color: "var(--color-accent-gold)" },
+//   { value: 20, suffix: "+", label: "events per jaar", color: "var(--color-accent-blue)" },
+//   { value: 2014, suffix: "", label: "opgericht", color: "var(--color-accent-green)" },
+// ];
 
 interface FloatingFragment {
   text: string;
@@ -197,29 +197,29 @@ export default function About() {
         );
       }
 
-      // Stats counter animation
-      if (statsRef.current && !prefersReducedMotion) {
-        const statEls = statsRef.current.querySelectorAll(".stat-value");
-        statEls.forEach((el, i) => {
-          const target = STATS[i].value;
-          const proxy = { val: 0 };
-          gsap.to(proxy, {
-            val: target,
-            duration: target > 100 ? 2 : 1.5,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: statsRef.current,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-            delay: i * 0.15,
-            onUpdate: () => {
-              (el as HTMLElement).textContent =
-                Math.round(proxy.val).toString() + STATS[i].suffix;
-            },
-          });
-        });
-      }
+      // // Stats counter animation
+      // if (statsRef.current && !prefersReducedMotion) {
+      //   const statEls = statsRef.current.querySelectorAll(".stat-value");
+      //   statEls.forEach((el, i) => {
+      //     // const target = STATS[i].value;
+      //     const proxy = { val: 0 };
+      //     gsap.to(proxy, {
+      //       // val: target,
+      //       // duration: target > 100 ? 2 : 1.5,
+      //       ease: "power2.out",
+      //       scrollTrigger: {
+      //         trigger: statsRef.current,
+      //         start: "top 90%",
+      //         toggleActions: "play none none none",
+      //       },
+      //       delay: i * 0.15,
+      //       onUpdate: () => {
+      //         (el as HTMLElement).textContent =
+      //           // Math.round(proxy.val).toString() + STATS[i].suffix;
+      //       },
+      //     });
+      //   });
+      // }
 
       // Floating fragments parallax
       if (fragmentsRef.current && !prefersReducedMotion) {
@@ -434,7 +434,7 @@ export default function About() {
           ref={statsRef}
           className="grid grid-cols-3 gap-8 mt-16 md:mt-20 pt-12 border-t border-[var(--color-border)]"
         >
-          {STATS.map((stat, i) => (
+          {/* {STATS.map((stat, i) => (
             <div key={i} className="text-center md:text-left">
               <span
                 className="stat-value font-display text-4xl md:text-5xl lg:text-6xl font-bold block leading-none"
@@ -446,7 +446,7 @@ export default function About() {
                 {stat.label}
               </span>
             </div>
-          ))}
+          ))} */}
         </div>
       </div>
     </section>

@@ -36,6 +36,7 @@ export default function SectionLabel({
           {number}
         </span>
         <span className="w-12 h-px bg-[var(--color-accent-gold)]" />
+        {/* <span className="absolute top-0 left-6 md:left-12 lg:left-24 right-6 md:right-12 lg:right-24 h-px bg-gradient-to-r from-[var(--color-accent-gold)] via-[var(--color-accent-gold)] to-transparent origin-left z-10" /> */}
       </div>
 
       {/* Section title — large and readable */}

@@ -134,10 +134,10 @@ export default function Hero() {
               reducedMotion
                 ? {}
                 : {
-                    x: [-40, 60, -40],
-                    y: [-20, 30, -20],
-                    scale: [1, 1.2, 1],
-                  }
+                  x: [-40, 60, -40],
+                  y: [-20, 30, -20],
+                  scale: [1, 1.2, 1],
+                }
             }
             transition={{
               duration: 30,
@@ -154,10 +154,10 @@ export default function Hero() {
               reducedMotion
                 ? {}
                 : {
-                    x: [40, -50, 40],
-                    y: [20, -30, 20],
-                    scale: [1, 1.3, 1],
-                  }
+                  x: [40, -50, 40],
+                  y: [20, -30, 20],
+                  scale: [1, 1.3, 1],
+                }
             }
             transition={{
               duration: 35,
@@ -174,9 +174,9 @@ export default function Hero() {
               reducedMotion
                 ? {}
                 : {
-                    x: [20, -30, 20],
-                    y: [-25, 25, -25],
-                  }
+                  x: [20, -30, 20],
+                  y: [-25, 25, -25],
+                }
             }
             transition={{
               duration: 40,
@@ -193,10 +193,10 @@ export default function Hero() {
               reducedMotion
                 ? {}
                 : {
-                    x: [-30, 30, -30],
-                    y: [15, -15, 15],
-                    scale: [1, 1.15, 1],
-                  }
+                  x: [-30, 30, -30],
+                  y: [15, -15, 15],
+                  scale: [1, 1.15, 1],
+                }
             }
             transition={{
               duration: 32,
@@ -292,8 +292,8 @@ export default function Hero() {
               className={`font-mono text-lg md:text-xl text-[var(--color-text-muted)] max-w-lg leading-relaxed mb-10 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.2s_forwards]" : ""
                 }`}
             >
-              <span className="text-[var(--color-accent-blue)]">Door</span> studenten. <span className="text-[var(--color-accent-blue)]">Voor</span> studenten.
-              <span className="text-[var(--color-accent-gold)]"> In tech.</span>
+              <span className="text-[var(--color-accent-blue)]">Door</span> studenten. <span className="text-[var(--color-accent-green)]">Voor</span> studenten.
+              <span className="text-[var(--color-accent-red)]"> In tech.</span>
             </p>
 
             {/* CTAs */}

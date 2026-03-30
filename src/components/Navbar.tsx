@@ -42,8 +42,8 @@ export default function Navbar() {
     <>
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || menuOpen
-            ? "bg-[var(--color-bg)]/95 backdrop-blur-md border-b border-[var(--color-border)]"
-            : "bg-transparent"
+          ? "bg-[var(--color-bg)]/95 backdrop-blur-md border-b border-[var(--color-border)]"
+          : "bg-transparent"
           }`}
       >
         <div className="flex items-center justify-between px-6 md:px-12 py-4">
@@ -55,7 +55,7 @@ export default function Navbar() {
             <span className="text-[var(--color-accent-gold)]">{"{"}</span>
             <span className="text-[var(--color-text)]">SIT</span>
             <span className="text-[var(--color-accent-gold)]">{"}"}</span>
-            <span className="inline-block w-[2px] h-[1em] bg-[var(--color-accent-gold)] ml-0.5 align-middle animate-pulse" />
+            {/* <span className="inline-block w-[2px] h-[1em] bg-[var(--color-accent-gold)] ml-0.5 align-middle animate-pulse" /> */}
           </a>
 
           {/* Desktop nav */}
