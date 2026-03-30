@@ -23,12 +23,14 @@ export const metadata: Metadata = {
 export default function OverOns() {
   return (
     <SmoothScroll>
-      <CustomCursor />
-      <Navbar />
-      <main id="main-content" style={{ paddingTop: "5rem" }}>
-        <Board />
-      </main>
-      <Footer />
+      <div className="page-public">
+        <CustomCursor />
+        <Navbar />
+        <main id="main-content" style={{ paddingTop: "5rem" }}>
+          <Board />
+        </main>
+        <Footer />
+      </div>
     </SmoothScroll>
   );
 }

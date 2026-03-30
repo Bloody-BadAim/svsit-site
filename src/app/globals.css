@@ -101,9 +101,13 @@
 }
 
 * {
+  box-sizing: border-box;
+}
+
+/* Reset alleen voor homepage secties, niet voor dashboard/admin */
+.page-public *:not(input):not(select):not(textarea):not(button) {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 html {

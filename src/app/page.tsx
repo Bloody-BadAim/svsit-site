@@ -17,6 +17,7 @@ import SectionDivider from "@/components/SectionDivider";
 export default function Home() {
   return (
     <SmoothScroll>
+      <div className="page-public">
       <BackgroundStreaks />
       <CustomCursor />
       <ConsoleEasterEgg />
@@ -36,6 +37,7 @@ export default function Home() {
         <JoinCta />
       </main>
       <Footer />
+      </div>
     </SmoothScroll>
   );
 }
