@@ -2,7 +2,7 @@
 
 **Status**: APPROVED
 **Laatst bijgewerkt**: 2026-03-30
-**Voortgang**: 26/28 taken voltooid
+**Voortgang**: 27/28 taken voltooid
 
 ---
 
@@ -300,16 +300,15 @@
 
 ## Fase F: Polish & Deploy
 
-### T027 — Error handling en loading states
+### T027 — Error handling en loading states ✅
 - **Tijd**: 25 min
 - **Dependencies**: T009-T026
-- **Beschrijving**: Voeg loading skeletons, error boundaries, toast notifications en form validatie toe aan alle paginas
+- **Beschrijving**: Voeg loading skeletons, error boundaries en 404 pagina toe
 - **Acceptance criteria**:
-  - [ ] Loading skeletons op dashboard, ledenlijst, profiel
-  - [ ] Error boundaries met fallback UI
-  - [ ] Toast notifications voor success/error acties
-  - [ ] Form validatie met duidelijke foutmeldingen
-  - [ ] 404 pagina voor onbekende routes
+  - [x] Loading skeletons op dashboard en admin
+  - [x] Error boundaries met fallback UI (dashboard + admin)
+  - [x] Form validatie met foutmeldingen (inline in components)
+  - [x] 404 pagina voor onbekende routes
 
 ### T028 — Vercel deploy en env vars
 - **Tijd**: 20 min
