@@ -1,6 +1,9 @@
 "use client";
 
 import { Star, Check, Lock } from "lucide-react";
+import { getRank, ROLLEN } from "@/lib/constants";
+import type { Role } from "@/types/database";
+import QRCode from "react-qr-code";
 
 const BARCODE_BARS = [
   2, 1, 3, 1, 2, 1, 1, 3, 2, 1, 3, 1, 1, 2, 1, 3, 1, 2, 2, 1, 1, 3, 1, 2, 1, 1, 3, 2, 1, 2,
@@ -10,28 +13,62 @@ const BARCODE_OPACITIES = [
   0.8, 0.3, 0.7, 0.5, 0.4, 0.8, 0.6, 0.3, 0.9, 0.5, 0.7, 0.4,
 ];
 
-const STATS = [
+const DEFAULT_STATS = [
   { label: "code", color: "var(--color-accent-blue)", fill: 65 },
   { label: "social", color: "var(--color-accent-green)", fill: 45 },
   { label: "chaos", color: "var(--color-accent-red)", fill: 80 },
 ];
 
-const BADGES = [
+const DEFAULT_BADGES = [
   { unlocked: true, label: "Joined" },
   { unlocked: false, label: "First Event" },
   { unlocked: false, label: "Hackathon" },
   { unlocked: false, label: "Legend" },
 ];
 
+export interface MemberCardData {
+  name: string;
+  role: Role;
+  commissie: string | null;
+  points: number;
+  memberId?: string;
+  email?: string;
+  stats?: { label: string; color: string; fill: number }[];
+  badges?: { unlocked: boolean; label: string }[];
+}
+
 export default function MemberCard({
   className = "",
   style,
   children,
+  data,
+  showQR = false,
 }: {
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
+  data?: MemberCardData;
+  showQR?: boolean;
 }) {
+  // Placeholder or real data
+  const name = data?.name || "Jouw Naam";
+  const role = data?.role || "member";
+  const commissie = data?.commissie;
+  const points = data?.points ?? 0;
+  const rank = getRank(points);
+  const level = Math.floor(points / 5) + 1;
+  const xpInLevel = points % 5;
+  const xpMax = 5;
+  const xpPercent = (xpInLevel / xpMax) * 100;
+  const rolLabel = data ? (commissie ? ROLLEN[role]?.naam || role : ROLLEN[role]?.naam || "Member") : "Undecided";
+  const stats = data?.stats || DEFAULT_STATS;
+  const badges = data?.badges || DEFAULT_BADGES;
+  const isPlaceholder = !data;
+
+  const qrData = data?.memberId
+    ? JSON.stringify({ id: data.memberId, email: data.email })
+    : "";
+
   return (
     <div className={`relative ${className}`} style={style}>
       {/* Glow */}
@@ -110,38 +147,55 @@ export default function MemberCard({
 
           {/* ── Content ── */}
           <div className="relative z-20" style={{ padding: "32px 32px 28px" }}>
-            {/* Avatar + player info */}
+            {/* Avatar/QR + player info */}
             <div className="flex items-start gap-4 mb-7">
-              {/* Avatar */}
+              {/* Avatar or QR */}
               <div
-                className="w-20 h-20 shrink-0 flex items-center justify-center"
+                className="w-20 h-20 shrink-0 flex items-center justify-center overflow-hidden"
                 style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  backgroundImage:
-                    "repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(245,158,11,0.03) 5px, rgba(245,158,11,0.03) 6px), repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(59,130,246,0.02) 5px, rgba(59,130,246,0.02) 6px)",
+                  background: showQR && qrData ? "#ffffff" : "rgba(255,255,255,0.03)",
+                  border: showQR && qrData ? "none" : "1px solid rgba(255,255,255,0.06)",
+                  ...(!showQR || !qrData
+                    ? {
+                        backgroundImage:
+                          "repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(245,158,11,0.03) 5px, rgba(245,158,11,0.03) 6px), repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(59,130,246,0.02) 5px, rgba(59,130,246,0.02) 6px)",
+                      }
+                    : {}),
                 }}
               >
-                <span className="font-mono text-sm text-[var(--color-text-muted)] opacity-30">
-                  ?????
-                </span>
+                {showQR && qrData ? (
+                  <QRCode
+                    value={qrData}
+                    size={72}
+                    level="M"
+                    bgColor="#ffffff"
+                    fgColor="#09090B"
+                  />
+                ) : (
+                  <span className="font-mono text-sm text-[var(--color-text-muted)] opacity-30">
+                    {isPlaceholder ? "?????" : name.slice(0, 2).toUpperCase()}
+                  </span>
+                )}
               </div>
 
               {/* Info */}
               <div className="flex flex-col gap-1 min-w-0 pt-0.5">
                 <span className="font-mono text-base text-[var(--color-text)] font-bold tracking-wide">
-                  Jouw Naam
+                  {name}
                 </span>
                 <span className="font-mono text-[11px] text-[var(--color-text-muted)]">
-                  CLASS: <span className="text-[var(--color-text-muted)] opacity-50">Undecided</span>
+                  CLASS:{" "}
+                  <span className={isPlaceholder ? "opacity-50" : ""}>
+                    {commissie || rolLabel}
+                  </span>
                 </span>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="font-mono text-[11px] text-[var(--color-accent-gold)] font-bold">
-                    LVL 01
+                    LVL {String(level).padStart(2, "0")}
                   </span>
                   <span className="flex items-center gap-1 font-mono text-[11px] text-[var(--color-accent-gold)]">
                     <Star size={10} fill="currentColor" />
-                    ROOKIE
+                    {rank.naam.toUpperCase()}
                   </span>
                 </div>
               </div>
@@ -154,7 +208,7 @@ export default function MemberCard({
                   Experience
                 </span>
                 <span className="font-mono text-[10px] text-[var(--color-text-muted)]">
-                  0 / 100 xp
+                  {points} / {level * xpMax} xp
                 </span>
               </div>
               <div
@@ -162,9 +216,9 @@ export default function MemberCard({
                 style={{ background: "rgba(255,255,255,0.05)" }}
               >
                 <div
-                  className="h-full"
+                  className="h-full transition-all duration-700"
                   style={{
-                    width: "0%",
+                    width: `${xpPercent}%`,
                     background: "linear-gradient(90deg, var(--color-accent-gold), #FBBF24)",
                     boxShadow: "0 0 8px rgba(245, 158, 11, 0.4)",
                   }}
@@ -189,7 +243,7 @@ export default function MemberCard({
               </div>
 
               <div className="flex flex-col gap-2.5">
-                {STATS.map((stat) => (
+                {stats.map((stat) => (
                   <div key={stat.label} className="flex items-center gap-3">
                     <span className="font-mono text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider w-12">
                       {stat.label}
@@ -199,16 +253,16 @@ export default function MemberCard({
                       style={{ background: "rgba(255,255,255,0.05)" }}
                     >
                       <div
-                        className="h-full"
+                        className="h-full transition-all duration-700"
                         style={{
                           width: `${stat.fill}%`,
                           background: stat.color,
-                          opacity: 0.3,
+                          opacity: isPlaceholder ? 0.3 : 0.7,
                         }}
                       />
                     </div>
                     <span className="font-mono text-[10px] text-[var(--color-text-muted)] opacity-40 w-8 text-right">
-                      ?/10
+                      {isPlaceholder ? "?/10" : `${Math.round(stat.fill / 10)}/10`}
                     </span>
                   </div>
                 ))}
@@ -232,7 +286,7 @@ export default function MemberCard({
               </div>
 
               <div className="flex items-center gap-2">
-                {BADGES.map((badge, i) => (
+                {badges.map((badge, i) => (
                   <div
                     key={i}
                     className="w-7 h-7 flex items-center justify-center"

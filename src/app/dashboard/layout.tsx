@@ -9,11 +9,22 @@ export default function DashboardLayout({
   return (
     <SessionProvider>
       <div
-        className="min-h-screen"
+        className="min-h-screen relative"
         style={{ backgroundColor: 'var(--color-bg)' }}
       >
+        {/* Subtle grid background like homepage */}
+        <div
+          className="fixed inset-0 pointer-events-none z-0"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(245, 158, 11, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(245, 158, 11, 0.02) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+            maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 70%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 70%)',
+          }}
+        />
         <DashboardNav />
-        <main className="pt-16 lg:pt-0 lg:ml-64 pb-20 lg:pb-0 px-4 sm:px-6 lg:px-8 py-8">
+        <main className="relative z-[1] pt-16 lg:pt-0 lg:ml-64 pb-20 lg:pb-8 px-4 sm:px-6 lg:px-10 py-8">
           {children}
         </main>
       </div>
