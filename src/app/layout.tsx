@@ -26,9 +26,6 @@ export const metadata: Metadata = {
   metadataBase: "https://svsit.nl",
   description:
     "De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Door studenten. Voor studenten. In tech.",
-  icons: {
-    icon: "/icon.svg",
-  },
   openGraph: {
     title: "{SIT} — Studievereniging ICT",
     description:
