@@ -13,8 +13,20 @@ export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
   const glowDotsRef = useRef<HTMLDivElement>(null);
   const scrollArrowRef = useRef<HTMLSpanElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
 
   const fullText = "{SIT}";
+
+  // Pause animations when hero scrolls out of view
+  useEffect(() => {
+    if (!heroRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.05 }
+    );
+    observer.observe(heroRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // Check reduced motion once
   useEffect(() => {
@@ -52,7 +64,8 @@ export default function Hero() {
     return () => clearInterval(blinkInterval);
   }, []);
 
-  // GSAP: scroll indicator bounce
+  // GSAP: scroll indicator bounce (pauses when off-screen)
+  const scrollTweenRef = useRef<gsap.core.Tween | null>(null);
   useEffect(() => {
     if (reducedMotion || !scrollArrowRef.current) return;
     const tween = gsap.to(scrollArrowRef.current, {
@@ -62,10 +75,12 @@ export default function Hero() {
       yoyo: true,
       repeat: -1,
     });
+    scrollTweenRef.current = tween;
     return () => { tween.kill(); };
   }, [reducedMotion]);
 
   // GSAP: subtle glow dot pulse on grid intersections
+  const dotsTlRef = useRef<gsap.core.Timeline | null>(null);
   useEffect(() => {
     if (reducedMotion || !glowDotsRef.current) return;
 
@@ -106,6 +121,7 @@ export default function Hero() {
         i * 1.5
       );
     });
+    dotsTlRef.current = tl;
 
     return () => {
       tl.kill();
@@ -113,13 +129,24 @@ export default function Hero() {
     };
   }, [reducedMotion]);
 
+  // Pause/resume GSAP tweens based on visibility
+  useEffect(() => {
+    if (isVisible) {
+      scrollTweenRef.current?.resume();
+      dotsTlRef.current?.resume();
+    } else {
+      scrollTweenRef.current?.pause();
+      dotsTlRef.current?.pause();
+    }
+  }, [isVisible]);
+
   return (
     <section
       ref={heroRef}
       className="relative flex items-center justify-center min-h-screen overflow-hidden"
     >
-      {/* ── Layer 0: Aurora brand color blobs ── */}
-      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+      {/* ── Layer 0: Aurora brand color blobs (paused when off-screen) ── */}
+      <div className="absolute inset-0 overflow-hidden" aria-hidden="true" style={{ animationPlayState: isVisible ? "running" : "paused" }}>
         <motion.div
           className="absolute inset-0"
           initial={{ opacity: 0 }}
@@ -208,8 +235,8 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* ── Layer 0.5: Code rain (desktop only — too heavy for mobile) ── */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block" aria-hidden="true">
+      {/* ── Layer 0.5: Code rain (desktop only, paused when off-screen) ── */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block" aria-hidden="true" style={{ animationPlayState: isVisible ? "running" : "paused" }}>
         {[
           { left: "8%", dur: "25s", delay: "0s", op: 0.08, chars: "{ } < > ; 0 1 = ( )\n[ ] / * + - _ . # @\n! & | : 0x1F 0b10\nconst let var =>\nif else while for\n{ } ( ) => { }\nimport export from\nasync await return" },
           { left: "22%", dur: "30s", delay: "-8s", op: 0.10, chars: "0 1 1 0 1 0 0 1\nfunction class new\n[] {} () => void\nnull undefined NaN\ntrue false 0xFF\nfor of in delete\nswitch case break\ncontinue throw try" },

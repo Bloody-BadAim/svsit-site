@@ -50,13 +50,11 @@ interface Packet {
   delay: number;
 }
 
+// Reduced from 6 to 3 packets for better desktop performance
 const packets: Packet[] = [
-  { lineIndex: 0, bundle: "left", speed: 8, size: 3, delay: 0 },
-  { lineIndex: 2, bundle: "left", speed: 6, size: 4, delay: 2 },
-  { lineIndex: 3, bundle: "left", speed: 10, size: 2.5, delay: 5 },
-  { lineIndex: 1, bundle: "left", speed: 12, size: 3, delay: 8 },
-  { lineIndex: 0, bundle: "right", speed: 14, size: 2, delay: 3 },
-  { lineIndex: 2, bundle: "right", speed: 11, size: 2, delay: 7 },
+  { lineIndex: 0, bundle: "left", speed: 10, size: 3, delay: 0 },
+  { lineIndex: 2, bundle: "left", speed: 8, size: 4, delay: 3 },
+  { lineIndex: 0, bundle: "right", speed: 14, size: 2, delay: 6 },
 ];
 
 export default function BackgroundStreaks() {

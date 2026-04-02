@@ -63,7 +63,8 @@
       "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website -name *org* -o -name *skill* -o -name *tree*)",
       "Bash(grep -r \"hexagon\\\\|glowing.*line\\\\|svg.*path\\\\|connection.*line\\\\|dimming\\\\|unlock.*sequence\" /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website --include=*.md --include=*.tsx --include=*.ts)",
       "Bash(pip3 install:*)",
-      "Bash(node -e \":*)"
+      "Bash(node -e \":*)",
+      "Bash(grep:*)"
     ]
   },
   "outputStyle": "default",
