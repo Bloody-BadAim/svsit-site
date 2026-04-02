@@ -37,22 +37,44 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: 'Wachtwoord', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null
+        if (!credentials?.email || !credentials?.password) {
+          console.error('[auth] Missing email or password')
+          return null
+        }
+
+        const email = (credentials.email as string).toLowerCase().trim()
 
         const supabase = createServiceClient()
-        const { data: member } = await supabase
+        const { data: member, error } = await supabase
           .from('members')
           .select('id, email, password_hash, role, membership_active')
-          .eq('email', credentials.email as string)
+          .eq('email', email)
           .single()
 
-        if (!member?.password_hash) return null
+        if (error) {
+          console.error('[auth] Supabase error:', error.message, error.code)
+          return null
+        }
+
+        if (!member) {
+          console.error('[auth] No member found for:', email)
+          return null
+        }
+
+        if (!member.password_hash) {
+          console.error('[auth] No password_hash for:', email)
+          return null
+        }
 
         const valid = await bcrypt.compare(
           credentials.password as string,
           member.password_hash as string
         )
-        if (!valid) return null
+
+        if (!valid) {
+          console.error('[auth] Invalid password for:', email)
+          return null
+        }
 
         return {
           id: member.id as string,
