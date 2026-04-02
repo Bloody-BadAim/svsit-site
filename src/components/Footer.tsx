@@ -242,7 +242,7 @@ export default function Footer() {
 
           {/* Copyright + back-to-top */}
           <div className="flex items-center justify-between gap-4 flex-wrap">
-            <p className="font-mono text-xs text-[var(--color-text-muted)] opacity-40 flex items-center gap-2">
+            <p className="font-mono text-xs text-[var(--color-text-muted)] opacity-60 flex items-center gap-2">
               <span>&copy; {year} SIT — Hogeschool van Amsterdam</span>
               <span
                 className="inline-flex items-center gap-1.5"

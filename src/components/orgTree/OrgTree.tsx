@@ -18,20 +18,15 @@ import {
 //  OrgTree — RPG Skill Tree Style Organisation Chart
 // ═══════════════════════════════════════════════════════════
 
+// Color map for bestuur → commissie connections
+const BESTUUR_COLORS = ["#F59E0B", "#3B82F6", "#EF4444", "#22C55E"];
+
 export default function OrgTree() {
   const sectionRef = useRef<HTMLElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
   const [hoveredPerson, setHoveredPerson] = useState<string | null>(null);
   const [hoveredCommissie, setHoveredCommissie] = useState<string | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Responsive check
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
 
   // GSAP entry animations
   useEffect(() => {
@@ -59,6 +54,23 @@ export default function OrgTree() {
         }
       );
 
+      // SVG lines draw-on
+      gsap.fromTo(
+        "[data-connection-line]",
+        { strokeDashoffset: 200 },
+        {
+          strokeDashoffset: 0,
+          duration: 1.2,
+          stagger: 0.08,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "[data-connections-svg]",
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
       // Commissie clusters stagger
       gsap.fromTo(
         "[data-commissie-cluster]",
@@ -76,7 +88,6 @@ export default function OrgTree() {
           },
         }
       );
-
     }, sectionRef);
 
     return () => ctx.revert();
@@ -92,7 +103,6 @@ export default function OrgTree() {
         const person = getPersonById(hoveredPerson);
         if (!person) return false;
         if (commissieId) return person.commissies.includes(commissieId);
-        // Check if this person shares a commissie with hovered person
         const target = getPersonById(personId);
         if (!target) return false;
         return target.commissies.some((c) => person.commissies.includes(c));
@@ -109,16 +119,50 @@ export default function OrgTree() {
     [hoveredPerson, hoveredCommissie]
   );
 
-  const handlePersonClick = (id: string) => {
-    setSelectedPerson(selectedPerson === id ? null : id);
-  };
+  // Check if a specific connection line should glow
+  const isLineActive = useCallback(
+    (bestuurId: string, commissieId: string) => {
+      if (!hoveredPerson && !hoveredCommissie) return false;
+      if (hoveredPerson === bestuurId) {
+        const person = getPersonById(bestuurId);
+        return person?.commissies.includes(commissieId) ?? false;
+      }
+      if (hoveredCommissie === commissieId) {
+        const person = getPersonById(bestuurId);
+        return person?.commissies.includes(commissieId) ?? false;
+      }
+      return false;
+    },
+    [hoveredPerson, hoveredCommissie]
+  );
+
+  const handlePersonClick = useCallback((id: string) => {
+    setSelectedPerson((prev) => (prev === id ? null : id));
+  }, []);
+
+  // Build connection data: bestuur member → their commissies
+  const connections: { bestuurIdx: number; commissieIdx: number; color: string; bestuurId: string; commissieId: string }[] = [];
+  bestuur.forEach((person, bIdx) => {
+    person.commissies.forEach((cId) => {
+      const cIdx = commissies.findIndex((c) => c.id === cId);
+      if (cIdx !== -1) {
+        connections.push({
+          bestuurIdx: bIdx,
+          commissieIdx: cIdx,
+          color: person.accentColor,
+          bestuurId: person.id,
+          commissieId: cId,
+        });
+      }
+    });
+  });
 
   return (
     <section
       ref={sectionRef}
       className="relative min-h-screen py-24 md:py-32 px-5 sm:px-6 md:px-12 lg:px-24"
     >
-      {/* Background grid */}
+      {/* ── Background: Grid + Ambient glows ── */}
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
@@ -130,6 +174,22 @@ export default function OrgTree() {
           WebkitMaskImage: "radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 70%)",
         }}
       />
+
+      {/* Ambient glow orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <div
+          className="absolute rounded-full blur-[120px]"
+          style={{ top: "10%", left: "5%", width: "30%", height: "25%", background: "rgba(245, 158, 11, 0.06)" }}
+        />
+        <div
+          className="absolute rounded-full blur-[100px]"
+          style={{ top: "40%", right: "5%", width: "25%", height: "20%", background: "rgba(59, 130, 246, 0.05)" }}
+        />
+        <div
+          className="absolute rounded-full blur-[100px]"
+          style={{ bottom: "15%", left: "20%", width: "20%", height: "20%", background: "rgba(239, 68, 68, 0.04)" }}
+        />
+      </div>
 
       <div className="relative z-10 max-w-[1200px] mx-auto">
         {/* ── Header ── */}
@@ -144,9 +204,7 @@ export default function OrgTree() {
               <span className="text-[var(--color-accent-blue)] font-bold text-sm">×</span>
             </span>
           </div>
-          <h1
-            className="font-display text-4xl sm:text-5xl md:text-7xl font-extrabold uppercase tracking-tight leading-[0.95]"
-          >
+          <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-extrabold uppercase tracking-tight leading-[0.95]">
             Skill{" "}
             <span className="text-[var(--color-accent-gold)]">Tree</span>
           </h1>
@@ -157,7 +215,7 @@ export default function OrgTree() {
         </div>
 
         {/* ── Bestuur Row ── */}
-        <div className="mb-12 md:mb-16">
+        <div className="mb-4">
           <div className="flex items-center gap-2 mb-6">
             <span
               className="w-2 h-2 rounded-full bg-[var(--color-accent-gold)]"
@@ -182,8 +240,92 @@ export default function OrgTree() {
           </div>
         </div>
 
-        {/* ── Connection hint ── */}
-        <div className="flex items-center gap-3 mb-8 md:mb-12">
+        {/* ── SVG Connection Lines (desktop only) ── */}
+        <div className="hidden md:block relative" style={{ height: "120px" }}>
+          <svg
+            ref={svgRef}
+            data-connections-svg
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <defs>
+              {/* Glow filters per color */}
+              {BESTUUR_COLORS.map((color, i) => (
+                <filter key={i} id={`glow-${i}`} x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              ))}
+            </defs>
+
+            {connections.map((conn, i) => {
+              // Calculate start X (bestuur position: 4 columns)
+              const startX = (conn.bestuurIdx + 0.5) * (1200 / 4);
+              // Calculate end X (commissie position: 3 columns on desktop, wraps at row 3)
+              const col = conn.commissieIdx % 3;
+              const endX = (col + 0.5) * (1200 / 3);
+              const active = isLineActive(conn.bestuurId, conn.commissieId);
+              const anyHover = hoveredPerson !== null || hoveredCommissie !== null;
+              const dimmed = anyHover && !active;
+
+              // Curved path
+              const midY = 60;
+              const path = `M ${startX} 0 C ${startX} ${midY}, ${endX} ${midY}, ${endX} 120`;
+
+              return (
+                <g key={i}>
+                  {/* Deep ambient glow */}
+                  <path
+                    d={path}
+                    fill="none"
+                    stroke={conn.color}
+                    strokeWidth={active ? 6 : 3}
+                    opacity={dimmed ? 0.03 : active ? 0.15 : 0.06}
+                    filter={`url(#glow-${conn.bestuurIdx})`}
+                    style={{ transition: "opacity 0.3s ease, stroke-width 0.3s ease" }}
+                  />
+                  {/* Core line */}
+                  <path
+                    data-connection-line
+                    d={path}
+                    fill="none"
+                    stroke={conn.color}
+                    strokeWidth={active ? 2 : 1}
+                    strokeDasharray="200"
+                    opacity={dimmed ? 0.05 : active ? 0.7 : 0.15}
+                    style={{ transition: "opacity 0.3s ease, stroke-width 0.3s ease" }}
+                  />
+                  {/* Bright inner (active only) */}
+                  {active && (
+                    <path
+                      d={path}
+                      fill="none"
+                      stroke="white"
+                      strokeWidth={0.5}
+                      opacity={0.4}
+                      style={{ transition: "opacity 0.3s ease" }}
+                    />
+                  )}
+                </g>
+              );
+            })}
+          </svg>
+
+          {/* Center label */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="font-mono text-[10px] text-[var(--color-text-muted)] tracking-[0.2em] uppercase bg-[var(--color-bg)] px-4 relative z-10">
+              Commissies
+            </span>
+          </div>
+        </div>
+
+        {/* Mobile connection divider */}
+        <div className="md:hidden flex items-center gap-3 my-8">
           <div
             className="flex-1 h-px"
             style={{
@@ -222,7 +364,6 @@ export default function OrgTree() {
             />
           ))}
         </div>
-
       </div>
 
       {/* ── Selected Person Card Overlay ── */}
@@ -332,44 +473,15 @@ function BestuurNode({
 }
 
 // ═══════════════════════════════════════════════════════════
-//  CommissieIcon — Animated SVG node icon per commissie
+//  CommissieIcon — SVG node icon per commissie
 // ═══════════════════════════════════════════════════════════
 
 function CommissieIcon({ color }: { color: string }) {
   return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      className="shrink-0"
-    >
-      {/* Outer glow ring */}
-      <circle
-        cx="10"
-        cy="10"
-        r="8"
-        stroke={color}
-        strokeWidth="1"
-        opacity="0.2"
-      />
-      {/* Inner filled node */}
-      <circle
-        cx="10"
-        cy="10"
-        r="4"
-        fill={color}
-        opacity="0.8"
-      />
-      {/* Center bright dot */}
-      <circle
-        cx="10"
-        cy="10"
-        r="1.5"
-        fill="white"
-        opacity="0.9"
-      />
-      {/* Connection stubs — hints at a network */}
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
+      <circle cx="10" cy="10" r="8" stroke={color} strokeWidth="1" opacity="0.2" />
+      <circle cx="10" cy="10" r="4" fill={color} opacity="0.8" />
+      <circle cx="10" cy="10" r="1.5" fill="white" opacity="0.9" />
       <line x1="10" y1="2" x2="10" y2="0" stroke={color} strokeWidth="1" opacity="0.3" />
       <line x1="18" y1="10" x2="20" y2="10" stroke={color} strokeWidth="1" opacity="0.3" />
       <line x1="10" y1="18" x2="10" y2="20" stroke={color} strokeWidth="1" opacity="0.3" />
@@ -409,9 +521,7 @@ function CommissieCluster({
       data-commissie-cluster
       className="relative border p-4 md:p-5 transition-all duration-300"
       style={{
-        borderColor: isActive
-          ? commissie.color
-          : "var(--color-border)",
+        borderColor: isActive ? commissie.color : "var(--color-border)",
         background: isActive
           ? `color-mix(in srgb, ${commissie.color} 3%, var(--color-surface))`
           : "var(--color-surface)",
@@ -476,9 +586,7 @@ function CommissieCluster({
               onClick={() => onClickPerson(memberId)}
               className="flex items-center gap-2 px-3 py-1.5 border cursor-pointer transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[var(--color-accent-gold)] focus-visible:outline-offset-1"
               style={{
-                borderColor: hoveredPerson === memberId
-                  ? person.accentColor
-                  : "var(--color-border)",
+                borderColor: hoveredPerson === memberId ? person.accentColor : "var(--color-border)",
                 background: hoveredPerson === memberId
                   ? `color-mix(in srgb, ${person.accentColor} 8%, transparent)`
                   : "transparent",
@@ -531,7 +639,6 @@ function NodeCard({
 
   const personCommissies = getPersonCommissies(personId);
 
-  // Close on Escape
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -549,10 +656,8 @@ function NodeCard({
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-[var(--color-bg)]/80 backdrop-blur-sm" />
 
-      {/* Card */}
       <motion.div
         initial={{ scale: 0.95, y: 10 }}
         animate={{ scale: 1, y: 0 }}
@@ -562,13 +667,8 @@ function NodeCard({
         className="relative w-full max-w-md border bg-[var(--color-surface)] overflow-hidden"
         style={{ borderColor: person.accentColor }}
       >
-        {/* Top accent */}
-        <div
-          className="h-1"
-          style={{ background: person.accentColor }}
-        />
+        <div className="h-1" style={{ background: person.accentColor }} />
 
-        {/* Terminal header */}
         <div
           className="flex items-center justify-between px-5 py-3 border-b border-[var(--color-border)]"
           style={{ background: `color-mix(in srgb, ${person.accentColor} 3%, var(--color-bg))` }}
@@ -589,9 +689,7 @@ function NodeCard({
           </button>
         </div>
 
-        {/* Content */}
         <div className="p-5 space-y-5">
-          {/* Name + role */}
           <div className="flex items-center gap-4">
             <div
               className="w-14 h-14 flex items-center justify-center font-mono text-xl font-bold shrink-0"
@@ -619,7 +717,6 @@ function NodeCard({
             </div>
           </div>
 
-          {/* Commissies */}
           {personCommissies.length > 0 && (
             <div>
               <p className="font-mono text-[10px] text-[var(--color-text-muted)] tracking-[0.2em] uppercase mb-2">
@@ -651,7 +748,6 @@ function NodeCard({
             </div>
           )}
 
-          {/* Contact voor */}
           {person.contactVoor && person.contactVoor.length > 0 && (
             <div>
               <p className="font-mono text-[10px] text-[var(--color-text-muted)] tracking-[0.2em] uppercase mb-2">

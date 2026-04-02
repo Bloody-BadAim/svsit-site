@@ -16,7 +16,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -72,7 +72,7 @@ export default function Navbar() {
             ))}
             <a
               href="/login"
-              className="px-4 py-2 border border-[var(--color-border)] text-[var(--color-text-muted)] overflow-hidden hover:text-[var(--color-text)] hover:border-[var(--color-text-muted)] transition-all duration-300"
+              className="px-4 py-2 border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] overflow-hidden hover:border-[var(--color-accent-blue)] hover:shadow-[0_0_12px_rgba(59,130,246,0.15)] transition-all duration-300"
             >
               $ login
             </a>

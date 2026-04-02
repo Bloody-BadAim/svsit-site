@@ -129,7 +129,7 @@ export default function Hero() {
           {/* Gold blob — top left */}
           <motion.div
             className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[120px]"
-            style={{ background: "rgba(245, 158, 11, 0.12)" }}
+            style={{ background: "rgba(245, 158, 11, 0.20)" }}
             animate={
               reducedMotion
                 ? {}
@@ -149,7 +149,7 @@ export default function Hero() {
           {/* Blue blob — bottom right */}
           <motion.div
             className="absolute -bottom-[15%] -right-[10%] w-[45%] h-[45%] rounded-full blur-[120px]"
-            style={{ background: "rgba(59, 130, 246, 0.10)" }}
+            style={{ background: "rgba(59, 130, 246, 0.16)" }}
             animate={
               reducedMotion
                 ? {}
@@ -169,7 +169,7 @@ export default function Hero() {
           {/* Red blob — center left */}
           <motion.div
             className="absolute top-[30%] left-[15%] w-[30%] h-[30%] rounded-full blur-[100px]"
-            style={{ background: "rgba(239, 68, 68, 0.08)" }}
+            style={{ background: "rgba(239, 68, 68, 0.13)" }}
             animate={
               reducedMotion
                 ? {}
@@ -188,7 +188,7 @@ export default function Hero() {
           {/* Green blob — bottom center */}
           <motion.div
             className="absolute bottom-[10%] right-[25%] w-[25%] h-[25%] rounded-full blur-[100px]"
-            style={{ background: "rgba(34, 197, 94, 0.07)" }}
+            style={{ background: "rgba(34, 197, 94, 0.11)" }}
             animate={
               reducedMotion
                 ? {}
@@ -211,12 +211,12 @@ export default function Hero() {
       {/* ── Layer 0.5: Code rain (pure CSS) ── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
         {[
-          { left: "8%", dur: "25s", delay: "0s", op: 0.03, chars: "{ } < > ; 0 1 = ( )\n[ ] / * + - _ . # @\n! & | : 0x1F 0b10\nconst let var =>\nif else while for\n{ } ( ) => { }\nimport export from\nasync await return" },
-          { left: "22%", dur: "30s", delay: "-8s", op: 0.05, chars: "0 1 1 0 1 0 0 1\nfunction class new\n[] {} () => void\nnull undefined NaN\ntrue false 0xFF\nfor of in delete\nswitch case break\ncontinue throw try" },
-          { left: "38%", dur: "22s", delay: "-15s", op: 0.04, chars: "# include define\n< > / = ! & | ^\n++ -- ** // %%\nstruct enum union\nmalloc free sizeof\npush pop shift map\nfilter reduce find\nslice splice sort" },
-          { left: "53%", dur: "28s", delay: "-5s", op: 0.03, chars: "git add commit push\nnpm run dev build\nsudo chmod mkdir\nping localhost:3000\ncurl POST GET PUT\ndocker compose up\nkubectl apply -f\nssh deploy@prod" },
-          { left: "68%", dur: "26s", delay: "-12s", op: 0.05, chars: "10 42 FF 0B 3B 82\nF6 EF 44 22 C5 5E\n01 00 11 10 01 11\nACK SYN FIN RST\nHTTP 200 301 404\nTCP UDP DNS SSL\nAPI REST GraphQL\nJSON XML YAML CSV" },
-          { left: "83%", dur: "32s", delay: "-20s", op: 0.04, chars: "λ → ∀ ∃ ≡ ≢ ∅\nconsole.log debug\nprocess.env NODE\nwindow document\naddEventListener\nquerySelector All\nsetTimeout async\npromise resolve ok" },
+          { left: "8%", dur: "25s", delay: "0s", op: 0.08, chars: "{ } < > ; 0 1 = ( )\n[ ] / * + - _ . # @\n! & | : 0x1F 0b10\nconst let var =>\nif else while for\n{ } ( ) => { }\nimport export from\nasync await return" },
+          { left: "22%", dur: "30s", delay: "-8s", op: 0.10, chars: "0 1 1 0 1 0 0 1\nfunction class new\n[] {} () => void\nnull undefined NaN\ntrue false 0xFF\nfor of in delete\nswitch case break\ncontinue throw try" },
+          { left: "38%", dur: "22s", delay: "-15s", op: 0.09, chars: "# include define\n< > / = ! & | ^\n++ -- ** // %%\nstruct enum union\nmalloc free sizeof\npush pop shift map\nfilter reduce find\nslice splice sort" },
+          { left: "53%", dur: "28s", delay: "-5s", op: 0.07, chars: "git add commit push\nnpm run dev build\nsudo chmod mkdir\nping localhost:3000\ncurl POST GET PUT\ndocker compose up\nkubectl apply -f\nssh deploy@prod" },
+          { left: "68%", dur: "26s", delay: "-12s", op: 0.10, chars: "10 42 FF 0B 3B 82\nF6 EF 44 22 C5 5E\n01 00 11 10 01 11\nACK SYN FIN RST\nHTTP 200 301 404\nTCP UDP DNS SSL\nAPI REST GraphQL\nJSON XML YAML CSV" },
+          { left: "83%", dur: "32s", delay: "-20s", op: 0.08, chars: "λ → ∀ ∃ ≡ ≢ ∅\nconsole.log debug\nprocess.env NODE\nwindow document\naddEventListener\nquerySelector All\nsetTimeout async\npromise resolve ok" },
         ].map((col, i) => (
           <div
             key={i}

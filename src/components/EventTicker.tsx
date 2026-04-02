@@ -47,10 +47,10 @@ export default function EventTicker() {
           className="flex h-full w-full items-center"
           gap={0}
           speed={40}
-          speedOnHover={20}
+          speedOnHover={5}
         >
           {TICKER_ITEMS.map((item, i) => (
-            <div key={i} className="flex items-center gap-8 md:gap-12 shrink-0 px-4 md:px-6">
+            <div key={`${item.label}-${i}`} className="flex items-center gap-8 md:gap-12 shrink-0 px-4 md:px-6">
               {i > 0 && (
                 <span
                   className="font-bold text-lg select-none"

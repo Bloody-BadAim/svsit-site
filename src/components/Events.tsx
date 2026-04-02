@@ -802,7 +802,7 @@ export default function Events() {
   useEffect(() => {
     const check = () => setIsDesktop(window.innerWidth >= 1024);
     check();
-    window.addEventListener("resize", check);
+    window.addEventListener("resize", check, { passive: true });
     return () => window.removeEventListener("resize", check);
   }, []);
 

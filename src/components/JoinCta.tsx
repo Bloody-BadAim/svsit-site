@@ -140,7 +140,7 @@ export default function JoinCta() {
             {/* Price */}
             <div data-animate className="mt-10">
               <div className="flex items-baseline gap-3">
-                <span className="font-mono text-5xl md:text-6xl font-bold text-[var(--color-accent-gold)]">
+                <span className="font-display text-5xl md:text-6xl font-bold text-[var(--color-accent-gold)]">
                   &euro;10
                 </span>
                 <span className="font-mono text-sm text-[var(--color-text-muted)]">

@@ -17,24 +17,17 @@ const codeLines = [
   "await sit.launch();",
 ];
 
+const RE_KEYWORD = /\b(const|new|await)\b/g;
+const RE_STRING = /('[^']*')/g;
+const RE_COMMENT = /(\/\/.*$)/;
+const RE_NUMBER = /(\d+)/g;
+
 function colorize(line: string) {
   return line
-    .replace(
-      /\b(const|new|await)\b/g,
-      '<span style="color: var(--color-accent-blue)">$1</span>'
-    )
-    .replace(
-      /('[^']*')/g,
-      '<span style="color: var(--color-accent-gold)">$1</span>'
-    )
-    .replace(
-      /(\/\/.*$)/,
-      '<span style="color: var(--color-accent-green)">$1</span>'
-    )
-    .replace(
-      /(\d+)/g,
-      '<span style="color: var(--color-accent-red)">$1</span>'
-    );
+    .replace(RE_KEYWORD, '<span style="color: var(--color-accent-blue)">$1</span>')
+    .replace(RE_STRING, '<span style="color: var(--color-accent-gold)">$1</span>')
+    .replace(RE_COMMENT, '<span style="color: var(--color-accent-green)">$1</span>')
+    .replace(RE_NUMBER, '<span style="color: var(--color-accent-red)">$1</span>');
 }
 
 const HEADING_WORDS_1 = ["DE studievereniging voor"];
