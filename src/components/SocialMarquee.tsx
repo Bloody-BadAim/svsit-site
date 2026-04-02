@@ -1,7 +1,7 @@
 "use client";
 
 const marqueeItems = [
-  { text: "@svsit", accent: "var(--color-accent-gold)", type: "handle" },
+  // { text: "@svsit", accent: "var(--color-accent-gold)", type: "handle" },
   { text: "×", accent: "var(--color-accent-red)", type: "separator" },
   { text: "VOLG ONS OP INSTAGRAM", accent: "var(--color-text-muted)", type: "cta" },
   { text: "×", accent: "var(--color-accent-green)", type: "separator" },
@@ -9,7 +9,7 @@ const marqueeItems = [
   { text: "×", accent: "var(--color-accent-gold)", type: "separator" },
   { text: "HACKATHONS", accent: "var(--color-accent-red)", type: "tag" },
   { text: "×", accent: "var(--color-accent-blue)", type: "separator" },
-  { text: "@svsit", accent: "var(--color-accent-gold)", type: "handle" },
+  // { text: "@svsit", accent: "var(--color-accent-gold)", type: "handle" },
   { text: "×", accent: "var(--color-accent-green)", type: "separator" },
   { text: "GAME NIGHTS", accent: "var(--color-accent-green)", type: "tag" },
   { text: "×", accent: "var(--color-accent-red)", type: "separator" },
