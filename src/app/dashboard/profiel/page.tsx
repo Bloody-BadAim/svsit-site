@@ -147,13 +147,9 @@ export default function ProfielPage() {
   useEffect(() => {
     if (!session?.user?.id) return
 
-    fetch(`/api/members`)
+    fetch(`/api/members/${session.user.id}`)
       .then((res) => res.json())
-      .then(({ data }) => {
-        if (!data) return
-        const member = Array.isArray(data)
-          ? data.find((m: Record<string, unknown>) => m.id === session.user.id)
-          : data
+      .then(({ data: member }) => {
         if (member) {
           setStudentNumber((member.student_number as string) || '')
           setCommissie((member.commissie as string) || '')

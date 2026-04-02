@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ADMIN_EMAILS } from '@/lib/constants'
 import { LayoutDashboard, CreditCard, User, Trophy, Shield, LogOut, Menu, X } from 'lucide-react'
 
@@ -19,6 +19,11 @@ export default function DashboardNav() {
   const { data: session } = useSession()
   const isAdmin = session?.user?.email && ADMIN_EMAILS.includes(session.user.email)
   const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [open])
 
   const items = isAdmin
     ? [...NAV_ITEMS, { href: '/admin', label: 'Admin', Icon: Shield }]

@@ -126,9 +126,9 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 2, ease: "easeInOut" }}
         >
-          {/* Gold blob — top left */}
+          {/* Gold blob — top left (static on mobile for perf) */}
           <motion.div
-            className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[120px]"
+            className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[80px] md:blur-[120px]"
             style={{ background: "rgba(245, 158, 11, 0.20)" }}
             animate={
               reducedMotion
@@ -148,7 +148,7 @@ export default function Hero() {
           />
           {/* Blue blob — bottom right */}
           <motion.div
-            className="absolute -bottom-[15%] -right-[10%] w-[45%] h-[45%] rounded-full blur-[120px]"
+            className="absolute -bottom-[15%] -right-[10%] w-[45%] h-[45%] rounded-full blur-[80px] md:blur-[120px]"
             style={{ background: "rgba(59, 130, 246, 0.16)" }}
             animate={
               reducedMotion
@@ -168,7 +168,7 @@ export default function Hero() {
           />
           {/* Red blob — center left */}
           <motion.div
-            className="absolute top-[30%] left-[15%] w-[30%] h-[30%] rounded-full blur-[100px]"
+            className="absolute top-[30%] left-[15%] w-[30%] h-[30%] rounded-full blur-[60px] md:blur-[100px]"
             style={{ background: "rgba(239, 68, 68, 0.13)" }}
             animate={
               reducedMotion
@@ -187,7 +187,7 @@ export default function Hero() {
           />
           {/* Green blob — bottom center */}
           <motion.div
-            className="absolute bottom-[10%] right-[25%] w-[25%] h-[25%] rounded-full blur-[100px]"
+            className="absolute bottom-[10%] right-[25%] w-[25%] h-[25%] rounded-full blur-[60px] md:blur-[100px]"
             style={{ background: "rgba(34, 197, 94, 0.11)" }}
             animate={
               reducedMotion
@@ -208,8 +208,8 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* ── Layer 0.5: Code rain (pure CSS) ── */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      {/* ── Layer 0.5: Code rain (desktop only — too heavy for mobile) ── */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block" aria-hidden="true">
         {[
           { left: "8%", dur: "25s", delay: "0s", op: 0.08, chars: "{ } < > ; 0 1 = ( )\n[ ] / * + - _ . # @\n! & | : 0x1F 0b10\nconst let var =>\nif else while for\n{ } ( ) => { }\nimport export from\nasync await return" },
           { left: "22%", dur: "30s", delay: "-8s", op: 0.10, chars: "0 1 1 0 1 0 0 1\nfunction class new\n[] {} () => void\nnull undefined NaN\ntrue false 0xFF\nfor of in delete\nswitch case break\ncontinue throw try" },

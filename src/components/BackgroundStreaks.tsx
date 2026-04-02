@@ -69,7 +69,8 @@ export default function BackgroundStreaks() {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-    if (prefersReducedMotion) return;
+    const isMobile = window.innerWidth < 768;
+    if (prefersReducedMotion || isMobile) return;
 
     const ctx = gsap.context(() => {
       // ── Scroll-based bend: lines slightly shift on scroll ──
