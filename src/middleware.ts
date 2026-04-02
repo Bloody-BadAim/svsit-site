@@ -1,6 +1,5 @@
 import { auth } from '@/lib/auth'
 import { NextResponse } from 'next/server'
-import { ADMIN_EMAILS } from '@/lib/constants'
 
 export default auth((req) => {
   const { pathname } = req.nextUrl
@@ -48,7 +47,7 @@ export default auth((req) => {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL('/login', req.url))
     }
-    if (!ADMIN_EMAILS.includes(session.user.email)) {
+    if (!session.user.isAdmin) {
       return NextResponse.redirect(new URL('/dashboard', req.url))
     }
     return NextResponse.next()

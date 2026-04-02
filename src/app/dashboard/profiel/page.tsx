@@ -143,6 +143,8 @@ export default function ProfielPage() {
   const [newPassword, setNewPassword] = useState('')
   const [pwSaving, setPwSaving] = useState(false)
   const [pwMessage, setPwMessage] = useState('')
+  const [stripeLoading, setStripeLoading] = useState(false)
+  const [stripeError, setStripeError] = useState('')
 
   useEffect(() => {
     if (!session?.user?.id) return
@@ -157,7 +159,7 @@ export default function ProfielPage() {
           setExpiresAt(member.membership_expires_at as string | null)
           setMemberSince((member.membership_started_at as string) || null)
           setPoints((member.points as number) || 0)
-          setHasPassword(!!member.password_hash)
+          setHasPassword(!!(member.has_password))
         }
       })
       .finally(() => setLoading(false))
@@ -214,9 +216,23 @@ export default function ProfielPage() {
   }
 
   async function handleStripePortal() {
-    const res = await fetch('/api/stripe/portal', { method: 'POST' })
-    const { url } = await res.json()
-    if (url) window.location.href = url
+    setStripeLoading(true)
+    setStripeError('')
+    try {
+      const res = await fetch('/api/stripe/portal', { method: 'POST' })
+      const json = await res.json()
+      if (res.ok && json.url) {
+        window.location.href = json.url
+      } else {
+        setStripeError(json.error || 'Stripe portal kon niet worden geopend')
+        setTimeout(() => setStripeError(''), 5000)
+      }
+    } catch {
+      setStripeError('Verbindingsfout — probeer opnieuw')
+      setTimeout(() => setStripeError(''), 5000)
+    } finally {
+      setStripeLoading(false)
+    }
   }
 
   // ── Character name derived from email ───────────────────────────────────────
@@ -451,7 +467,8 @@ export default function ProfielPage() {
             {/* Stripe portal */}
             <motion.button
               onClick={handleStripePortal}
-              className="w-full font-mono text-[11px] uppercase tracking-[0.15em] py-2.5 px-4 transition-all duration-200 text-left"
+              disabled={stripeLoading}
+              className="w-full font-mono text-[11px] uppercase tracking-[0.15em] py-2.5 px-4 transition-all duration-200 text-left disabled:opacity-50"
               style={{
                 backgroundColor: 'transparent',
                 color: 'var(--color-accent-blue)',
@@ -463,8 +480,13 @@ export default function ProfielPage() {
               }}
               whileTap={{ scale: 0.98 }}
             >
-              {'>'} manage.subscription()
+              {'>'} {stripeLoading ? '// loading...' : 'manage.subscription()'}
             </motion.button>
+            {stripeError && (
+              <p className="font-mono text-[10px]" style={{ color: 'var(--color-accent-red)' }}>
+                {stripeError}
+              </p>
+            )}
           </div>
         </motion.div>
       </div>

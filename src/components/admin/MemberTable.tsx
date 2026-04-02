@@ -94,6 +94,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
           <option value="member">Member</option>
           <option value="contributor">Contributor</option>
           <option value="mentor">Mentor</option>
+          <option value="admin">Admin</option>
         </select>
         <select
           value={filters.commissie}

@@ -141,7 +141,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.id = token.id as string
       session.user.role = (token.role as Role) || 'member'
       session.user.membershipActive = (token.membershipActive as boolean) || false
-      session.user.isAdmin = ADMIN_EMAILS.includes(session.user.email)
+      session.user.isAdmin = ADMIN_EMAILS.includes(session.user.email) || session.user.role === 'admin'
       return session
     },
   },
