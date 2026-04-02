@@ -5,8 +5,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { InfiniteSlider } from "@/components/ui/InfiniteSlider";
 
-gsap.registerPlugin(ScrollTrigger);
-
 const slidesA = [
   { label: "Workshop", color: "#3B82F6" },
   { label: "Hackathon", color: "#F59E0B" },

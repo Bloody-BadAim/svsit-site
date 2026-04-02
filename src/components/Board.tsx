@@ -6,8 +6,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
 
-gsap.registerPlugin(ScrollTrigger);
-
 interface Member {
   name: string;
   role: string;

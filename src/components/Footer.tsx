@@ -8,8 +8,9 @@ import SitLogo from "@/components/SitLogo";
 const NAV_LINKS = [
   { href: "/#about", label: "Over SIT" },
   { href: "/#events", label: "Events" },
+  { href: "/organisatie", label: "Organisatie" },
   { href: "/over-ons", label: "Het Bestuur" },
-  { href: "/#join", label: "Word Lid" },
+  { href: "/login", label: "Word Lid" },
 ];
 
 const SOCIALS = [
@@ -92,12 +93,12 @@ export default function Footer() {
 
       <div
         ref={contentRef}
-        className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24 py-16 md:py-20"
+        className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 lg:px-24 py-12 sm:py-16 md:py-20"
       >
         {/* ═══ Zone 1: Brand + Social icons ═══ */}
         <div
           data-footer-zone
-          className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 pb-12 mb-12 border-b border-[var(--color-border)]"
+          className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between md:gap-8 pb-10 sm:pb-12 mb-10 sm:mb-12 border-b border-[var(--color-border)]"
         >
           {/* Logo + description */}
           <div className="max-w-sm">
@@ -156,7 +157,7 @@ export default function Footer() {
         {/* ═══ Zone 2: Info grid (2 columns, no duplicate socials) ═══ */}
         <div
           data-footer-zone
-          className="grid grid-cols-1 sm:grid-cols-2 gap-10 md:gap-16 pb-12 mb-8 border-b border-[var(--color-border)]"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 md:gap-16 pb-10 sm:pb-12 mb-8 border-b border-[var(--color-border)]"
         >
           {/* Column 1: Navigation */}
           <div>
@@ -221,7 +222,7 @@ export default function Footer() {
         <div data-footer-zone>
           {/* Terminal one-liner */}
           <p
-            className="font-mono text-xs text-[var(--color-text-muted)] opacity-25 mb-5"
+            className="hidden sm:block font-mono text-xs text-[var(--color-text-muted)] opacity-25 mb-5"
             aria-hidden="true"
           >
             <span className="text-[var(--color-accent-green)]">{"$"}</span>
@@ -266,7 +267,7 @@ export default function Footer() {
               aria-label="Terug naar boven"
               className="group flex items-center gap-2 font-mono text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-200 cursor-pointer"
             >
-              <span className="hidden sm:inline">scroll.toTop()</span>
+              <span>scroll.toTop()</span>
               <ArrowUp
                 size={14}
                 className="group-hover:-translate-y-0.5 transition-transform duration-200"

@@ -314,6 +314,13 @@ export default function Hero() {
                 <span className="relative z-10">WORD LID</span>
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               </a>
+              {/* <a
+                href="/login"
+                className="group/login relative px-8 py-4 border border-[var(--color-border)] text-[var(--color-text-muted)] font-mono text-sm tracking-wide overflow-hidden hover:border-[var(--color-accent-blue)] hover:text-[var(--color-text)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <div className="absolute inset-0 bg-[var(--color-accent-blue)]/10 translate-x-[-101%] group-hover/login:translate-x-0 transition-transform duration-400" />
+                <span className="relative z-10">LOG IN</span>
+              </a> */}
               <a
                 href="/#events"
                 className="group/events relative px-8 py-4 border border-[var(--color-border)] text-[var(--color-text-muted)] font-mono text-sm tracking-wide overflow-hidden hover:border-[var(--color-accent-gold)] hover:text-[var(--color-text)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
@@ -325,6 +332,16 @@ export default function Hero() {
                 </span>
               </a>
             </div>
+
+            {/* Organisatie hint */}
+            <p
+              className={`font-mono text-xs text-[var(--color-text-muted)] mt-6 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.7s_forwards]" : ""}`}
+            >
+              Benieuwd naar onze commissies?{" "}
+              <a href="/organisatie" className="text-[var(--color-accent-gold)] hover:underline transition-colors duration-200">
+                Bekijk de stamboom →
+              </a>
+            </p>
 
             {/* Amsterdam x marks — brand identity */}
             <div

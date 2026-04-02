@@ -6,8 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
 import { BorderTrail } from "@/components/ui/BorderTrail";
 
-gsap.registerPlugin(ScrollTrigger);
-
 const codeLines = [
   "// sit.config.ts",
   "const sit = new Vereniging({",

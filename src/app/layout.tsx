@@ -15,6 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,

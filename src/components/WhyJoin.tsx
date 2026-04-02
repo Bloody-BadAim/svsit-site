@@ -6,8 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
 
-gsap.registerPlugin(ScrollTrigger);
-
 const achievements = [
   {
     title: "Events & Activiteiten",

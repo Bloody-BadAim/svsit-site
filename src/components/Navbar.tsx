@@ -6,7 +6,8 @@ import SitLogo from "@/components/SitLogo";
 const navLinks = [
   { href: "/#about", label: "Over SIT" },
   { href: "/#events", label: "Events" },
-  { href: "/over-ons", label: "Over ons" },
+  { href: "/organisatie", label: "Organisatie" },
+  { href: "/over-ons", label: "Het Bestuur" },
 ];
 
 export default function Navbar() {
@@ -69,6 +70,12 @@ export default function Navbar() {
                 {link.label}
               </a>
             ))}
+            <a
+              href="/login"
+              className="px-4 py-2 border border-[var(--color-border)] text-[var(--color-text-muted)] overflow-hidden hover:text-[var(--color-text)] hover:border-[var(--color-text-muted)] transition-all duration-300"
+            >
+              $ login
+            </a>
             <a
               href="/#join"
               className="group/lid relative px-4 py-2 border border-[var(--color-accent-gold)] text-[var(--color-accent-gold)] overflow-hidden hover:text-[var(--color-bg)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(245,158,11,0.25)]"
@@ -136,18 +143,29 @@ export default function Navbar() {
               </a>
             ))}
 
-            <a
-              href="/#join"
-              onClick={closeMenu}
-              className="inline-block mt-4 px-8 py-4 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-lg tracking-wide"
+            <div
+              className="flex flex-col gap-3 mt-4"
               style={{
                 transform: menuOpen ? "translateX(0)" : "translateX(-30px)",
                 opacity: menuOpen ? 1 : 0,
                 transition: `all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${menuOpen ? 0.1 + navLinks.length * 0.08 : 0}s`,
               }}
             >
-              $ join --now
-            </a>
+              <a
+                href="/login"
+                onClick={closeMenu}
+                className="inline-block px-8 py-4 border border-[var(--color-border)] text-[var(--color-text-muted)] font-mono font-bold text-lg tracking-wide hover:text-[var(--color-text)] hover:border-[var(--color-text-muted)] transition-colors duration-200"
+              >
+                $ login
+              </a>
+              <a
+                href="/#join"
+                onClick={closeMenu}
+                className="inline-block px-8 py-4 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-lg tracking-wide"
+              >
+                $ join --now
+              </a>
+            </div>
           </nav>
 
           <div

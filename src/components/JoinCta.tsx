@@ -8,8 +8,6 @@ import SectionLabel from "@/components/SectionLabel";
 import HoldToJoinButton from "@/components/HoldToJoinButton";
 import MemberCard from "@/components/MemberCard";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function JoinCta() {
   const sectionRef = useRef<HTMLElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
@@ -155,9 +153,15 @@ export default function JoinCta() {
           {/* Right: member card */}
           <div ref={cardRef} className="flex justify-center lg:justify-end">
             <MemberCard className="w-full max-w-[400px]" data={{ name: 'Jouw Naam', role: 'member', commissie: null, points: 0, skin: 'skin_gold' }}>
-              <HoldToJoinButton href="/lid-worden" />
+              <HoldToJoinButton href="/login" />
               <p className="font-mono text-[11px] text-[var(--color-text-muted)] opacity-40 mt-3 text-center">
                 200+ studenten gingen je voor
+              </p>
+              <p className="font-mono text-[11px] text-[var(--color-text-muted)] mt-2 text-center">
+                Al lid?{" "}
+                <a href="/login" className="text-[var(--color-accent-blue)] hover:underline">Log in</a>
+                {" · "}
+                <a href="/organisatie" className="text-[var(--color-accent-gold)] hover:underline">Bekijk commissies →</a>
               </p>
             </MemberCard>
           </div>

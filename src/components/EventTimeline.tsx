@@ -5,8 +5,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { SitEvent } from "@/components/EventList";
 
-gsap.registerPlugin(ScrollTrigger);
-
 // ─── Layout config: organic, non-uniform spacing ──────────
 const ROW_GAPS = [0, 20, 36, 12, 44, 20, 28, 16];
 const H_OFFSETS = [0, 32, 12, 56, 8, 44, 24, 0];
@@ -242,7 +240,7 @@ function TimelineBlock({
           <span
             className="font-mono"
             style={{
-              fontSize: "10px",
+              fontSize: "12px",
               color: "var(--color-text-muted)",
               letterSpacing: "0.15em",
               textTransform: "uppercase",
@@ -255,7 +253,7 @@ function TimelineBlock({
         <span
           className="font-mono"
           style={{
-            fontSize: "9px",
+            fontSize: "11px",
             padding: "3px 8px",
             color: event.color,
             border: `1px solid color-mix(in srgb, ${event.color} 25%, transparent)`,
@@ -277,7 +275,7 @@ function TimelineBlock({
       <h3
         className="font-mono"
         style={{
-          fontSize: "15px",
+          fontSize: "18px",
           fontWeight: 700,
           textTransform: "uppercase",
           color: isActive ? "var(--color-text)" : "rgba(250,250,250,0.85)",
@@ -305,11 +303,11 @@ function TimelineBlock({
               key={tag}
               className="font-mono"
               style={{
-                fontSize: "9px",
+                fontSize: "11px",
                 color: `color-mix(in srgb, ${event.color} 80%, white)`,
                 border: `1px solid color-mix(in srgb, ${event.color} 15%, transparent)`,
                 background: `color-mix(in srgb, ${event.color} 5%, transparent)`,
-                padding: "2px 7px",
+                padding: "3px 8px",
                 letterSpacing: "0.06em",
                 textTransform: "uppercase",
               }}
@@ -325,7 +323,7 @@ function TimelineBlock({
             display: "flex",
             alignItems: "center",
             gap: "6px",
-            fontSize: "10px",
+            fontSize: "12px",
             color: "var(--color-text-muted)",
             opacity: 0.7,
           }}

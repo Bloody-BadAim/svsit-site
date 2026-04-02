@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
@@ -8,11 +9,12 @@ import JoinCta from "@/components/JoinCta";
 import Footer from "@/components/Footer";
 import BackgroundStreaks from "@/components/BackgroundStreaks";
 import PageScrollProgress from "@/components/PageScrollProgress";
-import CustomCursor from "@/components/CustomCursor";
-import ConsoleEasterEgg from "@/components/ConsoleEasterEgg";
-import KonamiGame from "@/components/KonamiGame";
 import SmoothScroll from "@/components/SmoothScroll";
 import SectionDivider from "@/components/SectionDivider";
+
+const CustomCursor = dynamic(() => import("@/components/CustomCursor"));
+const ConsoleEasterEgg = dynamic(() => import("@/components/ConsoleEasterEgg"));
+const KonamiGame = dynamic(() => import("@/components/KonamiGame"));
 
 export default function Home() {
   return (

@@ -5,8 +5,6 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollTrigger);
-
 const proPhotos = [
   "/slider/pro1.jpg",
   "/slider/pro2.jpg",
