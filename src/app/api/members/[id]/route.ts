@@ -1,7 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
-import { ADMIN_EMAILS } from '@/lib/constants'
+
+// GET — Haal lidgegevens op (eigen profiel of admin)
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth()
+    if (!session?.user) {
+      return NextResponse.json({ data: null, error: 'Niet ingelogd', meta: null }, { status: 401 })
+    }
+
+    const { id } = await params
+    const isAdmin = session.user.isAdmin
+    const isOwn = session.user.id === id
+
+    if (!isAdmin && !isOwn) {
+      return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
+    }
+
+    const supabase = createServiceClient()
+    const { data: member, error } = await supabase
+      .from('members')
+      .select('id, email, student_number, role, commissie, commissie_voorstel, points, membership_active, membership_started_at, membership_expires_at, active_skin, active_badges, password_hash, created_at')
+      .eq('id', id)
+      .single()
+
+    if (error || !member) {
+      return NextResponse.json({ data: null, error: 'Lid niet gevonden', meta: null }, { status: 404 })
+    }
+
+    // Never send the actual password hash to the client; expose only a boolean
+    const { password_hash, ...rest } = member
+    return NextResponse.json({ data: { ...rest, has_password: !!password_hash }, error: null, meta: null })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Onbekende fout'
+    return NextResponse.json({ data: null, error: message, meta: null }, { status: 500 })
+  }
+}
 
 // PATCH — Update lid (eigen profiel of admin)
 export async function PATCH(
@@ -15,7 +53,7 @@ export async function PATCH(
     }
 
     const { id } = await params
-    const isAdmin = ADMIN_EMAILS.includes(session.user.email)
+    const isAdmin = session.user.isAdmin
     const isOwn = session.user.id === id
 
     if (!isAdmin && !isOwn) {

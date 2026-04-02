@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { createServiceClient } from '@/lib/supabase'
 import { auth } from '@/lib/auth'
-import { ADMIN_EMAILS } from '@/lib/constants'
 
 // POST — Nieuw lid aanmaken (registratie)
 export async function POST(req: NextRequest) {
@@ -79,7 +78,10 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   try {
     const session = await auth()
-    if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
+    if (!session?.user) {
+      return NextResponse.json({ data: null, error: 'Niet ingelogd', meta: null }, { status: 401 })
+    }
+    if (!session.user.isAdmin) {
       return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
     }
 

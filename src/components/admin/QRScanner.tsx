@@ -25,6 +25,12 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<MessageType>('success')
 
+  // Debounce: prevent the same QR payload from being processed more than once
+  // within the cooldown window (avoids rapid-fire camera duplicates).
+  const lastScanRef = useRef<{ text: string; time: number } | null>(null)
+  const processingRef = useRef(false)
+  const SCAN_COOLDOWN_MS = 3000
+
   // --- Detection logic ---
 
   type ParsedQR =
@@ -122,17 +128,40 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
   // --- Unified scan handler (camera + manual) ---
 
   async function handleScan(raw: string) {
+    const now = Date.now()
+
+    // Skip if a scan is already being processed
+    if (processingRef.current) return
+
+    // Skip if same payload scanned within cooldown window
+    if (
+      lastScanRef.current &&
+      lastScanRef.current.text === raw &&
+      now - lastScanRef.current.time < SCAN_COOLDOWN_MS
+    ) {
+      return
+    }
+
     const detected = detectQRType(raw)
 
-    if (detected.kind === 'ticket') {
-      await handleTicketCheckin(detected.id)
-    } else if (detected.kind === 'ledenpas') {
-      await submitScan(detected.id, detected.email)
-    } else {
+    if (detected.kind === 'invalid') {
       setMessage('Ongeldig QR code')
       setMessageType('error')
       setTimeout(() => setMessage(''), 5000)
+      return
     }
+
+    // Mark as processing only after we know the QR is valid
+    processingRef.current = true
+    lastScanRef.current = { text: raw, time: now }
+
+    if (detected.kind === 'ticket') {
+      await handleTicketCheckin(detected.id)
+    } else {
+      await submitScan(detected.id, detected.email)
+    }
+
+    processingRef.current = false
   }
 
   // --- Manual input handler ---
@@ -141,6 +170,10 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
   // ledenpas member ID so existing workflows still work.
   async function handleManualSubmit() {
     if (!memberId) return
+
+    // Reset debounce for manual submissions — these are always intentional
+    lastScanRef.current = null
+    processingRef.current = false
 
     // Try JSON parse first (supports pasting full QR payloads)
     const detected = detectQRType(memberId)
