@@ -64,7 +64,12 @@
       "Bash(grep -r \"hexagon\\\\|glowing.*line\\\\|svg.*path\\\\|connection.*line\\\\|dimming\\\\|unlock.*sequence\" /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website --include=*.md --include=*.tsx --include=*.ts)",
       "Bash(pip3 install:*)",
       "Bash(node -e \":*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f -name \"*.tsx\" -exec grep -l \"img\\\\|Image\\\\|<image\" {})",
+      "Bash(du:*)",
+      "Bash(git status:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   },
   "outputStyle": "default",
