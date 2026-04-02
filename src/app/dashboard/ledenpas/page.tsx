@@ -1,9 +1,10 @@
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
-import MemberCard from '@/components/MemberCard'
 import type { Role } from '@/types/database'
 import { COMMISSIES } from '@/lib/constants'
+import { calculateStats } from '@/lib/rewards'
+import LedenpasClient from '@/components/dashboard/LedenpasClient'
 
 export const metadata = {
   title: 'Ledenpas — SIT',
@@ -16,13 +17,25 @@ export default async function LedenpasPage() {
   const supabase = createServiceClient()
   const { data: member } = await supabase
     .from('members')
-    .select('id, email, student_number, role, points, commissie')
+    .select('id, email, student_number, role, points, commissie, active_skin, active_badges')
     .eq('id', session.user.id)
     .single()
 
   if (!member) redirect('/dashboard')
 
   const commissieNaam = COMMISSIES.find(c => c.id === (member.commissie as string))?.naam || (member.commissie as string) || null
+
+  // Fetch unlocked skin rewards
+  const { data: rewards } = await supabase
+    .from('rewards')
+    .select('reward_id')
+    .eq('member_id', session.user.id)
+    .eq('type', 'skin_unlock')
+
+  const unlockedSkins = ['default', ...((rewards || []).map(r => r.reward_id as string))]
+  const activeSkin = (member.active_skin as string) || 'default'
+  const activeBadges = (member.active_badges as string[]) || []
+  const memberStats = await calculateStats(session.user.id)
 
   return (
     <div className="max-w-5xl space-y-8">
@@ -48,20 +61,21 @@ export default async function LedenpasPage() {
         </p>
       </div>
 
-      <div className="flex justify-center">
-        <MemberCard
-          className="w-full max-w-[400px]"
-          showQR
-          data={{
-            name: (member.email as string).split('@')[0],
-            role: member.role as Role,
-            commissie: commissieNaam,
-            points: member.points as number,
-            memberId: member.id as string,
-            email: member.email as string,
-          }}
-        />
-      </div>
+      <LedenpasClient
+        data={{
+          name: (member.email as string).split('@')[0],
+          role: member.role as Role,
+          commissie: commissieNaam,
+          points: member.points as number,
+          memberId: member.id as string,
+          email: member.email as string,
+          activeBadges,
+          dynamicStats: memberStats,
+        }}
+        skin={activeSkin}
+        memberId={member.id as string}
+        unlockedSkins={unlockedSkins}
+      />
     </div>
   )
 }

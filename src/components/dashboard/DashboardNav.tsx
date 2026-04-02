@@ -5,12 +5,13 @@ import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { useState } from 'react'
 import { ADMIN_EMAILS } from '@/lib/constants'
-import { LayoutDashboard, CreditCard, User, Shield, LogOut, Menu, X } from 'lucide-react'
+import { LayoutDashboard, CreditCard, User, Trophy, Shield, LogOut, Menu, X } from 'lucide-react'
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
   { href: '/dashboard/ledenpas', label: 'Ledenpas', Icon: CreditCard },
   { href: '/dashboard/profiel', label: 'Profiel', Icon: User },
+  { href: '/dashboard/rewards', label: 'Rewards', Icon: Trophy },
 ]
 
 export default function DashboardNav() {

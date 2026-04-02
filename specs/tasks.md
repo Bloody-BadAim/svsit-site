@@ -1,8 +1,8 @@
 # Tasks — SIT Leden Portaal
 
 **Status**: APPROVED
-**Laatst bijgewerkt**: 2026-03-30
-**Voortgang**: 27/28 taken voltooid
+**Laatst bijgewerkt**: 2026-04-01
+**Voortgang**: 27/28 taken voltooid (alle acceptance criteria Fase D+E complete)
 
 ---
 
@@ -204,7 +204,7 @@
   - [x] QR code met JSON data (member id, email, timestamp)
   - [x] Kaart met SIT branding, naam, studentnummer, rol, rank
   - [x] Rank badge kleurt per level
-  - [ ] Download als PNG knop (should-have SH-04)
+  - [x] Download als PNG knop (html-to-image, 3x pixelRatio, LedenpasClient wrapper)
   - [x] Mobile-friendly (kaart past op scherm)
 
 ### T019 — Profiel pagina ✅
@@ -214,7 +214,7 @@
 - **Acceptance criteria**:
   - [x] Profiel form met save knop
   - [x] Studentnummer en commissie aanpasbaar
-  - [ ] Wachtwoord wijzigen (oud + nieuw, min 8 tekens)
+  - [x] Wachtwoord wijzigen/instellen (API: /api/members/[id]/password, bcrypt, min 8 tekens)
   - [x] Lidmaatschap status: actief/verlopen + vervaldatum
   - [x] Stripe Portal link werkt
 
@@ -237,7 +237,7 @@
 - **Beschrijving**: Maak `src/app/admin/page.tsx` en `src/components/admin/StatsOverview.tsx`. Totaal leden, actieve leden, nieuwe leden deze maand, leden per commissie, leden per rol
 - **Acceptance criteria**:
   - [x] Stat cards: totaal, actief, nieuw deze maand
-  - [ ] Inkomsten overzicht (totaal, deze maand)
+  - [x] Inkomsten overzicht (totaal + deze maand, uit payments tabel, euro formatting)
   - [x] Leden per commissie breakdown
   - [x] Leden per rol (Member/Contributor/Mentor)
   - [x] Data uit Supabase queries
@@ -293,7 +293,7 @@
 - **Acceptance criteria**:
   - [x] Event aanmaken form (naam, datum)
   - [x] Actief event selecteren (voor scanner)
-  - [ ] Scan geschiedenis per event
+  - [x] Scan geschiedenis per event (GET /api/scans?event_name=X, toont bij activeren)
   - [x] Events opgeslagen in Zustand
 
 ---

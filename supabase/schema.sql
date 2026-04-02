@@ -149,3 +149,64 @@ CREATE POLICY "payments_update" ON payments
   FOR UPDATE USING (
     is_admin(auth.jwt()->>'email')
   );
+
+-- ===== REWARD SYSTEEM =====
+
+ALTER TABLE members ADD COLUMN IF NOT EXISTS active_skin TEXT DEFAULT 'default';
+ALTER TABLE members ADD COLUMN IF NOT EXISTS active_badges TEXT[] DEFAULT '{}';
+ALTER TABLE scans ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'social';
+
+CREATE TABLE IF NOT EXISTS rewards (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  member_id UUID REFERENCES members(id) ON DELETE CASCADE NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('skin_unlock', 'badge', 'merch_claim')),
+  reward_id TEXT NOT NULL,
+  claimed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(member_id, reward_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_rewards_member ON rewards(member_id);
+CREATE INDEX IF NOT EXISTS idx_rewards_type ON rewards(type);
+
+CREATE TABLE IF NOT EXISTS challenges (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('quest', 'track_milestone', 'achievement')),
+  category TEXT NOT NULL CHECK (category IN ('code', 'social', 'learn', 'impact')),
+  points INTEGER NOT NULL CHECK (points > 0),
+  track_id TEXT,
+  track_order INTEGER,
+  proof_required BOOLEAN DEFAULT true,
+  proof_type TEXT CHECK (proof_type IN ('link', 'screenshot', 'text', 'scan')),
+  active_from TIMESTAMPTZ,
+  active_until TIMESTAMPTZ,
+  created_by TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_challenges_type ON challenges(type);
+CREATE INDEX IF NOT EXISTS idx_challenges_track ON challenges(track_id);
+
+CREATE TABLE IF NOT EXISTS challenge_submissions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  challenge_id UUID REFERENCES challenges(id) NOT NULL,
+  member_id UUID REFERENCES members(id) ON DELETE CASCADE NOT NULL,
+  proof_url TEXT,
+  proof_text TEXT,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  reviewed_by TEXT,
+  reviewed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(challenge_id, member_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_submissions_member ON challenge_submissions(member_id);
+CREATE INDEX IF NOT EXISTS idx_submissions_status ON challenge_submissions(status);
+
+ALTER TABLE rewards ENABLE ROW LEVEL SECURITY;
+ALTER TABLE challenges ENABLE ROW LEVEL SECURITY;
+ALTER TABLE challenge_submissions ENABLE ROW LEVEL SECURITY;
+
+-- Events schema: see supabase/events-schema.sql

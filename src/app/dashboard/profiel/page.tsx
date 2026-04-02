@@ -2,23 +2,153 @@
 
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
-import { COMMISSIES } from '@/lib/constants'
+import { motion } from 'motion/react'
+import { COMMISSIES, getRank, getLevel, getPrestige } from '@/lib/constants'
 
+// ─── Corner decoration component ──────────────────────────────────────────────
+function CornerDecorations({ color = 'var(--color-accent-gold)' }: { color?: string }) {
+  return (
+    <>
+      <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2" style={{ borderColor: color }} />
+      <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
+    </>
+  )
+}
+
+// ─── Panel header ──────────────────────────────────────────────────────────────
+function PanelHeader({ label, color = 'var(--color-text-muted)' }: { label: string; color?: string }) {
+  return (
+    <div className="px-5 py-3" style={{ borderBottom: '1px solid var(--color-border)' }}>
+      <span
+        className="font-mono text-[10px] uppercase tracking-[0.2em]"
+        style={{ color }}
+      >
+        {label}
+      </span>
+    </div>
+  )
+}
+
+// ─── Dark input ────────────────────────────────────────────────────────────────
+function DarkInput({
+  label,
+  type = 'text',
+  value,
+  onChange,
+  placeholder,
+  disabled,
+}: {
+  label: string
+  type?: string
+  value: string
+  onChange?: (v: string) => void
+  placeholder?: string
+  disabled?: boolean
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label
+        className="block font-mono text-[10px] uppercase tracking-[0.2em]"
+        style={{ color: 'var(--color-text-muted)' }}
+      >
+        {label}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
+        placeholder={placeholder}
+        disabled={disabled}
+        className="w-full py-2.5 px-3 text-sm outline-none transition-all duration-200 disabled:opacity-50"
+        style={{
+          backgroundColor: 'var(--color-bg)',
+          color: disabled ? 'var(--color-text-muted)' : 'var(--color-text)',
+          border: '1px solid var(--color-border)',
+          fontFamily: 'var(--font-mono)',
+        }}
+        onFocus={(e) => {
+          if (!disabled) e.currentTarget.style.borderColor = 'var(--color-accent-gold)'
+        }}
+        onBlur={(e) => {
+          e.currentTarget.style.borderColor = 'var(--color-border)'
+        }}
+      />
+    </div>
+  )
+}
+
+// ─── Rank badge ────────────────────────────────────────────────────────────────
+function RankBadge({ points }: { points: number }) {
+  const rank = getRank(points)
+  const level = getLevel(points)
+  const prestige = getPrestige(points)
+  const xpInLevel = points % 10
+  const pct = (xpInLevel / 10) * 100
+
+  return (
+    <div className="flex flex-col gap-3">
+      {/* Rank name + level */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div
+            className="w-2 h-2"
+            style={{ backgroundColor: rank.kleur, boxShadow: `0 0 6px ${rank.kleur}88` }}
+          />
+          <span
+            className="font-mono text-xs font-bold uppercase tracking-[0.15em]"
+            style={{ color: rank.kleur }}
+          >
+            {rank.naam}
+          </span>
+        </div>
+        <span className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
+          LVL {level}{prestige > 0 && <span style={{ color: 'var(--color-accent-gold)' }}> ✦{prestige}</span>}
+        </span>
+      </div>
+
+      {/* XP bar */}
+      <div>
+        <div className="flex justify-between font-mono text-[10px] mb-1" style={{ color: 'var(--color-text-muted)' }}>
+          <span>{points} XP total</span>
+          <span>{xpInLevel}/10 to next level</span>
+        </div>
+        <div className="h-[4px] w-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}>
+          <motion.div
+            className="h-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${pct}%` }}
+            transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }}
+            style={{ backgroundColor: rank.kleur }}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Main page ─────────────────────────────────────────────────────────────────
 export default function ProfielPage() {
   const { data: session } = useSession()
   const [studentNumber, setStudentNumber] = useState('')
   const [commissie, setCommissie] = useState('')
   const [membershipActive, setMembershipActive] = useState(false)
+  const [memberSince, setMemberSince] = useState<string | null>(null)
   const [expiresAt, setExpiresAt] = useState<string | null>(null)
+  const [points, setPoints] = useState(0)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(true)
+  const [hasPassword, setHasPassword] = useState(false)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [pwSaving, setPwSaving] = useState(false)
+  const [pwMessage, setPwMessage] = useState('')
 
   useEffect(() => {
     if (!session?.user?.id) return
 
     fetch(`/api/members`)
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(({ data }) => {
         if (!data) return
         const member = Array.isArray(data)
@@ -29,6 +159,9 @@ export default function ProfielPage() {
           setCommissie((member.commissie as string) || '')
           setMembershipActive(member.membership_active as boolean)
           setExpiresAt(member.membership_expires_at as string | null)
+          setMemberSince((member.membership_started_at as string) || null)
+          setPoints((member.points as number) || 0)
+          setHasPassword(!!member.password_hash)
         }
       })
       .finally(() => setLoading(false))
@@ -48,13 +181,40 @@ export default function ProfielPage() {
       }),
     })
 
-    if (res.ok) {
-      setMessage('Opgeslagen')
-    } else {
-      setMessage('Fout bij opslaan')
-    }
+    setMessage(res.ok ? 'config.saved' : 'error: save_failed')
     setSaving(false)
     setTimeout(() => setMessage(''), 3000)
+  }
+
+  async function handlePasswordChange() {
+    if (!session?.user?.id) return
+    if (!newPassword || newPassword.length < 8) {
+      setPwMessage('error: min_8_chars')
+      return
+    }
+    setPwSaving(true)
+    setPwMessage('')
+
+    const res = await fetch(`/api/members/${session.user.id}/password`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        currentPassword: currentPassword || undefined,
+        newPassword,
+      }),
+    })
+
+    const { error } = await res.json()
+    if (res.ok) {
+      setPwMessage('password.updated')
+      setCurrentPassword('')
+      setNewPassword('')
+      setHasPassword(true)
+    } else {
+      setPwMessage(error || 'error: update_failed')
+    }
+    setPwSaving(false)
+    setTimeout(() => setPwMessage(''), 4000)
   }
 
   async function handleStripePortal() {
@@ -63,145 +223,342 @@ export default function ProfielPage() {
     if (url) window.location.href = url
   }
 
+  // ── Character name derived from email ───────────────────────────────────────
+  const username = session?.user?.email?.split('@')[0]?.toUpperCase() || 'USER'
+  const email = session?.user?.email || ''
+  const rank = getRank(points)
+  const commissieDef = COMMISSIES.find((c) => c.id === commissie)
+
+  // ── Loading skeleton ─────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="max-w-xl space-y-4">
+      <div className="max-w-5xl space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-16 rounded-lg animate-pulse" style={{ backgroundColor: 'var(--color-surface)' }} />
+          <motion.div
+            key={i}
+            className="h-24"
+            style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+            animate={{ opacity: [0.4, 0.7, 0.4] }}
+            transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.15 }}
+          />
         ))}
       </div>
     )
   }
 
   return (
-    <div className="max-w-xl space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text)' }}>
-          Profiel
-        </h1>
-      </div>
-
-      <div className="space-y-4">
-        {/* Email (readonly) */}
-        <div>
-          <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-            email
-          </label>
-          <input
-            type="email"
-            value={session?.user?.email || ''}
-            disabled
-            className="w-full py-3 px-4 rounded-lg text-base opacity-60"
-            style={{
-              backgroundColor: 'var(--color-surface)',
-              color: 'var(--color-text)',
-              border: '1px solid var(--color-border)',
-            }}
-          />
-        </div>
-
-        {/* Studentnummer */}
-        <div>
-          <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-            studentnummer
-          </label>
-          <input
-            type="text"
-            value={studentNumber}
-            onChange={(e) => setStudentNumber(e.target.value)}
-            placeholder="Niet ingevuld"
-            className="w-full py-3 px-4 rounded-lg text-base outline-none"
-            style={{
-              backgroundColor: 'var(--color-surface)',
-              color: 'var(--color-text)',
-              border: '1px solid var(--color-border)',
-            }}
-          />
-        </div>
-
-        {/* Commissie */}
-        <div>
-          <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-            commissie
-          </label>
-          <select
-            value={commissie}
-            onChange={(e) => setCommissie(e.target.value)}
-            className="w-full py-3 px-4 rounded-lg text-base outline-none"
-            style={{
-              backgroundColor: 'var(--color-surface)',
-              color: 'var(--color-text)',
-              border: '1px solid var(--color-border)',
-            }}
-          >
-            <option value="">Geen commissie</option>
-            {COMMISSIES.map((c) => (
-              <option key={c.id} value={c.id}>{c.naam}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Save button */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="py-3 px-6 rounded-lg font-semibold transition-all"
-            style={{
-              backgroundColor: 'var(--color-accent-gold)',
-              color: 'var(--color-bg)',
-            }}
-          >
-            {saving ? 'Opslaan...' : 'Opslaan'}
-          </button>
-          {message && (
-            <span className="text-sm" style={{ color: message === 'Opgeslagen' ? 'var(--color-accent-green)' : 'var(--color-accent-red)' }}>
-              {message}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Lidmaatschap status */}
-      <div
-        className="p-5 rounded-lg space-y-3"
-        style={{
-          backgroundColor: 'var(--color-surface)',
-          border: '1px solid var(--color-border)',
-        }}
+    <div className="max-w-5xl">
+      {/* ── Page header ──────────────────────────────────────────────────────── */}
+      <motion.div
+        className="mb-10"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
       >
-        <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-          Lidmaatschap
-        </h3>
-
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 mb-2">
           <div
-            className="w-2.5 h-2.5 rounded-full"
-            style={{ backgroundColor: membershipActive ? 'var(--color-accent-green)' : 'var(--color-accent-red)' }}
+            className="w-2 h-2"
+            style={{
+              backgroundColor: membershipActive ? 'var(--color-accent-green)' : 'var(--color-accent-red)',
+              boxShadow: membershipActive
+                ? '0 0 8px rgba(34, 197, 94, 0.5)'
+                : '0 0 8px rgba(239, 68, 68, 0.5)',
+            }}
           />
-          <span style={{ color: 'var(--color-text)' }}>
-            {membershipActive ? 'Actief' : 'Niet actief'}
+          <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
+            character.settings · {rank.naam} · lvl {getLevel(points)}
           </span>
         </div>
-
-        {expiresAt && (
-          <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-            Verloopt op {new Date(expiresAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}
-          </p>
-        )}
-
-        <button
-          onClick={handleStripePortal}
-          className="py-2 px-4 rounded-lg text-sm font-medium transition-all"
+        <h1
+          className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight uppercase leading-[0.9]"
           style={{
-            backgroundColor: 'transparent',
-            color: 'var(--color-accent-blue)',
-            border: '1px solid var(--color-accent-blue)',
+            color: 'var(--color-text)',
+            fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
           }}
         >
-          Beheer abonnement
-        </button>
+          {username}
+        </h1>
+      </motion.div>
+
+      {/* ── Top two-column: Identity + Account Status ────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 mb-5">
+
+        {/* LEFT — CHARACTER IDENTITY */}
+        <motion.div
+          className="relative overflow-hidden"
+          style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
+          <CornerDecorations color="var(--color-accent-gold)" />
+          <PanelHeader label="character.identity" color="var(--color-accent-gold)" />
+
+          <div className="p-5 space-y-5">
+            {/* Email display */}
+            <DarkInput
+              label="identity.email"
+              value={email}
+              disabled
+            />
+
+            {/* Student ID */}
+            <DarkInput
+              label="student.id"
+              value={studentNumber}
+              onChange={setStudentNumber}
+              placeholder="Niet ingevuld"
+            />
+
+            {/* Class / commissie */}
+            <div className="space-y-1.5">
+              <label
+                className="block font-mono text-[10px] uppercase tracking-[0.2em]"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                class.assignment
+              </label>
+              <div className="relative">
+                <select
+                  value={commissie}
+                  onChange={(e) => setCommissie(e.target.value)}
+                  className="w-full py-2.5 px-3 text-sm outline-none transition-all duration-200 appearance-none"
+                  style={{
+                    backgroundColor: 'var(--color-bg)',
+                    color: 'var(--color-text)',
+                    border: '1px solid var(--color-border)',
+                    fontFamily: 'var(--font-mono)',
+                  }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--color-accent-gold)' }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--color-border)' }}
+                >
+                  <option value="">— geen commissie —</option>
+                  {COMMISSIES.map((c) => (
+                    <option key={c.id} value={c.id}>{c.emoji} {c.naam}</option>
+                  ))}
+                </select>
+                {/* custom chevron */}
+                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                  <span className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>▼</span>
+                </div>
+              </div>
+              {commissieDef && (
+                <p className="font-mono text-[10px] mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                  // {commissieDef.beschrijving}
+                </p>
+              )}
+            </div>
+
+            {/* Save button + message */}
+            <div className="flex items-center gap-4 pt-1">
+              <motion.button
+                onClick={handleSave}
+                disabled={saving}
+                className="relative overflow-hidden font-mono text-[11px] uppercase tracking-[0.2em] py-2.5 px-5 transition-all duration-200 disabled:opacity-50"
+                style={{
+                  backgroundColor: saving ? 'rgba(242,158,24,0.12)' : 'var(--color-accent-gold)',
+                  color: saving ? 'var(--color-accent-gold)' : 'var(--color-bg)',
+                  border: '1px solid var(--color-accent-gold)',
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {saving ? '// saving...' : '> save.config()'}
+              </motion.button>
+
+              {message && (
+                <motion.span
+                  className="font-mono text-[11px]"
+                  initial={{ opacity: 0, x: -4 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  style={{
+                    color: message.startsWith('error')
+                      ? 'var(--color-accent-red)'
+                      : 'var(--color-accent-green)',
+                  }}
+                >
+                  {message}
+                </motion.span>
+              )}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* RIGHT — ACCOUNT STATUS */}
+        <motion.div
+          className="relative overflow-hidden"
+          style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
+          <CornerDecorations color="var(--color-accent-blue)" />
+          <PanelHeader label="account.status" color="var(--color-accent-blue)" />
+
+          <div className="p-5 space-y-5">
+            {/* Membership active indicator */}
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
+                membership
+              </span>
+              <div className="flex items-center gap-2">
+                <motion.div
+                  className="w-2 h-2"
+                  style={{
+                    backgroundColor: membershipActive ? 'var(--color-accent-green)' : 'var(--color-accent-red)',
+                  }}
+                  animate={membershipActive ? { opacity: [1, 0.4, 1] } : {}}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <span
+                  className="font-mono text-xs font-bold uppercase tracking-[0.1em]"
+                  style={{ color: membershipActive ? 'var(--color-accent-green)' : 'var(--color-accent-red)' }}
+                >
+                  {membershipActive ? 'ACTIVE' : 'INACTIVE'}
+                </span>
+              </div>
+            </div>
+
+            {/* Member since */}
+            {memberSince && (
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
+                  member.since
+                </span>
+                <span className="font-mono text-[11px]" style={{ color: 'var(--color-text)' }}>
+                  {new Date(memberSince).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </span>
+              </div>
+            )}
+
+            {/* Expires at */}
+            {expiresAt && (
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
+                  expires
+                </span>
+                <span className="font-mono text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
+                  {new Date(expiresAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </span>
+              </div>
+            )}
+
+            {/* Divider */}
+            <div style={{ borderTop: '1px dashed rgba(255,255,255,0.06)' }} />
+
+            {/* Rank badge */}
+            <RankBadge points={points} />
+
+            {/* Divider */}
+            <div style={{ borderTop: '1px dashed rgba(255,255,255,0.06)' }} />
+
+            {/* Stripe portal */}
+            <motion.button
+              onClick={handleStripePortal}
+              className="w-full font-mono text-[11px] uppercase tracking-[0.15em] py-2.5 px-4 transition-all duration-200 text-left"
+              style={{
+                backgroundColor: 'transparent',
+                color: 'var(--color-accent-blue)',
+                border: '1px solid rgba(59,130,246,0.3)',
+              }}
+              whileHover={{
+                borderColor: 'var(--color-accent-blue)',
+                backgroundColor: 'rgba(59,130,246,0.06)',
+              }}
+              whileTap={{ scale: 0.98 }}
+            >
+              {'>'} manage.subscription()
+            </motion.button>
+          </div>
+        </motion.div>
       </div>
+
+      {/* ── SECURITY.CONFIG — full width ─────────────────────────────────────── */}
+      <motion.div
+        className="relative overflow-hidden"
+        style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+      >
+        <CornerDecorations color="var(--color-accent-red)" />
+        <PanelHeader
+          label={`security.config · ${hasPassword ? 'password.change' : 'password.set'}`}
+          color="var(--color-accent-red)"
+        />
+
+        <div className="p-5">
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-4 items-end">
+            {/* Current password — only if password already set */}
+            {hasPassword ? (
+              <DarkInput
+                label="current.password"
+                type="password"
+                value={currentPassword}
+                onChange={setCurrentPassword}
+                placeholder="••••••••"
+              />
+            ) : (
+              <div className="flex items-end pb-0.5">
+                <span className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
+                  // no password set yet — set one below
+                </span>
+              </div>
+            )}
+
+            {/* New password */}
+            <DarkInput
+              label="new.password"
+              type="password"
+              value={newPassword}
+              onChange={setNewPassword}
+              placeholder="min. 8 characters"
+            />
+
+            {/* Confirm button */}
+            <div className="flex flex-col gap-2">
+              <motion.button
+                onClick={handlePasswordChange}
+                disabled={pwSaving || !newPassword}
+                className="font-mono text-[11px] uppercase tracking-[0.15em] py-2.5 px-5 transition-all duration-200 disabled:opacity-40 whitespace-nowrap"
+                style={{
+                  backgroundColor: 'transparent',
+                  color: 'var(--color-accent-red)',
+                  border: '1px solid rgba(239,68,68,0.4)',
+                }}
+                whileHover={{ borderColor: 'var(--color-accent-red)', backgroundColor: 'rgba(239,68,68,0.06)' }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {pwSaving ? '// updating...' : hasPassword ? '> update.pass()' : '> set.pass()'}
+              </motion.button>
+
+              {pwMessage && (
+                <motion.span
+                  className="font-mono text-[10px]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  style={{
+                    color: pwMessage === 'password.updated'
+                      ? 'var(--color-accent-green)'
+                      : 'var(--color-accent-red)',
+                  }}
+                >
+                  {pwMessage}
+                </motion.span>
+              )}
+            </div>
+          </div>
+
+          {/* Security hint line */}
+          <div
+            className="mt-4 flex items-center gap-2 font-mono text-[10px]"
+            style={{ color: 'var(--color-text-muted)', borderTop: '1px dashed rgba(255,255,255,0.04)', paddingTop: '12px' }}
+          >
+            <span style={{ color: 'rgba(239,68,68,0.5)' }}>▲</span>
+            <span>// password must be ≥8 characters · never share your credentials</span>
+          </div>
+        </div>
+      </motion.div>
     </div>
   )
 }

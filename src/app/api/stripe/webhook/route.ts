@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { createServiceClient } from '@/lib/supabase'
+import { sendTicketEmail, generateTicketNumber } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   const body = await req.text()
@@ -26,6 +27,52 @@ export async function POST(req: NextRequest) {
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object
+
+      // Event ticket betaling — afhandelen vóór membership logica
+      if (session.metadata?.type === 'event_ticket') {
+        const ticketId = session.metadata.ticket_id
+        if (ticketId) {
+          const ticketNumber = generateTicketNumber()
+
+          const { data: updatedTicket } = await supabase
+            .from('tickets')
+            .update({ status: 'paid', ticket_number: ticketNumber })
+            .eq('id', ticketId)
+            .select('id, email, name, member_id, paid_amount, event_id')
+            .single()
+
+          // Stuur bevestigingsmail na betaling
+          if (updatedTicket) {
+            try {
+              const { data: event } = await supabase
+                .from('events')
+                .select('title, date, end_date, location')
+                .eq('id', updatedTicket.event_id)
+                .single()
+
+              if (event) {
+                await sendTicketEmail({
+                  to: updatedTicket.email as string,
+                  buyerName: (updatedTicket.name as string) ?? (updatedTicket.email as string).split('@')[0],
+                  buyerEmail: updatedTicket.email as string,
+                  isMember: !!(updatedTicket.member_id),
+                  eventTitle: event.title as string,
+                  eventDate: new Date(event.date as string),
+                  eventEndDate: event.end_date ? new Date(event.end_date as string) : null,
+                  eventLocation: (event.location as string) ?? '',
+                  ticketId: updatedTicket.id as string,
+                  ticketNumber,
+                  paidAmount: (updatedTicket.paid_amount as number) ?? 0,
+                })
+              }
+            } catch (emailErr) {
+              console.error('[email] Ticket mail mislukt na Stripe betaling:', emailErr)
+            }
+          }
+        }
+        break
+      }
+
       const memberId = session.metadata?.member_id
       if (!memberId) break
 

@@ -27,8 +27,8 @@ export async function PATCH(
 
     // Welke velden mag het lid zelf updaten vs admin
     const allowedFields = isAdmin
-      ? ['student_number', 'role', 'commissie', 'commissie_voorstel', 'points', 'membership_active', 'membership_expires_at']
-      : ['student_number', 'commissie']
+      ? ['student_number', 'role', 'commissie', 'commissie_voorstel', 'points', 'membership_active', 'membership_expires_at', 'active_skin', 'active_badges']
+      : ['student_number', 'commissie', 'active_skin', 'active_badges']
 
     const updateData: Record<string, unknown> = {}
     for (const field of allowedFields) {

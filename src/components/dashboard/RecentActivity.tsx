@@ -1,9 +1,11 @@
 'use client'
 
-import { Zap, Calendar } from 'lucide-react'
+import { motion, useReducedMotion } from 'motion/react'
+import { Zap, Target } from 'lucide-react'
 
-interface Scan {
+interface ActivityItem {
   id: string
+  type: 'scan' | 'challenge'
   points: number
   reason: string
   event_name: string | null
@@ -11,85 +13,134 @@ interface Scan {
 }
 
 interface RecentActivityProps {
-  scans: Scan[]
+  items: ActivityItem[]
 }
 
-export default function RecentActivity({ scans }: RecentActivityProps) {
-  if (scans.length === 0) {
+export default function RecentActivity({ items }: RecentActivityProps) {
+  const shouldReduceMotion = useReducedMotion()
+
+  if (items.length === 0) {
     return (
-      <div
-        className="relative p-8 rounded-xl text-center overflow-hidden"
-        style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+      <motion.div
+        className="relative overflow-hidden font-mono"
+        style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
       >
-        <div
-          className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
-          style={{ backgroundColor: 'rgba(242, 158, 24, 0.08)' }}
-        >
-          <Zap size={28} style={{ color: 'var(--color-accent-gold)' }} />
+        {/* Corner decorations */}
+        <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
+        <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
+
+        <div className="px-5 py-3" style={{ borderBottom: '1px solid var(--color-border)' }}>
+          <span className="text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
+            activity.log
+          </span>
         </div>
-        <p className="font-semibold mb-1" style={{ color: 'var(--color-text)' }}>
-          Nog geen activiteit
-        </p>
-        <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-          Ga naar een SIT event en scan je QR code om punten te verdienen
-        </p>
-      </div>
+        <div className="px-5 py-8 text-center">
+          <motion.div
+            animate={shouldReduceMotion ? {} : { rotate: [0, -6, 6, 0] }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <Zap size={24} style={{ color: 'var(--color-accent-gold)', opacity: 0.4 }} className="mx-auto mb-3" />
+          </motion.div>
+          <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+            {'>'} awaiting first event scan...
+          </p>
+          <p className="text-[10px] mt-1" style={{ color: 'rgba(255,255,255,0.2)' }}>
+            ga naar een SIT event en scan je QR code
+          </p>
+        </div>
+      </motion.div>
     )
   }
 
   return (
     <div
-      className="rounded-xl overflow-hidden"
-      style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+      className="relative overflow-hidden font-mono"
+      style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
     >
-      <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: '1px solid var(--color-border)' }}>
-        <h3 className="text-[11px] uppercase tracking-[0.15em] font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-          Recente activiteit
-        </h3>
-        <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(242, 158, 24, 0.1)', color: 'var(--color-accent-gold)' }}>
-          {scans.length} scans
+      {/* Corner decorations */}
+      <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
+      <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
+
+      <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid var(--color-border)' }}>
+        <span className="text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
+          activity.log
         </span>
+        <motion.span
+          className="text-[10px] px-1.5 py-0.5"
+          style={{ color: 'var(--color-accent-gold)', border: '1px solid rgba(242, 158, 24, 0.2)' }}
+          initial={shouldReduceMotion ? {} : { scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.5, type: 'spring', stiffness: 500, damping: 15 }}
+        >
+          {items.length}
+        </motion.span>
       </div>
 
-      <div>
-        {scans.slice(0, 10).map((scan, i) => (
-          <div
-            key={scan.id}
-            className="px-5 py-3.5 flex items-center gap-3 transition-colors"
-            style={{
-              borderBottom: i < Math.min(scans.length - 1, 9) ? '1px solid var(--color-border)' : 'none',
-            }}
-          >
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-              style={{ backgroundColor: 'rgba(242, 158, 24, 0.08)' }}
+      <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+        {items.map((item, i) => {
+          const time = new Date(item.created_at)
+          const timeStr = `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`
+          const dateStr = time.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })
+
+          const isChallenge = item.type === 'challenge'
+          const dotColor = isChallenge ? 'var(--color-accent-blue)' : 'var(--color-accent-gold)'
+          const dotGlow = isChallenge ? '0 0 6px rgba(59, 130, 246, 0.4)' : '0 0 6px rgba(242, 158, 24, 0.4)'
+
+          return (
+            <motion.div
+              key={item.id}
+              className="flex items-start gap-4 px-5 py-3 group"
+              style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+              initial={shouldReduceMotion ? {} : { opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 + i * 0.05, type: 'spring', stiffness: 400, damping: 28 }}
+              whileHover={{ backgroundColor: 'rgba(242, 158, 24, 0.02)' }}
             >
-              <Zap size={14} style={{ color: 'var(--color-accent-gold)' }} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate" style={{ color: 'var(--color-text)' }}>
-                {scan.reason}
-              </p>
-              <div className="flex items-center gap-2 mt-0.5">
-                {scan.event_name && (
-                  <span className="text-[11px]" style={{ color: 'var(--color-accent-blue)' }}>
-                    {scan.event_name}
+              {/* Timestamp column */}
+              <div className="shrink-0 text-[10px] pt-0.5 w-20" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                <span>{dateStr}</span>
+                <span className="ml-1.5" style={{ color: 'rgba(255,255,255,0.15)' }}>{timeStr}</span>
+              </div>
+
+              {/* Type icon */}
+              <div className="shrink-0 pt-0.5">
+                {isChallenge ? (
+                  <Target size={12} style={{ color: dotColor, filter: `drop-shadow(${dotGlow})` }} />
+                ) : (
+                  <Zap size={12} style={{ color: dotColor, filter: `drop-shadow(${dotGlow})` }} />
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <span className="text-xs" style={{ color: 'var(--color-text)' }}>
+                  {item.reason}
+                </span>
+                {item.event_name && (
+                  <span className="text-[10px] ml-2" style={{ color: 'var(--color-accent-blue)' }}>
+                    @{item.event_name}
                   </span>
                 )}
-                <span className="flex items-center gap-1 text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
-                  <Calendar size={10} />
-                  {new Date(scan.created_at).toLocaleDateString('nl-NL')}
-                </span>
+                {isChallenge && (
+                  <span className="text-[10px] ml-2" style={{ color: 'var(--color-accent-blue)', opacity: 0.7 }}>
+                    challenge
+                  </span>
+                )}
               </div>
-            </div>
-            <span
-              className="text-sm font-bold shrink-0 px-2 py-0.5 rounded-md"
-              style={{ color: 'var(--color-accent-gold)', backgroundColor: 'rgba(242, 158, 24, 0.08)' }}
-            >
-              +{scan.points}
-            </span>
-          </div>
-        ))}
+
+              {/* XP gain */}
+              <span
+                className="shrink-0 text-xs font-bold"
+                style={{ color: isChallenge ? 'var(--color-accent-blue)' : 'var(--color-accent-gold)' }}
+              >
+                +{item.points}xp
+              </span>
+            </motion.div>
+          )
+        })}
       </div>
     </div>
   )

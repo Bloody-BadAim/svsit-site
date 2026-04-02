@@ -8,6 +8,7 @@ const ADMIN_ITEMS = [
   { href: '/admin/leden', label: 'Leden', icon: '☰' },
   { href: '/admin/scanner', label: 'Scanner', icon: '⎕' },
   { href: '/admin/events', label: 'Events', icon: '◈' },
+  { href: '/admin/challenges', label: 'Challenges', icon: '◎' },
 ]
 
 export default function AdminNav() {

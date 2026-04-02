@@ -1,0 +1,58 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@/lib/auth'
+import { createServiceClient } from '@/lib/supabase'
+import { ADMIN_EMAILS } from '@/lib/constants'
+import { grantRewards } from '@/lib/rewards'
+import type { SubmissionStatus } from '@/types/database'
+
+// PATCH — Approve or reject a challenge submission (admin only)
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth()
+    if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
+      return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
+    }
+
+    const { id } = await params
+    const { status } = await req.json() as { status: SubmissionStatus }
+
+    if (status !== 'approved' && status !== 'rejected') {
+      return NextResponse.json(
+        { data: null, error: 'status moet "approved" of "rejected" zijn', meta: null },
+        { status: 400 }
+      )
+    }
+
+    const supabase = createServiceClient()
+
+    // Update submission
+    const { data, error } = await supabase
+      .from('challenge_submissions')
+      .update({
+        status,
+        reviewed_by: session.user.email,
+        reviewed_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select('*')
+      .single()
+
+    if (error) throw error
+    if (!data) {
+      return NextResponse.json({ data: null, error: 'Submission niet gevonden', meta: null }, { status: 404 })
+    }
+
+    // If approved: recalculate stats and grant rewards
+    if (status === 'approved') {
+      await grantRewards(data.member_id)
+    }
+
+    return NextResponse.json({ data, error: null, meta: null })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Onbekende fout'
+    return NextResponse.json({ data: null, error: message, meta: null }, { status: 500 })
+  }
+}

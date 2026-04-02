@@ -1,9 +1,11 @@
 "use client";
 
-import { Star, Check, Lock } from "lucide-react";
-import { getRank, ROLLEN } from "@/lib/constants";
+import { Star } from "lucide-react";
+import { getRank, ROLLEN, getLevel, getLevelProgress } from "@/lib/constants";
 import type { Role } from "@/types/database";
 import QRCode from "react-qr-code";
+import { getSkin } from "@/lib/cardSkins";
+import BadgeIcon from "@/components/badges/BadgeIcon";
 
 const BARCODE_BARS = [
   2, 1, 3, 1, 2, 1, 1, 3, 2, 1, 3, 1, 1, 2, 1, 3, 1, 2, 2, 1, 1, 3, 1, 2, 1, 1, 3, 2, 1, 2,
@@ -35,6 +37,9 @@ export interface MemberCardData {
   email?: string;
   stats?: { label: string; color: string; fill: number }[];
   badges?: { unlocked: boolean; label: string }[];
+  skin?: string;
+  activeBadges?: string[];
+  dynamicStats?: { code: number; social: number; learn: number; impact: number };
 }
 
 export default function MemberCard({
@@ -56,14 +61,34 @@ export default function MemberCard({
   const commissie = data?.commissie;
   const points = data?.points ?? 0;
   const rank = getRank(points);
-  const level = Math.floor(points / 5) + 1;
-  const xpInLevel = points % 5;
-  const xpMax = 5;
-  const xpPercent = (xpInLevel / xpMax) * 100;
+  const level = getLevel(points);
+  const levelProg = getLevelProgress(points);
+  const xpPercent = levelProg.percent;
   const rolLabel = data ? (commissie ? ROLLEN[role]?.naam || role : ROLLEN[role]?.naam || "Member") : "Undecided";
-  const stats = data?.stats || DEFAULT_STATS;
-  const badges = data?.badges || DEFAULT_BADGES;
   const isPlaceholder = !data;
+
+  // Skin
+  const skinDef = getSkin(data?.skin || "default");
+
+  // Stats: dynamicStats > data.stats > DEFAULT_STATS
+  const stats = data?.dynamicStats
+    ? [
+        { label: "CODE", color: "var(--color-accent-blue)", fill: Math.min(data.dynamicStats.code * 10, 100) },
+        { label: "SOCIAL", color: "var(--color-accent-green)", fill: Math.min(data.dynamicStats.social * 10, 100) },
+        { label: "LEARN", color: "var(--color-accent-gold)", fill: Math.min(data.dynamicStats.learn * 10, 100) },
+        { label: "IMPACT", color: "var(--color-accent-red)", fill: Math.min(data.dynamicStats.impact * 10, 100) },
+      ]
+    : (data?.stats || DEFAULT_STATS);
+
+  // Badges: activeBadges prop > data.badges > DEFAULT_BADGES
+  const activeBadges = data?.activeBadges;
+  const badges = data?.badges || DEFAULT_BADGES;
+
+  // Border wrapper: always use gradient as background for the 2px wrapper
+  const borderWrapperStyle: React.CSSProperties = {
+    background: skinDef.border,
+    ...(skinDef.animated ? { animation: "borderRotate 8s linear infinite" } : {}),
+  };
 
   const qrData = data?.memberId
     ? JSON.stringify({ id: data.memberId, email: data.email })
@@ -73,29 +98,23 @@ export default function MemberCard({
     <div className={`relative ${className}`} style={style}>
       {/* Glow */}
       <div
-        className="absolute -inset-4 pointer-events-none"
+        className="absolute -inset-6 pointer-events-none"
         aria-hidden="true"
         style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(245, 158, 11, 0.12) 0%, transparent 70%)",
-          filter: "blur(30px)",
+          background: `radial-gradient(ellipse at center, ${skinDef.glowColor} 0%, transparent 70%)`,
         }}
       />
 
       {/* Gradient border */}
       <div
         className="relative p-[2px] overflow-hidden"
-        style={{
-          background:
-            "conic-gradient(from 0deg, #F59E0B, #3B82F6, #EF4444, #22C55E, #F59E0B)",
-          animation: "borderRotate 8s linear infinite",
-        }}
+        style={borderWrapperStyle}
       >
         {/* Card body */}
         <div
           className="relative overflow-hidden"
           style={{
-            background: "rgba(17, 17, 19, 0.95)",
+            background: skinDef.background,
             backdropFilter: "blur(8px)",
           }}
         >
@@ -107,7 +126,7 @@ export default function MemberCard({
               background:
                 "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.04) 45%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.04) 55%, transparent 60%)",
               backgroundSize: "200% 100%",
-              animation: "cardShine 6s ease-in-out infinite",
+              ...(skinDef.animated ? { animation: "cardShine 6s ease-in-out infinite" } : {}),
             }}
           />
 
@@ -122,18 +141,49 @@ export default function MemberCard({
             }}
           />
 
+          {/* Skin overlay pattern */}
+          {skinDef.overlay && (
+            <div
+              className="absolute inset-0 pointer-events-none z-[5]"
+              aria-hidden="true"
+              style={{
+                backgroundImage: skinDef.overlay,
+                backgroundSize: skinDef.overlay.includes('radial') ? '16px 16px' : undefined,
+                opacity: skinDef.overlayOpacity ?? 0.5,
+              }}
+            />
+          )}
+
           {/* Inner border frame */}
           <div
             className="absolute pointer-events-none z-20"
             aria-hidden="true"
-            style={{ inset: 10, border: "1px solid rgba(255,255,255,0.05)" }}
+            style={{ inset: 10, border: `1px solid ${skinDef.innerBorder || 'rgba(255,255,255,0.05)'}` }}
           />
+
+          {/* Skin stamp */}
+          {skinDef.stamp && (
+            <div
+              className="absolute top-4 right-4 z-20 font-mono text-[8px] font-bold uppercase tracking-[0.2em] pointer-events-none"
+              aria-hidden="true"
+              style={{ color: skinDef.accent, opacity: 0.3 }}
+            >
+              {skinDef.stamp}
+            </div>
+          )}
 
           {/* ── Header ── */}
           <div
-            className="flex items-center justify-between border-b"
+            className="flex items-center justify-between border-b relative"
             style={{ padding: "20px 32px", borderColor: "rgba(255,255,255,0.06)" }}
           >
+            {/* Header accent line */}
+            {skinDef.headerGradient && (
+              <div
+                className="absolute bottom-0 left-0 right-0 h-[1px]"
+                style={{ background: skinDef.headerGradient, opacity: 0.4 }}
+              />
+            )}
             <span className="font-mono text-[11px] font-bold uppercase tracking-[0.15em]">
               <span className="text-[var(--color-accent-gold)]">{"{"}</span>
               <span className="text-[var(--color-text)]">SIT</span>
@@ -208,7 +258,7 @@ export default function MemberCard({
                   Experience
                 </span>
                 <span className="font-mono text-[10px] text-[var(--color-text-muted)]">
-                  {points} / {level * xpMax} xp
+                  {levelProg.current} / {levelProg.max} xp
                 </span>
               </div>
               <div
@@ -286,27 +336,52 @@ export default function MemberCard({
               </div>
 
               <div className="flex items-center gap-2">
-                {badges.map((badge, i) => (
-                  <div
-                    key={i}
-                    className="w-7 h-7 flex items-center justify-center"
-                    title={badge.label}
-                    style={{
-                      border: badge.unlocked
-                        ? "1px solid var(--color-accent-gold)"
-                        : "1px dashed rgba(255,255,255,0.08)",
-                      background: badge.unlocked
-                        ? "rgba(245, 158, 11, 0.08)"
-                        : "transparent",
-                    }}
-                  >
-                    {badge.unlocked ? (
-                      <Check size={12} className="text-[var(--color-accent-gold)]" />
-                    ) : (
-                      <Lock size={9} className="text-[var(--color-text-muted)] opacity-20" />
-                    )}
-                  </div>
-                ))}
+                {activeBadges
+                  ? (() => {
+                      const BADGE_SLOTS = 4;
+                      const slots: React.ReactNode[] = activeBadges
+                        .slice(0, BADGE_SLOTS)
+                        .map((badgeId) => (
+                          <BadgeIcon key={badgeId} badgeId={badgeId} size={16} locked={false} />
+                        ));
+                      for (let i = slots.length; i < BADGE_SLOTS; i++) {
+                        slots.push(
+                          <BadgeIcon key={`locked-${i}`} badgeId="badge_joined" size={16} locked={true} />
+                        );
+                      }
+                      return slots;
+                    })()
+                  : badges.map((badge, i) => (
+                      <div
+                        key={i}
+                        className="w-7 h-7 flex items-center justify-center"
+                        title={badge.label}
+                        style={{
+                          border: badge.unlocked
+                            ? "1px solid var(--color-accent-gold)"
+                            : "1px dashed rgba(255,255,255,0.08)",
+                          background: badge.unlocked
+                            ? "rgba(245, 158, 11, 0.08)"
+                            : "transparent",
+                        }}
+                      >
+                        {badge.unlocked ? (
+                          <span
+                            className="font-mono text-[10px] text-[var(--color-accent-gold)]"
+                            aria-hidden="true"
+                          >
+                            ✓
+                          </span>
+                        ) : (
+                          <span
+                            className="font-mono text-[9px] text-[var(--color-text-muted)] opacity-20"
+                            aria-hidden="true"
+                          >
+                            ✕
+                          </span>
+                        )}
+                      </div>
+                    ))}
               </div>
             </div>
 
@@ -328,7 +403,7 @@ export default function MemberCard({
                   style={{
                     width,
                     height: `${60 + (i % 3) * 15}%`,
-                    background: "var(--color-accent-gold)",
+                    background: skinDef.accent,
                     opacity: BARCODE_OPACITIES[i],
                   }}
                 />

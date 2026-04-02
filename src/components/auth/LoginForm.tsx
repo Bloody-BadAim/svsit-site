@@ -11,11 +11,6 @@ export default function LoginForm() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleMicrosoft() {
-    setLoading(true)
-    await signIn('microsoft-entra-id', { callbackUrl: '/dashboard' })
-  }
-
   async function handleCredentials(e: React.FormEvent) {
     e.preventDefault()
     setError('')
@@ -37,35 +32,7 @@ export default function LoginForm() {
 
   return (
     <div className="w-full">
-      {/* Microsoft login — blue button per design doc */}
-      <button
-        onClick={handleMicrosoft}
-        disabled={loading}
-        className="w-full flex items-center justify-center gap-3 py-3.5 px-6 rounded-md font-bold text-base transition-all duration-200 cursor-pointer disabled:opacity-50"
-        style={{
-          backgroundColor: 'var(--color-accent-blue)',
-          color: '#ffffff',
-        }}
-      >
-        <svg width="18" height="18" viewBox="0 0 21 21" fill="none">
-          <rect width="10" height="10" fill="currentColor" opacity="0.9" />
-          <rect x="11" width="10" height="10" fill="currentColor" opacity="0.7" />
-          <rect y="11" width="10" height="10" fill="currentColor" opacity="0.7" />
-          <rect x="11" y="11" width="10" height="10" fill="currentColor" opacity="0.5" />
-        </svg>
-        Inloggen met Microsoft
-      </button>
-
-      {/* Divider */}
-      <div className="flex items-center gap-4 my-8">
-        <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
-        <span className="font-mono text-[10px] text-[var(--color-text-muted)] uppercase tracking-[0.2em]">
-          of
-        </span>
-        <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
-      </div>
-
-      {/* Email + wachtwoord — glass style inputs per design doc */}
+      {/* Email + wachtwoord */}
       <form onSubmit={handleCredentials} className="space-y-4">
         <div>
           <label
