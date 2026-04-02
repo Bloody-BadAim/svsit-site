@@ -370,8 +370,28 @@ export default function KonamiGame() {
     }
 
     rafRef.current = requestAnimationFrame(gameLoop);
+
+    // Pause game loop when tab is hidden to save CPU
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        // Pause the timer by adjusting startTime when tab becomes visible again
+      } else {
+        // Adjust start time to account for time spent hidden
+        const gs = gameStateRef.current;
+        if (gs && !gs.gameOver) {
+          const elapsed = (performance.now() - startTimeRef.current) / 1000;
+          const pausedDuration = GAME_DURATION - gs.timeLeft;
+          startTimeRef.current = performance.now() - pausedDuration * 1000;
+          rafRef.current = requestAnimationFrame(gameLoop);
+        }
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
     };
   }, [showGame, gameOver]);
 

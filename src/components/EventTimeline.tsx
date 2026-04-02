@@ -427,14 +427,18 @@ export default function EventTimeline({
       raf2 = requestAnimationFrame(updatePath);
     });
 
+    // Debounced ResizeObserver to avoid rapid recalculations
+    let resizeRaf = 0;
     const ro = new ResizeObserver(() => {
-      requestAnimationFrame(updatePath);
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(updatePath);
     });
     if (containerRef.current) ro.observe(containerRef.current);
 
     return () => {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
+      cancelAnimationFrame(resizeRaf);
       ro.disconnect();
     };
   }, [events, isMobile]); // NO activeId — blocks don't change height

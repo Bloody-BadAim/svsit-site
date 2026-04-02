@@ -1,9 +1,15 @@
 "use client";
 
 import { useMotionValue, motion, useMotionTemplate } from "motion/react";
-import React, { MouseEvent as ReactMouseEvent, useState } from "react";
-import { CanvasRevealEffect } from "@/components/ui/canvas-reveal-effect";
+import React, { MouseEvent as ReactMouseEvent, useState, lazy, Suspense } from "react";
 import { cn } from "@/lib/utils";
+
+// Lazy-load Three.js canvas effect — ~100KB saved from initial bundle
+const CanvasRevealEffect = lazy(() =>
+  import("@/components/ui/canvas-reveal-effect").then((m) => ({
+    default: m.CanvasRevealEffect,
+  }))
+);
 
 export const CardSpotlight = ({
   children,
@@ -59,16 +65,18 @@ export const CardSpotlight = ({
         }}
       >
         {isHovering && (
-          <CanvasRevealEffect
-            animationSpeed={5}
-            containerClassName="bg-transparent absolute inset-0 pointer-events-none"
-            colors={revealColors || [
-              [59, 130, 246],
-              [139, 92, 246],
-            ]}
-            dotSize={3}
-            showGradient={false}
-          />
+          <Suspense fallback={null}>
+            <CanvasRevealEffect
+              animationSpeed={5}
+              containerClassName="bg-transparent absolute inset-0 pointer-events-none"
+              colors={revealColors || [
+                [59, 130, 246],
+                [139, 92, 246],
+              ]}
+              dotSize={3}
+              showGradient={false}
+            />
+          </Suspense>
         )}
       </motion.div>
       {children}

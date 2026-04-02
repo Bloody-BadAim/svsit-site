@@ -153,12 +153,12 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 2, ease: "easeInOut" }}
         >
-          {/* Gold blob — top left (static on mobile for perf) */}
+          {/* Gold blob — top left */}
           <motion.div
             className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[80px] md:blur-[120px]"
             style={{ background: "rgba(245, 158, 11, 0.20)" }}
             animate={
-              reducedMotion
+              reducedMotion || !isVisible
                 ? {}
                 : {
                   x: [-40, 60, -40],
@@ -178,7 +178,7 @@ export default function Hero() {
             className="absolute -bottom-[15%] -right-[10%] w-[45%] h-[45%] rounded-full blur-[80px] md:blur-[120px]"
             style={{ background: "rgba(59, 130, 246, 0.16)" }}
             animate={
-              reducedMotion
+              reducedMotion || !isVisible
                 ? {}
                 : {
                   x: [40, -50, 40],
@@ -198,7 +198,7 @@ export default function Hero() {
             className="absolute top-[30%] left-[15%] w-[30%] h-[30%] rounded-full blur-[60px] md:blur-[100px]"
             style={{ background: "rgba(239, 68, 68, 0.13)" }}
             animate={
-              reducedMotion
+              reducedMotion || !isVisible
                 ? {}
                 : {
                   x: [20, -30, 20],
@@ -217,7 +217,7 @@ export default function Hero() {
             className="absolute bottom-[10%] right-[25%] w-[25%] h-[25%] rounded-full blur-[60px] md:blur-[100px]"
             style={{ background: "rgba(34, 197, 94, 0.11)" }}
             animate={
-              reducedMotion
+              reducedMotion || !isVisible
                 ? {}
                 : {
                   x: [-30, 30, -30],

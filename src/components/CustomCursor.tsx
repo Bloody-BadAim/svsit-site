@@ -42,7 +42,7 @@ export default function CustomCursor() {
       animationId = requestAnimationFrame(animate);
     };
 
-    const onMouseEnterInteractive = () => {
+    const setInteractive = () => {
       circle.style.width = "54px";
       circle.style.height = "54px";
       circle.style.marginLeft = "-9px";
@@ -51,7 +51,14 @@ export default function CustomCursor() {
       circle.style.backgroundColor = "rgba(245, 158, 11, 0.1)";
     };
 
-    const onMouseLeaveInteractive = () => {
+    const setText = () => {
+      circle.style.width = "24px";
+      circle.style.height = "24px";
+      circle.style.marginLeft = "6px";
+      circle.style.marginTop = "6px";
+    };
+
+    const resetCircle = () => {
       circle.style.width = "36px";
       circle.style.height = "36px";
       circle.style.marginLeft = "0px";
@@ -60,54 +67,52 @@ export default function CustomCursor() {
       circle.style.backgroundColor = "transparent";
     };
 
-    const onMouseEnterText = () => {
-      circle.style.width = "24px";
-      circle.style.height = "24px";
-      circle.style.marginLeft = "6px";
-      circle.style.marginTop = "6px";
+    // Event delegation: single listener on document instead of per-element
+    const onMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("a, button, [role='button'], input, select, textarea")) {
+        setInteractive();
+      } else if (target.closest("p, h1, h2, h3, h4, h5, h6, span, li")) {
+        setText();
+      }
     };
 
-    const onMouseLeaveText = () => {
-      circle.style.width = "36px";
-      circle.style.height = "36px";
-      circle.style.marginLeft = "0px";
-      circle.style.marginTop = "0px";
+    const onMouseOut = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const related = e.relatedTarget as HTMLElement | null;
+      // Only reset when leaving an interactive/text element to a non-interactive/text element
+      if (
+        target.closest("a, button, [role='button'], input, select, textarea") &&
+        !related?.closest("a, button, [role='button'], input, select, textarea")
+      ) {
+        resetCircle();
+      } else if (
+        target.closest("p, h1, h2, h3, h4, h5, h6, span, li") &&
+        !related?.closest("p, h1, h2, h3, h4, h5, h6, span, li") &&
+        !related?.closest("a, button, [role='button'], input, select, textarea")
+      ) {
+        resetCircle();
+      }
     };
 
     window.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseover", onMouseOver);
+    document.addEventListener("mouseout", onMouseOut);
     animationId = requestAnimationFrame(animate);
 
-    // Add cursor: none to body
+    // Add cursor: none to body via CSS class (no MutationObserver needed)
     document.body.style.cursor = "none";
-
-    // Observe interactive elements
-    const interactiveSelector = "a, button, [role='button'], input, select, textarea";
-    const textSelector = "p, h1, h2, h3, h4, h5, h6, span, li";
-
-    const addListeners = () => {
-      document.querySelectorAll(interactiveSelector).forEach((el) => {
-        (el as HTMLElement).style.cursor = "none";
-        el.addEventListener("mouseenter", onMouseEnterInteractive);
-        el.addEventListener("mouseleave", onMouseLeaveInteractive);
-      });
-      document.querySelectorAll(textSelector).forEach((el) => {
-        // Skip if it's also interactive
-        if ((el as HTMLElement).closest(interactiveSelector)) return;
-        el.addEventListener("mouseenter", onMouseEnterText);
-        el.addEventListener("mouseleave", onMouseLeaveText);
-      });
-    };
-
-    // Initial setup + re-apply on DOM changes
-    addListeners();
-    const observer = new MutationObserver(addListeners);
-    observer.observe(document.body, { childList: true, subtree: true });
+    const style = document.createElement("style");
+    style.textContent = "a,button,[role='button'],input,select,textarea,p,h1,h2,h3,h4,h5,h6,span,li{cursor:none!important}";
+    document.head.appendChild(style);
 
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseover", onMouseOver);
+      document.removeEventListener("mouseout", onMouseOut);
       cancelAnimationFrame(animationId);
       document.body.style.cursor = "";
-      observer.disconnect();
+      style.remove();
       mql.removeEventListener("change", handleChange);
     };
   }, [isTouch]);
