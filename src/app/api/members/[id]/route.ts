@@ -3,6 +3,47 @@ import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { ADMIN_EMAILS } from '@/lib/constants'
 
+// GET — Lid ophalen (eigen profiel of admin)
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth()
+    if (!session?.user) {
+      return NextResponse.json({ data: null, error: 'Niet ingelogd', meta: null }, { status: 401 })
+    }
+
+    const { id } = await params
+    const isAdmin = ADMIN_EMAILS.includes(session.user.email)
+    const isOwn = session.user.id === id
+
+    if (!isAdmin && !isOwn) {
+      return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
+    }
+
+    const supabase = createServiceClient()
+    const { data, error } = await supabase
+      .from('members')
+      .select('id, email, student_number, role, commissie, commissie_voorstel, points, membership_active, membership_started_at, membership_expires_at, stripe_customer_id, active_skin, active_badges, password_hash, created_at')
+      .eq('id', id)
+      .single()
+
+    if (error) throw error
+
+    // Stuur nooit de echte hash mee, alleen of er een wachtwoord is
+    if (data) {
+      (data as Record<string, unknown>).has_password = !!data.password_hash;
+      (data as Record<string, unknown>).password_hash = undefined
+    }
+
+    return NextResponse.json({ data, error: null, meta: null })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Onbekende fout'
+    return NextResponse.json({ data: null, error: message, meta: null }, { status: 500 })
+  }
+}
+
 // PATCH — Update lid (eigen profiel of admin)
 export async function PATCH(
   req: NextRequest,

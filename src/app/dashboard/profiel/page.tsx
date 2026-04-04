@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { COMMISSIES, getRank, getLevel, getPrestige } from '@/lib/constants'
+import { COMMISSIES, ADMIN_EMAILS, getRank, getLevel, getPrestige } from '@/lib/constants'
 
 // ─── Corner decoration component ──────────────────────────────────────────────
 function CornerDecorations({ color = 'var(--color-accent-gold)' }: { color?: string }) {
@@ -157,7 +157,7 @@ export default function ProfielPage() {
           setExpiresAt(member.membership_expires_at as string | null)
           setMemberSince((member.membership_started_at as string) || null)
           setPoints((member.points as number) || 0)
-          setHasPassword(!!member.password_hash)
+          setHasPassword(!!member.has_password)
         }
       })
       .finally(() => setLoading(false))
@@ -213,15 +213,10 @@ export default function ProfielPage() {
     setTimeout(() => setPwMessage(''), 4000)
   }
 
-  async function handleStripePortal() {
-    const res = await fetch('/api/stripe/portal', { method: 'POST' })
-    const { url } = await res.json()
-    if (url) window.location.href = url
-  }
-
   // ── Character name derived from email ───────────────────────────────────────
   const username = session?.user?.email?.split('@')[0]?.toUpperCase() || 'USER'
   const email = session?.user?.email || ''
+  const isAdmin = ADMIN_EMAILS.includes(email)
   const rank = getRank(points)
   const commissieDef = COMMISSIES.find((c) => c.id === commissie)
 
@@ -318,7 +313,8 @@ export default function ProfielPage() {
                 <select
                   value={commissie}
                   onChange={(e) => setCommissie(e.target.value)}
-                  className="w-full py-2.5 px-3 text-sm outline-none transition-all duration-200 appearance-none"
+                  disabled={!isAdmin}
+                  className="w-full py-2.5 px-3 text-sm outline-none transition-all duration-200 appearance-none disabled:opacity-50"
                   style={{
                     backgroundColor: 'var(--color-bg)',
                     color: 'var(--color-text)',
@@ -445,26 +441,17 @@ export default function ProfielPage() {
             {/* Rank badge */}
             <RankBadge points={points} />
 
-            {/* Divider */}
-            <div style={{ borderTop: '1px dashed rgba(255,255,255,0.06)' }} />
-
-            {/* Stripe portal */}
-            <motion.button
-              onClick={handleStripePortal}
-              className="w-full font-mono text-[11px] uppercase tracking-[0.15em] py-2.5 px-4 transition-all duration-200 text-left"
-              style={{
-                backgroundColor: 'transparent',
-                color: 'var(--color-accent-blue)',
-                border: '1px solid rgba(59,130,246,0.3)',
-              }}
-              whileHover={{
-                borderColor: 'var(--color-accent-blue)',
-                backgroundColor: 'rgba(59,130,246,0.06)',
-              }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {'>'} manage.subscription()
-            </motion.button>
+            {/* Member since creation fallback */}
+            {!memberSince && (
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
+                  account.created
+                </span>
+                <span className="font-mono text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
+                  legacy import
+                </span>
+              </div>
+            )}
           </div>
         </motion.div>
       </div>
