@@ -124,8 +124,8 @@ export default function MemberCard({
             aria-hidden="true"
             style={{
               background:
-                "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.04) 45%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.04) 55%, transparent 60%)",
-              backgroundSize: "200% 100%",
+                "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.04) 60%, transparent 70%)",
+              willChange: "transform",
               ...(skinDef.animated ? { animation: "cardShine 6s ease-in-out infinite" } : {}),
             }}
           />

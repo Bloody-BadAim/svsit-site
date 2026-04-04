@@ -121,7 +121,7 @@ function PixelBattle() {
         {/* Knight (gold, left side) */}
         <div
           style={{
-            animation: "pixelBob 2s ease-in-out infinite, pixelAttack 4s ease-in-out infinite",
+            animation: "pixelBattle 4s ease-in-out infinite",
             ["--attack-dir" as string]: "8px",
           }}
         >
@@ -181,7 +181,7 @@ function PixelBattle() {
         {/* Mage (blue, right side) */}
         <div
           style={{
-            animation: "pixelBob 2.5s ease-in-out infinite 0.5s, pixelAttack 4s ease-in-out infinite 0.2s",
+            animation: "pixelBattle 4s ease-in-out infinite 0.5s",
             ["--attack-dir" as string]: "-8px",
           }}
         >
