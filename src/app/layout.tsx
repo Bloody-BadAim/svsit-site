@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/next";
@@ -13,6 +14,13 @@ const geistSans = Geist({
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
+});
+
+const bigShoulders = localFont({
+  src: "../fonts/BigShouldersDisplay-latin.woff2",
+  variable: "--font-big-shoulders",
+  display: "swap",
+  weight: "700 800",
 });
 
 
@@ -51,14 +59,10 @@ export default function RootLayout({
   return (
     <html
       lang="nl"
-      className={cn("antialiased", geistSans.variable, "font-mono", jetbrainsMono.variable)}
+      className={cn("antialiased", geistSans.variable, jetbrainsMono.variable, bigShoulders.variable, "font-mono")}
       suppressHydrationWarning
     >
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&display=swap" rel="stylesheet" />
-      </head>
+      <head />
       <body>
         {/* Skip link for keyboard navigation */}
         <a
