@@ -4,7 +4,7 @@ import React, { MouseEvent as ReactMouseEvent, useState, useRef, lazy, Suspense 
 import { cn } from "@/lib/utils";
 
 const CanvasRevealEffect = lazy(() =>
-  import("@/components/ui/canvas-reveal-effect").then((m) => ({
+  import("@/components/ui/CanvasRevealEffect").then((m) => ({
     default: m.CanvasRevealEffect,
   }))
 );

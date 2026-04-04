@@ -107,11 +107,11 @@ export default function MerchClaims({ rewards, currentRank, memberId }: MerchCla
 
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid var(--color-border)' }}>
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
           merch.claims
         </span>
         {claimError && (
-          <span className="font-mono text-[9px]" style={{ color: 'var(--color-accent-red)' }}>
+          <span className="font-mono text-[10px] md:text-xs" style={{ color: 'var(--color-accent-red)' }}>
             {claimError}
           </span>
         )}
@@ -153,7 +153,7 @@ export default function MerchClaims({ rewards, currentRank, memberId }: MerchCla
               >
                 {isUnlocked ? (
                   <span
-                    className="font-mono text-[11px] font-bold"
+                    className="font-mono text-xs md:text-sm font-bold"
                     style={{ color: rankColor }}
                   >
                     {tier.requiredRank === 'Gold' ? 'AU' : tier.requiredRank === 'Platinum' ? 'PT' : 'DI'}
@@ -174,7 +174,7 @@ export default function MerchClaims({ rewards, currentRank, memberId }: MerchCla
                 >
                   {tier.naam}
                 </p>
-                <p className="text-[11px] mt-0.5" style={{ color: isUnlocked ? 'var(--color-text-muted)' : 'rgba(255,255,255,0.15)' }}>
+                <p className="text-xs md:text-sm mt-0.5" style={{ color: isUnlocked ? 'var(--color-text-muted)' : 'rgba(255,255,255,0.15)' }}>
                   {tier.beschrijving}
                 </p>
               </div>
@@ -184,13 +184,13 @@ export default function MerchClaims({ rewards, currentRank, memberId }: MerchCla
                 {isClaimed ? (
                   <div className="text-right">
                     <span
-                      className="font-mono text-[10px] px-2 py-0.5"
+                      className="font-mono text-xs px-2 py-0.5"
                       style={{ color: 'var(--color-accent-green)', border: '1px solid rgba(34,197,94,0.3)' }}
                     >
                       &#10003; CLAIMED
                     </span>
                     {reward.claimed_at && (
-                      <p className="font-mono text-[9px] mt-1" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                      <p className="font-mono text-[10px] md:text-xs mt-1" style={{ color: 'rgba(255,255,255,0.2)' }}>
                         {new Date(reward.claimed_at).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}
                       </p>
                     )}
@@ -199,7 +199,7 @@ export default function MerchClaims({ rewards, currentRank, memberId }: MerchCla
                   <button
                     disabled={isLoading}
                     onClick={() => handleClaim(tier.merchId)}
-                    className="font-mono text-[10px] px-3 py-1 transition-opacity hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="font-mono text-xs px-3 py-1 transition-opacity hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       backgroundColor: 'var(--color-accent-gold)',
                       color: 'var(--color-bg)',
@@ -210,11 +210,11 @@ export default function MerchClaims({ rewards, currentRank, memberId }: MerchCla
                     {isLoading ? '...' : 'CLAIM'}
                   </button>
                 ) : !isUnlocked ? (
-                  <span className="font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.15)' }}>
+                  <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.15)' }}>
                     Bereik {tier.requiredRank}
                   </span>
                 ) : (
-                  <span className="font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                  <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>
                     &#8212;
                   </span>
                 )}

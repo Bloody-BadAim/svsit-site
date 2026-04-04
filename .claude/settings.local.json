@@ -76,7 +76,22 @@
       "Bash(pkill -f \"next dev\")",
       "mcp__claude_ai_Vercel__list_teams",
       "mcp__claude_ai_Vercel__list_projects",
-      "mcp__claude_ai_Vercel__get_runtime_logs"
+      "mcp__claude_ai_Vercel__get_runtime_logs",
+      "mcp__plugin_figma_figma__get_metadata",
+      "mcp__plugin_figma_figma__get_screenshot",
+      "mcp__plugin_figma_figma__get_variable_defs",
+      "mcp__plugin_figma_figma__get_design_context",
+      "mcp__plugin_figma_figma__search_design_system",
+      "Bash(__NEW_LINE_74f90159f2749d1d__ BASE=\"/mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src\" echo \"=== useKonamiCode usage ===\" grep -r \"useKonamiCode\" \"$BASE\" --include=\"*.tsx\" --include=\"*.ts\")",
+      "Bash(__NEW_LINE_78b7ff607045fd0c__ BASE=\"/mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src/components\" __NEW_LINE_78b7ff607045fd0c__ echo \"=== Files with kebab-case \\(should be PascalCase or camelCase\\) ===\" find \"$BASE\" -type f \\\\\\( -name \"*.tsx\" -o -name \"*.ts\" \\\\\\))",
+      "Bash(__NEW_LINE_dade08b5c850505c__ BASE=\"/mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src\" __NEW_LINE_dade08b5c850505c__ echo \"=== Checking for InfiniteSlider imports ===\" grep -r \"InfiniteSlider\\\\|infinite-slider\" \"$BASE\" --include=\"*.tsx\" --include=\"*.ts\")",
+      "Bash(diff:*)",
+      "Bash(__NEW_LINE_b4b15a01ee42a7ca__ find:*)",
+      "Bash(__NEW_LINE_6fa412e65b2c1735__ grep:*)",
+      "Bash(__NEW_LINE_c234ba583c0c1658__ grep:*)",
+      "Bash(__NEW_LINE_db95466335583230__ echo:*)",
+      "Bash(xargs basename:*)",
+      "Bash(git mv:*)"
     ]
   },
   "outputStyle": "default",

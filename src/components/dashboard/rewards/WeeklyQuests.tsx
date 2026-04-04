@@ -105,7 +105,7 @@ function QuestItem({
       <div className="flex items-start gap-4 px-5 py-4">
         {/* Category badge */}
         <div
-          className="shrink-0 font-mono text-[9px] font-bold uppercase tracking-wider px-2 py-1 mt-0.5"
+          className="shrink-0 font-mono text-[10px] md:text-xs font-bold uppercase tracking-wider px-2 py-1 mt-0.5"
           style={{
             color: cat.color,
             border: `1px solid ${cat.color}30`,
@@ -124,7 +124,7 @@ function QuestItem({
             {quest.description}
           </p>
           {timeLeft && (
-            <p className="font-mono text-[10px] mt-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <p className="font-mono text-xs mt-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
               {timeLeft.days > 0 && `${timeLeft.days}d `}{timeLeft.hours}h {timeLeft.minutes}m resterend
             </p>
           )}
@@ -137,24 +137,24 @@ function QuestItem({
           </span>
 
           {status === 'approved' && (
-            <span className="font-mono text-[10px] px-2 py-0.5" style={{ color: 'var(--color-accent-green)', border: '1px solid rgba(34,197,94,0.3)' }}>
+            <span className="font-mono text-xs px-2 py-0.5" style={{ color: 'var(--color-accent-green)', border: '1px solid rgba(34,197,94,0.3)' }}>
               &#10003; DONE
             </span>
           )}
           {status === 'pending' && (
-            <span className="font-mono text-[10px] px-2 py-0.5" style={{ color: 'var(--color-accent-gold)', border: '1px solid rgba(242,158,24,0.3)' }}>
+            <span className="font-mono text-xs px-2 py-0.5" style={{ color: 'var(--color-accent-gold)', border: '1px solid rgba(242,158,24,0.3)' }}>
               &#8987; REVIEW
             </span>
           )}
           {status === 'rejected' && (
-            <span className="font-mono text-[10px] px-2 py-0.5" style={{ color: 'var(--color-accent-red)', border: '1px solid rgba(239,68,68,0.3)' }}>
+            <span className="font-mono text-xs px-2 py-0.5" style={{ color: 'var(--color-accent-red)', border: '1px solid rgba(239,68,68,0.3)' }}>
               &#10007; REJECTED
             </span>
           )}
           {status === 'submit' && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="font-mono text-[10px] px-3 py-1 cursor-pointer transition-all duration-200"
+              className="font-mono text-xs px-3 py-1 cursor-pointer transition-all duration-200"
               style={{
                 color: 'var(--color-bg)',
                 backgroundColor: cat.color,
@@ -182,13 +182,13 @@ function QuestItem({
               className="p-4 space-y-3"
               style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
             >
-              <div className="font-mono text-[10px] uppercase tracking-[0.15em] mb-2" style={{ color: 'var(--color-text-muted)' }}>
+              <div className="font-mono text-xs uppercase tracking-[0.15em] mb-2" style={{ color: 'var(--color-text-muted)' }}>
                 {'>'} bewijs indienen
               </div>
 
               {(quest.proof_type === 'link' || quest.proof_type === 'screenshot') && (
                 <div>
-                  <label className="font-mono text-[10px] uppercase tracking-wider block mb-1" style={{ color: 'var(--color-text-muted)' }}>
+                  <label className="font-mono text-xs uppercase tracking-wider block mb-1" style={{ color: 'var(--color-text-muted)' }}>
                     Link / URL
                   </label>
                   <input
@@ -208,7 +208,7 @@ function QuestItem({
 
               {(quest.proof_type === 'text' || !quest.proof_type || quest.proof_type === 'link') && (
                 <div>
-                  <label className="font-mono text-[10px] uppercase tracking-wider block mb-1" style={{ color: 'var(--color-text-muted)' }}>
+                  <label className="font-mono text-xs uppercase tracking-wider block mb-1" style={{ color: 'var(--color-text-muted)' }}>
                     Toelichting
                   </label>
                   <textarea
@@ -227,7 +227,7 @@ function QuestItem({
               )}
 
               {submitError && (
-                <p className="font-mono text-[10px]" style={{ color: 'var(--color-accent-red)' }}>
+                <p className="font-mono text-xs" style={{ color: 'var(--color-accent-red)' }}>
                   ! {submitError}
                 </p>
               )}
@@ -235,7 +235,7 @@ function QuestItem({
               <button
                 onClick={handleSubmit}
                 disabled={submitting || (!proofUrl && !proofText)}
-                className="font-mono text-[10px] uppercase tracking-wider px-4 py-2 cursor-pointer transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                className="font-mono text-xs uppercase tracking-wider px-4 py-2 cursor-pointer transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
                 style={{
                   backgroundColor: cat.color,
                   color: 'var(--color-bg)',
@@ -280,11 +280,11 @@ export default function WeeklyQuests({ quests, submissions, memberId }: WeeklyQu
 
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid var(--color-border)' }}>
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
           weekly.quests
         </span>
         <motion.span
-          className="font-mono text-[10px] px-1.5 py-0.5"
+          className="font-mono text-xs px-1.5 py-0.5"
           style={{ color: 'var(--color-accent-gold)', border: '1px solid rgba(242, 158, 24, 0.2)' }}
           initial={shouldReduceMotion ? {} : { scale: 0 }}
           animate={{ scale: 1 }}
@@ -300,7 +300,7 @@ export default function WeeklyQuests({ quests, submissions, memberId }: WeeklyQu
           <p className="font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
             {'>'} geen actieve quests momenteel...
           </p>
-          <p className="font-mono text-[10px] mt-1" style={{ color: 'rgba(255,255,255,0.2)' }}>
+          <p className="font-mono text-xs mt-1" style={{ color: 'rgba(255,255,255,0.2)' }}>
             check later voor nieuwe challenges
           </p>
         </div>

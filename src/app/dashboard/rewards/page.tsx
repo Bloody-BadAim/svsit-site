@@ -107,7 +107,7 @@ export default async function RewardsPage() {
               boxShadow: '0 0 8px rgba(242, 158, 24, 0.5)',
             }}
           />
-          <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
+          <span className="font-mono text-xs uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
             rewards &middot; {rank.naam} &middot; {points}xp &middot; {earnedBadges.length} badges
           </span>
         </div>
@@ -124,7 +124,7 @@ export default async function RewardsPage() {
 
       {/* Stats summary line */}
       <div
-        className="flex items-center gap-6 font-mono text-[11px] mb-8 pb-4"
+        className="flex flex-wrap items-center gap-3 md:gap-6 font-mono text-xs md:text-sm mb-8 pb-4"
         style={{ borderBottom: '1px dashed rgba(255,255,255,0.06)', color: 'var(--color-text-muted)' }}
       >
         <span>
@@ -150,14 +150,14 @@ export default async function RewardsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-5 mb-6">
         {/* Stats bars panel */}
         <div
-          className="relative overflow-hidden"
+          className="relative"
           style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
         >
           <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2" style={{ borderColor: 'var(--color-accent-blue)' }} />
           <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
 
           <div className="px-5 py-3" style={{ borderBottom: '1px solid var(--color-border)' }}>
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
+            <span className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
               stat.breakdown
             </span>
           </div>
@@ -174,7 +174,7 @@ export default async function RewardsPage() {
 
               return (
                 <div key={stat.label} className="flex items-center gap-3">
-                  <span className="font-mono text-[11px] font-bold w-12 shrink-0" style={{ color: stat.color }}>
+                  <span className="font-mono text-xs md:text-sm font-bold w-12 shrink-0" style={{ color: stat.color }}>
                     {stat.label}
                   </span>
                   <div className="flex-1 h-[6px] overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
@@ -183,7 +183,7 @@ export default async function RewardsPage() {
                       style={{ width: `${pct}%`, backgroundColor: stat.color, opacity: 0.8 }}
                     />
                   </div>
-                  <span className="font-mono text-[10px] w-8 text-right shrink-0" style={{ color: 'var(--color-text-muted)' }}>
+                  <span className="font-mono text-xs w-8 text-right shrink-0" style={{ color: 'var(--color-text-muted)' }}>
                     {stat.value}
                   </span>
                 </div>
@@ -192,7 +192,7 @@ export default async function RewardsPage() {
 
             {/* Total */}
             <div
-              className="flex items-center justify-between pt-3 font-mono text-[11px]"
+              className="flex items-center justify-between pt-3 font-mono text-xs md:text-sm"
               style={{ borderTop: '1px dashed rgba(255,255,255,0.06)' }}
             >
               <span style={{ color: 'var(--color-text-muted)' }}>TOTAL</span>

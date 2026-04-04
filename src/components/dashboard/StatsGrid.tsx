@@ -25,9 +25,9 @@ export default function StatsGrid({ points, role, commissie, memberSince, dynami
 
   const maxStat = Math.max(dynamicStats.code, dynamicStats.social, dynamicStats.learn, dynamicStats.impact, 10)
   const statBars = [
-    { label: 'CODE', value: dynamicStats.code, max: maxStat, color: 'var(--color-accent-blue)', suffix: '' },
-    { label: 'LEARN', value: dynamicStats.learn, max: maxStat, color: 'var(--color-accent-gold)', suffix: '' },
-    { label: 'SOC', value: dynamicStats.social, max: maxStat, color: 'var(--color-accent-green)', suffix: '' },
+    { label: 'CODE', value: dynamicStats.code, max: maxStat, color: 'var(--color-accent-green)', suffix: '' },
+    { label: 'LEARN', value: dynamicStats.learn, max: maxStat, color: 'var(--color-accent-blue)', suffix: '' },
+    { label: 'SOCIAL', value: dynamicStats.social, max: maxStat, color: 'var(--color-accent-gold)', suffix: '' },
     { label: 'IMPACT', value: dynamicStats.impact, max: maxStat, color: 'var(--color-accent-red)', suffix: '' },
   ]
 

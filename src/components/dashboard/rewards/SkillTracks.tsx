@@ -122,18 +122,18 @@ function MilestoneItem({
             {milestone.title}
           </span>
           {isCompleted && (
-            <span className="font-mono text-[9px]" style={{ color: trackColor }}>&#10003;</span>
+            <span className="font-mono text-[10px] md:text-xs" style={{ color: trackColor }}>&#10003;</span>
           )}
           {isPending && (
-            <span className="font-mono text-[9px]" style={{ color: 'var(--color-accent-gold)' }}>&#8987;</span>
+            <span className="font-mono text-[10px] md:text-xs" style={{ color: 'var(--color-accent-gold)' }}>&#8987;</span>
           )}
           {isRejected && (
-            <span className="font-mono text-[9px]" style={{ color: 'var(--color-accent-red)' }}>&#10007;</span>
+            <span className="font-mono text-[10px] md:text-xs" style={{ color: 'var(--color-accent-red)' }}>&#10007;</span>
           )}
         </div>
 
         {!isLocked && (
-          <p className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
             {milestone.description}
           </p>
         )}
@@ -142,7 +142,7 @@ function MilestoneItem({
         {isCurrentMilestone && !isCompleted && !isPending && (
           <button
             onClick={() => setExpanded(!expanded)}
-            className="font-mono text-[9px] uppercase tracking-wider mt-2 px-2 py-1 cursor-pointer transition-opacity"
+            className="font-mono text-[10px] md:text-xs uppercase tracking-wider mt-2 px-2 py-1 cursor-pointer transition-opacity"
             style={{
               border: `1px solid ${trackColor}40`,
               color: trackColor,
@@ -174,7 +174,7 @@ function MilestoneItem({
                     value={proofUrl}
                     onChange={(e) => setProofUrl(e.target.value)}
                     placeholder="Link / URL bewijs..."
-                    className="w-full font-mono text-[11px] px-2 py-1.5 outline-none"
+                    className="w-full font-mono text-xs md:text-sm px-2 py-1.5 outline-none"
                     style={{
                       backgroundColor: 'rgba(255,255,255,0.03)',
                       border: '1px solid var(--color-border)',
@@ -187,7 +187,7 @@ function MilestoneItem({
                   onChange={(e) => setProofText(e.target.value)}
                   rows={2}
                   placeholder="Toelichting..."
-                  className="w-full font-mono text-[11px] px-2 py-1.5 outline-none resize-none"
+                  className="w-full font-mono text-xs md:text-sm px-2 py-1.5 outline-none resize-none"
                   style={{
                     backgroundColor: 'rgba(255,255,255,0.03)',
                     border: '1px solid var(--color-border)',
@@ -195,14 +195,14 @@ function MilestoneItem({
                   }}
                 />
                 {submitError && (
-                  <p className="font-mono text-[9px]" style={{ color: 'var(--color-accent-red)' }}>
+                  <p className="font-mono text-[10px] md:text-xs" style={{ color: 'var(--color-accent-red)' }}>
                     ! {submitError}
                   </p>
                 )}
                 <button
                   onClick={handleSubmit}
                   disabled={submitting || (!proofUrl && !proofText)}
-                  className="font-mono text-[9px] uppercase tracking-wider px-3 py-1.5 cursor-pointer transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="font-mono text-[10px] md:text-xs uppercase tracking-wider px-3 py-1.5 cursor-pointer transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{ backgroundColor: trackColor, color: 'var(--color-bg)' }}
                 >
                   {submitting ? 'BEZIG...' : 'INDIENEN'}
@@ -215,7 +215,7 @@ function MilestoneItem({
 
       {/* Points */}
       <span
-        className="shrink-0 font-mono text-[10px]"
+        className="shrink-0 font-mono text-xs"
         style={{ color: isLocked ? 'rgba(255,255,255,0.12)' : `${trackColor}80` }}
       >
         +{milestone.points}xp
@@ -269,10 +269,10 @@ function TrackCard({ track, memberId }: { track: TrackData; memberId: string }) 
       {/* Track header */}
       <div className="px-4 py-3" style={{ borderBottom: `1px solid ${meta.kleur}15` }}>
         <div className="flex items-center justify-between mb-1">
-          <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: meta.kleur }}>
+          <span className="font-mono text-xs uppercase tracking-[0.15em]" style={{ color: meta.kleur }}>
             track.{track.trackId}
           </span>
-          <span className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
+          <span className="font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
             {completedCount}/{totalCount}
           </span>
         </div>
@@ -285,7 +285,7 @@ function TrackCard({ track, memberId }: { track: TrackData; memberId: string }) 
         >
           {meta.naam}
         </h3>
-        <p className="text-[11px] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+        <p className="text-xs md:text-sm mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
           {meta.beschrijving}
         </p>
 
@@ -304,7 +304,7 @@ function TrackCard({ track, memberId }: { track: TrackData; memberId: string }) 
         </div>
 
         {isComplete && (
-          <div className="mt-2 font-mono text-[10px] flex items-center gap-1.5" style={{ color: meta.kleur }}>
+          <div className="mt-2 font-mono text-xs flex items-center gap-1.5" style={{ color: meta.kleur }}>
             <span>&#9733;</span> TRACK VOLTOOID
           </div>
         )}
@@ -340,7 +340,7 @@ export default function SkillTracks({ tracks, memberId }: SkillTracksProps) {
     <div>
       {/* Section header */}
       <div className="flex items-center gap-3 mb-4">
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
           skill.tracks
         </span>
         <div className="flex-1 h-[1px]" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }} />

@@ -32,10 +32,10 @@ export default function ProgressionTracker({ currentRank, points }: ProgressionT
 
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid var(--color-border)' }}>
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
           progression.rank
         </span>
-        <span className="font-mono text-[10px]" style={{ color: currentRankDef.kleur }}>
+        <span className="font-mono text-xs" style={{ color: currentRankDef.kleur }}>
           {points} XP
         </span>
       </div>
@@ -110,7 +110,7 @@ export default function ProgressionTracker({ currentRank, points }: ProgressionT
 
                   {/* Rank name */}
                   <span
-                    className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider mt-3 text-center"
+                    className="font-mono text-[10px] sm:text-xs uppercase tracking-wider mt-3 text-center"
                     style={{
                       color: isLocked ? 'rgba(255,255,255,0.2)' : isActive ? rank.kleur : 'var(--color-text-muted)',
                       fontWeight: isActive ? 700 : 400,
@@ -121,7 +121,7 @@ export default function ProgressionTracker({ currentRank, points }: ProgressionT
 
                   {/* XP requirement */}
                   <span
-                    className="font-mono text-[8px] sm:text-[9px] mt-0.5"
+                    className="font-mono text-[10px] sm:text-xs mt-0.5"
                     style={{
                       color: isLocked ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.25)',
                     }}
@@ -132,7 +132,7 @@ export default function ProgressionTracker({ currentRank, points }: ProgressionT
                   {/* Completed check */}
                   {isCompleted && (
                     <motion.span
-                      className="font-mono text-[10px] mt-1"
+                      className="font-mono text-xs mt-1"
                       style={{ color: rank.kleur }}
                       initial={shouldReduceMotion ? {} : { scale: 0 }}
                       animate={{ scale: 1 }}
@@ -150,7 +150,7 @@ export default function ProgressionTracker({ currentRank, points }: ProgressionT
         {/* Next rank info */}
         {nextRank && (
           <motion.div
-            className="mt-6 flex items-center justify-between font-mono text-[11px]"
+            className="mt-6 flex items-center justify-between font-mono text-xs md:text-sm"
             style={{ borderTop: '1px dashed rgba(255,255,255,0.06)', paddingTop: 12 }}
             initial={shouldReduceMotion ? {} : { opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -168,7 +168,7 @@ export default function ProgressionTracker({ currentRank, points }: ProgressionT
         {/* Max rank message */}
         {!nextRank && (
           <motion.div
-            className="mt-6 text-center font-mono text-[11px]"
+            className="mt-6 text-center font-mono text-xs md:text-sm"
             style={{ borderTop: '1px dashed rgba(255,255,255,0.06)', paddingTop: 12, color: currentRankDef.kleur }}
             initial={shouldReduceMotion ? {} : { opacity: 0 }}
             animate={{ opacity: 1 }}

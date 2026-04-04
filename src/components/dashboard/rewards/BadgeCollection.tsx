@@ -64,7 +64,7 @@ export default function BadgeCollection({
 
   return (
     <div
-      className="relative overflow-hidden"
+      className="relative"
       style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
     >
       {/* Corner decorations */}
@@ -75,18 +75,18 @@ export default function BadgeCollection({
 
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid var(--color-border)' }}>
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
           badge.collection
         </span>
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px]" style={{ color: 'var(--color-accent-gold)' }}>
+          <span className="font-mono text-xs" style={{ color: 'var(--color-accent-gold)' }}>
             {earnedBadges.length}/{BADGES.length}
           </span>
-          <span className="font-mono text-[9px] px-1.5 py-0.5" style={{ color: 'var(--color-text-muted)', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <span className="font-mono text-[10px] md:text-xs px-1.5 py-0.5" style={{ color: 'var(--color-text-muted)', border: '1px solid rgba(255,255,255,0.08)' }}>
             {maxSlots} slots
           </span>
           {saving && (
-            <span className="font-mono text-[9px]" style={{ color: 'var(--color-accent-gold)', opacity: 0.7 }}>
+            <span className="font-mono text-[10px] md:text-xs" style={{ color: 'var(--color-accent-gold)', opacity: 0.7 }}>
               saving...
             </span>
           )}
@@ -95,7 +95,7 @@ export default function BadgeCollection({
 
       {/* Active badge slots */}
       <div className="px-5 py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-        <div className="font-mono text-[9px] uppercase tracking-wider mb-2" style={{ color: 'var(--color-text-muted)' }}>
+        <div className="font-mono text-[10px] md:text-xs uppercase tracking-wider mb-2" style={{ color: 'var(--color-text-muted)' }}>
           equipped ({currentActive.length}/{maxSlots})
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -132,21 +132,21 @@ export default function BadgeCollection({
                       border: '1px dashed rgba(255,255,255,0.08)',
                     }}
                   >
-                    <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.1)' }}>+</span>
+                    <span className="text-xs" style={{ color: 'rgba(255,255,255,0.1)' }}>+</span>
                   </div>
                 )}
               </motion.div>
             )
           })}
         </div>
-        <p className="font-mono text-[9px] mt-2" style={{ color: 'rgba(255,255,255,0.2)' }}>
+        <p className="font-mono text-[10px] md:text-xs mt-2" style={{ color: 'rgba(255,255,255,0.2)' }}>
           Klik een badge hieronder om te equippen of verwijderen
         </p>
       </div>
 
       {/* All badges grid */}
       <div className="p-5">
-        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {BADGES.map((badge, i) => {
             const isEarned = earnedSet.has(badge.id)
             const isActive = activeSet.has(badge.id)
@@ -215,14 +215,14 @@ export default function BadgeCollection({
 
                 {/* Badge name */}
                 <span
-                  className="font-mono text-[11px] text-center mt-1.5 leading-tight"
+                  className="font-mono text-xs md:text-sm text-center mt-1.5 leading-tight"
                   style={{
                     color: isActive
                       ? 'var(--color-accent-gold)'
                       : isEarned
                         ? 'var(--color-text-muted)'
                         : 'rgba(255,255,255,0.15)',
-                    maxWidth: 72,
+                    maxWidth: 88,
                   }}
                 >
                   {badge.naam}
@@ -232,18 +232,19 @@ export default function BadgeCollection({
                 <AnimatePresence>
                   {hoveredBadge === badge.id && (
                     <motion.div
-                      className="absolute z-20 bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none"
+                      className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 pointer-events-none"
                       initial={{ opacity: 0, y: 4 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
                       transition={{ duration: 0.15 }}
                     >
                       <div
-                        className="px-3 py-2 font-mono text-[10px]"
+                        className="px-3 py-2 font-mono text-xs"
                         style={{
                           backgroundColor: 'var(--color-surface)',
                           border: '1px solid var(--color-border)',
                           color: isEarned ? 'var(--color-text)' : 'var(--color-text-muted)',
+                          maxWidth: 220,
                         }}
                       >
                         <div className="font-bold mb-0.5">{badge.naam}</div>
