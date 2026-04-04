@@ -463,6 +463,7 @@ export default function EventTimeline({
               trigger: containerRef.current,
               start: "top 85%",
               toggleActions: "play none none none",
+              once: true,
             },
           },
         );
@@ -484,6 +485,7 @@ export default function EventTimeline({
               trigger: containerRef.current,
               start: "top 80%",
               toggleActions: "play none none none",
+              once: true,
             },
           },
         );

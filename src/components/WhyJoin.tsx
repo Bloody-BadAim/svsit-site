@@ -132,6 +132,7 @@ export default function WhyJoin() {
               trigger: card,
               start: "top 88%",
               toggleActions: "play none none none",
+              once: true,
             },
             delay: i * 0.08,
           }
@@ -154,6 +155,7 @@ export default function WhyJoin() {
                 trigger: card,
                 start: "top 88%",
                 toggleActions: "play none none none",
+              once: true,
               },
               delay: 0.3 + i * 0.08,
             }
@@ -188,6 +190,7 @@ export default function WhyJoin() {
                 trigger: card,
                 start: "top 88%",
                 toggleActions: "play none none none",
+              once: true,
               },
               delay: 0.4 + i * 0.08,
               onUpdate() {
