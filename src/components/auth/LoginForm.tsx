@@ -81,6 +81,16 @@ export default function LoginForm() {
           />
         </div>
 
+        <div className="flex justify-end">
+          <a
+            href="/forgot-password"
+            className="font-mono text-xs transition-colors hover:text-[var(--color-text)]"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            Wachtwoord vergeten?
+          </a>
+        </div>
+
         {error && (
           <p className="font-mono text-sm" style={{ color: 'var(--color-accent-red)' }}>
             {error}
