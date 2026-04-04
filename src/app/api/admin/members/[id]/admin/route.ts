@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
-import { ADMIN_EMAILS } from '@/lib/constants'
 
 export async function PATCH(
   req: NextRequest,
@@ -13,8 +12,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
     }
 
-    const isAdmin = session.user.isAdmin || ADMIN_EMAILS.includes(session.user.email || '')
-    if (!isAdmin) {
+    if (!session.user.isAdmin) {
       return NextResponse.json({ error: 'Niet geautoriseerd' }, { status: 403 })
     }
 

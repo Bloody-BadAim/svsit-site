@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
-import { ADMIN_EMAILS } from '@/lib/constants'
 
 // GET — Lid ophalen (eigen profiel of admin)
 export async function GET(
@@ -15,7 +14,7 @@ export async function GET(
     }
 
     const { id } = await params
-    const isAdmin = ADMIN_EMAILS.includes(session.user.email)
+    const isAdmin = session.user.isAdmin
     const isOwn = session.user.id === id
 
     if (!isAdmin && !isOwn) {
@@ -62,7 +61,7 @@ export async function PATCH(
     }
 
     const { id } = await params
-    const isAdmin = ADMIN_EMAILS.includes(session.user.email)
+    const isAdmin = session.user.isAdmin
     const isOwn = session.user.id === id
 
     if (!isAdmin && !isOwn) {
@@ -74,7 +73,7 @@ export async function PATCH(
 
     // Welke velden mag het lid zelf updaten vs admin
     const allowedFields = isAdmin
-      ? ['student_number', 'role', 'commissie', 'commissie_voorstel', 'points', 'membership_active', 'membership_expires_at', 'active_skin', 'active_badges', 'is_admin']
+      ? ['student_number', 'role', 'commissie', 'commissie_voorstel', 'points', 'membership_active', 'membership_expires_at', 'active_skin', 'active_badges']
       : ['student_number', 'active_skin', 'active_badges']
 
     const updateData: Record<string, unknown> = {}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import ClassSelector from './ClassSelector'
@@ -24,6 +24,35 @@ export default function RegisterFlow() {
   const [akkoord, setAkkoord] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  // Herstel formulierdata uit localStorage bij mount
+  useEffect(() => {
+    const saved = localStorage.getItem('sit-register-form')
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        if (parsed.step) setStep(parsed.step)
+        if (parsed.email && !isMicrosoft) setEmail(parsed.email)
+        if (parsed.studentNumber) setStudentNumber(parsed.studentNumber)
+        if (parsed.selectedCommissie !== undefined) setSelectedCommissie(parsed.selectedCommissie)
+        if (parsed.eigenIdee) setEigenIdee(parsed.eigenIdee)
+        if (parsed.isDocent) setIsDocent(parsed.isDocent)
+      } catch {}
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Sla formulierdata op in localStorage bij elke wijziging
+  useEffect(() => {
+    localStorage.setItem('sit-register-form', JSON.stringify({
+      step,
+      email,
+      studentNumber,
+      selectedCommissie,
+      eigenIdee,
+      isDocent,
+    }))
+  }, [step, email, studentNumber, selectedCommissie, eigenIdee, isDocent])
 
   const role: Role = isDocent ? 'mentor' : selectedCommissie ? 'contributor' : 'member'
   const commissieNaam = selectedCommissie === 'eigen-idee'
@@ -64,7 +93,10 @@ export default function RegisterFlow() {
       if (!checkoutRes.ok) throw new Error('Betaling starten mislukt')
 
       const { url } = await checkoutRes.json()
-      if (url) window.location.href = url
+      if (url) {
+        localStorage.removeItem('sit-register-form')
+        window.location.href = url
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Er ging iets mis')
       setLoading(false)
