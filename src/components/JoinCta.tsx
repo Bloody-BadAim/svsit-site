@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { motion } from "motion/react";
 import SectionLabel from "@/components/SectionLabel";
 import HoldToJoinButton from "@/components/HoldToJoinButton";
 import MemberCard from "@/components/MemberCard";
@@ -23,6 +22,7 @@ export default function JoinCta() {
         trigger: sectionRef.current,
         start: "top 80%",
         toggleActions: "play none none none" as const,
+        once: true,
       };
 
       // Left column stagger entrance
@@ -82,10 +82,8 @@ export default function JoinCta() {
         }}
       />
 
-      <motion.div
+      <div
         aria-hidden="true"
-        animate={{ scale: [1, 1.15, 1] }}
-        transition={{ duration: 6, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
         className="absolute pointer-events-none"
         style={{
           top: "20%",
@@ -94,6 +92,8 @@ export default function JoinCta() {
           height: "60%",
           background: "radial-gradient(ellipse at center, rgba(245, 158, 11, 0.08) 0%, transparent 70%)",
           filter: "blur(80px)",
+          animation: "joinPulse 6s ease-in-out infinite alternate",
+          willChange: "transform",
         }}
       />
 

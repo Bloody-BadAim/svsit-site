@@ -119,6 +119,7 @@ export default function About() {
                 trigger: headingRef.current,
                 start: "top 85%",
                 toggleActions: "play none none none",
+              once: true,
               },
             }
           );
@@ -138,6 +139,7 @@ export default function About() {
                 trigger: headingRef.current,
                 start: "top 85%",
                 toggleActions: "play none none none",
+              once: true,
               },
               onComplete: function () {
                 gsap.to(Array.from(goldWords), {
@@ -164,6 +166,7 @@ export default function About() {
               trigger: textRef.current,
               start: "top 85%",
               toggleActions: "play none none none",
+              once: true,
             },
             delay: 0.3,
           }
@@ -183,6 +186,7 @@ export default function About() {
               trigger: accentRef.current,
               start: "top 85%",
               toggleActions: "play none none none",
+              once: true,
             },
           }
         );
@@ -202,6 +206,7 @@ export default function About() {
       //         trigger: statsRef.current,
       //         start: "top 90%",
       //         toggleActions: "play none none none",
+      //         once: true,
       //       },
       //       delay: i * 0.15,
       //       onUpdate: () => {
@@ -366,7 +371,7 @@ export default function About() {
               <BorderTrail
                 className="bg-[var(--color-accent-gold)]"
                 size={60}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 8, ease: "linear" }}
               />
               {/* Terminal chrome */}
               <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[var(--color-border)]">

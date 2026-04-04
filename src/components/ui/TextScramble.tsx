@@ -1,7 +1,6 @@
 "use client";
 
-import { type JSX, useEffect, useState } from "react";
-import { motion, type MotionProps } from "motion/react";
+import { useEffect, useState } from "react";
 
 export type TextScrambleProps = {
   children: string;
@@ -12,7 +11,7 @@ export type TextScrambleProps = {
   className?: string;
   trigger?: boolean;
   onScrambleComplete?: () => void;
-} & MotionProps;
+};
 
 const defaultChars = "#{}/<>[]!@$%^&*_=+~";
 
@@ -25,18 +24,14 @@ export function TextScramble({
   as: Component = "p",
   trigger = true,
   onScrambleComplete,
-  ...props
 }: TextScrambleProps) {
-  const MotionComponent = motion.create(
-    Component as keyof JSX.IntrinsicElements
-  );
   const [scrambledText, setScrambledText] = useState<string | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const text = children;
   const displayText = scrambledText ?? children;
 
-  const scramble = async () => {
-    if (isAnimating) return;
+  useEffect(() => {
+    if (!trigger || isAnimating) return;
     setIsAnimating(true);
 
     const steps = duration / speed;
@@ -70,17 +65,11 @@ export function TextScramble({
         onScrambleComplete?.();
       }
     }, speed * 1000);
-  };
 
-  useEffect(() => {
-    if (!trigger) return;
-    scramble();
+    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger]);
 
-  return (
-    <MotionComponent className={className} {...props}>
-      {displayText}
-    </MotionComponent>
-  );
+  const Tag = Component as React.ElementType<{ className?: string; children: React.ReactNode }>;
+  return <Tag className={className}>{displayText}</Tag>;
 }

@@ -398,7 +398,7 @@ function EventCard({
         <BorderTrail
           className="bg-[var(--color-accent-gold)]"
           size={40}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 4, ease: "linear" }}
           style={{ opacity: 0.6 }}
         />
       )}
@@ -826,6 +826,7 @@ export default function Events() {
               trigger: sectionRef.current,
               start: "top 80%",
               toggleActions: "play none none none",
+              once: true,
             },
             onComplete: () => {
               // Breathing animation after entrance
@@ -860,6 +861,7 @@ export default function Events() {
               trigger: sectionRef.current,
               start: "top 70%",
               toggleActions: "play none none none",
+              once: true,
             },
           },
         );
@@ -879,6 +881,7 @@ export default function Events() {
               trigger: detailRef.current,
               start: "top 85%",
               toggleActions: "play none none none",
+              once: true,
             },
           },
         );

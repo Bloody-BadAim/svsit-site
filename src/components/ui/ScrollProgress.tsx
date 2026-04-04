@@ -1,36 +1,45 @@
 "use client";
 
-import { motion, useScroll, useSpring, type SpringOptions } from "motion/react";
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 export type ScrollProgressProps = {
   className?: string;
-  springOptions?: SpringOptions;
 };
 
-const DEFAULT_SPRING_OPTIONS: SpringOptions = {
-  stiffness: 200,
-  damping: 50,
-  restDelta: 0.001,
-};
+export function ScrollProgress({ className }: ScrollProgressProps) {
+  const ref = useRef<HTMLDivElement>(null);
 
-export function ScrollProgress({
-  className,
-  springOptions,
-}: ScrollProgressProps) {
-  const { scrollYProgress } = useScroll();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
 
-  const scaleX = useSpring(scrollYProgress, {
-    ...DEFAULT_SPRING_OPTIONS,
-    ...(springOptions ?? {}),
-  });
+    let ticking = false;
+    const handleScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop;
+        const scrollHeight =
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight;
+        const progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+        el.style.transform = `scaleX(${progress})`;
+        ticking = false;
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <motion.div
+    <div
+      ref={ref}
       className={cn("inset-x-0 top-0 h-1 origin-left", className)}
-      style={{
-        scaleX,
-      }}
+      style={{ transform: "scaleX(0)", willChange: "transform" }}
     />
   );
 }

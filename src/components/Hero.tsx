@@ -1,21 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "motion/react";
 import { GlowEffect } from "@/components/ui/GlowEffect";
 import gsap from "gsap";
 
 export default function Hero() {
-  const [typedText, setTypedText] = useState("");
+  const fullText = "{SIT}";
+  const [typedText, setTypedText] = useState(fullText);
   const [showCursor, setShowCursor] = useState(true);
-  const [phase, setPhase] = useState<"typing" | "done">("typing");
+  const [phase, setPhase] = useState<"typing" | "done">("done");
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [jsReady, setJsReady] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const glowDotsRef = useRef<HTMLDivElement>(null);
   const scrollArrowRef = useRef<HTMLSpanElement>(null);
   const [isVisible, setIsVisible] = useState(true);
-
-  const fullText = "{SIT}";
 
   // Pause animations when hero scrolls out of view
   useEffect(() => {
@@ -35,13 +34,16 @@ export default function Hero() {
     );
   }, []);
 
-  // Typing animation (skip if reduced motion)
+  // Typing animation — starts after hydration, skipped if reduced motion
   useEffect(() => {
     if (reducedMotion) {
-      setTypedText(fullText);
-      setPhase("done");
+      setJsReady(true);
       return;
     }
+    // Reset to empty and re-type after JS hydration
+    setTypedText("");
+    setPhase("typing");
+    setJsReady(true);
     let i = 0;
     const typeInterval = setInterval(() => {
       if (i < fullText.length) {
@@ -140,110 +142,72 @@ export default function Hero() {
     }
   }, [isVisible]);
 
+  const shouldAnimate = !reducedMotion && isVisible;
+  const blobPlayState = shouldAnimate ? "running" : "paused";
+
   return (
     <section
       ref={heroRef}
       className="relative flex items-center justify-center min-h-screen overflow-hidden"
     >
-      {/* ── Layer 0: Aurora brand color blobs (paused when off-screen) ── */}
-      <div className="absolute inset-0 overflow-hidden" aria-hidden="true" style={{ animationPlayState: isVisible ? "running" : "paused" }}>
-        <motion.div
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 2, ease: "easeInOut" }}
+      {/* ── Layer 0: Aurora brand color blobs (CSS animations, paused when off-screen) ── */}
+      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div
+          style={{
+            opacity: 0,
+            animation: "auroraFadeIn 2s ease-in-out forwards",
+          }}
         >
           {/* Gold blob — top left */}
-          <motion.div
+          <div
             className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[80px] md:blur-[120px]"
-            style={{ background: "rgba(245, 158, 11, 0.20)" }}
-            animate={
-              reducedMotion || !isVisible
-                ? {}
-                : {
-                  x: [-40, 60, -40],
-                  y: [-20, 30, -20],
-                  scale: [1, 1.2, 1],
-                }
-            }
-            transition={{
-              duration: 30,
-              repeat: Infinity,
-              repeatType: "mirror",
-              ease: "easeInOut",
+            style={{
+              background: "rgba(245, 158, 11, 0.20)",
+              animation: "auroraGold 30s ease-in-out infinite alternate",
+              animationPlayState: blobPlayState,
+              willChange: "transform",
             }}
           />
           {/* Blue blob — bottom right */}
-          <motion.div
+          <div
             className="absolute -bottom-[15%] -right-[10%] w-[45%] h-[45%] rounded-full blur-[80px] md:blur-[120px]"
-            style={{ background: "rgba(59, 130, 246, 0.16)" }}
-            animate={
-              reducedMotion || !isVisible
-                ? {}
-                : {
-                  x: [40, -50, 40],
-                  y: [20, -30, 20],
-                  scale: [1, 1.3, 1],
-                }
-            }
-            transition={{
-              duration: 35,
-              repeat: Infinity,
-              repeatType: "mirror",
-              ease: "easeInOut",
+            style={{
+              background: "rgba(59, 130, 246, 0.16)",
+              animation: "auroraBlue 35s ease-in-out infinite alternate",
+              animationPlayState: blobPlayState,
+              willChange: "transform",
             }}
           />
           {/* Red blob — center left */}
-          <motion.div
+          <div
             className="absolute top-[30%] left-[15%] w-[30%] h-[30%] rounded-full blur-[60px] md:blur-[100px]"
-            style={{ background: "rgba(239, 68, 68, 0.13)" }}
-            animate={
-              reducedMotion || !isVisible
-                ? {}
-                : {
-                  x: [20, -30, 20],
-                  y: [-25, 25, -25],
-                }
-            }
-            transition={{
-              duration: 40,
-              repeat: Infinity,
-              repeatType: "mirror",
-              ease: "easeInOut",
+            style={{
+              background: "rgba(239, 68, 68, 0.13)",
+              animation: "auroraRed 40s ease-in-out infinite alternate",
+              animationPlayState: blobPlayState,
+              willChange: "transform",
             }}
           />
           {/* Green blob — bottom center */}
-          <motion.div
+          <div
             className="absolute bottom-[10%] right-[25%] w-[25%] h-[25%] rounded-full blur-[60px] md:blur-[100px]"
-            style={{ background: "rgba(34, 197, 94, 0.11)" }}
-            animate={
-              reducedMotion || !isVisible
-                ? {}
-                : {
-                  x: [-30, 30, -30],
-                  y: [15, -15, 15],
-                  scale: [1, 1.15, 1],
-                }
-            }
-            transition={{
-              duration: 32,
-              repeat: Infinity,
-              repeatType: "mirror",
-              ease: "easeInOut",
+            style={{
+              background: "rgba(34, 197, 94, 0.11)",
+              animation: "auroraGreen 32s ease-in-out infinite alternate",
+              animationPlayState: blobPlayState,
+              willChange: "transform",
             }}
           />
-        </motion.div>
+        </div>
       </div>
 
-      {/* ── Layer 0.5: Code rain (desktop only, paused when off-screen) ── */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block" aria-hidden="true" style={{ animationPlayState: isVisible ? "running" : "paused" }}>
+      {/* ── Layer 0.5: Code rain (desktop only, 4 columns for perf) ── */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block" aria-hidden="true" style={{ contentVisibility: "auto" }}>
         {[
-          { left: "8%", dur: "25s", delay: "0s", op: 0.08, chars: "{ } < > ; 0 1 = ( )\n[ ] / * + - _ . # @\n! & | : 0x1F 0b10\nconst let var =>\nif else while for\n{ } ( ) => { }\nimport export from\nasync await return" },
-          { left: "22%", dur: "30s", delay: "-8s", op: 0.10, chars: "0 1 1 0 1 0 0 1\nfunction class new\n[] {} () => void\nnull undefined NaN\ntrue false 0xFF\nfor of in delete\nswitch case break\ncontinue throw try" },
-          { left: "38%", dur: "22s", delay: "-15s", op: 0.09, chars: "# include define\n< > / = ! & | ^\n++ -- ** // %%\nstruct enum union\nmalloc free sizeof\npush pop shift map\nfilter reduce find\nslice splice sort" },
-          { left: "53%", dur: "28s", delay: "-5s", op: 0.07, chars: "git add commit push\nnpm run dev build\nsudo chmod mkdir\nping localhost:3000\ncurl POST GET PUT\ndocker compose up\nkubectl apply -f\nssh deploy@prod" },
-          { left: "68%", dur: "26s", delay: "-12s", op: 0.10, chars: "10 42 FF 0B 3B 82\nF6 EF 44 22 C5 5E\n01 00 11 10 01 11\nACK SYN FIN RST\nHTTP 200 301 404\nTCP UDP DNS SSL\nAPI REST GraphQL\nJSON XML YAML CSV" },
-          { left: "83%", dur: "32s", delay: "-20s", op: 0.08, chars: "λ → ∀ ∃ ≡ ≢ ∅\nconsole.log debug\nprocess.env NODE\nwindow document\naddEventListener\nquerySelector All\nsetTimeout async\npromise resolve ok" },
+          { left: "12%", dur: "25s", delay: "0s", op: 0.08, chars: "{ } < > ; 0 1 = ( )\nconst let var =>\nif else while for\nimport export from\nasync await return" },
+          { left: "38%", dur: "22s", delay: "-10s", op: 0.09, chars: "function class new\n[] {} () => void\npush pop shift map\nfilter reduce find\nslice splice sort" },
+          { left: "62%", dur: "28s", delay: "-5s", op: 0.07, chars: "git add commit push\nnpm run dev build\ncurl POST GET PUT\ndocker compose up\nssh deploy@prod" },
+          { left: "85%", dur: "32s", delay: "-18s", op: 0.08, chars: "HTTP 200 301 404\nTCP UDP DNS SSL\nAPI REST GraphQL\nconsole.log debug\npromise resolve ok" },
         ].map((col, i) => (
           <div
             key={i}
@@ -253,6 +217,7 @@ export default function Hero() {
               opacity: col.op,
               animationDuration: col.dur,
               animationDelay: col.delay,
+              animationPlayState: blobPlayState,
             }}
           >
             {col.chars}
@@ -298,6 +263,7 @@ export default function Hero() {
             {/* Main logo */}
             <h1
               className="font-mono text-[clamp(4rem,15vw,12rem)] font-bold leading-none tracking-tighter mb-6 transition-opacity duration-500"
+              suppressHydrationWarning
             >
               <span className="text-[var(--color-accent-gold)]">
                 {typedText.slice(0, 1)}
@@ -341,13 +307,6 @@ export default function Hero() {
                 <span className="relative z-10">WORD LID</span>
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               </a>
-              {/* <a
-                href="/login"
-                className="group/login relative px-8 py-4 border border-[var(--color-border)] text-[var(--color-text-muted)] font-mono text-sm tracking-wide overflow-hidden hover:border-[var(--color-accent-blue)] hover:text-[var(--color-text)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <div className="absolute inset-0 bg-[var(--color-accent-blue)]/10 translate-x-[-101%] group-hover/login:translate-x-0 transition-transform duration-400" />
-                <span className="relative z-10">LOG IN</span>
-              </a> */}
               <a
                 href="/#events"
                 className="group/events relative px-8 py-4 border border-[var(--color-border)] text-[var(--color-text-muted)] font-mono text-sm tracking-wide overflow-hidden hover:border-[var(--color-accent-gold)] hover:text-[var(--color-text)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
@@ -370,7 +329,7 @@ export default function Hero() {
               </a>
             </p>
 
-            {/* Amsterdam x marks — brand identity */}
+            {/* Amsterdam × marks — brand identity */}
             <div
               className={`flex items-center gap-3 mt-16 font-mono text-sm opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.8s_forwards]" : ""
                 }`}

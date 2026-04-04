@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { motion, type Transition, type TargetAndTransition } from "motion/react";
 
 export type GlowEffectProps = {
   className?: string;
@@ -9,7 +8,6 @@ export type GlowEffectProps = {
   colors?: string[];
   mode?: "rotate" | "pulse" | "breathe" | "colorShift" | "flowHorizontal" | "static";
   blur?: number | "softest" | "soft" | "medium" | "strong" | "stronger" | "strongest" | "none";
-  transition?: Transition;
   scale?: number;
   duration?: number;
 };
@@ -20,114 +18,65 @@ export function GlowEffect({
   colors = ["#FF5733", "#33FF57", "#3357FF", "#F1C40F"],
   mode = "rotate",
   blur = "medium",
-  transition,
   scale = 1,
   duration = 5,
 }: GlowEffectProps) {
-  const BASE_TRANSITION = {
-    repeat: Infinity,
-    duration: duration,
-    ease: "linear" as const,
-  };
-
-  const animations: Record<string, TargetAndTransition> = {
-    rotate: {
-      background: [
-        `conic-gradient(from 0deg at 50% 50%, ${colors.join(", ")})`,
-        `conic-gradient(from 360deg at 50% 50%, ${colors.join(", ")})`,
-      ],
-      transition: {
-        ...(transition ?? BASE_TRANSITION),
-      },
-    },
-    pulse: {
-      background: colors.map(
-        (color) =>
-          `radial-gradient(circle at 50% 50%, ${color} 0%, transparent 100%)`
-      ),
-      scale: [1 * scale, 1.1 * scale, 1 * scale],
-      opacity: [0.5, 0.8, 0.5],
-      transition: {
-        ...(transition ?? {
-          ...BASE_TRANSITION,
-          repeatType: "mirror",
-        }),
-      },
-    },
-    breathe: {
-      background: colors.map(
-        (color) =>
-          `radial-gradient(circle at 50% 50%, ${color} 0%, transparent 100%)`
-      ),
-      scale: [1 * scale, 1.05 * scale, 1 * scale],
-      transition: {
-        ...(transition ?? {
-          ...BASE_TRANSITION,
-          repeatType: "mirror",
-        }),
-      },
-    },
-    colorShift: {
-      background: colors.map((color, index) => {
-        const nextColor = colors[(index + 1) % colors.length];
-        return `conic-gradient(from 0deg at 50% 50%, ${color} 0%, ${nextColor} 50%, ${color} 100%)`;
-      }),
-      transition: {
-        ...(transition ?? {
-          ...BASE_TRANSITION,
-          repeatType: "mirror",
-        }),
-      },
-    },
-    flowHorizontal: {
-      background: colors.map((color) => {
-        const nextColor = colors[(colors.indexOf(color) + 1) % colors.length];
-        return `linear-gradient(to right, ${color}, ${nextColor})`;
-      }),
-      transition: {
-        ...(transition ?? {
-          ...BASE_TRANSITION,
-          repeatType: "mirror",
-        }),
-      },
-    },
-    static: {
-      background: `linear-gradient(to right, ${colors.join(", ")})`,
-    },
-  };
-
-  const getBlurClass = (blur: GlowEffectProps["blur"]) => {
-    if (typeof blur === "number") {
-      return `blur-[${blur}px]`;
+  const getBackground = (): string => {
+    switch (mode) {
+      case "rotate":
+        return `conic-gradient(from var(--glow-angle, 0deg) at 50% 50%, ${colors.join(", ")})`;
+      case "pulse":
+      case "breathe":
+        return `radial-gradient(circle at 50% 50%, ${colors[0]} 0%, transparent 100%)`;
+      case "colorShift":
+        return `conic-gradient(from 0deg at 50% 50%, ${colors.join(", ")})`;
+      case "flowHorizontal":
+        return `linear-gradient(to right, ${colors.join(", ")})`;
+      case "static":
+        return `linear-gradient(to right, ${colors.join(", ")})`;
+      default:
+        return `radial-gradient(circle at 50% 50%, ${colors[0]} 0%, transparent 100%)`;
     }
+  };
 
+  const getAnimation = (): string => {
+    switch (mode) {
+      case "rotate":
+      case "colorShift":
+        return `glowRotate ${duration}s linear infinite`;
+      case "pulse":
+        return `glowPulse ${duration}s ease-in-out infinite alternate`;
+      case "breathe":
+        return `glowBreathe ${duration}s ease-in-out infinite alternate`;
+      case "flowHorizontal":
+        return `glowRotate ${duration}s linear infinite alternate`;
+      default:
+        return "none";
+    }
+  };
+
+  const getBlurClass = (b: GlowEffectProps["blur"]) => {
+    if (typeof b === "number") return `blur-[${b}px]`;
     const presets: Record<string, string> = {
-      softest: "blur-xs",
-      soft: "blur-sm",
-      medium: "blur-md",
-      strong: "blur-lg",
-      stronger: "blur-xl",
-      strongest: "blur-xl",
-      none: "blur-none",
+      softest: "blur-xs", soft: "blur-sm", medium: "blur-md",
+      strong: "blur-lg", stronger: "blur-xl", strongest: "blur-xl", none: "blur-none",
     };
-
-    return presets[blur as string];
+    return presets[b as string];
   };
 
   return (
-    <motion.div
-      style={
-        {
-          ...style,
-          "--scale": scale,
-          willChange: "transform",
-          backfaceVisibility: "hidden",
-        } as React.CSSProperties
-      }
-      animate={animations[mode]}
+    <div
+      style={{
+        ...style,
+        background: getBackground(),
+        animation: getAnimation(),
+        "--glow-scale": scale,
+        willChange: "transform",
+        backfaceVisibility: "hidden",
+      } as React.CSSProperties}
       className={cn(
         "pointer-events-none absolute inset-0 h-full w-full",
-        "scale-[var(--scale)] transform-gpu",
+        `scale-[${scale}] transform-gpu`,
         getBlurClass(blur),
         className
       )}
