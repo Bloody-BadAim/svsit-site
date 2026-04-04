@@ -88,7 +88,7 @@ export async function GET() {
     const supabase = createServiceClient()
     const { data, error, count } = await supabase
       .from('members')
-      .select('id, email, student_number, role, commissie, points, membership_active, membership_started_at, created_at', { count: 'exact' })
+      .select('id, email, student_number, role, commissie, points, membership_active, membership_started_at, is_admin, created_at', { count: 'exact' })
       .order('created_at', { ascending: false })
 
     if (error) throw error
