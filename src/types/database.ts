@@ -6,6 +6,20 @@ export type StatCategory = 'code' | 'social' | 'learn' | 'impact'
 export type ChallengeType = 'quest' | 'track_milestone' | 'achievement'
 export type SubmissionStatus = 'pending' | 'approved' | 'rejected'
 
+export interface Commissie {
+  id: string
+  slug: string
+  naam: string
+  beschrijving: string | null
+  emoji: string | null
+}
+
+export interface MemberCommissie {
+  commissie_id: string
+  role_in_commissie: string
+  commissies: Commissie
+}
+
 export interface Member {
   id: string
   email: string
@@ -24,6 +38,8 @@ export interface Member {
   updated_at: string
   active_skin: string
   active_badges: string[]
+  is_admin: boolean
+  member_commissies?: MemberCommissie[]
 }
 
 export interface Scan {
