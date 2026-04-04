@@ -18,20 +18,31 @@ export async function POST(req: NextRequest) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     )
-  } catch {
+  } catch (err) {
+    console.error('[webhook] Signature verification failed:', err instanceof Error ? err.message : err)
     return NextResponse.json({ error: 'Ongeldige signature' }, { status: 400 })
   }
 
   const supabase = createServiceClient()
 
+  console.log(`[webhook] Received event: ${event.type} (${event.id})`)
+
+  async function getSubscriptionExpiry(subscriptionId: string): Promise<Date> {
+    const sub = await stripe.subscriptions.retrieve(subscriptionId)
+    // current_period_end is a Unix timestamp — Stripe types may not expose it directly in v21+
+    const periodEnd = (sub as unknown as Record<string, number>).current_period_end
+    return new Date(periodEnd * 1000)
+  }
+
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object
 
-      // Event ticket betaling — afhandelen vóór membership logica
+      // ── Event ticket betaling ──
       if (session.metadata?.type === 'event_ticket') {
         const ticketId = session.metadata.ticket_id
         if (ticketId) {
+          console.log(`[webhook] Processing event ticket: ${ticketId}`)
           const ticketNumber = generateTicketNumber()
 
           const { data: updatedTicket } = await supabase
@@ -41,67 +52,93 @@ export async function POST(req: NextRequest) {
             .select('id, email, name, member_id, paid_amount, event_id')
             .single()
 
-          // Stuur bevestigingsmail na betaling
           if (updatedTicket) {
             try {
-              const { data: event } = await supabase
+              const { data: eventData } = await supabase
                 .from('events')
                 .select('title, date, end_date, location')
                 .eq('id', updatedTicket.event_id)
                 .single()
 
-              if (event) {
+              if (eventData) {
                 await sendTicketEmail({
                   to: updatedTicket.email as string,
                   buyerName: (updatedTicket.name as string) ?? (updatedTicket.email as string).split('@')[0],
                   buyerEmail: updatedTicket.email as string,
                   isMember: !!(updatedTicket.member_id),
-                  eventTitle: event.title as string,
-                  eventDate: new Date(event.date as string),
-                  eventEndDate: event.end_date ? new Date(event.end_date as string) : null,
-                  eventLocation: (event.location as string) ?? '',
+                  eventTitle: eventData.title as string,
+                  eventDate: new Date(eventData.date as string),
+                  eventEndDate: eventData.end_date ? new Date(eventData.end_date as string) : null,
+                  eventLocation: (eventData.location as string) ?? '',
                   ticketId: updatedTicket.id as string,
                   ticketNumber,
                   paidAmount: (updatedTicket.paid_amount as number) ?? 0,
                 })
+                console.log(`[webhook] Ticket email sent to ${updatedTicket.email}`)
               }
             } catch (emailErr) {
-              console.error('[email] Ticket mail mislukt na Stripe betaling:', emailErr)
+              console.error('[webhook] Ticket email failed:', emailErr)
             }
           }
         }
         break
       }
 
+      // ── Membership betaling ──
       const memberId = session.metadata?.member_id
-      if (!memberId) break
+      if (!memberId) {
+        console.warn('[webhook] checkout.session.completed without member_id in metadata')
+        break
+      }
 
-      const now = new Date()
-      const expiresAt = new Date(now)
-      expiresAt.setFullYear(expiresAt.getFullYear() + 1)
+      console.log(`[webhook] Processing membership checkout for member: ${memberId}`)
 
-      await supabase
+      // Haal subscription op van Stripe voor echte period_end
+      let expiresAt: Date
+      if (session.subscription) {
+        expiresAt = await getSubscriptionExpiry(session.subscription as string)
+        console.log(`[webhook] Subscription period_end: ${expiresAt.toISOString()}`)
+      } else {
+        // Fallback: 1 jaar vanaf nu (zou niet voorkomen bij subscription mode)
+        expiresAt = new Date()
+        expiresAt.setFullYear(expiresAt.getFullYear() + 1)
+        console.warn('[webhook] No subscription on session, using fallback expiry')
+      }
+
+      const { error: memberErr } = await supabase
         .from('members')
         .update({
           membership_active: true,
-          membership_started_at: now.toISOString(),
+          membership_started_at: new Date().toISOString(),
           membership_expires_at: expiresAt.toISOString(),
           stripe_subscription_id: session.subscription as string,
         })
         .eq('id', memberId)
 
-      // Registreer betaling
-      await supabase
-        .from('payments')
-        .insert({
-          member_id: memberId,
-          stripe_session_id: session.id,
-          stripe_subscription_id: session.subscription as string,
-          amount: (session.amount_total || 1000) / 100,
-          status: 'paid',
-          paid_at: now.toISOString(),
-        })
+      if (memberErr) {
+        console.error('[webhook] Member update failed:', memberErr.message)
+      }
 
+      // Registreer betaling (idempotent via stripe_session_id UNIQUE constraint)
+      const { error: payErr } = await supabase
+        .from('payments')
+        .upsert(
+          {
+            member_id: memberId,
+            stripe_session_id: session.id,
+            stripe_subscription_id: session.subscription as string,
+            amount: (session.amount_total || 1000) / 100,
+            status: 'paid',
+            paid_at: new Date().toISOString(),
+          },
+          { onConflict: 'stripe_session_id' }
+        )
+
+      if (payErr) {
+        console.error('[webhook] Payment upsert failed:', payErr.message)
+      }
+
+      console.log(`[webhook] Member ${memberId} activated, expires ${expiresAt.toISOString()}`)
       break
     }
 
@@ -109,15 +146,30 @@ export async function POST(req: NextRequest) {
       const invoice = event.data.object
       const customerId = invoice.customer as string
 
+      // Skip eerste invoice — die wordt al afgehandeld door checkout.session.completed
+      if (invoice.billing_reason === 'subscription_create') {
+        console.log(`[webhook] Skipping initial invoice for customer: ${customerId}`)
+        break
+      }
+
+      console.log(`[webhook] Processing renewal invoice for customer: ${customerId}`)
+
       const { data: member } = await supabase
         .from('members')
         .select('id')
         .eq('stripe_customer_id', customerId)
-        .single()
+        .maybeSingle()
 
       if (member) {
-        const expiresAt = new Date()
-        expiresAt.setFullYear(expiresAt.getFullYear() + 1)
+        // Haal actuele subscription period_end op
+        const subscriptionId = (invoice as unknown as Record<string, unknown>).subscription as string
+        let expiresAt: Date
+        if (subscriptionId) {
+          expiresAt = await getSubscriptionExpiry(subscriptionId)
+        } else {
+          expiresAt = new Date()
+          expiresAt.setFullYear(expiresAt.getFullYear() + 1)
+        }
 
         await supabase
           .from('members')
@@ -127,15 +179,24 @@ export async function POST(req: NextRequest) {
           })
           .eq('id', member.id as string)
 
+        // Payment record voor renewal (met invoice ID als session_id voor idempotency)
         await supabase
           .from('payments')
-          .insert({
-            member_id: member.id as string,
-            stripe_subscription_id: (invoice as unknown as Record<string, unknown>).subscription as string,
-            amount: (invoice.amount_paid || 0) / 100,
-            status: 'paid',
-            paid_at: new Date().toISOString(),
-          })
+          .upsert(
+            {
+              member_id: member.id as string,
+              stripe_session_id: invoice.id,
+              stripe_subscription_id: subscriptionId,
+              amount: (invoice.amount_paid || 0) / 100,
+              status: 'paid',
+              paid_at: new Date().toISOString(),
+            },
+            { onConflict: 'stripe_session_id' }
+          )
+
+        console.log(`[webhook] Renewal processed for member ${member.id}, expires ${expiresAt.toISOString()}`)
+      } else {
+        console.warn(`[webhook] No member found for customer: ${customerId}`)
       }
       break
     }
@@ -143,6 +204,7 @@ export async function POST(req: NextRequest) {
     case 'invoice.payment_failed': {
       const invoice = event.data.object
       const customerId = invoice.customer as string
+      console.warn(`[webhook] Payment failed for customer: ${customerId}`)
 
       await supabase
         .from('members')
@@ -155,6 +217,7 @@ export async function POST(req: NextRequest) {
     case 'customer.subscription.deleted': {
       const subscription = event.data.object
       const customerId = subscription.customer as string
+      console.log(`[webhook] Subscription deleted for customer: ${customerId}`)
 
       await supabase
         .from('members')
