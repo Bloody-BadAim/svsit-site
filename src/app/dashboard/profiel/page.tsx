@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { COMMISSIES, ADMIN_EMAILS, getRank, getLevel, getPrestige } from '@/lib/constants'
+import { ADMIN_EMAILS, getRank, getLevel, getPrestige } from '@/lib/constants'
 
 // ─── Corner decoration component ──────────────────────────────────────────────
 function CornerDecorations({ color = 'var(--color-accent-gold)' }: { color?: string }) {
@@ -130,7 +130,7 @@ function RankBadge({ points }: { points: number }) {
 export default function ProfielPage() {
   const { data: session } = useSession()
   const [studentNumber, setStudentNumber] = useState('')
-  const [commissie, setCommissie] = useState('')
+  const [commissieNames, setCommissieNames] = useState<string[]>([])
   const [membershipActive, setMembershipActive] = useState(false)
   const [memberSince, setMemberSince] = useState<string | null>(null)
   const [expiresAt, setExpiresAt] = useState<string | null>(null)
@@ -152,7 +152,11 @@ export default function ProfielPage() {
       .then(({ data: member }) => {
         if (member) {
           setStudentNumber((member.student_number as string) || '')
-          setCommissie((member.commissie as string) || '')
+          if (member.member_commissies && (member.member_commissies as { commissies: { naam: string } }[]).length > 0) {
+            setCommissieNames((member.member_commissies as { commissies: { naam: string } }[]).map((mc) => mc.commissies.naam))
+          } else if (member.commissie) {
+            setCommissieNames([member.commissie as string])
+          }
           setMembershipActive(member.membership_active as boolean)
           setExpiresAt(member.membership_expires_at as string | null)
           setMemberSince((member.membership_started_at as string) || null)
@@ -173,7 +177,6 @@ export default function ProfielPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         student_number: studentNumber || null,
-        commissie: commissie || null,
       }),
     })
 
@@ -218,7 +221,6 @@ export default function ProfielPage() {
   const email = session?.user?.email || ''
   const isAdmin = ADMIN_EMAILS.includes(email)
   const rank = getRank(points)
-  const commissieDef = COMMISSIES.find((c) => c.id === commissie)
 
   // ── Loading skeleton ─────────────────────────────────────────────────────────
   if (loading) {
@@ -301,44 +303,28 @@ export default function ProfielPage() {
               placeholder="Niet ingevuld"
             />
 
-            {/* Class / commissie */}
+            {/* Guild / commissies (read-only, managed by admin) */}
             <div className="space-y-1.5">
               <label
                 className="block font-mono text-[10px] uppercase tracking-[0.2em]"
                 style={{ color: 'var(--color-text-muted)' }}
               >
-                class.assignment
+                guild.assignment
               </label>
-              <div className="relative">
-                <select
-                  value={commissie}
-                  onChange={(e) => setCommissie(e.target.value)}
-                  disabled={!isAdmin}
-                  className="w-full py-2.5 px-3 text-sm outline-none transition-all duration-200 appearance-none disabled:opacity-50"
-                  style={{
-                    backgroundColor: 'var(--color-bg)',
-                    color: 'var(--color-text)',
-                    border: '1px solid var(--color-border)',
-                    fontFamily: 'var(--font-mono)',
-                  }}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--color-accent-gold)' }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--color-border)' }}
-                >
-                  <option value="">— geen commissie —</option>
-                  {COMMISSIES.map((c) => (
-                    <option key={c.id} value={c.id}>{c.emoji} {c.naam}</option>
-                  ))}
-                </select>
-                {/* custom chevron */}
-                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                  <span className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>▼</span>
-                </div>
+              <div
+                className="w-full py-2.5 px-3 text-sm"
+                style={{
+                  backgroundColor: 'var(--color-bg)',
+                  color: commissieNames.length > 0 ? 'var(--color-accent-blue)' : 'var(--color-text-muted)',
+                  border: '1px solid var(--color-border)',
+                  fontFamily: 'var(--font-mono)',
+                }}
+              >
+                {commissieNames.length > 0 ? commissieNames.join(', ') : '// geen commissie toegewezen'}
               </div>
-              {commissieDef && (
-                <p className="font-mono text-[10px] mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                  // {commissieDef.beschrijving}
-                </p>
-              )}
+              <p className="font-mono text-[10px] mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                // commissies worden toegewezen door het bestuur
+              </p>
             </div>
 
             {/* Save button + message */}

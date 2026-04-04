@@ -64,7 +64,7 @@ export default function MemberCard({
   const level = getLevel(points);
   const levelProg = getLevelProgress(points);
   const xpPercent = levelProg.percent;
-  const rolLabel = data ? (commissie ? ROLLEN[role]?.naam || role : ROLLEN[role]?.naam || "Member") : "Undecided";
+  const rolLabel = data ? (ROLLEN[role]?.naam || role) : "Undecided";
   const isPlaceholder = !data;
 
   // Skin
@@ -236,9 +236,17 @@ export default function MemberCard({
                 <span className="font-mono text-[11px] text-[var(--color-text-muted)]">
                   CLASS:{" "}
                   <span className={isPlaceholder ? "opacity-50" : ""}>
-                    {commissie || rolLabel}
+                    {rolLabel}
                   </span>
                 </span>
+                {commissie && (
+                  <span className="font-mono text-[10px] text-[var(--color-text-muted)]">
+                    GUILD:{" "}
+                    <span style={{ color: "var(--color-accent-blue)" }}>
+                      {commissie}
+                    </span>
+                  </span>
+                )}
                 <div className="flex items-center gap-2 mt-1">
                   <span className="font-mono text-[11px] text-[var(--color-accent-gold)] font-bold">
                     LVL {String(level).padStart(2, "0")}

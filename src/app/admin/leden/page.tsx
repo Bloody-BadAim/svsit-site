@@ -3,6 +3,11 @@
 import { useEffect, useState } from 'react'
 import MemberTable from '@/components/admin/MemberTable'
 
+interface MemberCommissieJoin {
+  commissie_id: string
+  commissies: { slug: string; naam: string }
+}
+
 interface MemberRow {
   id: string
   email: string
@@ -12,7 +17,9 @@ interface MemberRow {
   points: number
   membership_active: boolean
   membership_started_at: string | null
+  is_admin: boolean
   created_at: string
+  member_commissies?: MemberCommissieJoin[]
 }
 
 export default function LedenPage() {

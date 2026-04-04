@@ -2,7 +2,6 @@ import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
 import type { Role } from '@/types/database'
-import { COMMISSIES } from '@/lib/constants'
 import { calculateStats } from '@/lib/rewards'
 import LedenpasClient from '@/components/dashboard/LedenpasClient'
 
@@ -17,13 +16,17 @@ export default async function LedenpasPage() {
   const supabase = createServiceClient()
   const { data: member } = await supabase
     .from('members')
-    .select('id, email, student_number, role, points, commissie, active_skin, active_badges')
+    .select(`id, email, student_number, role, points, commissie, active_skin, active_badges,
+      member_commissies ( commissie_id, commissies ( slug, naam ) )`)
     .eq('id', session.user.id)
     .single()
 
   if (!member) redirect('/dashboard')
 
-  const commissieNaam = COMMISSIES.find(c => c.id === (member.commissie as string))?.naam || (member.commissie as string) || null
+  const memberCommissies = ((member.member_commissies || []) as unknown as { commissies: { naam: string } }[])
+  const commissieNaam = memberCommissies.length > 0
+    ? memberCommissies.map(mc => mc.commissies.naam).join(', ')
+    : (member.commissie as string) || null
 
   // Fetch unlocked skin rewards
   const { data: rewards } = await supabase

@@ -20,6 +20,7 @@ export const ROLLEN: Record<Role, { naam: string; beschrijving: string }> = {
   member: { naam: 'Member', beschrijving: 'Gewoon lid, toegang tot events en community' },
   contributor: { naam: 'Contributor', beschrijving: 'Actief commissielid, bouwt mee aan SIT' },
   mentor: { naam: 'Mentor', beschrijving: 'Docent/begeleider, support rol' },
+  bestuur: { naam: 'Bestuur', beschrijving: 'Bestuurslid van SIT' },
 }
 
 export interface Rank {

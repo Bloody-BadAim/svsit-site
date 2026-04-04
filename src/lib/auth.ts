@@ -124,14 +124,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const supabase = createServiceClient()
         const { data: member } = await supabase
           .from('members')
-          .select('role, membership_active, is_admin')
+          .select('role, membership_active')
           .eq('id', token.id as string)
           .single()
 
         if (member) {
           token.role = member.role as string
           token.membershipActive = member.membership_active as boolean
-          token.isAdmin = member.is_admin as boolean
         }
       }
 
@@ -142,7 +141,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.id = token.id as string
       session.user.role = (token.role as Role) || 'member'
       session.user.membershipActive = (token.membershipActive as boolean) || false
-      session.user.isAdmin = (token.isAdmin as boolean) || ADMIN_EMAILS.includes(session.user.email)
+      session.user.isAdmin = ADMIN_EMAILS.includes(session.user.email)
       return session
     },
   },

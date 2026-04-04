@@ -1,8 +1,15 @@
 'use client'
 
-import { useState } from 'react'
-import { COMMISSIES, ROLLEN, getRank } from '@/lib/constants'
+import { useState, useEffect } from 'react'
+import { ROLLEN, getRank } from '@/lib/constants'
 import type { Role } from '@/types/database'
+
+interface DbCommissie {
+  id: string
+  slug: string
+  naam: string
+  beschrijving: string | null
+}
 
 interface MemberDetail {
   id: string
@@ -13,6 +20,7 @@ interface MemberDetail {
   points: number
   membership_active: boolean
   membership_started_at: string | null
+  is_admin: boolean
   created_at: string
 }
 
@@ -26,10 +34,31 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
   const [puntenAantal, setPuntenAantal] = useState('1')
   const [puntenReden, setPuntenReden] = useState('')
   const [rol, setRol] = useState(member.role)
+  const [isAdmin, setIsAdmin] = useState(member.is_admin)
+  const [memberCommissieIds, setMemberCommissieIds] = useState<string[]>([])
+  const [allCommissies, setAllCommissies] = useState<DbCommissie[]>([])
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
 
   const rank = getRank(member.points)
+
+  useEffect(() => {
+    fetch(`/api/members/${member.id}`)
+      .then(res => res.json())
+      .then(({ data }) => {
+        if (data?.member_commissies) {
+          setMemberCommissieIds(
+            data.member_commissies.map((mc: { commissie_id: string }) => mc.commissie_id)
+          )
+        }
+      })
+
+    fetch('/api/commissies')
+      .then(res => res.json())
+      .then(({ data }) => {
+        if (data) setAllCommissies(data)
+      })
+  }, [member.id])
 
   async function handlePunten() {
     if (!puntenReden) return
@@ -56,13 +85,55 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
 
   async function handleRolWijzig() {
     setSaving(true)
-    const res = await fetch(`/api/members/${member.id}`, {
+    const res = await fetch(`/api/admin/members/${member.id}/role`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ role: rol }),
     })
     if (res.ok) {
       setMessage('Rol gewijzigd')
+      onUpdate()
+    } else {
+      setMessage('Fout bij wijzigen')
+    }
+    setSaving(false)
+    setTimeout(() => setMessage(''), 3000)
+  }
+
+  async function handleAdminToggle() {
+    const newValue = !isAdmin
+    setSaving(true)
+    const res = await fetch(`/api/admin/members/${member.id}/admin`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_admin: newValue }),
+    })
+    if (res.ok) {
+      setIsAdmin(newValue)
+      setMessage(newValue ? 'Admin rechten toegekend' : 'Admin rechten ingetrokken')
+      onUpdate()
+    } else {
+      const data = await res.json()
+      setMessage(data.error || 'Fout bij wijzigen')
+    }
+    setSaving(false)
+    setTimeout(() => setMessage(''), 3000)
+  }
+
+  async function handleCommissieToggle(commissieId: string) {
+    const newIds = memberCommissieIds.includes(commissieId)
+      ? memberCommissieIds.filter(id => id !== commissieId)
+      : [...memberCommissieIds, commissieId]
+
+    setSaving(true)
+    const res = await fetch(`/api/admin/members/${member.id}/commissies`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ commissie_ids: newIds }),
+    })
+    if (res.ok) {
+      setMemberCommissieIds(newIds)
+      setMessage('Commissies bijgewerkt')
       onUpdate()
     } else {
       setMessage('Fout bij wijzigen')
@@ -103,14 +174,28 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
         {/* Header */}
         <div className="flex justify-between items-start">
           <div>
-            <h2 className="text-lg font-bold" style={{ color: 'var(--color-text)' }}>
-              {member.email}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold" style={{ color: 'var(--color-text)' }}>
+                {member.email}
+              </h2>
+              {isAdmin && (
+                <span
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider"
+                  style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: 'var(--color-accent-red)' }}
+                >
+                  Admin
+                </span>
+              )}
+            </div>
             <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
               Lid sinds {new Date(member.created_at).toLocaleDateString('nl-NL')}
             </p>
           </div>
-          <button onClick={onClose} className="text-xl" style={{ color: 'var(--color-text-muted)' }}>×</button>
+          <button onClick={onClose} className="text-xl leading-none" style={{ color: 'var(--color-text-muted)' }}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
         </div>
 
         {/* Info grid */}
@@ -121,7 +206,9 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
           </div>
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg)' }}>
             <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>Punten</p>
-            <p className="font-semibold" style={{ color: 'var(--color-accent-gold)' }}>{member.points} <span className="text-xs font-normal" style={{ color: rank.kleur }}>({rank.naam})</span></p>
+            <p className="font-semibold" style={{ color: 'var(--color-accent-gold)' }}>
+              {member.points} <span className="text-xs font-normal" style={{ color: rank.kleur }}>({rank.naam})</span>
+            </p>
           </div>
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg)' }}>
             <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>Status</p>
@@ -130,9 +217,45 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
             </p>
           </div>
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg)' }}>
-            <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>Commissie</p>
-            <p className="font-semibold" style={{ color: 'var(--color-text)' }}>{member.commissie || '—'}</p>
+            <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>Commissies</p>
+            <p className="font-semibold text-sm" style={{ color: 'var(--color-text)' }}>
+              {memberCommissieIds.length > 0
+                ? allCommissies
+                    .filter(c => memberCommissieIds.includes(c.id))
+                    .map(c => c.naam)
+                    .join(', ')
+                : '\u2014'}
+            </p>
           </div>
+        </div>
+
+        {/* Admin toggle */}
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+            Admin status
+          </h3>
+          <button
+            onClick={handleAdminToggle}
+            disabled={saving}
+            className="flex items-center gap-3 w-full p-3 rounded-lg text-sm transition-colors"
+            style={{
+              backgroundColor: isAdmin ? 'rgba(239, 68, 68, 0.1)' : 'var(--color-bg)',
+              border: `1px solid ${isAdmin ? 'var(--color-accent-red)' : 'var(--color-border)'}`,
+            }}
+          >
+            <div
+              className="w-8 h-5 rounded-full relative transition-colors flex-shrink-0"
+              style={{ backgroundColor: isAdmin ? 'var(--color-accent-red)' : 'var(--color-border)' }}
+            >
+              <div
+                className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"
+                style={{ left: isAdmin ? '14px' : '2px' }}
+              />
+            </div>
+            <span style={{ color: isAdmin ? 'var(--color-accent-red)' : 'var(--color-text-muted)' }}>
+              {isAdmin ? 'Admin rechten actief' : 'Geen admin rechten'}
+            </span>
+          </button>
         </div>
 
         {/* Punten toekennen */}
@@ -193,6 +316,50 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
               Wijzig
             </button>
           </div>
+        </div>
+
+        {/* Commissies toewijzen */}
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+            Commissies
+          </h3>
+          {allCommissies.length === 0 ? (
+            <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Laden...</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              {allCommissies.map((c) => {
+                const active = memberCommissieIds.includes(c.id)
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => handleCommissieToggle(c.id)}
+                    disabled={saving}
+                    className="flex items-center gap-2 p-2.5 rounded-lg text-sm text-left transition-colors"
+                    style={{
+                      backgroundColor: active ? 'rgba(59, 130, 246, 0.1)' : 'var(--color-bg)',
+                      border: `1px solid ${active ? 'var(--color-accent-blue)' : 'var(--color-border)'}`,
+                      color: active ? 'var(--color-accent-blue)' : 'var(--color-text-muted)',
+                    }}
+                  >
+                    <div
+                      className="w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center"
+                      style={{
+                        borderColor: active ? 'var(--color-accent-blue)' : 'var(--color-border)',
+                        backgroundColor: active ? 'var(--color-accent-blue)' : 'transparent',
+                      }}
+                    >
+                      {active && (
+                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                          <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                    </div>
+                    {c.naam}
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         {/* Handmatig verlengen */}

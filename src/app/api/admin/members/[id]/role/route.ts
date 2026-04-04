@@ -4,7 +4,7 @@ import { createServiceClient } from '@/lib/supabase'
 import { ADMIN_EMAILS } from '@/lib/constants'
 import type { Role } from '@/types/database'
 
-const VALID_ROLES: Role[] = ['member', 'contributor', 'mentor']
+const VALID_ROLES: Role[] = ['member', 'contributor', 'mentor', 'bestuur']
 
 export async function PATCH(
   req: NextRequest,

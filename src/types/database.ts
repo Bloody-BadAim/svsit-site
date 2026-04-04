@@ -1,4 +1,4 @@
-export type Role = 'member' | 'contributor' | 'mentor'
+export type Role = 'member' | 'contributor' | 'mentor' | 'bestuur'
 
 export type MembershipStatus = 'active' | 'expired' | 'pending'
 

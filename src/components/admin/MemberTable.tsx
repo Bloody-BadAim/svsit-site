@@ -5,6 +5,11 @@ import { useAdminStore } from '@/stores/useAdminStore'
 import { COMMISSIES } from '@/lib/constants'
 import MemberDetailModal from './MemberDetailModal'
 
+interface MemberCommissieJoin {
+  commissie_id: string
+  commissies: { slug: string; naam: string }
+}
+
 interface MemberRow {
   id: string
   email: string
@@ -14,7 +19,9 @@ interface MemberRow {
   points: number
   membership_active: boolean
   membership_started_at: string | null
+  is_admin: boolean
   created_at: string
+  member_commissies?: MemberCommissieJoin[]
 }
 
 interface MemberTableProps {
@@ -22,8 +29,26 @@ interface MemberTableProps {
   onRefresh: () => void
 }
 
+function getCommissieSlugs(member: MemberRow): string[] {
+  if (member.member_commissies && member.member_commissies.length > 0) {
+    return member.member_commissies.map(mc => mc.commissies.slug)
+  }
+  return member.commissie ? [member.commissie] : []
+}
+
+function getCommissieNames(member: MemberRow): string[] {
+  if (member.member_commissies && member.member_commissies.length > 0) {
+    return member.member_commissies.map(mc => mc.commissies.naam)
+  }
+  if (member.commissie) {
+    const found = COMMISSIES.find(c => c.id === member.commissie)
+    return [found?.naam || member.commissie]
+  }
+  return []
+}
+
 export default function MemberTable({ members, onRefresh }: MemberTableProps) {
-  const { filters, setFilter, geselecteerdLidId, selecteerLid } = useAdminStore()
+  const { filters, setFilter } = useAdminStore()
   const [selectedMember, setSelectedMember] = useState<MemberRow | null>(null)
 
   const filtered = useMemo(() => {
@@ -49,7 +74,10 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
     }
 
     if (filters.commissie !== 'all') {
-      result = result.filter((m) => m.commissie === filters.commissie)
+      result = result.filter((m) => {
+        const slugs = getCommissieSlugs(m)
+        return slugs.includes(filters.commissie)
+      })
     }
 
     result.sort((a, b) => {
@@ -94,6 +122,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
           <option value="member">Member</option>
           <option value="contributor">Contributor</option>
           <option value="mentor">Mentor</option>
+          <option value="bestuur">Bestuur</option>
         </select>
         <select
           value={filters.commissie}
@@ -117,7 +146,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
         <table className="w-full text-sm">
           <thead>
             <tr style={{ backgroundColor: 'var(--color-surface)' }}>
-              {['Email', 'Studentnr.', 'Rol', 'Commissie', 'Punten', 'Status', 'Lid sinds'].map((col) => (
+              {['Email', 'Studentnr.', 'Rol', 'Commissie(s)', 'Punten', 'Status', 'Lid sinds'].map((col) => (
                 <th
                   key={col}
                   className="text-left px-4 py-3 font-semibold uppercase tracking-wider text-xs"
@@ -129,31 +158,48 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((member) => (
-              <tr
-                key={member.id}
-                onClick={() => setSelectedMember(member)}
-                className="cursor-pointer transition-colors"
-                style={{ borderBottom: '1px solid var(--color-border)' }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-surface)')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                <td className="px-4 py-3" style={{ color: 'var(--color-text)' }}>{member.email}</td>
-                <td className="px-4 py-3" style={{ color: 'var(--color-text-muted)' }}>{member.student_number || '—'}</td>
-                <td className="px-4 py-3 capitalize" style={{ color: 'var(--color-accent-blue)' }}>{member.role}</td>
-                <td className="px-4 py-3" style={{ color: 'var(--color-text-muted)' }}>{member.commissie || '—'}</td>
-                <td className="px-4 py-3 font-bold" style={{ color: 'var(--color-accent-gold)' }}>{member.points}</td>
-                <td className="px-4 py-3">
-                  <span
-                    className="inline-block w-2 h-2 rounded-full"
-                    style={{ backgroundColor: member.membership_active ? 'var(--color-accent-green)' : 'var(--color-accent-red)' }}
-                  />
-                </td>
-                <td className="px-4 py-3" style={{ color: 'var(--color-text-muted)' }}>
-                  {member.created_at ? new Date(member.created_at).toLocaleDateString('nl-NL') : '—'}
-                </td>
-              </tr>
-            ))}
+            {filtered.map((member) => {
+              const names = getCommissieNames(member)
+              return (
+                <tr
+                  key={member.id}
+                  onClick={() => setSelectedMember(member)}
+                  className="cursor-pointer transition-colors"
+                  style={{ borderBottom: '1px solid var(--color-border)' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-surface)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                >
+                  <td className="px-4 py-3" style={{ color: 'var(--color-text)' }}>
+                    <span className="inline-flex items-center gap-1.5">
+                      {member.email}
+                      {member.is_admin && (
+                        <span
+                          className="text-[9px] font-bold px-1 py-px rounded uppercase tracking-wider"
+                          style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: 'var(--color-accent-red)' }}
+                        >
+                          Admin
+                        </span>
+                      )}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3" style={{ color: 'var(--color-text-muted)' }}>{member.student_number || '\u2014'}</td>
+                  <td className="px-4 py-3 capitalize" style={{ color: 'var(--color-accent-blue)' }}>{member.role}</td>
+                  <td className="px-4 py-3" style={{ color: 'var(--color-text-muted)' }}>
+                    {names.length > 0 ? names.join(', ') : '\u2014'}
+                  </td>
+                  <td className="px-4 py-3 font-bold" style={{ color: 'var(--color-accent-gold)' }}>{member.points}</td>
+                  <td className="px-4 py-3">
+                    <span
+                      className="inline-block w-2 h-2 rounded-full"
+                      style={{ backgroundColor: member.membership_active ? 'var(--color-accent-green)' : 'var(--color-accent-red)' }}
+                    />
+                  </td>
+                  <td className="px-4 py-3" style={{ color: 'var(--color-text-muted)' }}>
+                    {member.created_at ? new Date(member.created_at).toLocaleDateString('nl-NL') : '\u2014'}
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
