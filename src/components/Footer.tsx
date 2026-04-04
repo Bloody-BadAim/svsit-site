@@ -206,12 +206,12 @@ export default function Footer() {
                 <span>
                   Wibauthuis, Wibautstraat 3b
                   <br />
-                  <span className="opacity-50">1091 GH Amsterdam</span>
+                  <span className="text-[#71717A]">1091 GH Amsterdam</span>
                 </span>
               </div>
 
               {/* Faculty */}
-              <p className="font-mono text-sm text-[var(--color-text-muted)] opacity-50 ml-[22.5px]">
+              <p className="font-mono text-sm text-[#71717A] ml-[22.5px]">
                 FDMCI — Hogeschool van Amsterdam
               </p>
             </div>
@@ -222,7 +222,7 @@ export default function Footer() {
         <div data-footer-zone>
           {/* Terminal one-liner */}
           <p
-            className="hidden sm:block font-mono text-xs text-[var(--color-text-muted)] opacity-25 mb-5"
+            className="hidden sm:block font-mono text-xs text-[#3F3F46] mb-5"
             aria-hidden="true"
           >
             <span className="text-[var(--color-accent-green)]">{"$"}</span>
@@ -242,7 +242,7 @@ export default function Footer() {
 
           {/* Copyright + back-to-top */}
           <div className="flex items-center justify-between gap-4 flex-wrap">
-            <p className="font-mono text-xs text-[var(--color-text-muted)] opacity-60 flex items-center gap-2">
+            <p className="font-mono text-xs text-[#71717A] flex items-center gap-2">
               <span>&copy; {year} SIT — Hogeschool van Amsterdam</span>
               <span
                 className="inline-flex items-center gap-1.5"
