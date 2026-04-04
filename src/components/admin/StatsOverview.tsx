@@ -15,8 +15,8 @@ interface StatsOverviewProps {
 }
 
 export default function StatsOverview({ stats }: StatsOverviewProps) {
-  const formatEuro = (cents: number) =>
-    new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
+  const formatEuro = (euros: number) =>
+    new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(euros)
 
   const activePercent = stats.totaal > 0 ? Math.round((stats.actief / stats.totaal) * 100) : 0
 
