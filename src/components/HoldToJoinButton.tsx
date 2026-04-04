@@ -598,7 +598,7 @@ export default function HoldToJoinButton({ href }: { href: string }) {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         aria-label="Word lid van SIT, houd ingedrukt om te bevestigen"
-        className="group relative inline-block px-12 py-5 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-xl tracking-wide overflow-hidden transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] active:scale-[0.97] select-none cursor-pointer border-0"
+        className="group relative inline-block px-12 py-5 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-xl tracking-wide overflow-hidden transition-[transform,box-shadow] duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] active:scale-[0.97] select-none cursor-pointer border-0"
       >
         <GlowEffect
           colors={["#F59E0B", "#D97706", "#FBBF24", "#F59E0B"]}
@@ -618,7 +618,7 @@ export default function HoldToJoinButton({ href }: { href: string }) {
         {/* Text */}
         <div className="relative z-10 flex flex-col items-center gap-1">
           <span ref={buttonTextRef}>WORD LID</span>
-          <span className="text-[10px] font-normal opacity-60 md:opacity-40 md:group-hover:opacity-80 translate-y-0.5 group-hover:translate-y-0 tracking-wider transition-all duration-300">
+          <span className="text-[10px] font-normal opacity-60 md:opacity-40 md:group-hover:opacity-80 translate-y-0.5 group-hover:translate-y-0 tracking-wider transition-[opacity,transform] duration-300">
             {"// tap or hold"}
           </span>
         </div>

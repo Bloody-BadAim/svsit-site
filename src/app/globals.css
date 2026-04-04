@@ -494,10 +494,10 @@ body::before {
   50% { transform: scale(1.15); }
 }
 
-/* Border trail offset-distance animation */
-@keyframes borderTrailMove {
-  from { offset-distance: 0%; }
-  to { offset-distance: 100%; }
+/* Border trail rotation — GPU composited via transform */
+@keyframes borderTrailRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Accessibility: respect user motion preferences */

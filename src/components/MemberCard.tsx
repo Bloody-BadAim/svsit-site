@@ -266,7 +266,7 @@ export default function MemberCard({
                 style={{ background: "rgba(255,255,255,0.05)" }}
               >
                 <div
-                  className="h-full transition-all duration-700"
+                  className="h-full transition-[width] duration-700"
                   style={{
                     width: `${xpPercent}%`,
                     background: "linear-gradient(90deg, var(--color-accent-gold), #FBBF24)",
@@ -303,7 +303,7 @@ export default function MemberCard({
                       style={{ background: "rgba(255,255,255,0.05)" }}
                     >
                       <div
-                        className="h-full transition-all duration-700"
+                        className="h-full transition-[width] duration-700"
                         style={{
                           width: `${stat.fill}%`,
                           background: stat.color,

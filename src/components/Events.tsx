@@ -388,7 +388,7 @@ function EventCard({
           : hovered && !isActive
             ? "translateY(-2px)"
             : "none",
-        transition: "all 200ms ease, transform 80ms ease",
+        transition: "background 200ms ease, border-color 200ms ease, box-shadow 200ms ease, opacity 200ms ease, transform 80ms ease",
       }}
       aria-pressed={isActive}
       aria-label={`${event.title}, ${fDay(event.date)} ${fMonth(event.date)} ${fYear(event.date)}, ${event.status}`}
@@ -422,7 +422,7 @@ function EventCard({
         style={{
           background: `linear-gradient(90deg, transparent, ${c}${isActive ? "80" : hovered ? "50" : "20"}, ${c}${isActive ? "CC" : hovered ? "60" : "25"}, ${c}${isActive ? "80" : hovered ? "50" : "20"}, transparent)`,
           boxShadow: isActive ? `0 0 8px ${c}40` : "none",
-          transition: "all 300ms ease",
+          transition: "background 300ms ease, box-shadow 300ms ease, opacity 300ms ease",
         }}
       />
 
@@ -740,7 +740,7 @@ function DetailPanel({
           {shown.status === "NEXT" && (
             <a
               href="#"
-              className="inline-flex items-center font-mono text-[13px] font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer hover:scale-[1.02]"
+              className="inline-flex items-center font-mono text-[13px] font-bold tracking-wider uppercase transition-[transform,opacity,color] duration-200 cursor-pointer hover:scale-[1.02]"
               style={{
                 padding: "12px 28px",
                 gap: 8,
@@ -1029,7 +1029,7 @@ export default function Events() {
           <div className="flex justify-center" style={{ marginTop: "3rem" }}>
             <button
               onClick={dlAll}
-              className="w-full font-mono text-sm cursor-pointer transition-all duration-200"
+              className="w-full font-mono text-sm cursor-pointer transition-[background,border-color,color,transform] duration-200"
               style={{
                 maxWidth: "32rem",
                 padding: "14px 0",
