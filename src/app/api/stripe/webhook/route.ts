@@ -28,10 +28,20 @@ export async function POST(req: NextRequest) {
   console.log(`[webhook] Received event: ${event.type} (${event.id})`)
 
   async function getSubscriptionExpiry(subscriptionId: string): Promise<Date> {
-    const sub = await stripe.subscriptions.retrieve(subscriptionId)
-    // current_period_end is a Unix timestamp — Stripe types may not expose it directly in v21+
-    const periodEnd = (sub as unknown as Record<string, number>).current_period_end
-    return new Date(periodEnd * 1000)
+    try {
+      const sub = await stripe.subscriptions.retrieve(subscriptionId)
+      const periodEnd = (sub as unknown as Record<string, number>).current_period_end
+      if (periodEnd && typeof periodEnd === 'number') {
+        return new Date(periodEnd * 1000)
+      }
+    } catch (err) {
+      console.error('[webhook] Failed to retrieve subscription:', err instanceof Error ? err.message : err)
+    }
+    // Fallback: 1 jaar vanaf nu
+    const fallback = new Date()
+    fallback.setFullYear(fallback.getFullYear() + 1)
+    console.warn('[webhook] Using 1 year fallback expiry')
+    return fallback
   }
 
   switch (event.type) {
