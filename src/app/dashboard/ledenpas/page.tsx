@@ -3,6 +3,7 @@ import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
 import type { Role } from '@/types/database'
 import { calculateStats } from '@/lib/rewards'
+import { CARD_SKINS } from '@/lib/cardSkins'
 import LedenpasClient from '@/components/dashboard/LedenpasClient'
 
 export const metadata = {
@@ -35,7 +36,10 @@ export default async function LedenpasPage() {
     .eq('member_id', session.user.id)
     .eq('type', 'skin_unlock')
 
-  const unlockedSkins = ['default', ...((rewards || []).map(r => r.reward_id as string))]
+  const isAdmin = session.user.isAdmin
+  const unlockedSkins = isAdmin
+    ? CARD_SKINS.map(s => s.id)
+    : ['default', ...((rewards || []).map(r => r.reward_id as string))]
   const activeSkin = (member.active_skin as string) || 'default'
   const activeBadges = (member.active_badges as string[]) || []
   const memberStats = await calculateStats(session.user.id)

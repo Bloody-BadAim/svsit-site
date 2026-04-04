@@ -1,7 +1,7 @@
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
-import { getRank, getBadgeSlotCount } from '@/lib/constants'
+import { getRank, getBadgeSlotCount, BADGES } from '@/lib/constants'
 import { calculateStats } from '@/lib/rewards'
 import type { Challenge, ChallengeSubmission, Reward } from '@/types/database'
 import ProgressionTracker from '@/components/dashboard/rewards/ProgressionTracker'
@@ -31,7 +31,8 @@ export default async function RewardsPage() {
   const points = (member?.points as number) || 0
   const rank = getRank(points)
   const activeBadges = (member?.active_badges as string[]) || []
-  const maxSlots = getBadgeSlotCount(rank.naam)
+  const isAdmin = session.user.isAdmin
+  const maxSlots = isAdmin ? BADGES.length : getBadgeSlotCount(rank.naam)
 
   // Fetch stats
   const stats = await calculateStats(memberId)
@@ -44,10 +45,10 @@ export default async function RewardsPage() {
 
   const rewards = (rewardsData || []) as Reward[]
 
-  // Earned badge IDs
-  const earnedBadges = rewards
-    .filter((r) => r.type === 'badge')
-    .map((r) => r.reward_id)
+  // Earned badge IDs — admins get all badges
+  const earnedBadges = isAdmin
+    ? BADGES.map(b => b.id)
+    : rewards.filter((r) => r.type === 'badge').map((r) => r.reward_id)
 
   // Fetch active weekly quests (type='quest', within active period)
   const now = new Date().toISOString()
