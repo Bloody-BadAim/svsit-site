@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS members (
   email TEXT UNIQUE NOT NULL,
   password_hash TEXT,
   student_number TEXT,
-  role TEXT NOT NULL DEFAULT 'member' CHECK (role IN ('member', 'contributor', 'mentor')),
+  role TEXT NOT NULL DEFAULT 'member' CHECK (role IN ('member', 'contributor', 'mentor', 'bestuur')),
   commissie TEXT,
   commissie_voorstel TEXT,
   points INTEGER DEFAULT 0,

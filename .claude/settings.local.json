@@ -93,7 +93,16 @@
       "Bash(xargs basename:*)",
       "Bash(git mv:*)",
       "Bash(node -e \"console.log\\(__dirname\\)\")",
-      "Bash(node -e \"console.log\\(process.cwd\\(\\)\\)\")"
+      "Bash(node -e \"console.log\\(process.cwd\\(\\)\\)\")",
+      "Bash(node -e \"console.log\\(require.resolve\\(''tailwindcss''\\)\\)\")",
+      "Bash(node -e \"console.log\\(require.resolve\\(''tw-animate-css''\\).replace\\(/.*node_modules\\\\//, ''''\\)\\)\")",
+      "Bash(find node_modules/tw-animate-css -name *.css)",
+      "Bash(find node_modules -path */shadcn/tailwind.css)",
+      "Bash(find node_modules -name tailwind.css -path *shadcn*)",
+      "Bash(ln -s /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/node_modules /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/node_modules)",
+      "mcp__plugin_supabase_supabase__list_projects",
+      "mcp__plugin_supabase_supabase__execute_sql",
+      "Bash(npm rebuild:*)"
     ]
   },
   "outputStyle": "default",

@@ -47,6 +47,31 @@ function getCommissieNames(member: MemberRow): string[] {
   return []
 }
 
+function exportCSV(members: MemberRow[]) {
+  const headers = ['Email', 'Studentnummer', 'Rol', 'Commissie(s)', 'Punten', 'Status', 'Lid sinds']
+  const rows = members.map(m => [
+    m.email,
+    m.student_number || '',
+    m.role,
+    getCommissieNames(m).join(' | ') || '',
+    m.points.toString(),
+    m.membership_active ? 'Actief' : 'Inactief',
+    m.created_at ? new Date(m.created_at).toLocaleDateString('nl-NL') : ''
+  ])
+
+  const csv = [headers, ...rows]
+    .map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(','))
+    .join('\n')
+
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `sit-leden-${new Date().toISOString().split('T')[0]}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function MemberTable({ members, onRefresh }: MemberTableProps) {
   const { filters, setFilter } = useAdminStore()
   const [selectedMember, setSelectedMember] = useState<MemberRow | null>(null)
@@ -135,6 +160,20 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
             <option key={c.id} value={c.id}>{c.naam}</option>
           ))}
         </select>
+        <button
+          onClick={() => exportCSV(filtered)}
+          className="py-2 px-4 rounded-lg text-sm font-semibold flex items-center gap-2"
+          style={{
+            backgroundColor: 'var(--color-surface)',
+            color: 'var(--color-accent-gold)',
+            border: '1px solid var(--color-accent-gold)'
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M2 10v3a1 1 0 001 1h10a1 1 0 001-1v-3M8 2v8M5 7l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Export CSV
+        </button>
       </div>
 
       <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>

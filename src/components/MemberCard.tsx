@@ -1,7 +1,7 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { getRank, ROLLEN, getLevel, getLevelProgress } from "@/lib/constants";
+import { getRank, ROLLEN, getLevel, getLevelProgress, getBadgeSlotCount } from "@/lib/constants";
 import type { Role } from "@/types/database";
 import QRCode from "react-qr-code";
 import { getSkin } from "@/lib/cardSkins";
@@ -346,13 +346,13 @@ export default function MemberCard({
               <div className="flex items-center gap-2">
                 {activeBadges
                   ? (() => {
-                      const BADGE_SLOTS = 4;
+                      const badgeSlots = getBadgeSlotCount(rank.naam);
                       const slots: React.ReactNode[] = activeBadges
-                        .slice(0, BADGE_SLOTS)
+                        .slice(0, badgeSlots)
                         .map((badgeId) => (
                           <BadgeIcon key={badgeId} badgeId={badgeId} size={16} locked={false} />
                         ));
-                      for (let i = slots.length; i < BADGE_SLOTS; i++) {
+                      for (let i = slots.length; i < badgeSlots; i++) {
                         slots.push(
                           <BadgeIcon key={`locked-${i}`} badgeId="badge_joined" size={16} locked={true} />
                         );
