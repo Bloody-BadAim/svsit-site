@@ -91,7 +91,9 @@
       "Bash(__NEW_LINE_c234ba583c0c1658__ grep:*)",
       "Bash(__NEW_LINE_db95466335583230__ echo:*)",
       "Bash(xargs basename:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(node -e \"console.log\\(__dirname\\)\")",
+      "Bash(node -e \"console.log\\(process.cwd\\(\\)\\)\")"
     ]
   },
   "outputStyle": "default",
