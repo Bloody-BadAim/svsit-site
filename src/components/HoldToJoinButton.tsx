@@ -86,8 +86,7 @@ export default function HoldToJoinButton({ href }: { href: string }) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const mountedRef = useRef(true);
 
-  const HOLD_DURATION = 3000;
-  const REVERSE_DURATION = 500;
+  const HOLD_DURATION = 2000;
 
   // --- Cleanup ---
   const cleanup = useCallback(() => {
@@ -483,17 +482,7 @@ export default function HoldToJoinButton({ href }: { href: string }) {
     const now = performance.now();
     let progress: number;
 
-    if (reversingRef.current) {
-      const elapsed = now - reverseStartRef.current;
-      const t = Math.min(elapsed / REVERSE_DURATION, 1);
-      const eased = 1 - (1 - t) * (1 - t);
-      progress = reverseFromRef.current * (1 - eased);
-
-      if (t >= 1) {
-        cleanup();
-        return;
-      }
-    } else if (holdingRef.current) {
+    if (holdingRef.current) {
       const elapsed = now - holdStartRef.current;
       progress = Math.min(elapsed / HOLD_DURATION, 1);
     } else {
@@ -545,59 +534,18 @@ export default function HoldToJoinButton({ href }: { href: string }) {
     rafRef.current = requestAnimationFrame(animationLoop);
   }, [createOverlay, animationLoop]);
 
-  // --- End hold ---
-  const endHold = useCallback(() => {
-    if (climaxRef.current) return;
-    if (!holdingRef.current) return;
-    holdingRef.current = false;
-
-    if (progressRef.current > 0.01) {
-      reversingRef.current = true;
-      reverseStartRef.current = performance.now();
-      reverseFromRef.current = progressRef.current;
-      rafRef.current = requestAnimationFrame(animationLoop);
-    } else {
-      cleanup();
-    }
-  }, [cleanup, animationLoop]);
-
-  const TAP_THRESHOLD = 300; // ms — anything shorter is a tap, not a hold
-
-  // --- Event handlers ---
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
+  // --- Click handler: start animation and auto-complete ---
+  const handleClick = useCallback(() => {
+    if (climaxRef.current || holdingRef.current) return;
     startHold();
   }, [startHold]);
-
-  const handleMouseUp = useCallback(() => endHold(), [endHold]);
-  const handleMouseLeave = useCallback(() => {
-    if (holdingRef.current) endHold();
-  }, [endHold]);
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    e.preventDefault();
-    startHold();
-  }, [startHold]);
-  const handleTouchEnd = useCallback(() => {
-    // Quick tap → navigate directly (mobile-friendly fallback)
-    const holdDuration = performance.now() - holdStartRef.current;
-    if (holdDuration < TAP_THRESHOLD && !climaxRef.current) {
-      cleanup();
-      window.location.href = href;
-      return;
-    }
-    endHold();
-  }, [endHold, cleanup, href]);
 
   return (
     <Magnetic intensity={0.25} range={150}>
       <button
         ref={buttonRef}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        aria-label="Word lid van SIT, houd ingedrukt om te bevestigen"
+        onClick={handleClick}
+        aria-label="Word lid van SIT"
         className="group relative inline-block px-12 py-5 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-xl tracking-wide overflow-hidden transition-[transform,box-shadow] duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] active:scale-[0.97] select-none cursor-pointer border-0"
       >
         <GlowEffect
@@ -616,11 +564,8 @@ export default function HoldToJoinButton({ href }: { href: string }) {
         />
 
         {/* Text */}
-        <div className="relative z-10 flex flex-col items-center gap-1">
+        <div className="relative z-10 flex flex-col items-center">
           <span ref={buttonTextRef}>WORD LID</span>
-          <span className="text-[10px] font-normal opacity-60 md:opacity-40 md:group-hover:opacity-80 translate-y-0.5 group-hover:translate-y-0 tracking-wider transition-[opacity,transform] duration-300">
-            {"// tap or hold"}
-          </span>
         </div>
 
         {/* Hover sweep */}
