@@ -49,6 +49,38 @@ export async function GET(
   }
 }
 
+// DELETE — Lid verwijderen (admin only)
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth()
+    if (!session?.user?.isAdmin) {
+      return NextResponse.json({ error: 'Niet geautoriseerd' }, { status: 403 })
+    }
+
+    const { id } = await params
+
+    // Prevent deleting yourself
+    if (id === session.user.id) {
+      return NextResponse.json({ error: 'Je kunt jezelf niet verwijderen' }, { status: 400 })
+    }
+
+    const supabase = createServiceClient()
+    const { error } = await supabase
+      .from('members')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Onbekende fout'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
+
 // PATCH — Update lid (eigen profiel of admin)
 export async function PATCH(
   req: NextRequest,

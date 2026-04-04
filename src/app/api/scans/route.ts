@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
-import { ADMIN_EMAILS } from '@/lib/constants'
 import { grantRewards } from '@/lib/rewards'
 
 // GET — Scan geschiedenis per event (admin only)
 export async function GET(req: NextRequest) {
   try {
     const session = await auth()
-    if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
+    if (!session?.user?.isAdmin) {
       return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
     }
 
@@ -39,7 +38,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()
-    if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
+    if (!session?.user?.isAdmin) {
       return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
     }
 
@@ -50,6 +49,29 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = createServiceClient()
+
+    // Dedup: prevent duplicate scan for same member+event within 5 minutes
+    if (event_id || event_name) {
+      const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
+      const dedup = supabase
+        .from('scans')
+        .select('id')
+        .eq('member_id', member_id)
+        .gte('created_at', fiveMinAgo)
+
+      if (event_id) dedup.eq('event_id', event_id)
+      else if (event_name) dedup.eq('event_name', event_name)
+
+      const { data: existing } = await dedup
+      if (existing && existing.length > 0) {
+        return NextResponse.json({ error: 'Dit lid is al gescand voor dit event' }, { status: 409 })
+      }
+    }
+
+    // Validate points range
+    if (points < 1 || points > 10) {
+      return NextResponse.json({ error: 'Punten moeten tussen 1 en 10 zijn' }, { status: 400 })
+    }
 
     // Maak scan aan
     const { data: scan, error: scanError } = await supabase

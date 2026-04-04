@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { stripe } from '@/lib/stripe'
 import { createServiceClient } from '@/lib/supabase'
-import { ADMIN_EMAILS } from '@/lib/constants'
 import { sendTicketEmail, generateTicketNumber } from '@/lib/email'
 
 // GET — Lijst van tickets voor een event (admin only)
@@ -12,7 +11,7 @@ export async function GET(
 ) {
   try {
     const session = await auth()
-    if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
+    if (!session?.user?.isAdmin) {
       return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
     }
 

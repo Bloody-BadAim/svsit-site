@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
-import { ADMIN_EMAILS } from '@/lib/constants'
 import type { StatCategory } from '@/types/database'
 
 // GET — Alle events ophalen (publiek)
@@ -34,7 +33,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()
-    if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
+    if (!session?.user?.isAdmin) {
       return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
     }
 

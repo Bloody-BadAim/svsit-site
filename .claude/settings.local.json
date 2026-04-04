@@ -102,7 +102,8 @@
       "Bash(ln -s /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/node_modules /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/node_modules)",
       "mcp__plugin_supabase_supabase__list_projects",
       "mcp__plugin_supabase_supabase__execute_sql",
-      "Bash(npm rebuild:*)"
+      "Bash(npm rebuild:*)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))"
     ]
   },
   "outputStyle": "default",

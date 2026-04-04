@@ -38,7 +38,9 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
   const [memberCommissieIds, setMemberCommissieIds] = useState<string[]>([])
   const [allCommissies, setAllCommissies] = useState<DbCommissie[]>([])
   const [saving, setSaving] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [message, setMessage] = useState('')
+  const [scanHistory, setScanHistory] = useState<{reason: string; points: number; created_at: string; category: string}[]>([])
 
   const rank = getRank(member.points)
 
@@ -58,7 +60,27 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
       .then(({ data }) => {
         if (data) setAllCommissies(data)
       })
+
+    fetch(`/api/scans/${member.id}`)
+      .then(res => res.json())
+      .then(({ data }) => {
+        if (data) setScanHistory(data)
+      })
   }, [member.id])
+
+  async function handleDelete() {
+    if (!confirm('Weet je zeker dat je dit lid wilt verwijderen? Dit kan niet ongedaan worden.')) return
+    setDeleting(true)
+    const res = await fetch(`/api/members/${member.id}`, { method: 'DELETE' })
+    if (res.ok) {
+      onUpdate()
+    } else {
+      const data = await res.json()
+      setMessage(data.error || 'Fout bij verwijderen')
+      setDeleting(false)
+      setTimeout(() => setMessage(''), 3000)
+    }
+  }
 
   async function handlePunten() {
     if (!puntenReden) return
@@ -362,6 +384,25 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
           )}
         </div>
 
+        {/* Points history */}
+        {scanHistory.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+              Punten historie
+            </h3>
+            <div className="max-h-40 overflow-y-auto space-y-1">
+              {scanHistory.slice(0, 20).map((scan, i) => (
+                <div key={i} className="flex items-center justify-between py-1 px-2 rounded text-xs" style={{ backgroundColor: 'var(--color-bg)' }}>
+                  <span style={{ color: 'var(--color-text-muted)' }}>
+                    {new Date(scan.created_at).toLocaleDateString('nl-NL')} — {scan.reason || scan.category}
+                  </span>
+                  <span className="font-bold" style={{ color: 'var(--color-accent-gold)' }}>+{scan.points}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Handmatig verlengen */}
         {!member.membership_active && (
           <button
@@ -373,6 +414,16 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
             Lidmaatschap handmatig verlengen (1 jaar)
           </button>
         )}
+
+        {/* Delete member */}
+        <button
+          onClick={handleDelete}
+          disabled={deleting}
+          className="w-full py-2 rounded-lg text-sm font-semibold disabled:opacity-50"
+          style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--color-accent-red)', border: '1px solid rgba(239, 68, 68, 0.3)' }}
+        >
+          {deleting ? 'Verwijderen...' : 'Lid verwijderen'}
+        </button>
 
         {message && (
           <p className="text-sm text-center" style={{ color: 'var(--color-accent-green)' }}>{message}</p>

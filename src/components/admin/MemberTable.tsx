@@ -75,6 +75,34 @@ function exportCSV(members: MemberRow[]) {
 export default function MemberTable({ members, onRefresh }: MemberTableProps) {
   const { filters, setFilter } = useAdminStore()
   const [selectedMember, setSelectedMember] = useState<MemberRow | null>(null)
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [newEmail, setNewEmail] = useState('')
+  const [newStudentNr, setNewStudentNr] = useState('')
+  const [newRole, setNewRole] = useState('member')
+  const [adding, setAdding] = useState(false)
+  const [addError, setAddError] = useState('')
+
+  async function handleAddMember() {
+    if (!newEmail) return
+    setAdding(true)
+    setAddError('')
+    const res = await fetch('/api/members', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: newEmail, student_number: newStudentNr || null, role: newRole }),
+    })
+    if (res.ok) {
+      setNewEmail('')
+      setNewStudentNr('')
+      setNewRole('member')
+      setShowAddForm(false)
+      onRefresh()
+    } else {
+      const data = await res.json()
+      setAddError(data.error || 'Fout bij aanmaken')
+    }
+    setAdding(false)
+  }
 
   const filtered = useMemo(() => {
     let result = [...members]
@@ -117,6 +145,60 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
 
   return (
     <div className="space-y-4">
+      {/* Add member section */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => setShowAddForm(!showAddForm)}
+          className="py-2 px-4 rounded-lg text-sm font-semibold"
+          style={{ backgroundColor: 'var(--color-accent-gold)', color: 'var(--color-bg)' }}
+        >
+          + Nieuw lid
+        </button>
+      </div>
+
+      {showAddForm && (
+        <div className="p-4 rounded-lg space-y-3" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+          <div className="flex flex-wrap gap-3">
+            <input
+              type="email"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              placeholder="Email..."
+              className="flex-1 min-w-[200px] py-2 px-3 rounded-lg text-sm outline-none"
+              style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
+            />
+            <input
+              type="text"
+              value={newStudentNr}
+              onChange={(e) => setNewStudentNr(e.target.value)}
+              placeholder="Studentnummer (optioneel)"
+              className="py-2 px-3 rounded-lg text-sm outline-none"
+              style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
+            />
+            <select
+              value={newRole}
+              onChange={(e) => setNewRole(e.target.value)}
+              className="py-2 px-3 rounded-lg text-sm"
+              style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
+            >
+              <option value="member">Member</option>
+              <option value="contributor">Contributor</option>
+              <option value="mentor">Mentor</option>
+              <option value="bestuur">Bestuur</option>
+            </select>
+            <button
+              onClick={handleAddMember}
+              disabled={adding || !newEmail}
+              className="py-2 px-4 rounded-lg text-sm font-semibold disabled:opacity-50"
+              style={{ backgroundColor: 'var(--color-accent-gold)', color: 'var(--color-bg)' }}
+            >
+              {adding ? 'Toevoegen...' : 'Toevoegen'}
+            </button>
+          </div>
+          {addError && <p className="text-sm" style={{ color: 'var(--color-accent-red)' }}>{addError}</p>}
+        </div>
+      )}
+
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <input
