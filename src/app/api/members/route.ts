@@ -8,11 +8,13 @@ import { ADMIN_EMAILS } from '@/lib/constants'
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { email, password, student_number, role, commissie, commissie_voorstel } = body
+    const { email: rawEmail, password, student_number, role, commissie, commissie_voorstel } = body
 
-    if (!email) {
+    if (!rawEmail) {
       return NextResponse.json({ data: null, error: 'Email is verplicht', meta: null }, { status: 400 })
     }
+
+    const email = rawEmail.toLowerCase().trim()
 
     const supabase = createServiceClient()
 

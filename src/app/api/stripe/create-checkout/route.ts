@@ -4,20 +4,27 @@ import { createServiceClient } from '@/lib/supabase'
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json()
-    if (!email) {
+    const { email: rawEmail } = await req.json()
+    if (!rawEmail) {
       return NextResponse.json({ error: 'Email is verplicht' }, { status: 400 })
     }
+    const email = rawEmail.toLowerCase().trim()
 
     const supabase = createServiceClient()
-    const { data: member } = await supabase
+    const { data: member, error: dbError } = await supabase
       .from('members')
       .select('id, stripe_customer_id')
       .eq('email', email)
-      .single()
+      .maybeSingle()
+
+    if (dbError) {
+      console.error('[checkout] DB lookup failed:', dbError.message)
+      return NextResponse.json({ error: 'Database fout bij opzoeken lid' }, { status: 500 })
+    }
 
     if (!member) {
-      return NextResponse.json({ error: 'Lid niet gevonden' }, { status: 404 })
+      console.error('[checkout] Member not found for email:', email)
+      return NextResponse.json({ error: 'Lid niet gevonden. Registreer eerst via /lid-worden' }, { status: 404 })
     }
 
     // Hergebruik bestaande Stripe customer of maak nieuwe aan
