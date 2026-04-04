@@ -130,7 +130,7 @@ async function main() {
       const firstName = (member.email as string).split('@')[0]
 
       await transporter.sendMail({
-        from: process.env.SMTP_FROM || 'SIT <bestuur@svsit.nl>',
+        from: process.env.SMTP_FROM || 'SIT <matin.khajehfard@svsit.nl>',
         to: member.email as string,
         subject: 'Stel je wachtwoord in voor SIT',
         html: buildEmailHtml(firstName, resetUrl),

@@ -61,7 +61,7 @@ export async function sendPasswordResetEmail(
 
   const transporter = getSmtpTransporter()
   await transporter.sendMail({
-    from: process.env.SMTP_FROM || 'SIT <bestuur@svsit.nl>',
+    from: process.env.SMTP_FROM || 'SIT <matin.khajehfard@svsit.nl>',
     to,
     subject: 'Stel je wachtwoord in voor SIT',
     html,
