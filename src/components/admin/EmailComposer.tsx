@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Mail, Send, Users, AlertTriangle, Check, X } from 'lucide-react'
+import { Mail, Send, Users, AlertTriangle, Check, X, FileText } from 'lucide-react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -12,6 +12,61 @@ interface FilterOption {
   label: string
   description: string
 }
+
+// ─── Email templates per aanleiding ───────────────────────────────────────────
+
+interface EmailTemplate {
+  id: string
+  label: string
+  description: string
+  subject: string
+  body: string
+}
+
+const EMAIL_TEMPLATES: EmailTemplate[] = [
+  {
+    id: 'blank',
+    label: 'Leeg bericht',
+    description: 'Begin vanaf scratch',
+    subject: '',
+    body: '',
+  },
+  {
+    id: 'new_event',
+    label: 'Nieuw event',
+    description: 'Kondig een event aan',
+    subject: 'Nieuw SIT event: [EVENT NAAM]',
+    body: `Er staat weer een vet event op de planning!\n\n[EVENT NAAM]\nDatum: [DATUM]\nLocatie: [LOCATIE]\nTijd: [TIJD]\n\nWat kun je verwachten?\n[KORTE BESCHRIJVING]\n\nMeld je aan via svsit.nl en verdien XP door aanwezig te zijn.\n\nHope to see you there!`,
+  },
+  {
+    id: 'new_boss',
+    label: 'Boss fight',
+    description: 'Kondig een boss fight aan',
+    subject: 'Boss Fight: [BOSS NAAM] verschijnt!',
+    body: `Een nieuwe boss is verschenen!\n\n[BOSS NAAM]\nHP: [AANTAL] — Deadline: [DATUM]\n\n[BESCHRIJVING]\n\nHoe doe je mee? Gewoon actief zijn! Elke XP die je verdient telt mee als damage. Hoe meer events je bezoekt en challenges je doet, hoe harder je slaat.\n\nAls we de boss samen verslaan krijgt iedereen een bonus reward. De top 3 bijdragers krijgen een exclusive item.\n\nOpen je dashboard op svsit.nl om de health bar live te volgen.`,
+  },
+  {
+    id: 'new_challenge',
+    label: 'Nieuwe challenge',
+    description: 'Kondig een challenge of quest aan',
+    subject: 'Nieuwe challenge: [CHALLENGE NAAM]',
+    body: `Er is een nieuwe challenge beschikbaar!\n\n[CHALLENGE NAAM]\nCategorie: [CODE/SOCIAL/LEARN/IMPACT]\nXP reward: [AANTAL] XP\nDeadline: [DATUM]\n\n[BESCHRIJVING]\n\nGa naar je dashboard op svsit.nl om de challenge te bekijken en bewijs in te leveren.`,
+  },
+  {
+    id: 'newsletter',
+    label: 'Nieuwsbrief',
+    description: 'Maandelijkse update',
+    subject: 'SIT Update — [MAAND] [JAAR]',
+    body: `Hier is je maandelijkse SIT update!\n\nWat is er gebeurd\n- [HIGHLIGHT 1]\n- [HIGHLIGHT 2]\n- [HIGHLIGHT 3]\n\nKomende events\n- [EVENT 1] — [DATUM]\n- [EVENT 2] — [DATUM]\n\nLeaderboard update\nDe huidige top 3: [NAAM 1], [NAAM 2], [NAAM 3]. Check svsit.nl/leaderboard voor de volledige ranking.\n\nNieuwe shop items\n[ITEMS BESCHRIJVING]\n\nTot de volgende!`,
+  },
+  {
+    id: 'reminder',
+    label: 'Event reminder',
+    description: 'Herinnering voor een event',
+    subject: 'Reminder: [EVENT NAAM] is morgen!',
+    body: `Niet vergeten: morgen is [EVENT NAAM]!\n\nDatum: [DATUM]\nTijd: [TIJD]\nLocatie: [LOCATIE]\n\nVergeet je telefoon niet — je hebt je QR code nodig om in te checken en XP te verdienen.\n\nTot morgen!`,
+  },
+]
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -325,6 +380,35 @@ export default function EmailComposer() {
                   <span style={{ color: 'var(--color-accent-red)' }}>onbekend</span>
                 )}
               </p>
+            </div>
+
+            {/* ── Template selector ── */}
+            <div>
+              <label style={labelStyle}>
+                <FileText size={11} style={{ display: 'inline', marginRight: 5, verticalAlign: 'middle' }} />
+                Template
+              </label>
+              <select
+                value=""
+                onChange={(e) => {
+                  const tpl = EMAIL_TEMPLATES.find((t) => t.id === e.target.value)
+                  if (tpl) {
+                    setSubject(tpl.subject)
+                    setBody(tpl.body)
+                    setResult(null)
+                    setError(null)
+                  }
+                }}
+                style={inputStyle}
+                disabled={sending}
+              >
+                <option value="" disabled>Kies een template...</option>
+                {EMAIL_TEMPLATES.map((tpl) => (
+                  <option key={tpl.id} value={tpl.id}>
+                    {tpl.label} — {tpl.description}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* ── Subject ── */}
