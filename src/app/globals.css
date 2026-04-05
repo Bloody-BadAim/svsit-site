@@ -697,22 +697,132 @@ body::before {
   100% { opacity: 0; transform: translateY(4px); }
 }
 
-/* Badge rarity animations */
-@keyframes badge-shimmer {
+/* ── Badge rarity animations ── */
+
+/* Common: inner light sweep */
+@keyframes badge-commonSweep {
+  0%   { transform: translateX(-100%) skewX(-15deg); opacity: 0; }
+  30%  { opacity: 0.4; }
+  70%  { opacity: 0.4; }
+  100% { transform: translateX(200%) skewX(-15deg); opacity: 0; }
+}
+
+/* Uncommon: data stream lines falling down */
+@keyframes badge-dataStream1 {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 0.8; }
+  90%  { opacity: 0.8; }
+  100% { transform: translateY(200%); opacity: 0; }
+}
+@keyframes badge-dataStream2 {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(200%); opacity: 0; }
+}
+@keyframes badge-dataStream3 {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 0.5; }
+  90%  { opacity: 0.5; }
+  100% { transform: translateY(200%); opacity: 0; }
+}
+
+/* Rare: holographic refraction sweep + brightness pulse */
+@keyframes badge-holoSweep {
+  0%   { transform: translateX(-150%); opacity: 0; }
+  20%  { opacity: 0.7; }
+  80%  { opacity: 0.7; }
+  100% { transform: translateX(250%); opacity: 0; }
+}
+@keyframes badge-rareShimmer {
   0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.35) drop-shadow(0 0 4px rgba(59,130,246,0.6)); }
+  50%       { filter: brightness(1.25); }
 }
-@keyframes badge-pulse {
-  0%, 100% { box-shadow: 0 0 12px rgba(139,92,246,0.5); }
-  50% { box-shadow: 0 0 20px rgba(139,92,246,0.75), 0 0 32px rgba(139,92,246,0.25); }
+
+/* Epic: pulsating energy core + box-shadow expansion */
+@keyframes badge-energyCore {
+  0%, 100% { transform: scale(0.8); opacity: 0.5; }
+  50%       { transform: scale(1.2); opacity: 0.9; }
 }
+@keyframes badge-epicPulse {
+  0%, 100% { box-shadow: 0 0 24px rgba(139,92,246,0.4), 0 0 48px rgba(139,92,246,0.15); }
+  50%       { box-shadow: 0 0 36px rgba(139,92,246,0.65), 0 0 72px rgba(139,92,246,0.25); }
+}
+@keyframes badge-epicScanLine {
+  0%   { top: -10%; }
+  100% { top: 110%; }
+}
+@keyframes badge-iconFlicker {
+  0%, 100% { opacity: 1; }
+  45%       { opacity: 0.85; }
+  47%       { opacity: 0.4; }
+  49%       { opacity: 0.95; }
+  51%       { opacity: 0.6; }
+  53%       { opacity: 1; }
+}
+
+/* Legendary: fire aura rotation + ember rise */
+@keyframes badge-fireRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes badge-orbitRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes badge-ember1 {
+  0%   { transform: translateY(0) translateX(0); opacity: 0.9; }
+  100% { transform: translateY(-50px) translateX(-4px); opacity: 0; }
+}
+@keyframes badge-ember2 {
+  0%   { transform: translateY(0) translateX(0); opacity: 0.8; }
+  100% { transform: translateY(-50px) translateX(3px); opacity: 0; }
+}
+@keyframes badge-ember3 {
+  0%   { transform: translateY(0) translateX(0); opacity: 0.7; }
+  100% { transform: translateY(-50px) translateX(-2px); opacity: 0; }
+}
+
+/* Mythic: counter-rotating rings + prismatic sweep + core glow shift */
+@keyframes badge-mythicCW {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes badge-mythicCCW {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+@keyframes badge-prismaticSweep {
+  0%   { transform: translateX(-150%); }
+  100% { transform: translateX(250%); }
+}
+@keyframes badge-glowShift {
+  0%, 100% { background-position: 30% 50%; }
+  50%       { background-position: 70% 50%; }
+}
+@keyframes badge-starburst {
+  0%, 100% { opacity: 0.15; transform: scale(0.9); }
+  50%       { opacity: 0.55; transform: scale(1.1); }
+}
+@keyframes badge-crystalSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes badge-crystalCore {
+  0%, 100% { r: 2; opacity: 0.6; }
+  50%       { r: 3.5; opacity: 1; }
+}
+@keyframes badge-sparkleFloat {
+  0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
+  50%       { opacity: 1; transform: translateY(-6px) scale(1); }
+}
+
+/* Legacy compat — kept for any existing usages */
 @keyframes badge-particle-rotate {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 @keyframes badge-rainbow-border {
-  0%   { filter: hue-rotate(0deg) brightness(1.2); box-shadow: 0 0 16px rgba(255,80,80,0.4); }
-  33%  { filter: hue-rotate(120deg) brightness(1.2); box-shadow: 0 0 16px rgba(80,255,80,0.4); }
-  66%  { filter: hue-rotate(240deg) brightness(1.2); box-shadow: 0 0 16px rgba(80,80,255,0.4); }
-  100% { filter: hue-rotate(360deg) brightness(1.2); box-shadow: 0 0 16px rgba(255,80,80,0.4); }
+  0%   { filter: hue-rotate(0deg) brightness(1.2); }
+  100% { filter: hue-rotate(360deg) brightness(1.2); }
 }
