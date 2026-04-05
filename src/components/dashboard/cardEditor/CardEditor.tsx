@@ -442,14 +442,13 @@ function AccessoryItem({ def, owned, isEquipped, onEquip, onUnequip }: Accessory
 // ---------------------------------------------------------------------------
 
 interface FlairTabProps {
-  memberId: string
   memberLevel: number
   initialAccentColor: string | null
   initialCustomTitle: string | null
   onAccentColorChange: (color: string) => void
 }
 
-function FlairTab({ memberId, memberLevel, initialAccentColor, initialCustomTitle, onAccentColorChange }: FlairTabProps) {
+function FlairTab({ memberLevel, initialAccentColor, initialCustomTitle, onAccentColorChange }: FlairTabProps) {
   const [accentColor, setAccentColor] = useState(initialAccentColor ?? '#F59E0B')
   const [customTitle, setCustomTitle] = useState(initialCustomTitle ?? '')
   const [saving, setSaving] = useState(false)
@@ -460,13 +459,14 @@ function FlairTab({ memberId, memberLevel, initialAccentColor, initialCustomTitl
     setSaving(true)
     setSaved(false)
     try {
-      const res = await fetch(`/api/members/${memberId}`, {
+      const body: Record<string, string> = { accent_color: accentColor }
+      if (canCustomTitle && customTitle.trim()) {
+        body.custom_title = customTitle.trim()
+      }
+      const res = await fetch('/api/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          accent_color: accentColor,
-          ...(canCustomTitle && customTitle.trim() ? { custom_title: customTitle.trim() } : {}),
-        }),
+        body: JSON.stringify(body),
       })
       if (res.ok) setSaved(true)
     } finally {
@@ -746,7 +746,6 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
             {activeTab === 'merch' ? (
               /* Flair tab */
               <FlairTab
-                memberId={memberId}
                 memberLevel={member.current_level ?? 1}
                 initialAccentColor={member.accent_color}
                 initialCustomTitle={member.custom_title}
