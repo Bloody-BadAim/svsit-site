@@ -40,7 +40,8 @@ export type ShopItem = Awaited<ReturnType<typeof getShopItems>>[number]
 
 export async function purchaseItem(
   memberId: string,
-  accessoryId: string
+  accessoryId: string,
+  isAdmin = false
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = createServiceClient()
 
@@ -54,15 +55,23 @@ export async function purchaseItem(
 
   const price = item.shop_price as number
 
-  const { data: member } = await supabase
-    .from('members')
-    .select('coins_balance')
-    .eq('id', memberId)
-    .single()
+  if (!isAdmin) {
+    const { data: member } = await supabase
+      .from('members')
+      .select('coins_balance')
+      .eq('id', memberId)
+      .single()
 
-  if (!member) return { success: false, error: 'Lid niet gevonden' }
-  if ((member.coins_balance as number) < price)
-    return { success: false, error: 'Niet genoeg coins' }
+    if (!member) return { success: false, error: 'Lid niet gevonden' }
+    if ((member.coins_balance as number) < price)
+      return { success: false, error: 'Niet genoeg coins' }
+
+    // Deduct coins
+    await supabase
+      .from('members')
+      .update({ coins_balance: (member.coins_balance as number) - price })
+      .eq('id', memberId)
+  }
 
   const { data: existing } = await supabase
     .from('member_accessories')
@@ -73,21 +82,15 @@ export async function purchaseItem(
 
   if (existing) return { success: false, error: 'Je hebt dit item al' }
 
-  // Deduct coins
-  await supabase
-    .from('members')
-    .update({ coins_balance: (member.coins_balance as number) - price })
-    .eq('id', memberId)
-
   // Add to inventory
   await supabase
     .from('member_accessories')
     .insert({ member_id: memberId, accessory_id: accessoryId, acquired_via: 'shop' })
 
-  // Log transaction
+  // Log transaction (coins_spent = 0 for admins)
   await supabase
     .from('shop_transactions')
-    .insert({ member_id: memberId, accessory_id: accessoryId, coins_spent: price })
+    .insert({ member_id: memberId, accessory_id: accessoryId, coins_spent: isAdmin ? 0 : price })
 
   // Decrease stock
   if (item.stock !== null) {

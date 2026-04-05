@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
+import { createServiceClient } from '@/lib/supabase'
 import { purchaseItem } from '@/lib/shopEngine'
 
 export async function POST(req: NextRequest) {
@@ -13,7 +14,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing accessoryId' }, { status: 400 })
   }
 
-  const result = await purchaseItem(session.user.id, accessoryId)
+  const supabase = createServiceClient()
+  const { data: member } = await supabase
+    .from('members')
+    .select('is_admin, role')
+    .eq('id', session.user.id)
+    .single()
+  const isAdmin = member?.is_admin === true || member?.role === 'bestuur'
+
+  const result = await purchaseItem(session.user.id, accessoryId, isAdmin)
   if (!result.success) {
     return NextResponse.json({ error: result.error }, { status: 400 })
   }

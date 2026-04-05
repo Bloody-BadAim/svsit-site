@@ -489,7 +489,7 @@ export default function ProfielPage() {
                 disabled={pwSaving || !newPassword}
                 className="font-mono text-[11px] uppercase tracking-[0.15em] py-2.5 px-5 transition-all duration-200 disabled:opacity-40 whitespace-nowrap"
                 style={{
-                  backgroundColor: 'transparent',
+                  backgroundColor: 'rgba(239,68,68,0)',
                   color: 'var(--color-accent-red)',
                   border: '1px solid rgba(239,68,68,0.4)',
                 }}

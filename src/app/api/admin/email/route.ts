@@ -115,10 +115,16 @@ export async function POST(req: NextRequest) {
   try {
     // Auth check
     const session = await auth()
-    if (!session?.user) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
     }
-    if (!session.user.isAdmin) {
+    const supabase = createServiceClient()
+    const { data: adminCheck } = await supabase
+      .from('members')
+      .select('is_admin')
+      .eq('id', session.user.id)
+      .single()
+    if (!adminCheck?.is_admin) {
       return NextResponse.json({ error: 'Niet geautoriseerd' }, { status: 403 })
     }
 
@@ -185,7 +191,16 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const session = await auth()
-    if (!session?.user?.isAdmin) {
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
+    }
+    const supabase = createServiceClient()
+    const { data: adminCheck } = await supabase
+      .from('members')
+      .select('is_admin')
+      .eq('id', session.user.id)
+      .single()
+    if (!adminCheck?.is_admin) {
       return NextResponse.json({ error: 'Niet geautoriseerd' }, { status: 403 })
     }
 
