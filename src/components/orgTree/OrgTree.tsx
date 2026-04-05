@@ -225,7 +225,7 @@ export default function OrgTree() {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-[900px] mx-auto">
             {bestuur.map((person) => (
               <BestuurNode
                 key={person.id}
@@ -347,7 +347,7 @@ export default function OrgTree() {
         {/* ── Commissie Grid ── */}
         <div
           data-commissie-grid
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 mb-16 md:mb-24"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 mb-16 md:mb-24 max-w-[1000px] mx-auto"
         >
           {commissies.map((commissie) => (
             <CommissieCluster
