@@ -672,3 +672,27 @@ body::before {
 .reduce-motion .lenis-smooth {
   scroll-behavior: auto !important;
 }
+
+/* ── MemberCard Accessory Keyframes ── */
+@keyframes petBounce {
+  0%, 100% { transform: translateY(0); }
+  45%       { transform: translateY(-6px); }
+  65%       { transform: translateY(-3px); }
+}
+
+@keyframes sparkleDot {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  40%, 60% { opacity: 0.9; transform: scale(1); }
+}
+
+@keyframes sparklesFade {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+@keyframes matrixScan {
+  0%   { opacity: 0; transform: translateY(-4px); }
+  30%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(4px); }
+}
