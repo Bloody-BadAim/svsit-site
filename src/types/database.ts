@@ -39,6 +39,12 @@ export interface Member {
   active_skin: string
   active_badges: string[]
   is_admin: boolean
+  total_xp: number
+  coins_balance: number
+  current_level: number
+  custom_title: string | null
+  accent_color: string | null
+  leaderboard_visible: boolean
   member_commissies?: MemberCommissie[]
 }
 
