@@ -93,12 +93,12 @@ export default function Footer() {
 
       <div
         ref={contentRef}
-        className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 lg:px-24 py-12 sm:py-16 md:py-20"
+        className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 lg:px-24 py-16 sm:py-20 md:py-24"
       >
         {/* ═══ Zone 1: Brand + Social icons ═══ */}
         <div
           data-footer-zone
-          className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between md:gap-8 pb-10 sm:pb-12 mb-10 sm:mb-12 border-b border-[var(--color-border)]"
+          className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-10 pb-12 sm:pb-16 mb-12 sm:mb-16 border-b border-[var(--color-border)]"
         >
           {/* Logo + description */}
           <div className="max-w-sm">
@@ -157,7 +157,7 @@ export default function Footer() {
         {/* ═══ Zone 2: Info grid (2 columns, no duplicate socials) ═══ */}
         <div
           data-footer-zone
-          className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 md:gap-16 pb-10 sm:pb-12 mb-8 border-b border-[var(--color-border)]"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-10 sm:gap-12 md:gap-16 pb-12 sm:pb-16 mb-12 border-b border-[var(--color-border)]"
         >
           {/* Column 1: Navigation */}
           <div>
@@ -218,7 +218,26 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* ═══ Zone 3: Terminal signature + Copyright + Back-to-top ═══ */}
+        {/* ═══ Zone 3: HvA branding + specialisaties ═══ */}
+        <div
+          data-footer-zone
+          className="pb-12 mb-12 border-b border-[var(--color-border)]"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="font-mono text-xs text-[#71717A] leading-relaxed">
+              <span>Onderdeel van </span>
+              <span className="text-[#7C6FD4]">HBO-ICT</span>
+              <span> — Hogeschool van Amsterdam</span>
+              <br />
+              <span className="text-[#3F3F46]">FDMCI — Faculteit Digital Media and Creative Industries</span>
+            </div>
+          </div>
+          <p className="font-mono text-[11px] text-[#3F3F46] mt-4 leading-relaxed">
+            Software Engineering · Cyber Security · Game Development · Business IT &amp; Management · Technische Informatica
+          </p>
+        </div>
+
+        {/* ═══ Zone 4: Terminal signature + Copyright + Back-to-top ═══ */}
         <div data-footer-zone>
           {/* Terminal one-liner */}
           <p
