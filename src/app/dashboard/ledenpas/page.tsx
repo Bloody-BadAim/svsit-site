@@ -34,23 +34,21 @@ export default async function LedenpasPage() {
     ? memberCommissies.map(mc => mc.commissies.naam).join(', ')
     : (member.commissie as string) || null
 
-  // Fetch unlocked skin rewards
-  const { data: rewards } = await supabase
-    .from('rewards')
-    .select('reward_id')
-    .eq('member_id', session.user.id)
-    .eq('type', 'skin_unlock')
-
   const isAdmin = session.user.isAdmin
+
+  // Fetch skin rewards, stats, and equipped accessories in parallel
+  const [rewardsResult, memberStats, cardEquipment] = await Promise.all([
+    supabase.from('rewards').select('reward_id').eq('member_id', session.user.id).eq('type', 'skin_unlock'),
+    calculateStats(session.user.id),
+    getEquippedAccessories(member.id as string),
+  ])
+
+  const { data: rewards } = rewardsResult
   const unlockedSkins = isAdmin
     ? CARD_SKINS.map(s => s.id)
     : ['default', ...((rewards || []).map(r => r.reward_id as string))]
   const activeSkin = (member.active_skin as string) || 'default'
   const activeBadges = (member.active_badges as string[]) || []
-  const memberStats = await calculateStats(session.user.id)
-
-  // Fetch equipped accessories from card editor and map to MemberCard format
-  const cardEquipment = await getEquippedAccessories(member.id as string)
 
   // Look up definitions for equipped items to get display values
   const equippedAccessoryIds = [

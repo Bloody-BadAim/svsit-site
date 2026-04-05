@@ -35,14 +35,20 @@ export default async function RewardsPage() {
   const isAdmin = session.user.isAdmin
   const maxSlots = isAdmin ? BADGE_DEFS.length : getBadgeSlotCount(levelDef.level)
 
-  // Fetch stats
-  const stats = await calculateStats(memberId)
+  // Fetch stats, rewards, quests, milestones, and submissions in parallel
+  const now = new Date().toISOString()
+  const [stats, rewardsResult, questsResult, milestonesResult, submissionsResult] = await Promise.all([
+    calculateStats(memberId),
+    supabase.from('rewards').select('*').eq('member_id', memberId),
+    supabase.from('challenges').select('*').eq('type', 'quest').or(`active_until.is.null,active_until.gte.${now}`),
+    supabase.from('challenges').select('*').eq('type', 'track_milestone').order('track_order', { ascending: true }),
+    supabase.from('challenge_submissions').select('*').eq('member_id', memberId),
+  ])
 
-  // Fetch all rewards for this member
-  const { data: rewardsData } = await supabase
-    .from('rewards')
-    .select('*')
-    .eq('member_id', memberId)
+  const { data: rewardsData } = rewardsResult
+  const { data: questsData } = questsResult
+  const { data: milestonesData } = milestonesResult
+  const { data: submissionsData } = submissionsResult
 
   const rewards = (rewardsData || []) as Reward[]
 
@@ -51,22 +57,7 @@ export default async function RewardsPage() {
     ? BADGE_DEFS.map(b => b.id)
     : rewards.filter((r) => r.type === 'badge').map((r) => r.reward_id)
 
-  // Fetch active weekly quests (type='quest', within active period)
-  const now = new Date().toISOString()
-  const { data: questsData } = await supabase
-    .from('challenges')
-    .select('*')
-    .eq('type', 'quest')
-    .or(`active_until.is.null,active_until.gte.${now}`)
-
   const quests = (questsData || []) as Challenge[]
-
-  // Fetch all track milestones grouped by track_id
-  const { data: milestonesData } = await supabase
-    .from('challenges')
-    .select('*')
-    .eq('type', 'track_milestone')
-    .order('track_order', { ascending: true })
 
   const milestones = (milestonesData || []) as Challenge[]
 
@@ -77,12 +68,6 @@ export default async function RewardsPage() {
     if (!milestonesByTrack.has(m.track_id)) milestonesByTrack.set(m.track_id, [])
     milestonesByTrack.get(m.track_id)!.push(m)
   }
-
-  // Fetch all challenge submissions for this member
-  const { data: submissionsData } = await supabase
-    .from('challenge_submissions')
-    .select('*')
-    .eq('member_id', memberId)
 
   const submissions = (submissionsData || []) as ChallengeSubmission[]
 

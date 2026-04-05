@@ -213,21 +213,22 @@ export default async function LeaderboardPage() {
 
       const position = (aboveCount ?? 0) + 1
 
-      const { data: above } = await supabase
-        .from('members')
-        .select('id, email, total_xp, current_level, leaderboard_visible')
-        .eq('membership_active', true)
-        .gt('total_xp', member.total_xp as number)
-        .order('total_xp', { ascending: true })
-        .limit(5)
-
-      const { data: below } = await supabase
-        .from('members')
-        .select('id, email, total_xp, current_level, leaderboard_visible')
-        .eq('membership_active', true)
-        .lt('total_xp', member.total_xp as number)
-        .order('total_xp', { ascending: false })
-        .limit(5)
+      const [{ data: above }, { data: below }] = await Promise.all([
+        supabase
+          .from('members')
+          .select('id, email, total_xp, current_level, leaderboard_visible')
+          .eq('membership_active', true)
+          .gt('total_xp', member.total_xp as number)
+          .order('total_xp', { ascending: true })
+          .limit(5),
+        supabase
+          .from('members')
+          .select('id, email, total_xp, current_level, leaderboard_visible')
+          .eq('membership_active', true)
+          .lt('total_xp', member.total_xp as number)
+          .order('total_xp', { ascending: false })
+          .limit(5),
+      ])
 
       const mapEntry = (
         m: Record<string, unknown>,

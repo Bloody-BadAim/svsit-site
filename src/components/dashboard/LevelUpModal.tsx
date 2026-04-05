@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { getTierColor, getBadgeSlotCount } from '@/lib/levelEngine'
 import type { LevelDef } from '@/types/gamification'
 

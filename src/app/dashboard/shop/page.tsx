@@ -274,14 +274,13 @@ export default async function ShopPage({
     is_admin: (member?.is_admin as boolean | undefined) ?? false,
   })
 
-  // Fetch shop items
-  const allItems = await getShopItems(effectiveLevel, isAdminMember)
+  // Fetch shop items and owned accessories in parallel
+  const [allItems, inventoryResult] = await Promise.all([
+    getShopItems(effectiveLevel, isAdminMember),
+    supabase.from('member_accessories').select('accessory_id').eq('member_id', memberId),
+  ])
 
-  // Fetch owned accessories
-  const { data: inventoryData } = await supabase
-    .from('member_accessories')
-    .select('accessory_id')
-    .eq('member_id', memberId)
+  const { data: inventoryData } = inventoryResult
 
   const ownedIds = new Set<string>(
     (inventoryData ?? []).map((row) => row.accessory_id as string)
