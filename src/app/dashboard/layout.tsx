@@ -1,5 +1,6 @@
 import { SessionProvider } from 'next-auth/react'
 import DashboardNav from '@/components/dashboard/DashboardNav'
+import EasterEggTimeCheck from '@/components/dashboard/EasterEggTimeCheck'
 
 export default function DashboardLayout({
   children,
@@ -23,6 +24,7 @@ export default function DashboardLayout({
             WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 70%)',
           }}
         />
+        <EasterEggTimeCheck />
         <DashboardNav />
         <main className="relative z-[1] pt-16 lg:pt-0 lg:ml-64 pb-20 lg:pb-8 px-4 sm:px-6 lg:px-10 py-8">
           {children}
