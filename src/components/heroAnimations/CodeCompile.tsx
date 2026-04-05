@@ -28,7 +28,16 @@ export default function CodeCompile({ onComplete }: { onComplete: () => void }) 
       onComplete()
       return
     }
+    // Mark as seen immediately so navigating away + back skips it
     sessionStorage.setItem('sit-intro-seen', 'true')
+
+    // Safety timeout: if animation gets stuck, force complete after 8s
+    const safetyTimer = setTimeout(() => {
+      setVisible(false)
+      onComplete()
+    }, 8000)
+
+    return () => clearTimeout(safetyTimer)
   }, [onComplete])
 
   // Typing effect
