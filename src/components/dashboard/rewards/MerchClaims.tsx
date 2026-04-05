@@ -2,8 +2,14 @@
 
 import { useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
-import { RANKS } from '@/lib/constants'
 import type { Reward } from '@/types/database'
+
+// Merch tiers use legacy rank names — map to XP thresholds for unlock checks
+const MERCH_XP_REQUIREMENTS: Record<string, number> = {
+  Gold: 50,
+  Platinum: 100,
+  Diamond: 200,
+}
 
 interface MerchClaimsProps {
   rewards: Reward[]
@@ -42,8 +48,8 @@ const MERCH_TIERS: MerchTier[] = [
 export default function MerchClaims({ rewards, currentRank, memberId }: MerchClaimsProps) {
   const shouldReduceMotion = useReducedMotion()
 
-  const rankOrder = RANKS.map((r) => r.naam)
-  const currentRankIndex = rankOrder.indexOf(currentRank)
+  // currentRank is a legacy rank name (Gold/Platinum/Diamond) or level title — resolve to XP threshold comparison
+  const currentRankXpThreshold = MERCH_XP_REQUIREMENTS[currentRank] ?? 0
 
   // Local state for claimed rewards so UI updates immediately
   const [claimedRewards, setClaimedRewards] = useState<Map<string, Reward>>(() => {
@@ -120,16 +126,16 @@ export default function MerchClaims({ rewards, currentRank, memberId }: MerchCla
       {/* Merch list */}
       <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
         {MERCH_TIERS.map((tier, i) => {
-          const tierRankIndex = rankOrder.indexOf(tier.requiredRank)
-          const isUnlocked = currentRankIndex >= tierRankIndex
+          const tierXpRequired = MERCH_XP_REQUIREMENTS[tier.requiredRank] ?? 999999
+          const isUnlocked = currentRankXpThreshold >= tierXpRequired
           const reward = claimedRewards.get(tier.merchId)
           const isClaimed = !!reward?.claimed_at
           // Eligible: unlocked and not yet claimed (reward may or may not exist in DB yet)
           const isEligible = isUnlocked && !isClaimed
           const isLoading = claiming === tier.merchId
 
-          const tierRank = RANKS.find((r) => r.naam === tier.requiredRank)
-          const rankColor = tierRank?.kleur ?? '#6B7280'
+          const rankColorMap: Record<string, string> = { Gold: '#F29E18', Platinum: '#E5E4E2', Diamond: '#3B82F6' }
+          const rankColor = rankColorMap[tier.requiredRank] ?? '#6B7280'
 
           return (
             <motion.div

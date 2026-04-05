@@ -1,7 +1,8 @@
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
-import { getRank, getBadgeSlotCount, BADGES } from '@/lib/constants'
+import { getLevelForXp, getBadgeSlotCount } from '@/lib/levelEngine'
+import { BADGE_DEFS } from '@/lib/badgeEngine'
 import { calculateStats } from '@/lib/rewards'
 import type { Challenge, ChallengeSubmission, Reward } from '@/types/database'
 import ProgressionTracker from '@/components/dashboard/rewards/ProgressionTracker'
@@ -29,10 +30,10 @@ export default async function RewardsPage() {
     .single()
 
   const points = (member?.points as number) || 0
-  const rank = getRank(points)
+  const levelDef = getLevelForXp(points)
   const activeBadges = (member?.active_badges as string[]) || []
   const isAdmin = session.user.isAdmin
-  const maxSlots = isAdmin ? BADGES.length : getBadgeSlotCount(rank.naam)
+  const maxSlots = isAdmin ? BADGE_DEFS.length : getBadgeSlotCount(levelDef.level)
 
   // Fetch stats
   const stats = await calculateStats(memberId)
@@ -47,7 +48,7 @@ export default async function RewardsPage() {
 
   // Earned badge IDs — admins get all badges
   const earnedBadges = isAdmin
-    ? BADGES.map(b => b.id)
+    ? BADGE_DEFS.map(b => b.id)
     : rewards.filter((r) => r.type === 'badge').map((r) => r.reward_id)
 
   // Fetch active weekly quests (type='quest', within active period)
@@ -109,7 +110,7 @@ export default async function RewardsPage() {
             }}
           />
           <span className="font-mono text-xs uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
-            rewards &middot; {rank.naam} &middot; {points}xp &middot; {earnedBadges.length} badges
+            rewards &middot; {levelDef.title} &middot; {points}xp &middot; {earnedBadges.length} badges
           </span>
         </div>
         <h1
@@ -144,7 +145,7 @@ export default async function RewardsPage() {
 
       {/* 1. Progression Tracker — full width */}
       <div className="mb-6">
-        <ProgressionTracker currentRank={rank.naam} points={points} />
+        <ProgressionTracker currentRank={levelDef.title} points={points} />
       </div>
 
       {/* 2. Stats Bars + Weekly Quests — asymmetric 2-col */}
@@ -219,7 +220,7 @@ export default async function RewardsPage() {
           maxSlots={maxSlots}
           memberId={memberId}
         />
-        <MerchClaims rewards={rewards} currentRank={rank.naam} memberId={memberId} />
+        <MerchClaims rewards={rewards} currentRank={levelDef.title} memberId={memberId} />
       </div>
     </div>
   )

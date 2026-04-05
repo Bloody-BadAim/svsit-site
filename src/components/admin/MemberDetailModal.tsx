@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ROLLEN, getRank } from '@/lib/constants'
+import { ROLLEN } from '@/lib/constants'
+import { getLevelForXp } from '@/lib/levelEngine'
 import type { Role } from '@/types/database'
 
 interface DbCommissie {
@@ -42,7 +43,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
   const [message, setMessage] = useState('')
   const [scanHistory, setScanHistory] = useState<{reason: string; points: number; created_at: string; category: string}[]>([])
 
-  const rank = getRank(member.points)
+  const levelDef = getLevelForXp(member.points)
 
   useEffect(() => {
     fetch(`/api/members/${member.id}`)
@@ -229,7 +230,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg)' }}>
             <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>Punten</p>
             <p className="font-semibold" style={{ color: 'var(--color-accent-gold)' }}>
-              {member.points} <span className="text-xs font-normal" style={{ color: rank.kleur }}>({rank.naam})</span>
+              {member.points} <span className="text-xs font-normal" style={{ color: levelDef.color }}>({levelDef.title})</span>
             </p>
           </div>
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg)' }}>

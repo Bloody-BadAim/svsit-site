@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
-import { RANKS } from '@/lib/constants'
+import { LEVELS } from '@/lib/levelEngine'
 
 type MerchRewardId = 'merch_sticker_pack' | 'merch_hoodie' | 'merch_limited_edition'
 
@@ -49,9 +49,9 @@ export async function POST(req: NextRequest) {
 
     const requiredPoints = MERCH_RANK_REQUIREMENTS[rewardId]
     if ((member.points as number) < requiredPoints) {
-      // Find the rank name for a friendly error
-      const rank = RANKS.find((r) => r.minPunten === requiredPoints)
-      const rankName = rank?.naam ?? `${requiredPoints} XP`
+      // Find the level title for a friendly error
+      const level = LEVELS.find((l) => l.cumulativeXp === requiredPoints)
+      const rankName = level?.title ?? `${requiredPoints} XP`
       return NextResponse.json(
         { data: null, error: `Je hebt rank ${rankName} nodig om dit te claimen`, meta: null },
         { status: 403 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
-import { grantRewards } from '@/lib/rewards'
+import { checkAndGrantAutoBadges } from '@/lib/rewards'
 
 // GET — Scan geschiedenis per event (admin only)
 export async function GET(req: NextRequest) {
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
     if (scanError) throw scanError
 
     // Bereken stats en ken rewards automatisch toe
-    await grantRewards(member_id)
+    await checkAndGrantAutoBadges(member_id)
 
     return NextResponse.json({ data: scan, error: null, meta: null }, { status: 201 })
   } catch (err) {

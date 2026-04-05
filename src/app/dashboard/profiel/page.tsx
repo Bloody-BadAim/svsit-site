@@ -3,7 +3,8 @@
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { ADMIN_EMAILS, getRank, getLevel, getPrestige } from '@/lib/constants'
+import { ADMIN_EMAILS } from '@/lib/constants'
+import { getLevelForXp, getLevelProgress } from '@/lib/levelEngine'
 
 // ─── Corner decoration component ──────────────────────────────────────────────
 function CornerDecorations({ color = 'var(--color-accent-gold)' }: { color?: string }) {
@@ -77,32 +78,29 @@ function DarkInput({
   )
 }
 
-// ─── Rank badge ────────────────────────────────────────────────────────────────
+// ─── Level badge ───────────────────────────────────────────────────────────────
 function RankBadge({ points }: { points: number }) {
-  const rank = getRank(points)
-  const level = getLevel(points)
-  const prestige = getPrestige(points)
-  const xpInLevel = points % 10
-  const pct = (xpInLevel / 10) * 100
+  const levelDef = getLevelForXp(points)
+  const levelProgress = getLevelProgress(points)
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Rank name + level */}
+      {/* Level title + number */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div
             className="w-2 h-2"
-            style={{ backgroundColor: rank.kleur, boxShadow: `0 0 6px ${rank.kleur}88` }}
+            style={{ backgroundColor: levelDef.color, boxShadow: `0 0 6px ${levelDef.color}88` }}
           />
           <span
             className="font-mono text-xs font-bold uppercase tracking-[0.15em]"
-            style={{ color: rank.kleur }}
+            style={{ color: levelDef.color }}
           >
-            {rank.naam}
+            {levelDef.title}
           </span>
         </div>
         <span className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
-          LVL {level}{prestige > 0 && <span style={{ color: 'var(--color-accent-gold)' }}> ✦{prestige}</span>}
+          LVL {levelDef.level}
         </span>
       </div>
 
@@ -110,15 +108,18 @@ function RankBadge({ points }: { points: number }) {
       <div>
         <div className="flex justify-between font-mono text-[10px] mb-1" style={{ color: 'var(--color-text-muted)' }}>
           <span>{points} XP total</span>
-          <span>{xpInLevel}/10 to next level</span>
+          {levelProgress.max > 0
+            ? <span>{levelProgress.current}/{levelProgress.max} to next level</span>
+            : <span>MAX LEVEL</span>
+          }
         </div>
         <div className="h-[4px] w-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}>
           <motion.div
             className="h-full"
             initial={{ width: 0 }}
-            animate={{ width: `${pct}%` }}
+            animate={{ width: `${levelProgress.percent}%` }}
             transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }}
-            style={{ backgroundColor: rank.kleur }}
+            style={{ backgroundColor: levelDef.color }}
           />
         </div>
       </div>
@@ -220,7 +221,7 @@ export default function ProfielPage() {
   const username = session?.user?.email?.split('@')[0]?.toUpperCase() || 'USER'
   const email = session?.user?.email || ''
   const isAdmin = ADMIN_EMAILS.includes(email)
-  const rank = getRank(points)
+  const levelDef = getLevelForXp(points)
 
   // ── Loading skeleton ─────────────────────────────────────────────────────────
   if (loading) {
@@ -259,7 +260,7 @@ export default function ProfielPage() {
             }}
           />
           <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
-            character.settings · {rank.naam} · lvl {getLevel(points)}
+            character.settings · {levelDef.title} · lvl {levelDef.level}
           </span>
         </div>
         <h1

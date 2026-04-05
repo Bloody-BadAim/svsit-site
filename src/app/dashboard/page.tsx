@@ -1,7 +1,7 @@
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
-import { getRank, getLevel } from '@/lib/constants'
+import { getLevelForXp } from '@/lib/levelEngine'
 import { calculateStats } from '@/lib/rewards'
 import StatsGrid from '@/components/dashboard/StatsGrid'
 import RecentActivity from '@/components/dashboard/RecentActivity'
@@ -78,7 +78,7 @@ export default async function DashboardPage({
   const memberStats = await calculateStats(session.user.id)
 
   const points = (member?.points as number) || 0
-  const rank = getRank(points)
+  const levelDef = getLevelForXp(points)
   const username = (member?.email as string)?.split('@')[0] || 'lid'
 
   return (
@@ -116,7 +116,7 @@ export default async function DashboardPage({
             }}
           />
           <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
-            {member?.membership_active ? 'online' : 'inactive'} · {rank.naam} · lvl {getLevel(points)}
+            {member?.membership_active ? 'online' : 'inactive'} · {levelDef.title} · lvl {levelDef.level}
           </span>
         </div>
         <div className="relative">
@@ -202,7 +202,7 @@ export default async function DashboardPage({
               Ledenpas
             </p>
             <p className="font-mono text-[10px] mt-1" style={{ color: 'var(--color-text-muted)' }}>
-              <span style={{ color: rank.kleur }}>{rank.naam}</span> · {points}xp
+              <span style={{ color: levelDef.color }}>{levelDef.title}</span> · {points}xp
             </p>
 
             <div

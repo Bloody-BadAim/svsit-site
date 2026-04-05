@@ -1,7 +1,8 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { getRank, ROLLEN, getLevel, getLevelProgress, getBadgeSlotCount } from "@/lib/constants";
+import { ROLLEN } from "@/lib/constants";
+import { getLevelForXp, getLevelProgress, getBadgeSlotCount } from "@/lib/levelEngine";
 import type { Role } from "@/types/database";
 import QRCode from "react-qr-code";
 import { getSkin } from "@/lib/cardSkins";
@@ -60,8 +61,7 @@ export default function MemberCard({
   const role = data?.role || "member";
   const commissie = data?.commissie;
   const points = data?.points ?? 0;
-  const rank = getRank(points);
-  const level = getLevel(points);
+  const levelDef = getLevelForXp(points);
   const levelProg = getLevelProgress(points);
   const xpPercent = levelProg.percent;
   const rolLabel = data ? (ROLLEN[role]?.naam || role) : "Undecided";
@@ -249,11 +249,11 @@ export default function MemberCard({
                 )}
                 <div className="flex items-center gap-2 mt-1">
                   <span className="font-mono text-[11px] text-[var(--color-accent-gold)] font-bold">
-                    LVL {String(level).padStart(2, "0")}
+                    LVL {String(levelDef.level).padStart(2, "0")}
                   </span>
-                  <span className="flex items-center gap-1 font-mono text-[11px] text-[var(--color-accent-gold)]">
+                  <span className="flex items-center gap-1 font-mono text-[11px]" style={{ color: levelDef.color }}>
                     <Star size={10} fill="currentColor" />
-                    {rank.naam.toUpperCase()}
+                    {levelDef.title.toUpperCase()}
                   </span>
                 </div>
               </div>
@@ -346,7 +346,7 @@ export default function MemberCard({
               <div className="flex items-center gap-1.5 flex-wrap">
                 {activeBadges
                   ? (() => {
-                      const badgeSlots = Math.max(activeBadges.length, getBadgeSlotCount(rank.naam));
+                      const badgeSlots = Math.max(activeBadges.length, getBadgeSlotCount(levelDef.level));
                       const slots: React.ReactNode[] = activeBadges
                         .map((badgeId) => (
                           <BadgeIcon key={badgeId} badgeId={badgeId} size={16} locked={false} />

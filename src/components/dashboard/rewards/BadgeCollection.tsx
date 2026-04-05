@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, useReducedMotion, AnimatePresence } from 'motion/react'
-import { BADGES } from '@/lib/constants'
+import { BADGE_DEFS } from '@/lib/badgeDefs'
 import BadgeIcon from '@/components/badges/BadgeIcon'
 
 interface BadgeCollectionProps {
@@ -80,7 +80,7 @@ export default function BadgeCollection({
         </span>
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs" style={{ color: 'var(--color-accent-gold)' }}>
-            {earnedBadges.length}/{BADGES.length}
+            {earnedBadges.length}/{BADGE_DEFS.length}
           </span>
           <span className="font-mono text-[10px] md:text-xs px-1.5 py-0.5" style={{ color: 'var(--color-text-muted)', border: '1px solid rgba(255,255,255,0.08)' }}>
             {maxSlots} slots
@@ -101,7 +101,7 @@ export default function BadgeCollection({
         <div className="flex gap-2 flex-wrap">
           {Array.from({ length: maxSlots }).map((_, i) => {
             const badgeId = currentActive[i]
-            const badge = badgeId ? BADGES.find((b) => b.id === badgeId) : null
+            const badge = badgeId ? BADGE_DEFS.find((b) => b.id === badgeId) : null
 
             return (
               <motion.div
@@ -114,7 +114,7 @@ export default function BadgeCollection({
                 {badge ? (
                   <div
                     className="relative cursor-pointer"
-                    title={`Verwijder ${badge.naam}`}
+                    title={`Verwijder ${badge.name}`}
                     onClick={() => toggleBadge(badge.id)}
                     style={{
                       boxShadow: '0 0 12px rgba(242, 158, 24, 0.15)',
@@ -147,7 +147,7 @@ export default function BadgeCollection({
       {/* All badges grid */}
       <div className="p-5">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {BADGES.map((badge, i) => {
+          {BADGE_DEFS.map((badge, i) => {
             const isEarned = earnedSet.has(badge.id)
             const isActive = activeSet.has(badge.id)
             const canEquip = isEarned && !isActive && currentActive.length < maxSlots
@@ -225,7 +225,7 @@ export default function BadgeCollection({
                     maxWidth: 88,
                   }}
                 >
-                  {badge.naam}
+                  {badge.name}
                 </span>
 
                 {/* Tooltip on hover */}
@@ -247,8 +247,8 @@ export default function BadgeCollection({
                           maxWidth: 220,
                         }}
                       >
-                        <div className="font-bold mb-0.5">{badge.naam}</div>
-                        <div style={{ color: 'var(--color-text-muted)' }}>{badge.beschrijving}</div>
+                        <div className="font-bold mb-0.5">{badge.name}</div>
+                        <div style={{ color: 'var(--color-text-muted)' }}>{badge.description}</div>
                         {!isEarned ? (
                           <div className="mt-1" style={{ color: 'rgba(255,255,255,0.25)' }}>
                             &#128274; vergrendeld
