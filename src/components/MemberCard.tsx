@@ -16,8 +16,8 @@ const BARCODE_OPACITIES = [
 ];
 
 const DEFAULT_STATS = [
-  { label: "code", color: "var(--color-accent-blue)", fill: 65 },
-  { label: "social", color: "var(--color-accent-green)", fill: 45 },
+  { label: "code", color: "var(--color-accent-green)", fill: 65 },
+  { label: "social", color: "var(--color-accent-gold)", fill: 45 },
   { label: "chaos", color: "var(--color-accent-red)", fill: 80 },
 ];
 
@@ -73,7 +73,7 @@ export default function MemberCard({
   // Stats: dynamicStats > data.stats > DEFAULT_STATS
   const stats = data?.dynamicStats
     ? [
-        { label: "CODE", color: "var(--color-accent-blue)", fill: Math.min(data.dynamicStats.code * 10, 100) },
+        { label: "CODE", color: "var(--color-accent-green)", fill: Math.min(data.dynamicStats.code * 10, 100) },
         { label: "SOCIAL", color: "var(--color-accent-green)", fill: Math.min(data.dynamicStats.social * 10, 100) },
         { label: "LEARN", color: "var(--color-accent-gold)", fill: Math.min(data.dynamicStats.learn * 10, 100) },
         { label: "IMPACT", color: "var(--color-accent-red)", fill: Math.min(data.dynamicStats.impact * 10, 100) },

@@ -129,13 +129,13 @@ export default async function RewardsPage() {
         style={{ borderBottom: '1px dashed rgba(255,255,255,0.06)', color: 'var(--color-text-muted)' }}
       >
         <span>
-          code: <span style={{ color: 'var(--color-accent-blue)' }}>{stats.code}</span>
+          code: <span style={{ color: 'var(--color-accent-green)' }}>{stats.code}</span>
         </span>
         <span>
           social: <span style={{ color: 'var(--color-accent-gold)' }}>{stats.social}</span>
         </span>
         <span>
-          learn: <span style={{ color: 'var(--color-accent-green)' }}>{stats.learn}</span>
+          learn: <span style={{ color: 'var(--color-accent-blue)' }}>{stats.learn}</span>
         </span>
         <span>
           impact: <span style={{ color: 'var(--color-accent-red)' }}>{stats.impact}</span>
@@ -165,9 +165,9 @@ export default async function RewardsPage() {
 
           <div className="p-5 space-y-4">
             {([
-              { label: 'CODE', value: stats.code, color: 'var(--color-accent-blue)' },
+              { label: 'CODE', value: stats.code, color: 'var(--color-accent-green)' },
               { label: 'SOCIAL', value: stats.social, color: 'var(--color-accent-gold)' },
-              { label: 'LEARN', value: stats.learn, color: 'var(--color-accent-green)' },
+              { label: 'LEARN', value: stats.learn, color: 'var(--color-accent-blue)' },
               { label: 'IMPACT', value: stats.impact, color: 'var(--color-accent-red)' },
             ] as const).map((stat) => {
               const max = Math.max(stats.code, stats.social, stats.learn, stats.impact, 10)
