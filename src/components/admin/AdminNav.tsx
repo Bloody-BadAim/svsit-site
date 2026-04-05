@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Users, ScanLine, CalendarDays, Target } from 'lucide-react'
+import { LayoutDashboard, Users, ScanLine, CalendarDays, Target, Swords, Mail } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 const ADMIN_ITEMS: { href: string; label: string; Icon: LucideIcon }[] = [
@@ -11,6 +11,8 @@ const ADMIN_ITEMS: { href: string; label: string; Icon: LucideIcon }[] = [
   { href: '/admin/scanner',    label: 'Scanner',     Icon: ScanLine        },
   { href: '/admin/events',     label: 'Events',      Icon: CalendarDays    },
   { href: '/admin/challenges', label: 'Challenges',  Icon: Target          },
+  { href: '/admin/boss',       label: 'Boss Fights', Icon: Swords          },
+  { href: '/admin/email',      label: 'Email',       Icon: Mail            },
 ]
 
 export default function AdminNav() {
