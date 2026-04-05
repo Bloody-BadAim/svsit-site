@@ -21,6 +21,22 @@ const ICON_MAP: Record<string, (props: { size?: number; color?: string }) => Rea
   badge_security: Icons.IconSecurity,
   badge_party_animal: Icons.IconPartyAnimal,
   badge_community_builder: Icons.IconCommunityBuilder,
+  badge_first_purchase: Icons.IconFirstPurchase,
+  badge_profile_complete: Icons.IconProfileComplete,
+  badge_streak_7: Icons.IconStreak7,
+  badge_night_owl: Icons.IconNightOwl,
+  badge_mentor: Icons.IconMentor,
+  badge_double_xp_day: Icons.IconDoubleXpDay,
+  badge_boss_slayer: Icons.IconBossSlayer,
+  badge_max_category: Icons.IconMaxCategory,
+  badge_hacker: Icons.IconHacker,
+  badge_completionist: Icons.IconCompletionist,
+  badge_bdfl_witness: Icons.IconBdflWitness,
+  badge_404: Icons.Icon404,
+  badge_no_life: Icons.IconNoLife,
+  badge_konami: Icons.IconKonami,
+  badge_first_bdfl: Icons.IconFirstBdfl,
+  badge_founder_xi: Icons.IconFounderXi,
 }
 
 const RARITY_ORDER: BadgeRarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic']

@@ -158,7 +158,7 @@ export default function BadgeCollection({
 
       {/* All badges grid — sorted by rarity (mythic first) */}
       <div className="p-5">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
           {sortedBadges.map((badge, i) => {
             const isEarned = earnedSet.has(badge.id)
             const isActive = activeSet.has(badge.id)

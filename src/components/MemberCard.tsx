@@ -7,6 +7,8 @@ import type { Role } from "@/types/database";
 import QRCode from "react-qr-code";
 import { getSkin } from "@/lib/cardSkins";
 import BadgeIcon from "@/components/badges/BadgeIcon";
+import { getBadgeDef } from "@/lib/badgeDefs";
+import { RARITY_CONFIG } from "@/types/gamification";
 
 const BARCODE_BARS = [
   2, 1, 3, 1, 2, 1, 1, 3, 2, 1, 3, 1, 1, 2, 1, 3, 1, 2, 2, 1, 1, 3, 1, 2, 1, 1, 3, 2, 1, 2,
@@ -384,9 +386,23 @@ export default function MemberCard({
                   ? (() => {
                       const badgeSlots = Math.max(activeBadges.length, getBadgeSlotCount(levelDef.level));
                       const slots: React.ReactNode[] = activeBadges
-                        .map((badgeId) => (
-                          <BadgeIcon key={badgeId} badgeId={badgeId} size={16} locked={false} />
-                        ));
+                        .map((badgeId) => {
+                          const badgeDef = getBadgeDef(badgeId);
+                          const rarity = badgeDef?.rarity ?? 'common';
+                          const rarityColor = rarity === 'mythic' ? '#ff80ff' : RARITY_CONFIG[rarity].color;
+                          return (
+                            <div
+                              key={badgeId}
+                              style={{
+                                borderRadius: 2,
+                                boxShadow: `0 0 8px ${rarityColor}66`,
+                                display: 'inline-flex',
+                              }}
+                            >
+                              <BadgeIcon badgeId={badgeId} size={16} locked={false} rarity={rarity} />
+                            </div>
+                          );
+                        });
                       for (let i = slots.length; i < badgeSlots; i++) {
                         slots.push(
                           <BadgeIcon key={`locked-${i}`} badgeId="badge_joined" size={16} locked={true} />
