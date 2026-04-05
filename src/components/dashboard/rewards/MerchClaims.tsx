@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import type { Reward } from '@/types/database'
+import { Check, Minus } from 'lucide-react'
 
 // Merch tiers use legacy rank names — map to XP thresholds for unlock checks
 const MERCH_XP_REQUIREMENTS: Record<string, number> = {
@@ -190,10 +191,10 @@ export default function MerchClaims({ rewards, currentRank, memberId }: MerchCla
                 {isClaimed ? (
                   <div className="text-right">
                     <span
-                      className="font-mono text-xs px-2 py-0.5"
+                      className="font-mono text-xs px-2 py-0.5 inline-flex items-center gap-1"
                       style={{ color: 'var(--color-accent-green)', border: '1px solid rgba(34,197,94,0.3)' }}
                     >
-                      &#10003; CLAIMED
+                      <Check className="w-3 h-3" /> CLAIMED
                     </span>
                     {reward.claimed_at && (
                       <p className="font-mono text-[10px] md:text-xs mt-1" style={{ color: 'rgba(255,255,255,0.2)' }}>
@@ -220,9 +221,7 @@ export default function MerchClaims({ rewards, currentRank, memberId }: MerchCla
                     Bereik {tier.requiredRank}
                   </span>
                 ) : (
-                  <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>
-                    &#8212;
-                  </span>
+                  <Minus className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.2)' }} />
                 )}
               </div>
             </motion.div>

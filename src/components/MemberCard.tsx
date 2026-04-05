@@ -1,6 +1,6 @@
 "use client";
 
-import { Star } from "lucide-react";
+import { Star, Check, X } from "lucide-react";
 import { ROLLEN } from "@/lib/constants";
 import { getLevelForXp, getLevelProgress, getBadgeSlotCount } from "@/lib/levelEngine";
 import type { Role } from "@/types/database";
@@ -425,19 +425,15 @@ export default function MemberCard({
                         }}
                       >
                         {badge.unlocked ? (
-                          <span
-                            className="font-mono text-[10px] text-[var(--color-accent-gold)]"
+                          <Check
+                            className="w-2.5 h-2.5 text-[var(--color-accent-gold)]"
                             aria-hidden="true"
-                          >
-                            ✓
-                          </span>
+                          />
                         ) : (
-                          <span
-                            className="font-mono text-[9px] text-[var(--color-text-muted)] opacity-20"
+                          <X
+                            className="w-2.5 h-2.5 text-[var(--color-text-muted)] opacity-20"
                             aria-hidden="true"
-                          >
-                            ✕
-                          </span>
+                          />
                         )}
                       </div>
                     ))}

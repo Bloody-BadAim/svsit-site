@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Check } from 'lucide-react'
 
 interface BuyButtonProps {
   accessoryId: string
@@ -45,10 +46,10 @@ export default function BuyButton({ accessoryId, price, canAfford }: BuyButtonPr
   if (bought) {
     return (
       <span
-        className="font-mono text-xs px-3 py-1"
+        className="font-mono text-xs px-3 py-1 inline-flex items-center gap-1"
         style={{ color: 'var(--color-accent-green)', border: '1px solid rgba(34,197,94,0.3)' }}
       >
-        &#10003; IN BEZIT
+        <Check className="w-3 h-3" /> IN BEZIT
       </span>
     )
   }

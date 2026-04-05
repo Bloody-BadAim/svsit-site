@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import ClassSelector from './ClassSelector'
 import { COMMISSIES, ROLLEN } from '@/lib/constants'
 import type { Role } from '@/types/database'
+import { Check } from 'lucide-react'
 
 type Step = 1 | 2 | 3 | 4
 
@@ -117,7 +118,7 @@ export default function RegisterFlow() {
                 border: step >= s ? 'none' : '1px solid var(--color-border)',
               }}
             >
-              {step > s ? '✓' : s}
+              {step > s ? <Check className="w-4 h-4" /> : s}
             </div>
             {s < 4 && (
               <div
@@ -368,14 +369,13 @@ export default function RegisterFlow() {
               className="mt-1 sr-only"
             />
             <div
-              className="w-5 h-5 rounded flex-shrink-0 flex items-center justify-center text-xs font-bold mt-0.5"
+              className="w-5 h-5 rounded flex-shrink-0 flex items-center justify-center mt-0.5"
               style={{
                 backgroundColor: akkoord ? 'var(--color-accent-gold)' : 'transparent',
                 border: akkoord ? 'none' : '2px solid var(--color-text-muted)',
-                color: akkoord ? 'var(--color-bg)' : 'transparent',
               }}
             >
-              ✓
+              {akkoord && <Check className="w-3 h-3" style={{ color: 'var(--color-bg)' }} />}
             </div>
             <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
               Ik ga akkoord met de voorwaarden en machtig SIT om jaarlijks €10 af te schrijven via automatische incasso.

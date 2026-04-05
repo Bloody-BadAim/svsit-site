@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { Lock } from 'lucide-react'
+import { Lock, PawPrint } from 'lucide-react'
 import { RARITY_CONFIG } from '@/types/gamification'
 import type { AccessoryCategory, BadgeRarity, UnlockRule } from '@/types/gamification'
 
@@ -240,7 +240,7 @@ function CardPreview({ equippedMap, member, accentColor }: CardPreviewProps) {
             style={{ zIndex: 4 }}
             title={petDef.name}
           >
-            {(petDef.preview_data?.emoji as string | undefined) ?? '🐾'}
+            {(petDef.preview_data?.emoji as string | undefined) ?? <PawPrint className="w-5 h-5" style={{ color: 'var(--color-accent-gold)' }} />}
           </div>
         )}
 

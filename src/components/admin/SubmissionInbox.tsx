@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { Check, X } from 'lucide-react'
 
 interface EnrichedSubmission {
   id: string
@@ -91,14 +92,14 @@ export default function SubmissionInbox() {
 
       {error && (
         <p
-          className="text-xs py-2 px-3 rounded-lg"
+          className="text-xs py-2 px-3 rounded-lg flex items-center gap-1.5"
           style={{
             color: 'var(--color-accent-red)',
             backgroundColor: 'rgba(239,68,68,0.08)',
             fontFamily: 'var(--font-mono)',
           }}
         >
-          ✗ {error}
+          <X className="w-3.5 h-3.5 shrink-0" /> {error}
         </p>
       )}
 
@@ -197,7 +198,7 @@ export default function SubmissionInbox() {
                     fontFamily: 'var(--font-mono)',
                   }}
                 >
-                  {actionLoading === sub.id ? '...' : '✓ Approve'}
+                  {actionLoading === sub.id ? '...' : <span className="flex items-center gap-1"><Check className="w-3 h-3" /> Approve</span>}
                 </button>
                 <button
                   onClick={() => handleAction(sub.id, 'rejected')}
@@ -210,7 +211,7 @@ export default function SubmissionInbox() {
                     fontFamily: 'var(--font-mono)',
                   }}
                 >
-                  {actionLoading === sub.id ? '...' : '✗ Reject'}
+                  {actionLoading === sub.id ? '...' : <span className="flex items-center gap-1"><X className="w-3 h-3" /> Reject</span>}
                 </button>
               </div>
             </div>

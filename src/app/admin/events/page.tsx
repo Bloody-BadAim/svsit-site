@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useScannerStore } from '@/stores/useScannerStore'
+import { Check, X } from 'lucide-react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -533,13 +534,13 @@ export default function EventsPage() {
 
             {/* Feedback */}
             {createError && (
-              <p style={{ color: 'var(--color-accent-red)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 10 }}>
-                ✗ {createError}
+              <p style={{ color: 'var(--color-accent-red)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <X size={13} style={{ flexShrink: 0 }} /> {createError}
               </p>
             )}
             {createSuccess && (
-              <p style={{ color: 'var(--color-accent-green)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 10 }}>
-                ✓ Event aangemaakt
+              <p style={{ color: 'var(--color-accent-green)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Check size={13} style={{ flexShrink: 0 }} /> Event aangemaakt
               </p>
             )}
 
@@ -596,8 +597,8 @@ export default function EventsPage() {
             ))}
           </div>
         ) : eventsError ? (
-          <p style={{ color: 'var(--color-accent-red)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-            ✗ {eventsError}
+          <p style={{ color: 'var(--color-accent-red)', fontFamily: 'var(--font-mono)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <X size={13} style={{ flexShrink: 0 }} /> {eventsError}
           </p>
         ) : events.length === 0 ? (
           <div
@@ -764,7 +765,7 @@ export default function EventsPage() {
                               cursor: 'pointer',
                             }}
                           >
-                            ✗ Annuleren
+                            <X size={11} style={{ display: 'inline', marginRight: 3, verticalAlign: 'middle' }} /> Annuleren
                           </button>
                         )}
                       </div>

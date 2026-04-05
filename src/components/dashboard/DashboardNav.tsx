@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 import { ADMIN_EMAILS } from '@/lib/constants'
-import { LayoutDashboard, CreditCard, User, Trophy, Shield, LogOut, Menu, X, Zap, Palette, ShoppingBag } from 'lucide-react'
+import { LayoutDashboard, CreditCard, User, Trophy, Shield, LogOut, Menu, X, Zap, Palette, ShoppingBag, Coins } from 'lucide-react'
 
 function CoinPill({ userId, isAdmin }: { userId: string; isAdmin: boolean }) {
   const [coins, setCoins] = useState<number | null>(null)
@@ -28,7 +28,7 @@ function CoinPill({ userId, isAdmin }: { userId: string; isAdmin: boolean }) {
 
   return (
     <div className="flex items-center gap-1.5 text-sm font-mono">
-      <span style={{ color: 'var(--color-accent-gold)' }}>🪙</span>
+      <Coins className="w-4 h-4" style={{ color: 'var(--color-accent-gold)' }} />
       <span style={{ color: 'var(--color-text)' }}>{coins.toLocaleString('nl-NL')}</span>
     </div>
   )

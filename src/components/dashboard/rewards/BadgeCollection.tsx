@@ -7,6 +7,7 @@ import { BADGE_DEFS, getBadgeDef } from '@/lib/badgeDefs'
 import BadgeIcon from '@/components/badges/BadgeIcon'
 import { RARITY_CONFIG } from '@/types/gamification'
 import type { BadgeRarity } from '@/types/gamification'
+import { Lock, Check } from 'lucide-react'
 
 const RARITY_SORT_ORDER: BadgeRarity[] = ['mythic', 'legendary', 'epic', 'rare', 'uncommon', 'common']
 
@@ -275,12 +276,12 @@ export default function BadgeCollection({
                           {RARITY_CONFIG[rarity].label}
                         </span>
                         {!isEarned ? (
-                          <div className="mt-1" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                            &#128274; vergrendeld
+                          <div className="mt-1 flex items-center gap-1" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                            <Lock className="w-3 h-3" /> vergrendeld
                           </div>
                         ) : isActive ? (
-                          <div className="mt-1" style={{ color: 'var(--color-accent-gold)' }}>
-                            &#10003; Geequipped — klik om te verwijderen
+                          <div className="mt-1 flex items-center gap-1" style={{ color: 'var(--color-accent-gold)' }}>
+                            <Check className="w-3 h-3" /> Geequipped &mdash; klik om te verwijderen
                           </div>
                         ) : canEquip ? (
                           <div className="mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>

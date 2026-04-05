@@ -1,5 +1,7 @@
 'use client'
 
+import { AlertTriangle } from 'lucide-react'
+
 export default function AdminError({
   error,
   reset,
@@ -9,7 +11,9 @@ export default function AdminError({
 }) {
   return (
     <div className="max-w-xl mx-auto text-center py-16">
-      <p className="text-4xl mb-4">⚠</p>
+      <div className="flex justify-center mb-4">
+        <AlertTriangle className="w-10 h-10" style={{ color: 'var(--color-accent-gold)' }} />
+      </div>
       <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>
         Er ging iets mis
       </h2>

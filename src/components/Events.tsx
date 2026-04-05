@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
 import { BorderTrail } from "@/components/ui/BorderTrail";
+import { Check } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════
    Types & Constants
@@ -715,7 +716,7 @@ function DetailPanel({
               className="inline-flex items-center font-mono text-[13px] font-bold tracking-wider uppercase border border-white/10 cursor-default"
               style={{ padding: "12px 28px", gap: 8, opacity: 0.5 }}
             >
-              AFGEROND &#10003;
+              AFGEROND <Check className="w-4 h-4" />
             </span>
           )}
           {shown.status === "TBA" && (

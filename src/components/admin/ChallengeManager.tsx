@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { StatCategory } from '@/types/database'
+import { Check, X } from 'lucide-react'
 
 const CATEGORIES: { value: StatCategory; label: string }[] = [
   { value: 'code', label: 'Code' },
@@ -201,13 +202,13 @@ export default function ChallengeManager() {
 
         {/* Feedback */}
         {error && (
-          <p className="text-xs py-2 px-3 rounded-lg" style={{ color: 'var(--color-accent-red)', backgroundColor: 'rgba(239,68,68,0.08)', fontFamily: 'var(--font-mono)' }}>
-            ✗ {error}
+          <p className="text-xs py-2 px-3 rounded-lg flex items-center gap-1.5" style={{ color: 'var(--color-accent-red)', backgroundColor: 'rgba(239,68,68,0.08)', fontFamily: 'var(--font-mono)' }}>
+            <X className="w-3.5 h-3.5 shrink-0" /> {error}
           </p>
         )}
         {success && (
-          <p className="text-xs py-2 px-3 rounded-lg" style={{ color: 'var(--color-accent-green)', backgroundColor: 'rgba(34,197,94,0.08)', fontFamily: 'var(--font-mono)' }}>
-            ✓ Challenge aangemaakt
+          <p className="text-xs py-2 px-3 rounded-lg flex items-center gap-1.5" style={{ color: 'var(--color-accent-green)', backgroundColor: 'rgba(34,197,94,0.08)', fontFamily: 'var(--font-mono)' }}>
+            <Check className="w-3.5 h-3.5 shrink-0" /> Challenge aangemaakt
           </p>
         )}
 

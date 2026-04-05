@@ -5,6 +5,7 @@ import { getLevelForXp, getEffectiveLevel } from '@/lib/levelEngine'
 import { getShopItems } from '@/lib/shopEngine'
 import type { ShopItem } from '@/lib/shopEngine'
 import BuyButton from './BuyButton'
+import { Star, PawPrint, Square, Sparkles, Tag, Coins, Check } from 'lucide-react'
 
 export const metadata = {
   title: 'Shop — SIT',
@@ -84,7 +85,7 @@ function ShopItemCard({ item, owned, coinsBalance }: ShopItemCardProps) {
             className="font-mono text-[10px] px-1.5 py-0.5 flex items-center gap-1"
             style={{ color: 'var(--color-accent-gold)', border: '1px solid rgba(245,158,11,0.3)' }}
           >
-            &#9733; FEATURED
+            <Star className="w-3 h-3 fill-current" /> FEATURED
           </span>
         ) : (
           <span />
@@ -130,7 +131,7 @@ function ShopItemCard({ item, owned, coinsBalance }: ShopItemCardProps) {
             className="font-mono text-3xl font-bold select-none"
             style={{ color: `${rarityColor}60` }}
           >
-            {item.category === 'pets' ? '&#128062;' : item.category === 'frames' ? '&#9643;' : item.category === 'effects' ? '&#10024;' : item.category === 'stickers' ? '&#127991;' : '&#9673;'}
+            {item.category === 'pets' ? <PawPrint className="w-8 h-8" style={{ color: `${rarityColor}60` }} /> : item.category === 'frames' ? <Square className="w-8 h-8" style={{ color: `${rarityColor}60` }} /> : item.category === 'effects' ? <Sparkles className="w-8 h-8" style={{ color: `${rarityColor}60` }} /> : item.category === 'stickers' ? <Tag className="w-8 h-8" style={{ color: `${rarityColor}60` }} /> : <Coins className="w-8 h-8" style={{ color: `${rarityColor}60` }} />}
           </span>
         )}
       </div>
@@ -177,16 +178,18 @@ function ShopItemCard({ item, owned, coinsBalance }: ShopItemCardProps) {
           className="font-mono text-sm font-bold"
           style={{ color: item.locked ? 'rgba(255,255,255,0.2)' : 'var(--color-accent-gold)' }}
         >
-          {item.shopPrice.toLocaleString('nl-NL')} &#9673;
+          <span className="inline-flex items-center gap-1">
+            {item.shopPrice.toLocaleString('nl-NL')} <Coins className="w-3.5 h-3.5" />
+          </span>
         </span>
 
         {/* Action */}
         {owned ? (
           <span
-            className="font-mono text-xs px-2 py-0.5"
+            className="font-mono text-xs px-2 py-0.5 inline-flex items-center gap-1"
             style={{ color: 'var(--color-accent-green)', border: '1px solid rgba(34,197,94,0.3)' }}
           >
-            &#10003; IN BEZIT
+            <Check className="w-3 h-3" /> IN BEZIT
           </span>
         ) : item.locked ? (
           <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>
@@ -352,7 +355,9 @@ export default async function ShopPage({
             className="font-mono text-3xl font-bold mt-0.5"
             style={{ color: 'var(--color-accent-gold)' }}
           >
-            {coinsBalance.toLocaleString('nl-NL')} &#9673;
+            <span className="inline-flex items-center gap-2">
+              {coinsBalance.toLocaleString('nl-NL')} <Coins className="w-6 h-6" />
+            </span>
           </p>
         </div>
         <div className="text-right hidden sm:block">

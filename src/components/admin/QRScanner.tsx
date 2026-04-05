@@ -58,7 +58,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
 
     if (res.ok && json.data) {
       const { name, event_title } = json.data
-      setMessage(`TICKET CHECK-IN ✓ — ${name} voor ${event_title}`)
+      setMessage(`TICKET CHECK-IN [OK] — ${name} voor ${event_title}`)
       setMessageType('success')
       // Store last scan — punten 0 since this is just a check-in
       setLaatsteScan({

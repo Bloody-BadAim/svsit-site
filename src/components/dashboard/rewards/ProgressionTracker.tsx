@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from 'motion/react'
 import { LEVELS, getLevelForXp, getLevelProgress, getTierColor } from '@/lib/levelEngine'
+import { Check, Star } from 'lucide-react'
 
 interface ProgressionTrackerProps {
   // Legacy prop — kept for call-site compatibility, ignored internally
@@ -143,7 +144,7 @@ export default function ProgressionTracker({ points, total_xp }: ProgressionTrac
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.5 + i * 0.05, type: 'spring', stiffness: 500, damping: 12 }}
                     >
-                      &#10003;
+                      <Check className="w-3 h-3" />
                     </motion.span>
                   )}
                 </motion.div>
@@ -179,7 +180,9 @@ export default function ProgressionTracker({ points, total_xp }: ProgressionTrac
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
-            &#9733; MAX LEVEL BEREIKT &#9733;
+            <span className="inline-flex items-center gap-2">
+              <Star className="w-4 h-4 fill-current" /> MAX LEVEL BEREIKT <Star className="w-4 h-4 fill-current" />
+            </span>
           </motion.div>
         )}
       </div>

@@ -9,6 +9,7 @@ import { getEquippedAccessories } from '@/lib/inventoryEngine'
 import type { MemberCardEquipment } from '@/components/MemberCard'
 import { RARITY_CONFIG } from '@/types/gamification'
 import type { BadgeRarity } from '@/types/gamification'
+import { Trophy, ShoppingBag, Palette, BarChart3 } from 'lucide-react'
 
 export const metadata = {
   title: 'Ledenpas — SIT',
@@ -201,12 +202,12 @@ export default async function LedenpasPage() {
 
           {/* Quick Actions */}
           <div className="grid grid-cols-2 gap-3">
-            {[
-              { href: '/dashboard/rewards',     icon: '🏆', label: 'Badges'      },
-              { href: '/dashboard/shop',        icon: '🛒', label: 'Shop'        },
-              { href: '/dashboard/card-editor', icon: '🎨', label: 'Card Editor' },
-              { href: '/leaderboard',           icon: '📊', label: 'Leaderboard' },
-            ].map(({ href, icon, label }) => (
+            {([
+              { href: '/dashboard/rewards',     Icon: Trophy,      label: 'Badges'      },
+              { href: '/dashboard/shop',        Icon: ShoppingBag, label: 'Shop'        },
+              { href: '/dashboard/card-editor', Icon: Palette,     label: 'Card Editor' },
+              { href: '/leaderboard',           Icon: BarChart3,   label: 'Leaderboard' },
+            ] as const).map(({ href, Icon, label }) => (
               <a
                 key={href}
                 href={href}
@@ -216,7 +217,7 @@ export default async function LedenpasPage() {
                   backgroundColor: 'rgba(255,255,255,0.02)',
                 }}
               >
-                <span className="text-lg leading-none">{icon}</span>
+                <Icon className="w-5 h-5" style={{ color: 'var(--color-accent-gold)' }} />
                 <span className="text-sm font-mono" style={{ color: 'var(--color-text)' }}>{label}</span>
               </a>
             ))}

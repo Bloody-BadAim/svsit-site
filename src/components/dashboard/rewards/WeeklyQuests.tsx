@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, useReducedMotion, AnimatePresence } from 'motion/react'
 import type { Challenge, ChallengeSubmission, StatCategory } from '@/types/database'
+import { Check, Clock, X } from 'lucide-react'
 
 interface WeeklyQuestsProps {
   quests: Challenge[]
@@ -137,18 +138,18 @@ function QuestItem({
           </span>
 
           {status === 'approved' && (
-            <span className="font-mono text-xs px-2 py-0.5" style={{ color: 'var(--color-accent-green)', border: '1px solid rgba(34,197,94,0.3)' }}>
-              &#10003; DONE
+            <span className="font-mono text-xs px-2 py-0.5 inline-flex items-center gap-1" style={{ color: 'var(--color-accent-green)', border: '1px solid rgba(34,197,94,0.3)' }}>
+              <Check className="w-3 h-3" /> DONE
             </span>
           )}
           {status === 'pending' && (
-            <span className="font-mono text-xs px-2 py-0.5" style={{ color: 'var(--color-accent-gold)', border: '1px solid rgba(242,158,24,0.3)' }}>
-              &#8987; REVIEW
+            <span className="font-mono text-xs px-2 py-0.5 inline-flex items-center gap-1" style={{ color: 'var(--color-accent-gold)', border: '1px solid rgba(242,158,24,0.3)' }}>
+              <Clock className="w-3 h-3" /> REVIEW
             </span>
           )}
           {status === 'rejected' && (
-            <span className="font-mono text-xs px-2 py-0.5" style={{ color: 'var(--color-accent-red)', border: '1px solid rgba(239,68,68,0.3)' }}>
-              &#10007; REJECTED
+            <span className="font-mono text-xs px-2 py-0.5 inline-flex items-center gap-1" style={{ color: 'var(--color-accent-red)', border: '1px solid rgba(239,68,68,0.3)' }}>
+              <X className="w-3 h-3" /> REJECTED
             </span>
           )}
           {status === 'submit' && (

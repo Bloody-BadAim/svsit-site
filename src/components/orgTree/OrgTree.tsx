@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Star } from "lucide-react";
 import {
   bestuur,
   commissies,
@@ -770,7 +771,7 @@ function NodeCard({
                     >
                       {c.name}
                       {isVz && (
-                        <span className="ml-1 text-[var(--color-accent-gold)]">★</span>
+                        <Star className="inline ml-1 w-3 h-3 fill-current" style={{ color: 'var(--color-accent-gold)' }} />
                       )}
                     </span>
                   );

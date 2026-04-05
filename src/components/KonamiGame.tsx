@@ -364,7 +364,7 @@ export default function KonamiGame() {
       ctx.textAlign = "left";
       ctx.font = "11px monospace";
       ctx.fillStyle = BRAND.muted;
-      ctx.fillText("☕+10  💻+25  🍕+15  🐛-20", 16, CANVAS_H - 20);
+      ctx.fillText("[C]+10  [L]+25  [P]+15  [B]-20", 16, CANVAS_H - 20);
 
       rafRef.current = requestAnimationFrame(gameLoop);
     }

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion, useReducedMotion, AnimatePresence } from 'motion/react'
 import type { Challenge, ChallengeSubmission } from '@/types/database'
+import { Check, Clock, X, Star } from 'lucide-react'
 
 interface TrackData {
   trackId: string
@@ -122,13 +123,13 @@ function MilestoneItem({
             {milestone.title}
           </span>
           {isCompleted && (
-            <span className="font-mono text-[10px] md:text-xs" style={{ color: trackColor }}>&#10003;</span>
+            <Check className="w-3 h-3 shrink-0" style={{ color: trackColor }} />
           )}
           {isPending && (
-            <span className="font-mono text-[10px] md:text-xs" style={{ color: 'var(--color-accent-gold)' }}>&#8987;</span>
+            <Clock className="w-3 h-3 shrink-0" style={{ color: 'var(--color-accent-gold)' }} />
           )}
           {isRejected && (
-            <span className="font-mono text-[10px] md:text-xs" style={{ color: 'var(--color-accent-red)' }}>&#10007;</span>
+            <X className="w-3 h-3 shrink-0" style={{ color: 'var(--color-accent-red)' }} />
           )}
         </div>
 
@@ -305,7 +306,7 @@ function TrackCard({ track, memberId }: { track: TrackData; memberId: string }) 
 
         {isComplete && (
           <div className="mt-2 font-mono text-xs flex items-center gap-1.5" style={{ color: meta.kleur }}>
-            <span>&#9733;</span> TRACK VOLTOOID
+            <Star className="w-3.5 h-3.5 fill-current" /> TRACK VOLTOOID
           </div>
         )}
       </div>
