@@ -160,7 +160,7 @@ export default function OrgTree() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen py-24 md:py-32 px-5 sm:px-6 md:px-12 lg:px-24"
+      className="relative min-h-screen py-32 md:py-40 px-6 md:px-12 lg:px-24"
     >
       {/* ── Background: Grid + Ambient glows ── */}
       <div
@@ -193,23 +193,22 @@ export default function OrgTree() {
 
       <div className="relative z-10 max-w-[1200px] mx-auto">
         {/* ── Header ── */}
-        <div className="mb-16 md:mb-20">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="font-mono text-xs text-[var(--color-accent-gold)] tracking-[0.3em] opacity-60">
-              {">"} ORGANISATIE
+        <div className="mb-16 md:mb-24">
+          <div className="flex items-center gap-4 mb-4">
+            <span className="font-mono text-xs text-[var(--color-accent-gold)] tracking-[0.3em] uppercase">
+              03
             </span>
-            <span className="flex items-center gap-1.5" aria-hidden="true">
-              <span className="text-[var(--color-accent-red)] font-bold text-sm">×</span>
-              <span className="text-[var(--color-accent-green)] font-bold text-sm">×</span>
-              <span className="text-[var(--color-accent-blue)] font-bold text-sm">×</span>
-            </span>
+            <span className="w-12 h-px bg-[var(--color-accent-gold)]" />
           </div>
-          <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-extrabold uppercase tracking-tight leading-[0.95]">
-            Skill{" "}
-            <span className="text-[var(--color-accent-gold)]">Tree</span>
+          <h1
+            className="text-4xl sm:text-5xl md:text-7xl font-extrabold uppercase tracking-tight leading-[0.95]"
+            style={{ fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif" }}
+          >
+            De{" "}
+            <span className="text-[var(--color-accent-gold)]">Stamboom</span>
           </h1>
-          <p className="font-mono text-sm md:text-base text-[var(--color-text-muted)] mt-4 max-w-lg">
-            Het bestuur, de commissies, en alle mensen die SIT mogelijk maken.
+          <p className="font-mono text-base md:text-lg text-[var(--color-text-muted)] mt-6 max-w-lg leading-relaxed">
+            Bestuur XI en de commissies die SIT draaiende houden.
             Klik op een naam voor meer info.
           </p>
         </div>
@@ -348,7 +347,7 @@ export default function OrgTree() {
         {/* ── Commissie Grid ── */}
         <div
           data-commissie-grid
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 mb-16 md:mb-20"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 mb-16 md:mb-24"
         >
           {commissies.map((commissie) => (
             <CommissieCluster
@@ -365,6 +364,38 @@ export default function OrgTree() {
           ))}
         </div>
       </div>
+
+        {/* ── Commissie Aanmelding CTA ── */}
+        <div className="text-center mt-16 md:mt-24 pb-8">
+          <h2
+            className="text-2xl md:text-4xl font-bold uppercase tracking-tight mb-4"
+            style={{ fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif", color: 'var(--color-text)' }}
+          >
+            Wil je meedoen?
+          </h2>
+          <p className="font-mono text-sm md:text-base text-[var(--color-text-muted)] mb-8 max-w-md mx-auto leading-relaxed">
+            Onze commissies zoeken altijd nieuwe leden.
+            Geen ervaring nodig, alleen motivatie.
+          </p>
+          <a
+            href="https://forms.office.com/Pages/ResponsePage.aspx?id=HrsHCfwhb0eIQwLQnOtZp5Gb5Qz7gPZNhhsylBIlKC9UN01YN1EzTEFBMVFaRkhNSVdOU1pDRVpRNC4u"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block px-8 py-4 font-mono font-bold text-base tracking-wide transition-transform hover:scale-[1.03]"
+            style={{
+              backgroundColor: 'var(--color-accent-gold)',
+              color: 'var(--color-bg)',
+            }}
+          >
+            MELD JE AAN
+          </a>
+          <p className="font-mono text-xs text-[#71717A] mt-4">
+            Of stuur een mail naar{" "}
+            <a href="mailto:bestuur@svsit.nl" className="hover:text-[var(--color-text)] transition-colors">
+              bestuur@svsit.nl
+            </a>
+          </p>
+        </div>
 
       {/* ── Selected Person Card Overlay ── */}
       <AnimatePresence>
@@ -463,8 +494,8 @@ function BestuurNode({
 
       {/* Commissie count badge */}
       <span
-        className="font-mono text-[9px] tracking-[0.15em] uppercase"
-        style={{ color: "var(--color-text-muted)", opacity: 0.6 }}
+        className="font-mono text-[10px] tracking-[0.15em] uppercase"
+        style={{ color: "var(--color-text-muted)" }}
       >
         {person.commissies.length} commissie{person.commissies.length !== 1 ? "s" : ""}
       </span>
