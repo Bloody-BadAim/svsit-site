@@ -41,3 +41,7 @@ export const BADGE_DEFS: BadgeDef[] = [
   { id: 'badge_first_bdfl',       name: 'First BDFL',          description: 'De allereerste BDFL van SIT',                   rarity: 'mythic',    xpBonus: 500, icon: 'badge_first_bdfl',       category: 'achievement', autoGrantRule: null },
   { id: 'badge_founder_xi',       name: 'Founder XI',          description: 'Bestuur XI founding member',                    rarity: 'mythic',    xpBonus: 500, icon: 'badge_founder_xi',       category: 'achievement', autoGrantRule: null },
 ]
+
+export function getBadgeDef(badgeId: string): BadgeDef | undefined {
+  return BADGE_DEFS.find((b) => b.id === badgeId)
+}

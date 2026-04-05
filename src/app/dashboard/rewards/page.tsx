@@ -219,6 +219,7 @@ export default async function RewardsPage() {
           activeBadges={activeBadges}
           maxSlots={maxSlots}
           memberId={memberId}
+          memberLevel={levelDef.level}
         />
         <MerchClaims rewards={rewards} currentRank={levelDef.title} memberId={memberId} />
       </div>

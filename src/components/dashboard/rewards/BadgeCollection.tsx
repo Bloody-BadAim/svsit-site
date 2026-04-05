@@ -2,28 +2,43 @@
 
 import { useState } from 'react'
 import { motion, useReducedMotion, AnimatePresence } from 'motion/react'
-import { BADGE_DEFS } from '@/lib/badgeDefs'
+import { BADGE_DEFS, getBadgeDef } from '@/lib/badgeDefs'
+import { getBadgeSlotCount } from '@/lib/levelEngine'
 import BadgeIcon from '@/components/badges/BadgeIcon'
+import { RARITY_CONFIG } from '@/types/gamification'
+import type { BadgeRarity } from '@/types/gamification'
+
+const RARITY_SORT_ORDER: BadgeRarity[] = ['mythic', 'legendary', 'epic', 'rare', 'uncommon', 'common']
 
 interface BadgeCollectionProps {
   earnedBadges: string[]
   activeBadges: string[]
   maxSlots: number
   memberId: string
+  memberLevel?: number
 }
 
 export default function BadgeCollection({
   earnedBadges,
   activeBadges,
-  maxSlots,
+  maxSlots: maxSlotsProp,
   memberId,
+  memberLevel,
 }: BadgeCollectionProps) {
   const shouldReduceMotion = useReducedMotion()
   const [hoveredBadge, setHoveredBadge] = useState<string | null>(null)
   const [currentActive, setCurrentActive] = useState<string[]>(activeBadges)
   const [saving, setSaving] = useState(false)
 
+  // Use level-based slot count when memberLevel is provided
+  const maxSlots = memberLevel != null ? getBadgeSlotCount(memberLevel) : maxSlotsProp
+
   const earnedSet = new Set(earnedBadges)
+
+  // Sort BADGE_DEFS by rarity (mythic first, common last)
+  const sortedBadges = [...BADGE_DEFS].sort((a, b) => {
+    return RARITY_SORT_ORDER.indexOf(a.rarity) - RARITY_SORT_ORDER.indexOf(b.rarity)
+  })
 
   async function toggleBadge(badgeId: string) {
     if (!earnedSet.has(badgeId)) return
@@ -102,6 +117,7 @@ export default function BadgeCollection({
           {Array.from({ length: maxSlots }).map((_, i) => {
             const badgeId = currentActive[i]
             const badge = badgeId ? BADGE_DEFS.find((b) => b.id === badgeId) : null
+            const slotRarity = badge ? (getBadgeDef(badge.id)?.rarity ?? 'common') : 'common'
 
             return (
               <motion.div
@@ -116,12 +132,8 @@ export default function BadgeCollection({
                     className="relative cursor-pointer"
                     title={`Verwijder ${badge.name}`}
                     onClick={() => toggleBadge(badge.id)}
-                    style={{
-                      boxShadow: '0 0 12px rgba(242, 158, 24, 0.15)',
-                      border: '1px solid var(--color-accent-gold)',
-                    }}
                   >
-                    <BadgeIcon badgeId={badge.id} size={28} />
+                    <BadgeIcon badgeId={badge.id} size={28} rarity={slotRarity} />
                   </div>
                 ) : (
                   <div
@@ -144,13 +156,14 @@ export default function BadgeCollection({
         </p>
       </div>
 
-      {/* All badges grid */}
+      {/* All badges grid — sorted by rarity (mythic first) */}
       <div className="p-5">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {BADGE_DEFS.map((badge, i) => {
+          {sortedBadges.map((badge, i) => {
             const isEarned = earnedSet.has(badge.id)
             const isActive = activeSet.has(badge.id)
             const canEquip = isEarned && !isActive && currentActive.length < maxSlots
+            const rarity = getBadgeDef(badge.id)?.rarity ?? 'common'
 
             return (
               <motion.div
@@ -168,21 +181,18 @@ export default function BadgeCollection({
                   onClick={() => isEarned && toggleBadge(badge.id)}
                   style={{
                     cursor: isEarned ? 'pointer' : 'default',
-                    boxShadow: isEarned && isActive
-                      ? '0 0 16px rgba(242, 158, 24, 0.35)'
-                      : isEarned
-                        ? `0 0 8px rgba(242, 158, 24, 0.1)`
-                        : 'none',
-                    border: isActive
-                      ? '1px solid var(--color-accent-gold)'
-                      : isEarned && canEquip
-                        ? '1px solid rgba(242, 158, 24, 0.2)'
-                        : '1px solid transparent',
-                    outline: isEarned && !isActive && !canEquip ? '1px solid rgba(255,255,255,0.05)' : undefined,
-                    transition: 'box-shadow 0.15s, border-color 0.15s',
+                    outline: isActive ? '2px solid rgba(255,255,255,0.15)' : undefined,
+                    outlineOffset: isActive ? 2 : undefined,
+                    transition: 'outline 0.15s',
                   }}
                 >
-                  <BadgeIcon badgeId={badge.id} size={28} locked={!isEarned} />
+                  <BadgeIcon
+                    badgeId={badge.id}
+                    size={28}
+                    locked={!isEarned}
+                    rarity={rarity}
+                    showLabel={false}
+                  />
 
                   {/* Active checkmark */}
                   {isActive && (
@@ -191,6 +201,7 @@ export default function BadgeCollection({
                       style={{
                         backgroundColor: 'var(--color-accent-gold)',
                         borderRadius: '50%',
+                        zIndex: 10,
                       }}
                     >
                       <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
@@ -203,7 +214,7 @@ export default function BadgeCollection({
                   {!isEarned && (
                     <div
                       className="absolute inset-0 flex items-center justify-center"
-                      style={{ backgroundColor: 'rgba(9,9,11,0.4)' }}
+                      style={{ backgroundColor: 'rgba(9,9,11,0.4)', zIndex: 5 }}
                     >
                       <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
                         <rect x="2" y="7" width="12" height="8" rx="1" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" fill="none" />
@@ -213,7 +224,7 @@ export default function BadgeCollection({
                   )}
                 </div>
 
-                {/* Badge name */}
+                {/* Badge name + rarity label */}
                 <span
                   className="font-mono text-xs md:text-sm text-center mt-1.5 leading-tight"
                   style={{
@@ -249,13 +260,29 @@ export default function BadgeCollection({
                       >
                         <div className="font-bold mb-0.5">{badge.name}</div>
                         <div style={{ color: 'var(--color-text-muted)' }}>{badge.description}</div>
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            marginTop: 4,
+                            fontSize: 9,
+                            fontFamily: 'var(--font-mono, monospace)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.08em',
+                            padding: '1px 5px',
+                            border: `1px solid ${rarity === 'mythic' ? 'rgba(255,255,255,0.3)' : RARITY_CONFIG[rarity].color}`,
+                            color: rarity === 'mythic' ? '#fff' : RARITY_CONFIG[rarity].color,
+                            background: rarity === 'mythic' ? 'rgba(255,255,255,0.05)' : `${RARITY_CONFIG[rarity].color}22`,
+                          }}
+                        >
+                          {RARITY_CONFIG[rarity].label}
+                        </span>
                         {!isEarned ? (
                           <div className="mt-1" style={{ color: 'rgba(255,255,255,0.25)' }}>
                             &#128274; vergrendeld
                           </div>
                         ) : isActive ? (
                           <div className="mt-1" style={{ color: 'var(--color-accent-gold)' }}>
-                            ✓ Geequipped — klik om te verwijderen
+                            &#10003; Geequipped — klik om te verwijderen
                           </div>
                         ) : canEquip ? (
                           <div className="mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
