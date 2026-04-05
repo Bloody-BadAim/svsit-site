@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'motion/react'
 
 const SECTIONS = [
   { id: 'about', number: '01' },
-  { id: 'why-join', number: '02' },
+  { id: 'whyjoin', number: '02' },
   { id: 'events', number: '03' },
   { id: 'join', number: '04' },
 ]

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { GlowEffect } from "@/components/ui/GlowEffect";
+import MagneticHero from "@/components/heroAnimations/MagneticHero";
 import gsap from "gsap";
 
 export default function Hero() {
@@ -148,6 +149,7 @@ export default function Hero() {
   return (
     <section
       ref={heroRef}
+      data-hero
       className="relative flex items-center justify-center min-h-screen overflow-hidden"
     >
       {/* ── Layer 0: Aurora brand color blobs (CSS animations, paused when off-screen) ── */}
@@ -261,24 +263,26 @@ export default function Hero() {
             </p>
 
             {/* Main logo */}
-            <h1
-              className="font-mono text-[clamp(4rem,15vw,12rem)] font-bold leading-none tracking-tighter mb-6 transition-opacity duration-500"
-              suppressHydrationWarning
-            >
-              <span className="text-[var(--color-accent-gold)]">
-                {typedText.slice(0, 1)}
-              </span>
-              <span className="text-[var(--color-text)]">
-                {typedText.slice(1, 4)}
-              </span>
-              <span className="text-[var(--color-accent-gold)]">
-                {typedText.slice(4)}
-              </span>
-              <span
-                className={`inline-block w-[3px] h-[0.85em] bg-[var(--color-accent-gold)] ml-1 align-middle ${showCursor ? "opacity-100" : "opacity-0"
-                  }`}
-              />
-            </h1>
+            <MagneticHero>
+              <h1
+                className="font-mono text-[clamp(4rem,15vw,12rem)] font-bold leading-none tracking-tighter mb-6 transition-opacity duration-500"
+                suppressHydrationWarning
+              >
+                <span className="text-[var(--color-accent-gold)]">
+                  {typedText.slice(0, 1)}
+                </span>
+                <span className="text-[var(--color-text)]">
+                  {typedText.slice(1, 4)}
+                </span>
+                <span className="text-[var(--color-accent-gold)]">
+                  {typedText.slice(4)}
+                </span>
+                <span
+                  className={`inline-block w-[3px] h-[0.85em] bg-[var(--color-accent-gold)] ml-1 align-middle ${showCursor ? "opacity-100" : "opacity-0"
+                    }`}
+                />
+              </h1>
+            </MagneticHero>
 
             {/* Tagline */}
             <p

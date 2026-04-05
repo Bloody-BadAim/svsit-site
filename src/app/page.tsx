@@ -15,6 +15,8 @@ import SectionDivider from "@/components/SectionDivider";
 const CustomCursor = dynamic(() => import("@/components/CustomCursor"));
 const ConsoleEasterEgg = dynamic(() => import("@/components/ConsoleEasterEgg"));
 const KonamiGame = dynamic(() => import("@/components/KonamiGame"));
+const ScrollMorphNumbers = dynamic(() => import("@/components/heroAnimations/ScrollMorphNumbers"));
+const IntroOverlay = dynamic(() => import("@/components/heroAnimations/IntroOverlay"));
 
 export default function Home() {
   return (
@@ -24,7 +26,9 @@ export default function Home() {
       <CustomCursor />
       <ConsoleEasterEgg />
       <KonamiGame />
+      <IntroOverlay />
       <PageScrollProgress />
+      <ScrollMorphNumbers />
       <Navbar />
       <main id="main-content" className="relative z-[1] flex-1">
         <Hero />
