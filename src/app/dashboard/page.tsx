@@ -90,6 +90,7 @@ export default async function DashboardPage({
           style={{
             backgroundColor: 'rgba(242, 158, 24, 0.03)',
             borderLeft: '3px solid var(--color-accent-gold)',
+            boxShadow: '0 0 20px rgba(242, 158, 24, 0.06), inset 0 1px 0 rgba(242, 158, 24, 0.06)',
           }}
         >
           <div className="flex items-center gap-3">
@@ -103,7 +104,10 @@ export default async function DashboardPage({
 
       {/* Character header — no numbered sections */}
       <div className="mb-10">
-        <div className="flex items-center gap-3 mb-2">
+        <div
+          className="inline-flex items-center gap-3 px-3 py-1.5 rounded-full mb-2"
+          style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
+        >
           <div
             className="w-2 h-2 rounded-full"
             style={{
@@ -115,19 +119,27 @@ export default async function DashboardPage({
             {member?.membership_active ? 'online' : 'inactive'} · {rank.naam} · lvl {getLevel(points)}
           </span>
         </div>
-        <h1
-          className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight uppercase leading-[0.9]"
-          style={{
-            color: 'var(--color-text)',
-            fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
-          }}
-        >
-          {username.toUpperCase()}
-        </h1>
+        <div className="relative">
+          <div
+            className="absolute -inset-x-20 -inset-y-10 pointer-events-none"
+            style={{
+              background: `radial-gradient(ellipse at center, rgba(242, 158, 24, 0.04) 0%, transparent 70%)`,
+            }}
+          />
+          <h1
+            className="relative text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight uppercase leading-[0.9]"
+            style={{
+              color: 'var(--color-text)',
+              fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
+            }}
+          >
+            {username.toUpperCase()}
+          </h1>
+        </div>
       </div>
 
       {/* Two-column: stats + equipped item */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-5 mb-5">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-5 mb-8">
         <StatsGrid
           points={points}
           role={(member?.role as string) || 'member'}
@@ -142,10 +154,11 @@ export default async function DashboardPage({
         {/* Equipped item — ledenpas */}
         <Link
           href="/dashboard/ledenpas"
-          className="group relative overflow-hidden transition-all duration-200"
+          className="group relative overflow-hidden transition-all duration-200 hover:scale-[1.01]"
           style={{
             backgroundColor: 'rgba(255,255,255,0.02)',
             border: '1px solid var(--color-border)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)',
           }}
         >
           {/* Corner decorations */}

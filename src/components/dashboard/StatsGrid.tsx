@@ -33,7 +33,7 @@ export default function StatsGrid({ points, role, commissieNames, memberSince, d
 
   return (
     <div
-      className="relative overflow-hidden"
+      className="relative overflow-hidden transition-colors duration-300"
       style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
     >
       {/* Corner decorations */}
@@ -48,7 +48,7 @@ export default function StatsGrid({ points, role, commissieNames, memberSince, d
           character.stats
         </span>
         <div className="flex items-center gap-3">
-          <span className="font-mono text-[10px]" style={{ color: 'var(--color-accent-gold)' }}>
+          <span className="font-mono text-[10px] px-2 py-0.5 rounded" style={{ color: 'var(--color-accent-gold)', backgroundColor: 'rgba(255,255,255,0.04)' }}>
             LVL {String(level).padStart(2, '0')}
           </span>
           {prestige > 0 && (
@@ -56,7 +56,7 @@ export default function StatsGrid({ points, role, commissieNames, memberSince, d
               P{prestige}
             </span>
           )}
-          <span className="text-[10px] font-mono px-2 py-0.5" style={{ color: rank.kleur, border: `1px solid ${rank.kleur}40` }}>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded" style={{ color: rank.kleur, border: `1px solid ${rank.kleur}40`, backgroundColor: 'rgba(255,255,255,0.04)' }}>
             {rank.naam.toUpperCase()}
           </span>
         </div>
@@ -81,10 +81,10 @@ export default function StatsGrid({ points, role, commissieNames, memberSince, d
               {nextRank ? `${nextRank.minPunten - points} tot ${nextRank.naam}` : `${levelProgress.current}/${levelProgress.max} xp`}
             </span>
           </div>
-          <div className="h-2 overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
+          <div className="h-2 overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: '2px' }}>
             <motion.div
               className="h-full"
-              style={{ backgroundColor: rank.kleur, boxShadow: `0 0 12px ${rank.kleur}60` }}
+              style={{ backgroundColor: rank.kleur, boxShadow: `0 0 12px ${rank.kleur}50`, borderRadius: '2px' }}
               initial={shouldReduceMotion ? { width: `${progress}%` } : { width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ delay: 0.3, duration: 1, type: 'spring', stiffness: 60, damping: 15 }}
@@ -102,13 +102,13 @@ export default function StatsGrid({ points, role, commissieNames, memberSince, d
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 + i * 0.08, type: 'spring', stiffness: 400, damping: 28 }}
             >
-              <span className="font-mono text-[11px] font-bold w-7 shrink-0" style={{ color: stat.color }}>
+              <span className="font-mono text-sm font-bold w-7 shrink-0" style={{ color: stat.color }}>
                 {stat.label}
               </span>
               <div className="flex-1 h-[6px] overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
                 <motion.div
                   className="h-full"
-                  style={{ backgroundColor: stat.color, opacity: 0.8 }}
+                  style={{ backgroundColor: stat.color, opacity: 0.8, boxShadow: `0 0 8px ${stat.color}40, 0 0 2px ${stat.color}80` }}
                   initial={shouldReduceMotion ? { width: `${(stat.value / stat.max) * 100}%` } : { width: 0 }}
                   animate={{ width: `${(stat.value / stat.max) * 100}%` }}
                   transition={{ delay: 0.5 + i * 0.1, duration: 0.8, type: 'spring', stiffness: 80, damping: 18 }}
@@ -127,15 +127,15 @@ export default function StatsGrid({ points, role, commissieNames, memberSince, d
           style={{ borderTop: '1px dashed rgba(255,255,255,0.06)', color: 'var(--color-text-muted)' }}
         >
           <span>
-            class: <span style={{ color: 'var(--color-accent-blue)' }}>{role}</span>
+            class: <span className="font-semibold" style={{ color: 'var(--color-accent-blue)' }}>{role}</span>
           </span>
           {commissieNames.length > 0 && (
             <span>
-              guild: <span style={{ color: 'var(--color-accent-green)' }}>{commissieNames.join(', ')}</span>
+              guild: <span className="font-semibold" style={{ color: 'var(--color-accent-green)' }}>{commissieNames.join(', ')}</span>
             </span>
           )}
           <span>
-            joined: <span style={{ color: 'var(--color-text)' }}>{since}</span>
+            joined: <span className="font-semibold" style={{ color: 'var(--color-accent-gold)' }}>{since}</span>
           </span>
         </div>
       </div>
