@@ -222,7 +222,7 @@ export default function OrgTree() {
               style={{ animation: "statusPulse 2s ease-in-out infinite" }}
             />
             <span className="font-mono text-xs text-[var(--color-accent-gold)] tracking-[0.2em] uppercase">
-              Bestuur XI — Kern
+              Bestuur XI — CORE
             </span>
           </div>
 
