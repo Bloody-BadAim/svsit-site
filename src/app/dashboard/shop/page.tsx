@@ -332,7 +332,7 @@ export default async function ShopPage({
 
       {/* Coin balance banner */}
       <div
-        className="flex items-center justify-between px-5 py-4 mb-6"
+        className="flex flex-wrap items-center justify-between gap-3 px-4 md:px-5 py-4 mb-6"
         style={{
           backgroundColor: 'rgba(245,158,11,0.06)',
           border: '1px solid rgba(245,158,11,0.2)',

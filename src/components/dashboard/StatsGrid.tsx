@@ -82,7 +82,7 @@ export default function StatsGrid({ points, role, commissieNames, memberSince, d
         </div>
 
         {/* Stat bars — RPG style */}
-        <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
           {statBars.map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -112,7 +112,7 @@ export default function StatsGrid({ points, role, commissieNames, memberSince, d
 
         {/* Character info line */}
         <div
-          className="flex items-center gap-6 pt-3 font-mono text-[11px]"
+          className="flex flex-wrap items-center gap-3 md:gap-6 pt-3 font-mono text-[11px]"
           style={{ borderTop: '1px dashed rgba(255,255,255,0.06)', color: 'var(--color-text-muted)' }}
         >
           <span>

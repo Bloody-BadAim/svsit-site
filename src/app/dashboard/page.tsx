@@ -140,7 +140,7 @@ export default async function DashboardPage({
       </div>
 
       {/* Two-column: stats + equipped item */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-5 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] lg:grid-cols-[1fr_280px] gap-5 mb-8">
         <StatsGrid
           points={points}
           role={(member?.role as string) || 'member'}

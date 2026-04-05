@@ -51,13 +51,13 @@ export default async function XpPage() {
 
       {/* XP Sources table */}
       <div
-        className="rounded-xl overflow-hidden"
+        className="rounded-xl overflow-x-auto"
         style={{
           border: '1px solid var(--color-border)',
           backgroundColor: 'rgba(255,255,255,0.02)',
         }}
       >
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[400px]">
           <thead>
             <tr
               className="text-left"
@@ -122,7 +122,7 @@ export default async function XpPage() {
               return (
                 <div
                   key={i}
-                  className="flex items-center justify-between rounded-lg px-4 py-3"
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-lg px-4 py-3"
                   style={{
                     border: '1px solid rgba(255,255,255,0.05)',
                     backgroundColor: 'rgba(255,255,255,0.02)',

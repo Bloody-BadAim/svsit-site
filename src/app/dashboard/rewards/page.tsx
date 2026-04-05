@@ -149,7 +149,7 @@ export default async function RewardsPage() {
       </div>
 
       {/* 2. Stats Bars + Weekly Quests — asymmetric 2-col */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-5 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
         {/* Stats bars panel */}
         <div
           className="relative"
@@ -213,7 +213,7 @@ export default async function RewardsPage() {
       </div>
 
       {/* 4. Badge Collection + Merch Claims — 2-col */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] lg:grid-cols-[1fr_380px] gap-5">
         <BadgeCollection
           earnedBadges={earnedBadges}
           activeBadges={activeBadges}
