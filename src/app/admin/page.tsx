@@ -53,6 +53,7 @@ export default async function AdminPage() {
       member: allMembers.filter((m) => m.role === 'member').length,
       contributor: allMembers.filter((m) => m.role === 'contributor').length,
       mentor: allMembers.filter((m) => m.role === 'mentor').length,
+      bestuur: allMembers.filter((m) => m.role === 'bestuur').length,
     },
     perCommissie: allMembers.reduce<Record<string, number>>((acc, m) => {
       const key = m.commissie || 'Geen'

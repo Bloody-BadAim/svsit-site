@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion, useReducedMotion, AnimatePresence } from 'motion/react'
 import { BADGE_DEFS, getBadgeDef } from '@/lib/badgeDefs'
-import { getBadgeSlotCount } from '@/lib/levelEngine'
+
 import BadgeIcon from '@/components/badges/BadgeIcon'
 import { RARITY_CONFIG } from '@/types/gamification'
 import type { BadgeRarity } from '@/types/gamification'
@@ -15,7 +15,6 @@ interface BadgeCollectionProps {
   activeBadges: string[]
   maxSlots: number
   memberId: string
-  memberLevel?: number
 }
 
 export default function BadgeCollection({
@@ -23,15 +22,14 @@ export default function BadgeCollection({
   activeBadges,
   maxSlots: maxSlotsProp,
   memberId,
-  memberLevel,
 }: BadgeCollectionProps) {
   const shouldReduceMotion = useReducedMotion()
   const [hoveredBadge, setHoveredBadge] = useState<string | null>(null)
   const [currentActive, setCurrentActive] = useState<string[]>(activeBadges)
   const [saving, setSaving] = useState(false)
 
-  // Use level-based slot count when memberLevel is provided
-  const maxSlots = memberLevel != null ? getBadgeSlotCount(memberLevel) : maxSlotsProp
+  // maxSlots is computed by the parent (accounts for admin/bestuur bypass)
+  const maxSlots = maxSlotsProp
 
   const earnedSet = new Set(earnedBadges)
 

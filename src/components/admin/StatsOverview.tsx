@@ -6,7 +6,7 @@ interface Stats {
   nieuwDezeMaand: number
   inkomstenTotaal: number
   inkomstenDezeMaand: number
-  perRol: { member: number; contributor: number; mentor: number }
+  perRol: { member: number; contributor: number; mentor: number; bestuur: number }
   perCommissie: Record<string, number>
 }
 
@@ -89,7 +89,7 @@ export default function StatsOverview({ stats }: StatsOverviewProps) {
           <div className="space-y-3">
             {Object.entries(stats.perRol).map(([rol, count]) => {
               const percent = stats.totaal > 0 ? (count / stats.totaal) * 100 : 0
-              const colors: Record<string, string> = { member: 'var(--color-text)', contributor: 'var(--color-accent-blue)', mentor: 'var(--color-accent-green)' }
+              const colors: Record<string, string> = { member: 'var(--color-text)', contributor: 'var(--color-accent-blue)', mentor: 'var(--color-accent-green)', bestuur: 'var(--color-accent-gold)' }
               return (
                 <div key={rol} className="flex items-center gap-3">
                   <span className="font-mono text-[11px] w-24 capitalize" style={{ color: colors[rol] || 'var(--color-text)' }}>

@@ -49,6 +49,11 @@ export function getBadgeSlotCount(level: number): number {
   return 6
 }
 
+export function getEffectiveLevel(member: { current_level: number; role?: string; is_admin?: boolean }): number {
+  if (member.is_admin || member.role === 'bestuur') return 12
+  return member.current_level
+}
+
 export function getTierColor(tier: LevelTier): string {
   const colors: Record<LevelTier, string> = {
     onboarding: '#22C55E',

@@ -1,7 +1,7 @@
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
-import { getLevelForXp } from '@/lib/levelEngine'
+import { getLevelForXp, getEffectiveLevel } from '@/lib/levelEngine'
 import { getShopItems } from '@/lib/shopEngine'
 import type { ShopItem } from '@/lib/shopEngine'
 import BuyButton from './BuyButton'
@@ -257,16 +257,21 @@ export default async function ShopPage({
   // Fetch member data (level + coins)
   const { data: member } = await supabase
     .from('members')
-    .select('points, coins_balance')
+    .select('points, coins_balance, role, is_admin')
     .eq('id', memberId)
     .single()
 
   const points = (member?.points as number) ?? 0
   const coinsBalance = (member?.coins_balance as number) ?? 0
   const levelDef = getLevelForXp(points)
+  const effectiveLevel = getEffectiveLevel({
+    current_level: levelDef.level,
+    role: (member?.role as string | undefined) ?? undefined,
+    is_admin: (member?.is_admin as boolean | undefined) ?? false,
+  })
 
   // Fetch shop items
-  const allItems = await getShopItems(levelDef.level)
+  const allItems = await getShopItems(effectiveLevel)
 
   // Fetch owned accessories
   const { data: inventoryData } = await supabase
