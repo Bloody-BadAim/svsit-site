@@ -6,12 +6,12 @@ import { getRank, RANKS, getLevel, getLevelProgress, getPrestige } from '@/lib/c
 interface StatsGridProps {
   points: number
   role: string
-  commissie: string | null
+  commissieNames: string[]
   memberSince: string | null
   dynamicStats: { code: number; social: number; learn: number; impact: number }
 }
 
-export default function StatsGrid({ points, role, commissie, memberSince, dynamicStats }: StatsGridProps) {
+export default function StatsGrid({ points, role, commissieNames, memberSince, dynamicStats }: StatsGridProps) {
   const rank = getRank(points)
   const nextRank = RANKS.find(r => r.minPunten > points)
   const progress = nextRank
@@ -129,9 +129,9 @@ export default function StatsGrid({ points, role, commissie, memberSince, dynami
           <span>
             class: <span style={{ color: 'var(--color-accent-blue)' }}>{role}</span>
           </span>
-          {commissie && (
+          {commissieNames.length > 0 && (
             <span>
-              guild: <span style={{ color: 'var(--color-accent-green)' }}>{commissie}</span>
+              guild: <span style={{ color: 'var(--color-accent-green)' }}>{commissieNames.join(', ')}</span>
             </span>
           )}
           <span>

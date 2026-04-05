@@ -42,7 +42,6 @@ export default function ClassSelector({
             }}
           >
             <div className="flex items-center gap-3 mb-1">
-              <span className="text-xl">{commissie.emoji}</span>
               <span
                 className="font-semibold"
                 style={{ color: selected === commissie.id ? 'var(--color-accent-gold)' : 'var(--color-text)' }}

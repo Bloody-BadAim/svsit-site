@@ -4,16 +4,15 @@ export interface Commissie {
   id: string
   naam: string
   beschrijving: string
-  emoji: string
 }
 
 export const COMMISSIES: Commissie[] = [
-  { id: 'gameit', naam: 'GameIT', beschrijving: 'Game nights, toernooien, en game dev showcases', emoji: '🎮' },
-  { id: 'ai4hva', naam: 'AI4HvA', beschrijving: 'AI workshops, hackathons, en de AI community', emoji: '🤖' },
-  { id: 'pr-socials', naam: 'PR & Socials', beschrijving: 'Content maken, socials beheren, SIT zichtbaar maken', emoji: '📱' },
-  { id: 'fun-events', naam: 'Fun & Events', beschrijving: 'Borrels, kroegentochten, en grote events organiseren', emoji: '🎉' },
-  { id: 'educatie', naam: 'Educatie', beschrijving: 'Workshops, lezingen, en skill development', emoji: '📚' },
-  { id: 'sponsoring', naam: 'Sponsoring', beschrijving: 'Bedrijven benaderen, partnerships opzetten', emoji: '🤝' },
+  { id: 'gameit', naam: 'GameIT', beschrijving: 'Game nights, toernooien, en game dev showcases' },
+  { id: 'ai4hva', naam: 'AI4HvA', beschrijving: 'AI workshops, hackathons, en de AI community' },
+  { id: 'pr-socials', naam: 'PR & Socials', beschrijving: 'Content maken, socials beheren, SIT zichtbaar maken' },
+  { id: 'fun-events', naam: 'Fun & Events', beschrijving: 'Borrels, kroegentochten, en grote events organiseren' },
+  { id: 'educatie', naam: 'Educatie', beschrijving: 'Workshops, lezingen, en skill development' },
+  { id: 'sponsoring', naam: 'Sponsoring', beschrijving: 'Bedrijven benaderen, partnerships opzetten' },
 ]
 
 export const ROLLEN: Record<Role, { naam: string; beschrijving: string }> = {

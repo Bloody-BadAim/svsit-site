@@ -27,7 +27,7 @@ export default async function DashboardPage({
 
   const { data: member } = await supabase
     .from('members')
-    .select('*')
+    .select(`*, member_commissies ( commissie_id, commissies ( slug, naam ) )`)
     .eq('id', session.user.id)
     .single()
 
@@ -131,7 +131,10 @@ export default async function DashboardPage({
         <StatsGrid
           points={points}
           role={(member?.role as string) || 'member'}
-          commissie={member?.commissie as string | null}
+          commissieNames={
+            ((member?.member_commissies || []) as unknown as { commissies: { naam: string } }[])
+              .map(mc => mc.commissies.naam)
+          }
           memberSince={member?.membership_started_at as string | null}
           dynamicStats={memberStats}
         />
