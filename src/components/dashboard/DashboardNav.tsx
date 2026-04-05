@@ -68,7 +68,7 @@ export default function DashboardNav() {
       <nav
         className={`fixed top-0 left-0 h-screen w-64 z-50 flex flex-col py-6 px-3 transition-transform duration-300 ease-out lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}
         style={{
-          backgroundColor: 'var(--color-bg)',
+          background: 'linear-gradient(180deg, rgba(17,17,19,0.98) 0%, rgba(9,9,11,1) 100%)',
           borderRight: '1px solid var(--color-border)',
         }}
       >
@@ -95,6 +95,9 @@ export default function DashboardNav() {
           </button>
         </div>
 
+        {/* Gradient divider */}
+        <div className="h-px mx-3 mb-4" style={{ background: 'linear-gradient(90deg, var(--color-accent-gold), transparent)' }} />
+
         {/* Nav items */}
         <div className="space-y-1 flex-1">
           <p className="text-[10px] uppercase tracking-[0.15em] px-3 mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
@@ -110,16 +113,21 @@ export default function DashboardNav() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer relative overflow-hidden"
+                className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer relative overflow-hidden"
                 style={{
                   backgroundColor: active ? 'rgba(242, 158, 24, 0.08)' : 'transparent',
                   color: active ? 'var(--color-accent-gold)' : 'var(--color-text-muted)',
                 }}
+                onMouseEnter={(e) => { if (!active) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)' }}
+                onMouseLeave={(e) => { if (!active) e.currentTarget.style.backgroundColor = 'transparent' }}
               >
                 {active && (
                   <div
                     className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full"
-                    style={{ backgroundColor: 'var(--color-accent-gold)' }}
+                    style={{
+                      backgroundColor: 'var(--color-accent-gold)',
+                      boxShadow: '0 0 8px rgba(242, 158, 24, 0.4)',
+                    }}
                   />
                 )}
                 <item.Icon size={18} strokeWidth={active ? 2.2 : 1.5} />
@@ -134,7 +142,11 @@ export default function DashboardNav() {
           <div className="flex items-center gap-3 mb-3">
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold uppercase"
-              style={{ backgroundColor: 'rgba(242, 158, 24, 0.15)', color: 'var(--color-accent-gold)' }}
+              style={{
+                backgroundColor: 'rgba(242, 158, 24, 0.15)',
+                color: 'var(--color-accent-gold)',
+                boxShadow: '0 0 0 2px rgba(242, 158, 24, 0.2)',
+              }}
             >
               {session?.user?.email?.[0] || '?'}
             </div>
@@ -151,6 +163,8 @@ export default function DashboardNav() {
             onClick={() => signOut({ callbackUrl: '/' })}
             className="flex items-center gap-2 text-xs w-full px-2 py-1.5 rounded-md transition-colors cursor-pointer"
             style={{ color: 'var(--color-text-muted)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.08)'; e.currentTarget.style.color = 'var(--color-accent-red)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--color-text-muted)' }}
           >
             <LogOut size={14} />
             Uitloggen
@@ -162,8 +176,10 @@ export default function DashboardNav() {
       <nav
         className="lg:hidden fixed bottom-0 left-0 right-0 z-40 flex justify-around py-1.5 px-1"
         style={{
-          backgroundColor: 'var(--color-bg)',
-          borderTop: '1px solid var(--color-border)',
+          backgroundColor: 'rgba(9, 9, 11, 0.85)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
         }}
       >
         {items.map((item) => {

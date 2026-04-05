@@ -343,12 +343,11 @@ export default function MemberCard({
                 />
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 {activeBadges
                   ? (() => {
-                      const badgeSlots = getBadgeSlotCount(rank.naam);
+                      const badgeSlots = Math.max(activeBadges.length, getBadgeSlotCount(rank.naam));
                       const slots: React.ReactNode[] = activeBadges
-                        .slice(0, badgeSlots)
                         .map((badgeId) => (
                           <BadgeIcon key={badgeId} badgeId={badgeId} size={16} locked={false} />
                         ));
