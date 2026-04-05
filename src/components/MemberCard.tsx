@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Star, Check, X } from "lucide-react";
 import { ROLLEN } from "@/lib/constants";
 import { getLevelForXp, getLevelProgress, getBadgeSlotCount } from "@/lib/levelEngine";
@@ -9,6 +10,19 @@ import { getSkin } from "@/lib/cardSkins";
 import BadgeIcon from "@/components/badges/BadgeIcon";
 import { getBadgeDef } from "@/lib/badgeDefs";
 import { RARITY_CONFIG } from "@/types/gamification";
+import * as Pets from "@/components/pets";
+
+const PET_MAP: Partial<Record<string, (props: { size?: number }) => React.ReactElement>> = {
+  pet_ghost: Pets.PetGhost,
+  pet_pixel_cat: Pets.PetPixelCat,
+  pet_octocat: Pets.PetOctocat,
+  pet_clippy: Pets.PetClippy,
+  pet_debug_bug: Pets.PetDebugBug,
+  pet_baby_dragon: Pets.PetBabyDragon,
+  pet_robot: Pets.PetRobot,
+  pet_rubber_duck: Pets.PetRubberDuck,
+  pet_konami_snake: Pets.PetKonamiSnake,
+};
 
 const BARCODE_BARS = [
   2, 1, 3, 1, 2, 1, 1, 3, 2, 1, 3, 1, 1, 2, 1, 3, 1, 2, 2, 1, 1, 3, 1, 2, 1, 1, 3, 2, 1, 2,
@@ -501,20 +515,22 @@ export default function MemberCard({
           ))}
 
           {/* ── Accessory: Pet (bottom-right corner, z-40) ── */}
-          {equipment?.petEmoji && (
-            <div
-              className="absolute bottom-3 right-3 pointer-events-none select-none z-40"
-              aria-hidden="true"
-              style={{
-                fontSize: 26,
-                lineHeight: 1,
-                animation: "petBounce 1.8s ease-in-out infinite",
-                filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.7))",
-              }}
-            >
-              {equipment.petEmoji}
-            </div>
-          )}
+          {equipment?.petEmoji && (() => {
+            const PetComponent = PET_MAP[equipment.petEmoji];
+            return (
+              <div
+                className="absolute bottom-3 right-3 pointer-events-none select-none z-40"
+                aria-hidden="true"
+                style={{
+                  animation: "petBounce 1.8s ease-in-out infinite",
+                  filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.7))",
+                  ...(PetComponent ? {} : { fontSize: 26, lineHeight: 1 }),
+                }}
+              >
+                {PetComponent ? <PetComponent size={36} /> : equipment.petEmoji}
+              </div>
+            );
+          })()}
 
           {/* ── Accessory: Effect overlay (z-50, pointer-events none) ── */}
           {equipment?.effectName === "sparkles" && (
