@@ -129,5 +129,119 @@ CREATE POLICY "members_insert" ON members FOR INSERT WITH CHECK (
 -- payments_insert: restrict to service_role only (Stripe webhook)
 DROP POLICY IF EXISTS "payments_insert" ON payments;
 CREATE POLICY "payments_insert" ON payments FOR INSERT WITH CHECK (
-  member_id = auth.uid()
+  member_id = (select auth.uid())
 );
+
+-- ============================================================================
+-- 4. Fix auth_rls_initplan: wrap auth.uid() in (select ...) for performance
+--    Prevents re-evaluation per row, evaluates once per query instead
+-- ============================================================================
+
+-- members: fix existing policies
+DROP POLICY IF EXISTS "members_select_own" ON members;
+CREATE POLICY "members_select_own" ON members FOR SELECT USING (id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "members_update_own" ON members;
+CREATE POLICY "members_update_own" ON members FOR UPDATE USING (id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "members_delete_admin" ON members;
+CREATE POLICY "members_delete_admin" ON members FOR DELETE USING (
+  EXISTS (SELECT 1 FROM members WHERE id = (select auth.uid()) AND is_admin = true)
+);
+
+-- scans: fix existing policies
+DROP POLICY IF EXISTS "scans_select" ON scans;
+CREATE POLICY "scans_select" ON scans FOR SELECT USING (member_id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "scans_insert_admin" ON scans;
+CREATE POLICY "scans_insert_admin" ON scans FOR INSERT WITH CHECK (
+  EXISTS (SELECT 1 FROM members WHERE id = (select auth.uid()) AND is_admin = true)
+);
+
+-- payments: fix existing policies
+DROP POLICY IF EXISTS "payments_select" ON payments;
+CREATE POLICY "payments_select" ON payments FOR SELECT USING (member_id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "payments_update" ON payments;
+CREATE POLICY "payments_update" ON payments FOR UPDATE USING (member_id = (select auth.uid()));
+
+-- Also fix the new V2 policies to use (select auth.uid())
+-- (Re-create them with optimized auth calls)
+
+DROP POLICY IF EXISTS "member_badges_select" ON member_badges;
+CREATE POLICY "member_badges_select" ON member_badges FOR SELECT USING (member_id = (select auth.uid()));
+DROP POLICY IF EXISTS "member_badges_insert" ON member_badges;
+CREATE POLICY "member_badges_insert" ON member_badges FOR INSERT WITH CHECK (member_id = (select auth.uid()));
+DROP POLICY IF EXISTS "member_badges_update" ON member_badges;
+CREATE POLICY "member_badges_update" ON member_badges FOR UPDATE USING (member_id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "member_accessories_select" ON member_accessories;
+CREATE POLICY "member_accessories_select" ON member_accessories FOR SELECT USING (member_id = (select auth.uid()));
+DROP POLICY IF EXISTS "member_accessories_insert" ON member_accessories;
+CREATE POLICY "member_accessories_insert" ON member_accessories FOR INSERT WITH CHECK (member_id = (select auth.uid()));
+DROP POLICY IF EXISTS "member_accessories_update" ON member_accessories;
+CREATE POLICY "member_accessories_update" ON member_accessories FOR UPDATE USING (member_id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "xp_transactions_select" ON xp_transactions;
+CREATE POLICY "xp_transactions_select" ON xp_transactions FOR SELECT USING (member_id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "shop_transactions_select" ON shop_transactions;
+CREATE POLICY "shop_transactions_select" ON shop_transactions FOR SELECT USING (member_id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "challenge_submissions_select" ON challenge_submissions;
+CREATE POLICY "challenge_submissions_select" ON challenge_submissions FOR SELECT USING (member_id = (select auth.uid()));
+DROP POLICY IF EXISTS "challenge_submissions_insert" ON challenge_submissions;
+CREATE POLICY "challenge_submissions_insert" ON challenge_submissions FOR INSERT WITH CHECK (member_id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "tickets_select" ON tickets;
+CREATE POLICY "tickets_select" ON tickets FOR SELECT USING (member_id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "rewards_select" ON rewards;
+CREATE POLICY "rewards_select" ON rewards FOR SELECT USING (member_id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "accessory_definitions_insert" ON accessory_definitions;
+CREATE POLICY "accessory_definitions_insert" ON accessory_definitions FOR INSERT WITH CHECK (
+  EXISTS (SELECT 1 FROM members WHERE id = (select auth.uid()) AND is_admin = true)
+);
+DROP POLICY IF EXISTS "accessory_definitions_update" ON accessory_definitions;
+CREATE POLICY "accessory_definitions_update" ON accessory_definitions FOR UPDATE USING (
+  EXISTS (SELECT 1 FROM members WHERE id = (select auth.uid()) AND is_admin = true)
+);
+
+DROP POLICY IF EXISTS "boss_fights_insert" ON boss_fights;
+CREATE POLICY "boss_fights_insert" ON boss_fights FOR INSERT WITH CHECK (
+  EXISTS (SELECT 1 FROM members WHERE id = (select auth.uid()) AND is_admin = true)
+);
+DROP POLICY IF EXISTS "boss_fights_update" ON boss_fights;
+CREATE POLICY "boss_fights_update" ON boss_fights FOR UPDATE USING (
+  EXISTS (SELECT 1 FROM members WHERE id = (select auth.uid()) AND is_admin = true)
+);
+
+-- Also fix members_insert
+DROP POLICY IF EXISTS "members_insert" ON members;
+CREATE POLICY "members_insert" ON members FOR INSERT WITH CHECK (
+  (select auth.uid()) = id
+);
+
+-- ============================================================================
+-- 5. Add missing foreign key indexes (PERFORMANCE)
+-- ============================================================================
+
+CREATE INDEX IF NOT EXISTS idx_boss_fight_contributions_member ON boss_fight_contributions(member_id);
+CREATE INDEX IF NOT EXISTS idx_boss_fights_badge ON boss_fights(base_reward_badge_id);
+CREATE INDEX IF NOT EXISTS idx_boss_fights_accessory ON boss_fights(top_reward_accessory_id);
+CREATE INDEX IF NOT EXISTS idx_challenge_submissions_member ON challenge_submissions(member_id);
+CREATE INDEX IF NOT EXISTS idx_member_accessories_accessory ON member_accessories(accessory_id);
+CREATE INDEX IF NOT EXISTS idx_member_badges_badge ON member_badges(badge_id);
+CREATE INDEX IF NOT EXISTS idx_scans_event ON scans(event_id);
+CREATE INDEX IF NOT EXISTS idx_shop_transactions_accessory ON shop_transactions(accessory_id);
+CREATE INDEX IF NOT EXISTS idx_shop_transactions_member ON shop_transactions(member_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_event ON tickets(event_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_member ON tickets(member_id);
+
+-- ============================================================================
+-- 6. Drop unused indexes
+-- ============================================================================
+
+DROP INDEX IF EXISTS idx_payments_session;
+DROP INDEX IF EXISTS idx_member_commissies_commissie;
