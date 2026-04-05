@@ -7,6 +7,29 @@ import { useState, useEffect } from 'react'
 import { ADMIN_EMAILS } from '@/lib/constants'
 import { LayoutDashboard, CreditCard, User, Trophy, Shield, LogOut, Menu, X } from 'lucide-react'
 
+function CoinPill({ userId }: { userId: string }) {
+  const [coins, setCoins] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!userId) return
+    fetch(`/api/members/${userId}`)
+      .then((r) => r.json())
+      .then(({ data }) => {
+        if (data?.coins_balance != null) setCoins(data.coins_balance as number)
+      })
+      .catch(() => {})
+  }, [userId])
+
+  if (coins === null) return null
+
+  return (
+    <div className="flex items-center gap-1.5 text-sm font-mono">
+      <span style={{ color: 'var(--color-accent-gold)' }}>🪙</span>
+      <span style={{ color: 'var(--color-text)' }}>{coins.toLocaleString('nl-NL')}</span>
+    </div>
+  )
+}
+
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
   { href: '/dashboard/ledenpas', label: 'Ledenpas', Icon: CreditCard },
@@ -158,6 +181,7 @@ export default function DashboardNav() {
                 {session?.user?.email}
               </p>
             </div>
+            {session?.user?.id && <CoinPill userId={session.user.id} />}
           </div>
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
