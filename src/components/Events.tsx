@@ -927,10 +927,11 @@ export default function Events() {
       </div>
 
       {/* ── Content ── */}
+      <span className="absolute top-0 left-6 md:left-12 lg:left-1 right-6 md:right-12 lg:right-24 h-px bg-gradient-to-r from-[var(--color-accent-gold)] via-[var(--color-accent-gold)] to-transparent origin-left z-10" />
       <div className="relative z-10">
         <div className="max-w-[1400px] mx-auto">
           <SectionLabel number="03" label="events" />
-          <span className="absolute top-0 left-6 md:left-12 lg:left-24 right-6 md:right-12 lg:right-24 h-px bg-gradient-to-r from-[var(--color-accent-gold)] via-[var(--color-accent-gold)] to-transparent origin-left z-10" />
+
 
           {/* Section header */}
           <div className="mb-12 md:mb-16">

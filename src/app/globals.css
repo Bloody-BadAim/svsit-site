@@ -104,7 +104,11 @@
   box-sizing: border-box;
 }
 
-/* Tailwind preflight handles resets — no manual * reset needed */
+/* Terminal-style tight spacing for homepage only */
+/* .page-home *:not(input):not(select):not(textarea):not(button):not(nav):not(nav *):not(footer):not(footer *):not(#join *):not(#join) {
+  margin: 0;
+  padding: 0;
+} */
 
 html {
 
@@ -390,8 +394,15 @@ body::before {
 
 /* Member card holographic shine — composited with transform */
 @keyframes cardShine {
-  0%, 100% { transform: translateX(-100%); }
-  50% { transform: translateX(100%); }
+
+  0%,
+  100% {
+    transform: translateX(-100%);
+  }
+
+  50% {
+    transform: translateX(100%);
+  }
 }
 
 /* Animated gradient border rotation */
@@ -402,18 +413,42 @@ body::before {
 }
 
 @keyframes borderRotate {
-  from { --border-angle: 0deg; }
-  to { --border-angle: 360deg; }
+  from {
+    --border-angle: 0deg;
+  }
+
+  to {
+    --border-angle: 360deg;
+  }
 }
 
 /* Pixel battle — SectionDivider easter egg (combined to avoid transform conflict) */
 @keyframes pixelBattle {
-  0%, 100% { transform: translate(0, 0); }
-  25% { transform: translate(0, -3px); }
-  50% { transform: translate(0, 0); }
-  88% { transform: translate(0, 0); }
-  92% { transform: translate(var(--attack-dir, 8px), 0); }
-  96% { transform: translate(0, 0); }
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  25% {
+    transform: translate(0, -3px);
+  }
+
+  50% {
+    transform: translate(0, 0);
+  }
+
+  88% {
+    transform: translate(0, 0);
+  }
+
+  92% {
+    transform: translate(var(--attack-dir, 8px), 0);
+  }
+
+  96% {
+    transform: translate(0, 0);
+  }
 }
 
 @keyframes pixelSpark {
@@ -438,28 +473,61 @@ body::before {
 
 /* ── Hero aurora blob animations (CSS replacement for motion) ── */
 @keyframes auroraFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes auroraGold {
-  0%, 100% { transform: translate(-40px, -20px) scale(1); }
-  50% { transform: translate(60px, 30px) scale(1.2); }
+
+  0%,
+  100% {
+    transform: translate(-40px, -20px) scale(1);
+  }
+
+  50% {
+    transform: translate(60px, 30px) scale(1.2);
+  }
 }
 
 @keyframes auroraBlue {
-  0%, 100% { transform: translate(40px, 20px) scale(1); }
-  50% { transform: translate(-50px, -30px) scale(1.3); }
+
+  0%,
+  100% {
+    transform: translate(40px, 20px) scale(1);
+  }
+
+  50% {
+    transform: translate(-50px, -30px) scale(1.3);
+  }
 }
 
 @keyframes auroraRed {
-  0%, 100% { transform: translate(20px, -25px) scale(1); }
-  50% { transform: translate(-30px, 25px) scale(1); }
+
+  0%,
+  100% {
+    transform: translate(20px, -25px) scale(1);
+  }
+
+  50% {
+    transform: translate(-30px, 25px) scale(1);
+  }
 }
 
 @keyframes auroraGreen {
-  0%, 100% { transform: translate(-30px, 15px) scale(1); }
-  50% { transform: translate(30px, -15px) scale(1.15); }
+
+  0%,
+  100% {
+    transform: translate(-30px, 15px) scale(1);
+  }
+
+  50% {
+    transform: translate(30px, -15px) scale(1.15);
+  }
 }
 
 /* GlowEffect CSS animations */
@@ -470,30 +538,63 @@ body::before {
 }
 
 @keyframes glowRotate {
-  from { --glow-angle: 0deg; }
-  to { --glow-angle: 360deg; }
+  from {
+    --glow-angle: 0deg;
+  }
+
+  to {
+    --glow-angle: 360deg;
+  }
 }
 
 @keyframes glowBreathe {
-  0%, 100% { transform: scale(var(--glow-scale, 1)); }
-  50% { transform: scale(calc(var(--glow-scale, 1) * 1.05)); }
+
+  0%,
+  100% {
+    transform: scale(var(--glow-scale, 1));
+  }
+
+  50% {
+    transform: scale(calc(var(--glow-scale, 1) * 1.05));
+  }
 }
 
 @keyframes glowPulse {
-  0%, 100% { transform: scale(var(--glow-scale, 1)); opacity: 0.5; }
-  50% { transform: scale(calc(var(--glow-scale, 1) * 1.1)); opacity: 0.8; }
+
+  0%,
+  100% {
+    transform: scale(var(--glow-scale, 1));
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(calc(var(--glow-scale, 1) * 1.1));
+    opacity: 0.8;
+  }
 }
 
 /* Join CTA pulse */
 @keyframes joinPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
 }
 
 /* Border trail rotation — GPU composited via transform */
 @keyframes borderTrailRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Accessibility: respect user motion preferences */

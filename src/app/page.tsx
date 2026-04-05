@@ -21,28 +21,28 @@ const IntroOverlay = dynamic(() => import("@/components/heroAnimations/IntroOver
 export default function Home() {
   return (
     <SmoothScroll>
-      <div className="page-public">
-      <BackgroundStreaks />
-      <CustomCursor />
-      <ConsoleEasterEgg />
-      <KonamiGame />
-      <IntroOverlay />
-      <PageScrollProgress />
-      <ScrollMorphNumbers />
-      <Navbar />
-      <main id="main-content" className="relative z-[1] flex-1">
-        <Hero />
-        {/* <SectionDivider variant="glow" /> */}
-        <About />
-        {/* <SectionDivider variant="line" /> */}
-        <WhyJoin />
-        <SectionDivider variant="battle" />
-        <Events />
-        <EventTicker />
-        {/* <SectionDivider variant="fade" /> */}
-        <JoinCta />
-      </main>
-      <Footer />
+      <div className="page-public page-home">
+        <BackgroundStreaks />
+        <CustomCursor />
+        <ConsoleEasterEgg />
+        <KonamiGame />
+        <IntroOverlay />
+        <PageScrollProgress />
+        <ScrollMorphNumbers />
+        <Navbar />
+        <main id="main-content" className="relative z-[1] flex-1">
+          <Hero />
+          {/* <SectionDivider variant="glow" /> */}
+          <About />
+          {/* <SectionDivider variant="line" /> */}
+          <WhyJoin />
+          <SectionDivider variant="battle" />
+          <Events />
+          <EventTicker />
+          {/* <SectionDivider variant="fade" /> */}
+          <JoinCta />
+        </main>
+        <Footer />
       </div>
     </SmoothScroll>
   );

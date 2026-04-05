@@ -119,7 +119,7 @@ export default function About() {
                 trigger: headingRef.current,
                 start: "top 85%",
                 toggleActions: "play none none none",
-              once: true,
+                once: true,
               },
             }
           );
@@ -139,7 +139,7 @@ export default function About() {
                 trigger: headingRef.current,
                 start: "top 85%",
                 toggleActions: "play none none none",
-              once: true,
+                once: true,
               },
               onComplete: function () {
                 gsap.to(Array.from(goldWords), {
@@ -318,7 +318,7 @@ export default function About() {
       {/* Accent line */}
       <div
         ref={accentRef}
-        className="absolute top-0 left-6 md:left-12 lg:left-24 right-6 md:right-12 lg:right-24 h-px bg-gradient-to-r from-[var(--color-accent-gold)] via-[var(--color-accent-gold)] to-transparent origin-left z-10"
+        className="absolute top-0 left-6 md:left-12 lg:left-1 right-6 md:right-12 lg:right-24 h-px bg-gradient-to-r from-[var(--color-accent-gold)] via-[var(--color-accent-gold)] to-transparent origin-left z-10"
       />
 
       <div className="relative max-w-[1400px] mx-auto">
