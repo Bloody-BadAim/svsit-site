@@ -14,6 +14,8 @@ export default async function CardEditorPage() {
 
   const supabase = createServiceClient()
 
+  const isAdminUser = !!session.user.isAdmin
+
   const [inventoryResult, equippedResult, definitionsResult, memberResult] = await Promise.all([
     supabase.from('member_accessories').select('*, accessory_definitions(*)').eq('member_id', session.user.id),
     supabase.from('member_accessories').select('*, accessory_definitions(*)').eq('member_id', session.user.id).eq('equipped', true),
@@ -58,9 +60,11 @@ export default async function CardEditorPage() {
             ...raw,
             leaderboard_visible: raw.leaderboard_visible ?? true,
             current_level: getEffectiveLevel({ current_level: raw.current_level ?? 1, role: raw.role ?? undefined, is_admin: raw.is_admin ?? false }),
+            coins_balance: isAdminUser ? 99999 : (raw.coins_balance ?? 0),
           }
         })()}
         memberId={session.user.id}
+        isAdmin={isAdminUser}
       />
     </div>
   )

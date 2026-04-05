@@ -1,6 +1,6 @@
 import { createServiceClient } from '@/lib/supabase'
 
-export async function getShopItems(memberLevel: number) {
+export async function getShopItems(memberLevel: number, isAdmin = false) {
   const supabase = createServiceClient()
   const { data } = await supabase
     .from('accessory_definitions')
@@ -29,9 +29,9 @@ export async function getShopItems(memberLevel: number) {
       limitedTimeEnd: item.limited_time_end,
       stock: item.stock,
       createdAt: item.created_at,
-      canBuy: !locked && !isExpired && !outOfStock,
-      locked,
-      lockReason: locked ? `Unlock op Level ${rule?.level}` : null,
+      canBuy: isAdmin ? true : (!locked && !isExpired && !outOfStock),
+      locked: isAdmin ? false : locked,
+      lockReason: isAdmin ? null : (locked ? `Unlock op Level ${rule?.level}` : null),
     }
   })
 }

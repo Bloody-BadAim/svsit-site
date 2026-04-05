@@ -7,10 +7,14 @@ import { useState, useEffect } from 'react'
 import { ADMIN_EMAILS } from '@/lib/constants'
 import { LayoutDashboard, CreditCard, User, Trophy, Shield, LogOut, Menu, X, Zap, Palette, ShoppingBag } from 'lucide-react'
 
-function CoinPill({ userId }: { userId: string }) {
+function CoinPill({ userId, isAdmin }: { userId: string; isAdmin: boolean }) {
   const [coins, setCoins] = useState<number | null>(null)
 
   useEffect(() => {
+    if (isAdmin) {
+      setCoins(99999)
+      return
+    }
     if (!userId) return
     fetch(`/api/members/${userId}`)
       .then((r) => r.json())
@@ -18,7 +22,7 @@ function CoinPill({ userId }: { userId: string }) {
         if (data?.coins_balance != null) setCoins(data.coins_balance as number)
       })
       .catch(() => {})
-  }, [userId])
+  }, [userId, isAdmin])
 
   if (coins === null) return null
 
@@ -184,7 +188,7 @@ export default function DashboardNav() {
                 {session?.user?.email}
               </p>
             </div>
-            {session?.user?.id && <CoinPill userId={session.user.id} />}
+            {session?.user?.id && <CoinPill userId={session.user.id} isAdmin={!!isAdmin} />}
           </div>
           <button
             onClick={() => signOut({ callbackUrl: '/' })}

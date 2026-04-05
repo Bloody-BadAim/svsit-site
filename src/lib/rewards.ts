@@ -13,6 +13,18 @@ export interface MemberStats {
 
 export async function calculateStats(memberId: string): Promise<MemberStats> {
   const supabase = createServiceClient()
+
+  // Admins and bestuur get max stats
+  const { data: memberCheck } = await supabase
+    .from('members')
+    .select('is_admin, role')
+    .eq('id', memberId)
+    .single()
+
+  if (memberCheck?.is_admin || memberCheck?.role === 'bestuur') {
+    return { code: 999, social: 999, learn: 999, impact: 999, total: 3996 }
+  }
+
   const stats: MemberStats = { code: 0, social: 0, learn: 0, impact: 0, total: 0 }
 
   // V2: XP transactions

@@ -262,7 +262,8 @@ export default async function ShopPage({
     .single()
 
   const points = (member?.points as number) ?? 0
-  const coinsBalance = (member?.coins_balance as number) ?? 0
+  const isAdminMember = !!(member?.is_admin || member?.role === 'bestuur')
+  const coinsBalance = isAdminMember ? 99999 : ((member?.coins_balance as number) ?? 0)
   const levelDef = getLevelForXp(points)
   const effectiveLevel = getEffectiveLevel({
     current_level: levelDef.level,
@@ -271,7 +272,7 @@ export default async function ShopPage({
   })
 
   // Fetch shop items
-  const allItems = await getShopItems(effectiveLevel)
+  const allItems = await getShopItems(effectiveLevel, isAdminMember)
 
   // Fetch owned accessories
   const { data: inventoryData } = await supabase

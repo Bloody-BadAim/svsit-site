@@ -49,6 +49,7 @@ interface CardEditorProps {
   allDefinitions: AccessoryDefinition[]
   member: MemberData
   memberId: string
+  isAdmin?: boolean
 }
 
 // ---------------------------------------------------------------------------
@@ -645,14 +646,32 @@ function FlairTab({ memberLevel, initialAccentColor, initialCustomTitle, initial
 // Main CardEditor
 // ---------------------------------------------------------------------------
 
-export function CardEditor({ inventory, equipped, allDefinitions, member, memberId }: CardEditorProps) {
+export function CardEditor({ inventory, equipped, allDefinitions, member, memberId, isAdmin = false }: CardEditorProps) {
   const [activeTab, setActiveTab] = useState<AccessoryCategory>('skin')
   const [saving, setSaving] = useState<string | null>(null)
 
   // Build owned accessory set (accessory_id -> row)
+  // Admins see all definitions as owned
   const ownedMap = new Map<string, MemberAccessoryRow>()
   for (const row of inventory) {
     ownedMap.set(row.accessory_id, row)
+  }
+  if (isAdmin) {
+    for (const def of allDefinitions) {
+      if (!ownedMap.has(def.id)) {
+        // Synthesize a virtual owned row so the item appears unlocked
+        ownedMap.set(def.id, {
+          id: `admin-${def.id}`,
+          member_id: memberId,
+          accessory_id: def.id,
+          equipped: false,
+          position: null,
+          acquired_via: 'admin',
+          acquired_at: new Date().toISOString(),
+          accessory_definitions: def,
+        })
+      }
+    }
   }
 
   // Build equipped map (category -> row) — reactive state
