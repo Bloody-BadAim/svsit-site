@@ -209,7 +209,7 @@ export default function WhyJoin() {
     <section
       ref={sectionRef}
       id="whyjoin"
-      className="relative min-h-[70vh] py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24"
+      className="relative py-20 md:py-24 lg:py-28 px-6 md:px-12 lg:px-24"
     >
       <div className="absolute inset-0 bg-[var(--color-bg)]/70" />
 
@@ -236,7 +236,7 @@ export default function WhyJoin() {
       <div className="relative max-w-[1400px] mx-auto">
         <SectionLabel number="02" label="waarom lid worden" />
 
-        <div className="mb-12 md:mb-16">
+        <div className="mb-8 md:mb-12">
           <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tight leading-[1.1]">
             Achievements
             <br />

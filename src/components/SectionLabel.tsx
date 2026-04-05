@@ -29,7 +29,7 @@ export default function SectionLabel({
   }, []);
 
   return (
-    <div ref={ref} className="mb-14 md:mb-20">
+    <div ref={ref} className="mb-10 md:mb-14">
       {/* Eyebrow: number + gold line */}
       <div className="flex items-center gap-4 mb-4">
         <span className="font-mono text-xs text-[var(--color-accent-gold)] tracking-[0.3em] uppercase">

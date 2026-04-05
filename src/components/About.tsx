@@ -260,7 +260,7 @@ export default function About() {
     <section
       ref={sectionRef}
       id="about"
-      className="relative min-h-[70vh] py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24 overflow-hidden"
+      className="relative py-20 md:py-24 lg:py-28 px-6 md:px-12 lg:px-24 overflow-hidden"
     >
       {/* ── Background depth layers ── */}
 
@@ -325,7 +325,7 @@ export default function About() {
         <SectionLabel number="01" label="over sit" />
 
         {/* Heading — word-by-word reveal */}
-        <div ref={headingRef} className="mb-12 md:mb-16" style={{ perspective: "600px" }}>
+        <div ref={headingRef} className="mb-8 md:mb-12" style={{ perspective: "600px" }}>
           <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight uppercase">
             <span className="block">
               {HEADING_WORDS_1.map((word, i) => (
@@ -428,7 +428,7 @@ export default function About() {
         {/* Stats row */}
         <div
           ref={statsRef}
-          className="grid grid-cols-3 gap-8 mt-16 md:mt-20 pt-12 border-t border-[var(--color-border)]"
+          className="grid grid-cols-3 gap-8 mt-10 md:mt-12 pt-8 border-t border-[var(--color-border)]"
         >
           {/* {STATS.map((stat, i) => (
             <div key={i} className="text-center md:text-left">

@@ -67,7 +67,7 @@ export default function JoinCta() {
     <section
       ref={sectionRef}
       id="join"
-      className="relative min-h-[70vh] flex items-center overflow-hidden py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24"
+      className="relative flex items-center overflow-hidden py-20 md:py-24 lg:py-28 px-6 md:px-12 lg:px-24"
     >
       {/* Background layers */}
       <div

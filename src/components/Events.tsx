@@ -895,7 +895,7 @@ export default function Events() {
     <section
       ref={sectionRef}
       id="events"
-      className="relative min-h-[70vh] py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24"
+      className="relative py-20 md:py-24 lg:py-28 px-6 md:px-12 lg:px-24"
     >
       {/* Background overlay */}
       <div

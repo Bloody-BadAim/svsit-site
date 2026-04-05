@@ -93,7 +93,7 @@ function PixelBattle() {
       aria-hidden="true"
       className="w-full pointer-events-none flex items-center justify-center"
       style={{
-        height: 140,
+        height: 80,
         background: "rgba(9, 9, 11, 0.7)",
         position: "relative",
         overflow: "hidden",

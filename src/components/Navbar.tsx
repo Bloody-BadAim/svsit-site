@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import SitLogo from "@/components/SitLogo";
+import MotionToggle from "@/components/MotionToggle";
 
 const navLinks = [
   { href: "/#about", label: "Over SIT" },
@@ -70,6 +71,7 @@ export default function Navbar() {
                 {link.label}
               </a>
             ))}
+            <MotionToggle />
             <a
               href="/login"
               className="px-4 py-2 border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] overflow-hidden hover:border-[var(--color-accent-blue)] hover:shadow-[0_0_12px_rgba(59,130,246,0.15)] transition-all duration-300"
@@ -178,6 +180,7 @@ export default function Navbar() {
             <a href="https://instagram.com/svsit" target="_blank" rel="noopener noreferrer" className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300">
               @svsit — Instagram
             </a>
+            <MotionToggle />
           </div>
         </div>
       </div>
