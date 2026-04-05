@@ -86,7 +86,7 @@ function TopCard({ entry }: { entry: LeaderEntry }) {
 
       {/* name */}
       <p
-        className="font-mono text-lg font-bold truncate"
+        className="font-mono text-sm font-bold break-all leading-tight"
         style={{ color: 'var(--color-text)' }}
       >
         {entry.name}
