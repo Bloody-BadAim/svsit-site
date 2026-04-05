@@ -4,7 +4,7 @@ const notion = new Client({
   auth: process.env.NOTION_API_KEY,
 })
 
-const EVENT_DATABASE_ID = '2f5be6edc1a98117bb4c000b42a59c22'
+const EVENT_DATABASE_ID = '2f5be6edc1a981899b85c1fd0a05be3a'
 
 export interface NotionEvent {
   id: string
@@ -70,9 +70,9 @@ function getCheckbox(prop: unknown): boolean {
 export async function getNotionEvents(): Promise<NotionEvent[]> {
   try {
     const response = await notion.dataSources.query({
-      data_source_id: `collection://${EVENT_DATABASE_ID}`,
+      data_source_id: EVENT_DATABASE_ID,
       sorts: [{ property: 'Date', direction: 'ascending' }],
-    } as Parameters<typeof notion.dataSources.query>[0])
+    })
 
     const now = new Date()
 
