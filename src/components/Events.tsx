@@ -43,8 +43,21 @@ const EVENT_HEX: Record<string, string> = {
   cern: BRAND.gold,
 };
 
-function eHex(id: string) {
-  return EVENT_HEX[id] || BRAND.gold;
+function eHex(id: string, tags?: string[]) {
+  if (EVENT_HEX[id]) return EVENT_HEX[id];
+  // For Notion events, derive color from first tag
+  if (tags?.length) {
+    const TAG_COLOR_MAP: Record<string, string> = {
+      SOCIAL: BRAND.gold, NACHTLEVEN: BRAND.gold, SVO: BRAND.gold, BESTUUR: BRAND.gold,
+      TECH: BRAND.red, AI: BRAND.red,
+      EDUCATIE: BRAND.blue, CARRIERE: BRAND.blue,
+      GAMING: '#8B5CF6',
+    };
+    for (const tag of tags) {
+      if (TAG_COLOR_MAP[tag]) return TAG_COLOR_MAP[tag];
+    }
+  }
+  return BRAND.gold;
 }
 
 const MONTHS = [
@@ -66,107 +79,52 @@ const fMonth = (d: Date) => MONTHS[d.getMonth()];
 const fYear = (d: Date) => d.getFullYear().toString();
 
 /* ═══════════════════════════════════════════════════════════
-   Event Data (hardcoded — later Notion API)
+   Event Data — fetched from Notion API, with hardcoded fallback
    ═══════════════════════════════════════════════════════════ */
 
-const events: SitEvent[] = [
-  {
-    id: "alv-xi",
-    file: "alv.ts",
-    title: "ALV Bestuur XI",
-    date: new Date("2026-03-20T16:00:00"),
-    location: "WBH 5e verdieping",
-    time: "16:00",
-    description: "Algemene Ledenvergadering, installatie Bestuur XI.",
-    status: "DONE",
-    tags: ["BESTUUR"],
-  },
-  {
-    id: "meet-oc",
-    file: "meetdeoc.ts",
-    title: "Meet de OC",
-    date: new Date("2026-03-24T16:00:00"),
-    location: "WBH 5e verdieping",
-    time: "16:00",
-    description:
-      "Ontmoet de Opleidingscommissie en praat mee over de opleiding.",
-    status: "DONE",
-    tags: ["EDUCATIE"],
-  },
-  {
-    id: "get-together",
-    file: "gettogether.ts",
-    title: "Get Together",
-    date: new Date("2026-03-27T17:00:00"),
-    location: "Common Room, dan Fest",
-    time: "17:00",
-    description: "De eerste borrel van het nieuwe bestuur.",
-    status: "DONE",
-    tags: ["SOCIAL"],
-  },
-  {
-    id: "kroegentocht",
-    file: "kroegentocht.ts",
-    title: "Kroegentocht",
-    date: new Date("2026-04-16T20:00:00"),
-    location: "Amsterdam Centrum",
-    time: "20:00",
-    description:
-      "Een avond door de beste kroegen van Amsterdam met je medestudenten.",
-    status: "NEXT",
-    tags: ["SVO", "SOCIAL", "NACHTLEVEN"],
-  },
-  {
-    id: "stagemarkt",
-    file: "stagemarkt.ts",
-    title: "Stagemarkt HBO-ICT",
-    date: new Date("2026-04-17T13:30:00"),
-    endDate: new Date("2026-04-17T15:30:00"),
-    location: "Kohnstammhuis",
-    time: "13:30",
-    description: "Ontmoet bedrijven en vind je stageplek.",
-    status: "NEXT",
-    tags: ["CARRIERE"],
-  },
-  {
-    id: "hackathon",
-    file: "hackathon.ts",
-    title: "Connectie Code Hackathon",
-    date: new Date("2026-05-10T09:00:00"),
-    location: "AI House Amsterdam",
-    time: "09:00",
-    description: "Hackathon met mentoren uit het bedrijfsleven.",
-    status: "NEXT",
-    tags: ["TECH", "AI"],
-  },
-  {
-    id: "techborrel",
-    file: "techborrel.ts",
-    title: "Tech + Borrel",
-    date: new Date("2026-05-15T16:00:00"),
-    location: "met de opleiding",
-    time: "TBA",
-    description:
-      "Tech talks gecombineerd met een borrel, samen met de opleiding.",
-    status: "TBA",
-    tags: ["TECH", "SOCIAL"],
-  },
-  {
-    id: "cern",
-    file: "cern.ts",
-    title: "CERN Lezing",
-    date: new Date("2026-06-05T16:00:00"),
-    location: "HvA Amstelcampus",
-    time: "TBA",
-    description:
-      "Lezing over onderzoek bij CERN, met technische en HR sprekers.",
-    status: "TBA",
-    tags: ["TECH", "EDUCATIE"],
-  },
+const FALLBACK_EVENTS: SitEvent[] = [
+  { id: "alv-xi", file: "alv.ts", title: "ALV Bestuur XI", date: new Date("2026-03-20T16:00:00"), location: "WBH 5e verdieping", time: "16:00", description: "Algemene Ledenvergadering, installatie Bestuur XI.", status: "DONE", tags: ["BESTUUR"] },
+  { id: "meet-oc", file: "meetdeoc.ts", title: "Meet de OC", date: new Date("2026-03-24T16:00:00"), location: "WBH 5e verdieping", time: "16:00", description: "Ontmoet de Opleidingscommissie en praat mee over de opleiding.", status: "DONE", tags: ["EDUCATIE"] },
+  { id: "get-together", file: "gettogether.ts", title: "Get Together", date: new Date("2026-03-27T17:00:00"), location: "Common Room, dan Fest", time: "17:00", description: "De eerste borrel van het nieuwe bestuur.", status: "DONE", tags: ["SOCIAL"] },
+  { id: "kroegentocht", file: "kroegentocht.ts", title: "Kroegentocht", date: new Date("2026-04-16T20:00:00"), location: "Amsterdam Centrum", time: "20:00", description: "Een avond door de beste kroegen van Amsterdam met je medestudenten.", status: "NEXT", tags: ["SVO", "SOCIAL", "NACHTLEVEN"] },
+  { id: "stagemarkt", file: "stagemarkt.ts", title: "Stagemarkt HBO-ICT", date: new Date("2026-04-17T13:30:00"), endDate: new Date("2026-04-17T15:30:00"), location: "Kohnstammhuis", time: "13:30", description: "Ontmoet bedrijven en vind je stageplek.", status: "NEXT", tags: ["CARRIERE"] },
+  { id: "hackathon", file: "hackathon.ts", title: "Connectie Code Hackathon", date: new Date("2026-05-10T09:00:00"), location: "AI House Amsterdam", time: "09:00", description: "Hackathon met mentoren uit het bedrijfsleven.", status: "NEXT", tags: ["TECH", "AI"] },
+  { id: "techborrel", file: "techborrel.ts", title: "Tech + Borrel", date: new Date("2026-05-15T16:00:00"), location: "met de opleiding", time: "TBA", description: "Tech talks gecombineerd met een borrel, samen met de opleiding.", status: "TBA", tags: ["TECH", "SOCIAL"] },
+  { id: "cern", file: "cern.ts", title: "CERN Lezing", date: new Date("2026-06-05T16:00:00"), location: "HvA Amstelcampus", time: "TBA", description: "Lezing over onderzoek bij CERN, met technische en HR sprekers.", status: "TBA", tags: ["TECH", "EDUCATIE"] },
 ];
 
-const DEFAULT_ID =
-  events.find((e) => e.status === "NEXT")?.id ?? events[0].id;
+interface NotionEventResponse {
+  id: string
+  name: string
+  date: string
+  dateEnd?: string
+  time?: string
+  location?: string
+  description?: string
+  status: 'done' | 'next' | 'tba'
+  tags: string[]
+  color: string
+}
+
+function notionToSitEvent(e: NotionEventResponse): SitEvent {
+  const statusMap: Record<string, EventStatus> = { done: "DONE", next: "NEXT", tba: "TBA" }
+  return {
+    id: e.id,
+    file: e.name.toLowerCase().replace(/\s+/g, "") + ".ts",
+    title: e.name,
+    date: new Date(e.date),
+    endDate: e.dateEnd ? new Date(e.dateEnd) : undefined,
+    location: e.location || "TBA",
+    time: e.time || "TBA",
+    description: e.description || "",
+    status: statusMap[e.status] || "TBA",
+    tags: e.tags,
+  }
+}
+
+// Initial default before fetch completes
+const DEFAULT_EVENTS = FALLBACK_EVENTS;
+const DEFAULT_ID = DEFAULT_EVENTS.find((e) => e.status === "NEXT")?.id ?? DEFAULT_EVENTS[0].id;
 
 /* ═══════════════════════════════════════════════════════════
    ICS Calendar Generation (client-side, 0 deps)
@@ -207,7 +165,7 @@ function dlSingle(e: SitEvent) {
   );
 }
 
-function dlAll() {
+function dlAll(events: SitEvent[]) {
   const items = events
     .filter((e) => e.status !== "DONE")
     .map((e) => {
@@ -334,7 +292,7 @@ function EventCard({
   const [hovered, setHovered] = useState(false);
   const [isGlitching, setIsGlitching] = useState(false);
   const glitchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const c = eHex(event.id);
+  const c = eHex(event.id, event.tags);
   const isNext = event.status === "NEXT";
   const isDone = event.status === "DONE";
 
@@ -543,7 +501,7 @@ function DetailPanel({
   const [phase, setPhase] = useState<Phase>("idle");
   const panelRef = useRef<HTMLDivElement>(null);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const c = eHex(shown.id);
+  const c = eHex(shown.id, shown.tags);
 
   const clearTimers = useCallback(() => {
     timers.current.forEach(clearTimeout);
@@ -791,12 +749,30 @@ function DetailPanel({
    ═══════════════════════════════════════════════════════════ */
 
 export default function Events() {
+  const [events, setEvents] = useState<SitEvent[]>(DEFAULT_EVENTS);
   const [selectedId, setSelectedId] = useState(DEFAULT_ID);
   const [isDesktop, setIsDesktop] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
 
   const selected = events.find((e) => e.id === selectedId) ?? events[0];
+
+  // Fetch events from Notion API
+  useEffect(() => {
+    fetch('/api/events/public')
+      .then(res => res.json())
+      .then((data: NotionEventResponse[]) => {
+        if (data && data.length > 0) {
+          const mapped = data.map(notionToSitEvent)
+          setEvents(mapped)
+          const firstNext = mapped.find(e => e.status === 'NEXT')
+          if (firstNext) setSelectedId(firstNext.id)
+        }
+      })
+      .catch(() => {
+        // Keep fallback events on error
+      })
+  }, []);
 
   // Responsive breakpoint
   useEffect(() => {
@@ -959,7 +935,7 @@ export default function Events() {
             >
               <div className="grid grid-cols-2" style={{ gap: 16 }}>
                 {events.map((event, i) => {
-                  const c = eHex(event.id);
+                  const c = eHex(event.id, event.tags);
                   const isLeft = i % 2 === 0;
                   const connAngle = CONNECTOR_ANGLES[i] ?? 0;
                   const connWidth = CONNECTOR_WIDTHS[i] ?? 36;
@@ -1029,7 +1005,7 @@ export default function Events() {
           {/* ── Download All Events ── */}
           <div className="flex justify-center" style={{ marginTop: "3rem" }}>
             <button
-              onClick={dlAll}
+              onClick={() => dlAll(events)}
               className="w-full font-mono text-sm cursor-pointer transition-[background,border-color,color,transform] duration-200"
               style={{
                 maxWidth: "32rem",
