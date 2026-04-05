@@ -5,6 +5,7 @@ import { getLevelForXp } from '@/lib/levelEngine'
 import { calculateStats } from '@/lib/rewards'
 import StatsGrid from '@/components/dashboard/StatsGrid'
 import RecentActivity from '@/components/dashboard/RecentActivity'
+import { BossFightWidget } from '@/components/dashboard/BossFightWidget'
 import Link from 'next/link'
 import { ArrowRight, Sparkles } from 'lucide-react'
 
@@ -214,6 +215,11 @@ export default async function DashboardPage({
             </div>
           </div>
         </Link>
+      </div>
+
+      {/* Boss fight */}
+      <div className="mb-8">
+        <BossFightWidget />
       </div>
 
       {/* Activity log */}
