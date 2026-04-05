@@ -117,7 +117,8 @@
       "Bash(git stash:*)",
       "Bash(git merge:*)",
       "mcp__plugin_figma_figma__whoami",
-      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f -name *mail* -o -name *email*)"
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f -name *mail* -o -name *email*)",
+      "Bash(curl -s -o /dev/null -w \"api/shop\\(POST\\):%{http_code}\\\\n\" -X POST http://localhost:3002/api/shop -H \"Content-Type: application/json\" -d '{}')"
     ]
   },
   "outputStyle": "default",
