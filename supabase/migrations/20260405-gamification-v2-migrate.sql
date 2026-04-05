@@ -25,17 +25,17 @@ ON CONFLICT (member_id, badge_id) DO NOTHING;
 DO $$
 DECLARE
   m RECORD;
-  badge_id TEXT;
+  b_id TEXT;
   slot_num INTEGER;
 BEGIN
   FOR m IN SELECT id, active_badges FROM members WHERE active_badges IS NOT NULL AND array_length(active_badges, 1) > 0
   LOOP
     slot_num := 1;
-    FOREACH badge_id IN ARRAY m.active_badges
+    FOREACH b_id IN ARRAY m.active_badges
     LOOP
       UPDATE member_badges
       SET equipped = true, equipped_slot = slot_num
-      WHERE member_id = m.id AND member_badges.badge_id = badge_id;
+      WHERE member_id = m.id AND member_badges.badge_id = b_id;
       slot_num := slot_num + 1;
     END LOOP;
   END LOOP;
