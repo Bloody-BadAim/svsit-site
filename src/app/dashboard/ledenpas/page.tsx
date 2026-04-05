@@ -44,6 +44,14 @@ export default async function LedenpasPage() {
   const activeBadges = (member.active_badges as string[]) || []
   const memberStats = await calculateStats(session.user.id)
 
+  const stats = [
+    { key: 'code',   label: 'CODE',   value: memberStats.code,   color: '#22C55E' },
+    { key: 'social', label: 'SOCIAL', value: memberStats.social, color: '#F59E0B' },
+    { key: 'learn',  label: 'LEARN',  value: memberStats.learn,  color: '#3B82F6' },
+    { key: 'impact', label: 'IMPACT', value: memberStats.impact, color: '#EF4444' },
+  ]
+  const maxStat = Math.max(...stats.map(s => s.value), 1)
+
   return (
     <div className="max-w-5xl space-y-8">
       {/* Section label */}
@@ -68,21 +76,92 @@ export default async function LedenpasPage() {
         </p>
       </div>
 
-      <LedenpasClient
-        data={{
-          name: (member.email as string).split('@')[0],
-          role: member.role as Role,
-          commissie: commissieNaam,
-          points: member.points as number,
-          memberId: member.id as string,
-          email: member.email as string,
-          activeBadges,
-          dynamicStats: memberStats,
-        }}
-        skin={activeSkin}
-        memberId={member.id as string}
-        unlockedSkins={unlockedSkins}
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        {/* Left: member card */}
+        <div>
+          <LedenpasClient
+            data={{
+              name: (member.email as string).split('@')[0],
+              role: member.role as Role,
+              commissie: commissieNaam,
+              points: member.points as number,
+              memberId: member.id as string,
+              email: member.email as string,
+              activeBadges,
+              dynamicStats: memberStats,
+            }}
+            skin={activeSkin}
+            memberId={member.id as string}
+            unlockedSkins={unlockedSkins}
+          />
+        </div>
+
+        {/* Right: stats + quick actions */}
+        <div className="flex flex-col gap-6">
+          {/* Character Stats */}
+          <div
+            className="rounded-xl p-6"
+            style={{ border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.02)' }}
+          >
+            <h3
+              className="text-xs font-mono uppercase tracking-widest mb-5"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              Character Stats
+            </h3>
+            <div className="flex flex-col gap-4">
+              {stats.map(stat => (
+                <div key={stat.key}>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-xs font-mono uppercase tracking-wider" style={{ color: stat.color }}>
+                      {stat.label}
+                    </span>
+                    <span className="text-xs font-mono" style={{ color: 'var(--color-text-muted)' }}>
+                      {stat.value} XP
+                    </span>
+                  </div>
+                  <div
+                    className="h-1.5 rounded-full overflow-hidden"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
+                  >
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{
+                        width: `${Math.round((stat.value / maxStat) * 100)}%`,
+                        backgroundColor: stat.color,
+                        opacity: 0.85,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { href: '/dashboard/rewards',     icon: '🏆', label: 'Badges'      },
+              { href: '/dashboard/shop',        icon: '🛒', label: 'Shop'        },
+              { href: '/dashboard/card-editor', icon: '🎨', label: 'Card Editor' },
+              { href: '/leaderboard',           icon: '📊', label: 'Leaderboard' },
+            ].map(({ href, icon, label }) => (
+              <a
+                key={href}
+                href={href}
+                className="rounded-lg p-4 flex flex-col gap-1 transition-colors hover:border-[rgba(245,158,11,0.3)]"
+                style={{
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  backgroundColor: 'rgba(255,255,255,0.02)',
+                }}
+              >
+                <span className="text-lg leading-none">{icon}</span>
+                <span className="text-sm font-mono" style={{ color: 'var(--color-text)' }}>{label}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
