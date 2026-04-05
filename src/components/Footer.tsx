@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { Instagram, Linkedin, Mail, MapPin, ArrowUp } from "lucide-react";
 import SitLogo from "@/components/SitLogo";
 
 const NAV_LINKS = [
@@ -17,23 +16,40 @@ const SOCIALS = [
   {
     href: "https://www.instagram.com/sv.sit",
     ariaLabel: "Instagram: @svsit",
-    Icon: Instagram,
     hoverBorder: "#F59E0B",
     hoverGlow: "0 0 16px rgba(245, 158, 11, 0.2)",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" />
+        <circle cx="12" cy="12" r="5" />
+        <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+      </svg>
+    ),
   },
   {
     href: "https://linkedin.com/company/svsit-hbo-ict",
     ariaLabel: "LinkedIn: /company/svsit",
-    Icon: Linkedin,
     hoverBorder: "#3B82F6",
     hoverGlow: "0 0 16px rgba(59, 130, 246, 0.2)",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6z" />
+        <rect x="2" y="9" width="4" height="12" />
+        <circle cx="4" cy="4" r="2" />
+      </svg>
+    ),
   },
   {
     href: "mailto:bestuur@svsit.nl",
     ariaLabel: "E-mail: bestuur@svsit.nl",
-    Icon: Mail,
     hoverBorder: "#22C55E",
     hoverGlow: "0 0 16px rgba(34, 197, 94, 0.2)",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <path d="M22 7l-10 7L2 7" />
+      </svg>
+    ),
   },
 ];
 
@@ -80,7 +96,7 @@ export default function Footer() {
 
   return (
     <footer id="footer" className="relative z-[1] bg-[var(--color-bg)]">
-      {/* Gradient accent top border */}
+      {/* Top gradient line */}
       <div
         aria-hidden="true"
         className="absolute top-0 left-0 right-0 h-px"
@@ -91,77 +107,53 @@ export default function Footer() {
         }}
       />
 
-      <div
-        ref={contentRef}
-        className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 lg:px-24 py-16 sm:py-20 md:py-24"
-      >
-        {/* ═══ Zone 1: Brand + Social icons ═══ */}
+      <div ref={contentRef} className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24">
+        {/* ZONE 1: Logo + Social */}
         <div
           data-footer-zone
-          className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-10 pb-12 sm:pb-16 mb-12 sm:mb-16 border-b border-[var(--color-border)]"
+          className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 py-16 md:py-20"
         >
-          {/* Logo + description */}
-          <div className="max-w-sm">
-            <div className="mb-4">
+          <div className="max-w-md">
+            <div className="mb-6">
               <SitLogo size={40} showCrosses={false} />
             </div>
-            <p className="font-mono text-sm text-[var(--color-text-muted)] leading-relaxed">
-              Studievereniging voor alle{" "}
-              <span className="text-[var(--color-accent-blue)]">HBO-ICT</span>{" "}
-              studenten aan de HvA. Van{" "}
-              <span className="text-[var(--color-accent-gold)]">
-                Software Engineering
-              </span>{" "}
-              tot{" "}
-              <span className="text-[var(--color-accent-red)]">
-                Cyber Security
-              </span>
-              .
+            <p className="font-mono text-sm text-[#A1A1AA] leading-relaxed">
+              Studievereniging voor alle HBO-ICT studenten aan de HvA.
             </p>
           </div>
-
-          {/* Social icon buttons — ONLY place socials appear */}
           <div className="flex items-center gap-3">
             {SOCIALS.map((s) => (
               <a
                 key={s.ariaLabel}
                 href={s.href}
                 target={s.href.startsWith("mailto:") ? undefined : "_blank"}
-                rel={
-                  s.href.startsWith("mailto:")
-                    ? undefined
-                    : "noopener noreferrer"
-                }
+                rel={s.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                 aria-label={s.ariaLabel}
-                className="group flex items-center justify-center w-11 h-11 border border-[var(--color-border)] bg-[var(--color-surface)] transition-all duration-200"
+                className="group flex items-center justify-center w-11 h-11 border border-[var(--color-border)] bg-[var(--color-surface)] transition-all duration-200 text-[#A1A1AA] hover:text-[var(--color-text)]"
                 onMouseEnter={(e) => {
-                  const el = e.currentTarget;
-                  el.style.borderColor = s.hoverBorder;
-                  el.style.boxShadow = s.hoverGlow;
+                  e.currentTarget.style.borderColor = s.hoverBorder;
+                  e.currentTarget.style.boxShadow = s.hoverGlow;
                 }}
                 onMouseLeave={(e) => {
-                  const el = e.currentTarget;
-                  el.style.borderColor = "";
-                  el.style.boxShadow = "none";
+                  e.currentTarget.style.borderColor = "";
+                  e.currentTarget.style.boxShadow = "none";
                 }}
               >
-                <s.Icon
-                  size={18}
-                  className="text-[var(--color-text-muted)] group-hover:text-[var(--color-text)] transition-colors duration-200"
-                />
+                {s.icon}
               </a>
             ))}
           </div>
         </div>
 
-        {/* ═══ Zone 2: Info grid (2 columns, no duplicate socials) ═══ */}
+        <div className="h-px bg-[rgba(255,255,255,0.06)]" />
+
+        {/* ZONE 2: Links + Contact */}
         <div
           data-footer-zone
-          className="grid grid-cols-1 sm:grid-cols-2 gap-10 sm:gap-12 md:gap-16 pb-12 sm:pb-16 mb-12 border-b border-[var(--color-border)]"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-12 py-14 md:py-16"
         >
-          {/* Column 1: Navigation */}
           <div>
-            <h3 className="font-mono text-[11px] text-[var(--color-accent-gold)] uppercase tracking-[0.2em] mb-5">
+            <h3 className="font-mono text-[11px] text-[var(--color-accent-gold)] uppercase tracking-[0.2em] mb-6">
               Pagina&apos;s
             </h3>
             <nav className="flex flex-col gap-3">
@@ -169,128 +161,62 @@ export default function Footer() {
                 <a
                   key={link.href}
                   href={link.href}
-                  className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:translate-x-1 transition-all duration-200 w-fit"
+                  className="font-mono text-sm text-[#A1A1AA] hover:text-[var(--color-text)] transition-colors duration-200 w-fit"
                 >
                   {link.label}
                 </a>
               ))}
             </nav>
           </div>
-
-          {/* Column 2: Contact & Location */}
           <div>
-            <h3 className="font-mono text-[11px] text-[var(--color-accent-gold)] uppercase tracking-[0.2em] mb-5">
+            <h3 className="font-mono text-[11px] text-[var(--color-accent-gold)] uppercase tracking-[0.2em] mb-6">
               Contact
             </h3>
             <div className="flex flex-col gap-4">
-              {/* Email */}
               <a
                 href="mailto:bestuur@svsit.nl"
-                className="flex items-center gap-2.5 font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors duration-200 w-fit"
+                className="font-mono text-sm text-[#A1A1AA] hover:text-[var(--color-text)] transition-colors duration-200 w-fit"
               >
-                <Mail
-                  size={14}
-                  className="text-[var(--color-accent-green)] shrink-0"
-                  style={{ opacity: 0.7 }}
-                />
                 bestuur@svsit.nl
               </a>
-
-              {/* Location */}
-              <div className="flex items-start gap-2.5 font-mono text-sm text-[var(--color-text-muted)]">
-                <MapPin
-                  size={14}
-                  className="text-[var(--color-accent-red)] mt-0.5 shrink-0"
-                  style={{ opacity: 0.7 }}
-                />
-                <span>
-                  Wibauthuis, Wibautstraat 3b
-                  <br />
-                  <span className="text-[#71717A]">1091 GH Amsterdam</span>
-                </span>
+              <div className="font-mono text-sm text-[#A1A1AA] leading-relaxed">
+                Wibauthuis, Wibautstraat 3b
+                <br />
+                1091 GH Amsterdam
               </div>
-
-              {/* Faculty */}
-              <p className="font-mono text-sm text-[#71717A] ml-[22.5px]">
-                FDMCI — Hogeschool van Amsterdam
-              </p>
             </div>
           </div>
         </div>
 
-        {/* ═══ Zone 3: HvA branding + specialisaties ═══ */}
-        <div
-          data-footer-zone
-          className="pb-12 mb-12 border-b border-[var(--color-border)]"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="font-mono text-xs text-[#71717A] leading-relaxed">
-              <span>Onderdeel van </span>
-              <span className="text-[#7C6FD4]">HBO-ICT</span>
-              <span> — Hogeschool van Amsterdam</span>
-              <br />
-              <span className="text-[#3F3F46]">FDMCI — Faculteit Digital Media and Creative Industries</span>
-            </div>
+        <div className="h-px bg-[rgba(255,255,255,0.06)]" />
+
+        {/* ZONE 3: HvA + Copyright */}
+        <div data-footer-zone className="py-10 md:py-12">
+          <div className="flex flex-col gap-1.5 mb-8">
+            <p className="font-mono text-xs text-[#71717A]">
+              Onderdeel van{" "}
+              <span className="text-[#A78BFA]">HBO-ICT</span>
+              {" "}&mdash; Hogeschool van Amsterdam
+            </p>
+            <p className="font-mono text-[11px] text-[#52525B]">
+              Software Engineering &middot; Cyber Security &middot; Game Development &middot; Business IT &amp; Management &middot; Technische Informatica
+            </p>
           </div>
-          <p className="font-mono text-[11px] text-[#3F3F46] mt-4 leading-relaxed">
-            Software Engineering · Cyber Security · Game Development · Business IT &amp; Management · Technische Informatica
-          </p>
-        </div>
-
-        {/* ═══ Zone 4: Terminal signature + Copyright + Back-to-top ═══ */}
-        <div data-footer-zone>
-          {/* Terminal one-liner */}
-          <p
-            className="hidden sm:block font-mono text-xs text-[#3F3F46] mb-5"
-            aria-hidden="true"
-          >
-            <span className="text-[var(--color-accent-green)]">{"$"}</span>
-            {" cat package.json | "}
-            <span className="text-[var(--color-accent-blue)]">{"jq"}</span>
-            {" '.name, .version'  "}
-            <span className="opacity-40">{"\u2192"}</span>
-            {"  "}
-            <span className="text-[var(--color-accent-gold)]">
-              {'"@hva/sit"'}
-            </span>
-            {"  "}
-            <span className="text-[var(--color-accent-gold)]">
-              {'"11.0.0"'}
-            </span>
-          </p>
-
-          {/* Copyright + back-to-top */}
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <p className="font-mono text-xs text-[#71717A] flex items-center gap-2">
-              <span>&copy; {year} SIT — Hogeschool van Amsterdam</span>
-              <span
-                className="inline-flex items-center gap-1.5"
-                aria-hidden="true"
-              >
-                <span className="text-[var(--color-accent-red)] font-bold">
-                  ×
-                </span>
-                <span className="text-[var(--color-accent-green)] font-bold">
-                  ×
-                </span>
-                <span className="text-[var(--color-accent-blue)] font-bold">
-                  ×
-                </span>
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <p className="font-mono text-xs text-[#52525B] flex items-center gap-2">
+              <span>&copy; {year} SIT &mdash; Hogeschool van Amsterdam</span>
+              <span className="inline-flex items-center gap-1.5" aria-hidden="true">
+                <span className="text-[var(--color-accent-red)] font-bold text-[10px]">&times;</span>
+                <span className="text-[var(--color-accent-green)] font-bold text-[10px]">&times;</span>
+                <span className="text-[var(--color-accent-blue)] font-bold text-[10px]">&times;</span>
               </span>
             </p>
-
             <button
-              onClick={() =>
-                window.scrollTo({ top: 0, behavior: "smooth" })
-              }
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               aria-label="Terug naar boven"
-              className="group flex items-center gap-2 font-mono text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-200 cursor-pointer"
+              className="font-mono text-xs text-[#52525B] hover:text-[var(--color-accent-gold)] transition-colors cursor-pointer"
             >
-              <span>scroll.toTop()</span>
-              <ArrowUp
-                size={14}
-                className="group-hover:-translate-y-0.5 transition-transform duration-200"
-              />
+              scroll.toTop() &uarr;
             </button>
           </div>
         </div>
