@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { createServiceClient } from '@/lib/supabase'
 import { CardEditor } from '@/components/dashboard/cardEditor/CardEditor'
+import { getEffectiveLevel } from '@/lib/levelEngine'
 
 export const metadata = {
   title: 'Card Editor — SIT',
@@ -17,7 +18,7 @@ export default async function CardEditorPage() {
     supabase.from('member_accessories').select('*, accessory_definitions(*)').eq('member_id', session.user.id),
     supabase.from('member_accessories').select('*, accessory_definitions(*)').eq('member_id', session.user.id).eq('equipped', true),
     supabase.from('accessory_definitions').select('*').order('rarity'),
-    supabase.from('members').select('current_level, accent_color, custom_title, active_skin, coins_balance').eq('id', session.user.id).single(),
+    supabase.from('members').select('current_level, role, is_admin, accent_color, custom_title, leaderboard_visible, active_skin, coins_balance').eq('id', session.user.id).single(),
   ])
 
   return (
@@ -51,7 +52,14 @@ export default async function CardEditorPage() {
         inventory={inventoryResult.data ?? []}
         equipped={equippedResult.data ?? []}
         allDefinitions={definitionsResult.data ?? []}
-        member={memberResult.data ?? { current_level: 1, accent_color: null, custom_title: null, active_skin: 'default', coins_balance: 0 }}
+        member={(() => {
+          const raw = memberResult.data ?? { current_level: 1, role: 'member', is_admin: false, accent_color: null, custom_title: null, leaderboard_visible: true, active_skin: 'default', coins_balance: 0 }
+          return {
+            ...raw,
+            leaderboard_visible: raw.leaderboard_visible ?? true,
+            current_level: getEffectiveLevel({ current_level: raw.current_level ?? 1, role: raw.role ?? undefined, is_admin: raw.is_admin ?? false }),
+          }
+        })()}
         memberId={session.user.id}
       />
     </div>

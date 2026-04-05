@@ -38,6 +38,7 @@ interface MemberData {
   current_level: number
   accent_color: string | null
   custom_title: string | null
+  leaderboard_visible: boolean
   active_skin: string
   coins_balance: number
 }
@@ -445,24 +446,29 @@ interface FlairTabProps {
   memberLevel: number
   initialAccentColor: string | null
   initialCustomTitle: string | null
+  initialLeaderboardVisible: boolean
   onAccentColorChange: (color: string) => void
 }
 
-function FlairTab({ memberLevel, initialAccentColor, initialCustomTitle, onAccentColorChange }: FlairTabProps) {
+function FlairTab({ memberLevel, initialAccentColor, initialCustomTitle, initialLeaderboardVisible, onAccentColorChange }: FlairTabProps) {
   const [accentColor, setAccentColor] = useState(initialAccentColor ?? '#F59E0B')
   const [customTitle, setCustomTitle] = useState(initialCustomTitle ?? '')
+  const [leaderboardVisible, setLeaderboardVisible] = useState(initialLeaderboardVisible)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const canCustomTitle = memberLevel >= 8
+  const canAccentColor = memberLevel >= 6
 
   async function handleSave() {
     setSaving(true)
     setSaved(false)
     try {
-      const body: Record<string, string> = { accent_color: accentColor }
-      if (canCustomTitle && customTitle.trim()) {
-        body.custom_title = customTitle.trim()
+      const body: Record<string, unknown> = {
+        leaderboard_visible: leaderboardVisible,
       }
+      if (canAccentColor) body.accent_color = accentColor
+      if (canCustomTitle && customTitle.trim()) body.custom_title = customTitle.trim()
+      else if (canCustomTitle) body.custom_title = null
       const res = await fetch('/api/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -482,17 +488,65 @@ function FlairTab({ memberLevel, initialAccentColor, initialCustomTitle, onAccen
 
   return (
     <div className="p-5 space-y-6">
-      {/* Accent color */}
+
+      {/* Leaderboard visibility */}
       <div>
         <div className="font-mono text-xs uppercase tracking-[0.15em] mb-3" style={{ color: 'var(--color-text-muted)' }}>
-          Accent kleur
+          Leaderboard
         </div>
-        <div className="flex flex-wrap gap-2 mb-3">
+        <div className="flex items-center justify-between w-full gap-4">
+          <span className="text-sm" style={{ color: 'var(--color-text)' }}>Toon mij op het leaderboard</span>
+          <button
+            role="switch"
+            aria-checked={leaderboardVisible}
+            onClick={() => setLeaderboardVisible(!leaderboardVisible)}
+            className="relative shrink-0 w-11 h-6 rounded-full transition-colors duration-200 cursor-pointer"
+            style={{
+              backgroundColor: leaderboardVisible ? 'var(--color-accent-gold)' : 'rgba(255,255,255,0.1)',
+              border: '1px solid',
+              borderColor: leaderboardVisible ? 'var(--color-accent-gold)' : 'rgba(255,255,255,0.15)',
+            }}
+          >
+            <span
+              className="absolute top-0.5 w-5 h-5 rounded-full transition-transform duration-200"
+              style={{
+                backgroundColor: leaderboardVisible ? 'var(--color-bg)' : 'rgba(255,255,255,0.4)',
+                transform: leaderboardVisible ? 'translateX(21px)' : 'translateX(2px)',
+              }}
+            />
+          </button>
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div style={{ borderTop: '1px dashed rgba(255,255,255,0.06)' }} />
+
+      {/* Accent color */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <div className="font-mono text-xs uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
+            Accent kleur
+          </div>
+          {!canAccentColor && (
+            <span
+              className="font-mono text-[9px] px-1.5 py-0.5 rounded"
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                color: 'rgba(255,255,255,0.3)',
+              }}
+            >
+              Unlock op Level 6
+            </span>
+          )}
+        </div>
+        <div className={`flex flex-wrap gap-2 mb-3 ${!canAccentColor ? 'opacity-40 pointer-events-none' : ''}`}>
           {PRESET_COLORS.map((color) => (
             <button
               key={color}
               onClick={() => handleColorSelect(color)}
-              className="w-8 h-8 rounded-lg transition-all duration-150 cursor-pointer"
+              disabled={!canAccentColor}
+              className="w-8 h-8 rounded-lg transition-all duration-150 cursor-pointer disabled:cursor-not-allowed"
               style={{
                 backgroundColor: color,
                 outline: accentColor === color ? `2px solid ${color}` : '2px solid transparent',
@@ -503,11 +557,12 @@ function FlairTab({ memberLevel, initialAccentColor, initialCustomTitle, onAccen
             />
           ))}
           {/* Custom color picker */}
-          <label className="relative w-8 h-8 rounded-lg overflow-hidden cursor-pointer" title="Eigen kleur">
+          <label className={`relative w-8 h-8 rounded-lg overflow-hidden ${canAccentColor ? 'cursor-pointer' : 'cursor-not-allowed pointer-events-none'}`} title="Eigen kleur">
             <input
               type="color"
               value={accentColor}
               onChange={(e) => handleColorSelect(e.target.value)}
+              disabled={!canAccentColor}
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
             />
             <div
@@ -527,9 +582,12 @@ function FlairTab({ memberLevel, initialAccentColor, initialCustomTitle, onAccen
         </div>
       </div>
 
+      {/* Divider */}
+      <div style={{ borderTop: '1px dashed rgba(255,255,255,0.06)' }} />
+
       {/* Custom title */}
       <div>
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center justify-between gap-2 mb-2">
           <span className="font-mono text-xs uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
             Custom titel
           </span>
@@ -749,6 +807,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
                 memberLevel={member.current_level ?? 1}
                 initialAccentColor={member.accent_color}
                 initialCustomTitle={member.custom_title}
+                initialLeaderboardVisible={member.leaderboard_visible ?? true}
                 onAccentColorChange={setAccentColor}
               />
             ) : tabDefs.length === 0 ? (
