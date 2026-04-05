@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, useReducedMotion } from 'motion/react'
-import { getRank, RANKS, getLevel, getLevelProgress, getPrestige } from '@/lib/constants'
+import { getLevelForXp, getLevelProgress } from '@/lib/levelEngine'
 
 interface StatsGridProps {
   points: number
@@ -12,16 +12,10 @@ interface StatsGridProps {
 }
 
 export default function StatsGrid({ points, role, commissieNames, memberSince, dynamicStats }: StatsGridProps) {
-  const rank = getRank(points)
-  const nextRank = RANKS.find(r => r.minPunten > points)
-  const progress = nextRank
-    ? ((points - rank.minPunten) / (nextRank.minPunten - rank.minPunten)) * 100
-    : 100
+  const levelDef = getLevelForXp(points)
+  const levelProgress = getLevelProgress(points)
   const since = memberSince ? new Date(memberSince).toLocaleDateString('nl-NL', { month: 'short', year: 'numeric' }) : '—'
   const shouldReduceMotion = useReducedMotion()
-  const level = getLevel(points)
-  const levelProgress = getLevelProgress(points)
-  const prestige = getPrestige(points)
 
   const maxStat = Math.max(dynamicStats.code, dynamicStats.social, dynamicStats.learn, dynamicStats.impact, 10)
   const statBars = [
@@ -49,44 +43,39 @@ export default function StatsGrid({ points, role, commissieNames, memberSince, d
         </span>
         <div className="flex items-center gap-3">
           <span className="font-mono text-[10px] px-2 py-0.5 rounded" style={{ color: 'var(--color-accent-gold)', backgroundColor: 'rgba(255,255,255,0.04)' }}>
-            LVL {String(level).padStart(2, '0')}
+            LVL {String(levelDef.level).padStart(2, '0')}
           </span>
-          {prestige > 0 && (
-            <span className="font-mono text-[10px] px-1.5 py-0.5" style={{ color: '#F29E18', background: 'rgba(242,158,24,0.1)' }}>
-              P{prestige}
-            </span>
-          )}
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded" style={{ color: rank.kleur, border: `1px solid ${rank.kleur}40`, backgroundColor: 'rgba(255,255,255,0.04)' }}>
-            {rank.naam.toUpperCase()}
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded" style={{ color: levelDef.color, border: `1px solid ${levelDef.color}40`, backgroundColor: 'rgba(255,255,255,0.04)' }}>
+            {levelDef.title.toUpperCase()}
           </span>
         </div>
       </div>
 
       <div className="p-5 space-y-5">
-        {/* Rank + Level progress */}
+        {/* Level + progress */}
         <div>
           <div className="flex items-baseline justify-between mb-2">
             <div className="flex items-baseline gap-3">
               <span
                 className="text-4xl font-bold tracking-tight"
-                style={{ color: rank.kleur, fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif" }}
+                style={{ color: levelDef.color, fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif" }}
               >
-                {rank.naam}
+                {levelDef.title}
               </span>
               <span className="font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
-                {points} xp · lvl {level}
+                {points} xp · lvl {levelDef.level}
               </span>
             </div>
             <span className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
-              {nextRank ? `${nextRank.minPunten - points} tot ${nextRank.naam}` : `${levelProgress.current}/${levelProgress.max} xp`}
+              {levelProgress.max > 0 ? `${levelProgress.current}/${levelProgress.max} xp` : 'MAX LEVEL'}
             </span>
           </div>
           <div className="h-2 overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: '2px' }}>
             <motion.div
               className="h-full"
-              style={{ backgroundColor: rank.kleur, boxShadow: `0 0 12px ${rank.kleur}50`, borderRadius: '2px' }}
-              initial={shouldReduceMotion ? { width: `${progress}%` } : { width: 0 }}
-              animate={{ width: `${progress}%` }}
+              style={{ backgroundColor: levelDef.color, boxShadow: `0 0 12px ${levelDef.color}50`, borderRadius: '2px' }}
+              initial={shouldReduceMotion ? { width: `${levelProgress.percent}%` } : { width: 0 }}
+              animate={{ width: `${levelProgress.percent}%` }}
               transition={{ delay: 0.3, duration: 1, type: 'spring', stiffness: 60, damping: 15 }}
             />
           </div>

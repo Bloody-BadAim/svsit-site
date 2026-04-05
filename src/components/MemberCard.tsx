@@ -1,7 +1,8 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { getRank, ROLLEN, getLevel, getLevelProgress, getBadgeSlotCount } from "@/lib/constants";
+import { ROLLEN } from "@/lib/constants";
+import { getLevelForXp, getLevelProgress, getBadgeSlotCount } from "@/lib/levelEngine";
 import type { Role } from "@/types/database";
 import QRCode from "react-qr-code";
 import { getSkin } from "@/lib/cardSkins";
@@ -42,26 +43,36 @@ export interface MemberCardData {
   dynamicStats?: { code: number; social: number; learn: number; impact: number };
 }
 
+export interface MemberCardEquipment {
+  frameColor?: string;
+  petEmoji?: string;
+  effectName?: string;
+  stickers?: Array<{ id: string; x: number; y: number; emoji: string }>;
+  accentColor?: string;
+  customTitle?: string;
+}
+
 export default function MemberCard({
   className = "",
   style,
   children,
   data,
   showQR = false,
+  equipment,
 }: {
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
   data?: MemberCardData;
   showQR?: boolean;
+  equipment?: MemberCardEquipment;
 }) {
   // Placeholder or real data
   const name = data?.name || "Jouw Naam";
   const role = data?.role || "member";
   const commissie = data?.commissie;
   const points = data?.points ?? 0;
-  const rank = getRank(points);
-  const level = getLevel(points);
+  const levelDef = getLevelForXp(points);
   const levelProg = getLevelProgress(points);
   const xpPercent = levelProg.percent;
   const rolLabel = data ? (ROLLEN[role]?.naam || role) : "Undecided";
@@ -84,11 +95,28 @@ export default function MemberCard({
   const activeBadges = data?.activeBadges;
   const badges = data?.badges || DEFAULT_BADGES;
 
-  // Border wrapper: always use gradient as background for the 2px wrapper
-  const borderWrapperStyle: React.CSSProperties = {
-    background: skinDef.border,
-    ...(skinDef.animated ? { animation: "borderRotate 8s linear infinite" } : {}),
-  };
+  // Border wrapper: frame color overrides default skin border
+  const frameColor = equipment?.frameColor;
+  const borderWrapperStyle: React.CSSProperties = frameColor
+    ? {
+        background: frameColor,
+        boxShadow: `0 0 16px 2px ${frameColor}66, 0 0 32px 4px ${frameColor}33`,
+      }
+    : {
+        background: skinDef.border,
+        ...(skinDef.animated ? { animation: "borderRotate 8s linear infinite" } : {}),
+      };
+
+  // XP bar color: accentColor override or default gold
+  const xpBarColor = equipment?.accentColor
+    ? `linear-gradient(90deg, ${equipment.accentColor}, ${equipment.accentColor}CC)`
+    : "linear-gradient(90deg, var(--color-accent-gold), #FBBF24)";
+  const xpBarGlow = equipment?.accentColor
+    ? `0 0 8px ${equipment.accentColor}66`
+    : "0 0 8px rgba(245, 158, 11, 0.4)";
+
+  // Visible stickers: max 3
+  const visibleStickers = equipment?.stickers?.slice(0, 3) ?? [];
 
   const qrData = data?.memberId
     ? JSON.stringify({ id: data.memberId, email: data.email })
@@ -233,6 +261,14 @@ export default function MemberCard({
                 <span className="font-mono text-base text-[var(--color-text)] font-bold tracking-wide">
                   {name}
                 </span>
+                {equipment?.customTitle && (
+                  <span
+                    className="font-mono text-[10px] uppercase tracking-[0.15em]"
+                    style={{ color: equipment.accentColor ?? "var(--color-accent-gold)", opacity: 0.8 }}
+                  >
+                    {equipment.customTitle}
+                  </span>
+                )}
                 <span className="font-mono text-[11px] text-[var(--color-text-muted)]">
                   CLASS:{" "}
                   <span className={isPlaceholder ? "opacity-50" : ""}>
@@ -249,11 +285,11 @@ export default function MemberCard({
                 )}
                 <div className="flex items-center gap-2 mt-1">
                   <span className="font-mono text-[11px] text-[var(--color-accent-gold)] font-bold">
-                    LVL {String(level).padStart(2, "0")}
+                    LVL {String(levelDef.level).padStart(2, "0")}
                   </span>
-                  <span className="flex items-center gap-1 font-mono text-[11px] text-[var(--color-accent-gold)]">
+                  <span className="flex items-center gap-1 font-mono text-[11px]" style={{ color: levelDef.color }}>
                     <Star size={10} fill="currentColor" />
-                    {rank.naam.toUpperCase()}
+                    {levelDef.title.toUpperCase()}
                   </span>
                 </div>
               </div>
@@ -277,8 +313,8 @@ export default function MemberCard({
                   className="h-full transition-[width] duration-700"
                   style={{
                     width: `${xpPercent}%`,
-                    background: "linear-gradient(90deg, var(--color-accent-gold), #FBBF24)",
-                    boxShadow: "0 0 8px rgba(245, 158, 11, 0.4)",
+                    background: xpBarColor,
+                    boxShadow: xpBarGlow,
                   }}
                 />
               </div>
@@ -346,7 +382,7 @@ export default function MemberCard({
               <div className="flex items-center gap-1.5 flex-wrap">
                 {activeBadges
                   ? (() => {
-                      const badgeSlots = Math.max(activeBadges.length, getBadgeSlotCount(rank.naam));
+                      const badgeSlots = Math.max(activeBadges.length, getBadgeSlotCount(levelDef.level));
                       const slots: React.ReactNode[] = activeBadges
                         .map((badgeId) => (
                           <BadgeIcon key={badgeId} badgeId={badgeId} size={16} locked={false} />
@@ -432,6 +468,96 @@ export default function MemberCard({
             {/* CTA slot */}
             {children && <div className="relative z-30 flex flex-col items-center">{children}</div>}
           </div>
+
+          {/* ── Accessory: Stickers (z-40, absolutely positioned) ── */}
+          {visibleStickers.map((sticker) => (
+            <div
+              key={sticker.id}
+              className="absolute pointer-events-none select-none z-40"
+              aria-hidden="true"
+              style={{
+                left: `${sticker.x}%`,
+                top: `${sticker.y}%`,
+                transform: "translate(-50%, -50%)",
+                fontSize: 22,
+                lineHeight: 1,
+                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))",
+              }}
+            >
+              {sticker.emoji}
+            </div>
+          ))}
+
+          {/* ── Accessory: Pet (bottom-right corner, z-40) ── */}
+          {equipment?.petEmoji && (
+            <div
+              className="absolute bottom-3 right-3 pointer-events-none select-none z-40"
+              aria-hidden="true"
+              style={{
+                fontSize: 26,
+                lineHeight: 1,
+                animation: "petBounce 1.8s ease-in-out infinite",
+                filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.7))",
+              }}
+            >
+              {equipment.petEmoji}
+            </div>
+          )}
+
+          {/* ── Accessory: Effect overlay (z-50, pointer-events none) ── */}
+          {equipment?.effectName === "sparkles" && (
+            <div
+              className="absolute inset-0 pointer-events-none z-50 overflow-hidden"
+              aria-hidden="true"
+              style={{ animation: "sparklesFade 3s ease-in-out infinite" }}
+            >
+              {/* Static sparkle dots at fixed positions */}
+              {([
+                [12, 18], [28, 42], [55, 12], [72, 35], [88, 60],
+                [40, 70], [65, 85], [20, 80], [80, 22], [50, 50],
+              ] as [number, number][]).map(([x, y], i) => (
+                <div
+                  key={i}
+                  className="absolute rounded-full"
+                  style={{
+                    left: `${x}%`,
+                    top: `${y}%`,
+                    width: i % 3 === 0 ? 3 : 2,
+                    height: i % 3 === 0 ? 3 : 2,
+                    background: equipment.accentColor ?? "#FBBF24",
+                    opacity: 0,
+                    animation: `sparkleDot 2.4s ease-in-out ${(i * 0.22).toFixed(2)}s infinite`,
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
+          {equipment?.effectName === "matrix" && (
+            <div
+              className="absolute inset-0 pointer-events-none z-50 overflow-hidden"
+              aria-hidden="true"
+            >
+              {/* Horizontal scanlines */}
+              {Array.from({ length: 12 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute left-0 right-0"
+                  style={{
+                    top: `${(i / 12) * 100}%`,
+                    height: 1,
+                    background: "rgba(0,255,70,0.08)",
+                    animation: `matrixScan 3s linear ${(i * 0.25).toFixed(2)}s infinite`,
+                  }}
+                />
+              ))}
+              {/* Green tint overlay */}
+              <div
+                className="absolute inset-0"
+                style={{ background: "rgba(0,255,70,0.03)" }}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

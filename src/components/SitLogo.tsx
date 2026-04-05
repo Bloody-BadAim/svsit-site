@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * SitLogo — Official SIT (Studievereniging ICT) logo as inline SVG.
  *
@@ -8,7 +10,11 @@
  * Usage:
  *   <SitLogo size={28} />                     — compact, no crosses (navbar)
  *   <SitLogo size={48} showCrosses />         — full logo with × marks (footer)
+ *
+ * Easter egg: 10 rapid clicks within 5 seconds grants the logo_click badge.
  */
+
+import { useRef, useState } from 'react'
 
 interface SitLogoProps {
   /** Height in pixels */
@@ -31,6 +37,35 @@ export default function SitLogo({
   const aspect = showCrosses ? 2080 / 930 : 2080 / 770;
   const width = size * aspect;
 
+  const clickTimestamps = useRef<number[]>([])
+  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [pulsing, setPulsing] = useState(false)
+
+  function handleClick() {
+    const now = Date.now()
+    // Keep only clicks within the last 5 seconds
+    clickTimestamps.current = clickTimestamps.current.filter((t) => now - t < 5000)
+    clickTimestamps.current.push(now)
+
+    // Reset the 5-second expiry timer
+    if (resetTimer.current) clearTimeout(resetTimer.current)
+    resetTimer.current = setTimeout(() => {
+      clickTimestamps.current = []
+    }, 5000)
+
+    if (clickTimestamps.current.length >= 10) {
+      clickTimestamps.current = []
+      if (resetTimer.current) clearTimeout(resetTimer.current)
+      setPulsing(true)
+      setTimeout(() => setPulsing(false), 600)
+      fetch('/api/easter-egg', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ triggerId: 'logo_click' }),
+      }).catch(() => {/* silently ignore — user may not be logged in */})
+    }
+  }
+
   return (
     <svg
       viewBox={vb}
@@ -39,6 +74,8 @@ export default function SitLogo({
       className={className}
       role="img"
       aria-label="SIT - Studievereniging ICT"
+      onClick={handleClick}
+      style={pulsing ? { filter: 'drop-shadow(0 0 8px #F29E18)', transition: 'filter 0.1s' } : undefined}
     >
       <defs>
         <clipPath id="sit-clip-r">

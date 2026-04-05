@@ -3,7 +3,8 @@
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { ADMIN_EMAILS, getRank, getLevel, getPrestige } from '@/lib/constants'
+import { ADMIN_EMAILS } from '@/lib/constants'
+import { getLevelForXp, getLevelProgress } from '@/lib/levelEngine'
 
 // ─── Corner decoration component ──────────────────────────────────────────────
 function CornerDecorations({ color = 'var(--color-accent-gold)' }: { color?: string }) {
@@ -77,32 +78,29 @@ function DarkInput({
   )
 }
 
-// ─── Rank badge ────────────────────────────────────────────────────────────────
+// ─── Level badge ───────────────────────────────────────────────────────────────
 function RankBadge({ points }: { points: number }) {
-  const rank = getRank(points)
-  const level = getLevel(points)
-  const prestige = getPrestige(points)
-  const xpInLevel = points % 10
-  const pct = (xpInLevel / 10) * 100
+  const levelDef = getLevelForXp(points)
+  const levelProgress = getLevelProgress(points)
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Rank name + level */}
+      {/* Level title + number */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div
             className="w-2 h-2"
-            style={{ backgroundColor: rank.kleur, boxShadow: `0 0 6px ${rank.kleur}88` }}
+            style={{ backgroundColor: levelDef.color, boxShadow: `0 0 6px ${levelDef.color}88` }}
           />
           <span
             className="font-mono text-xs font-bold uppercase tracking-[0.15em]"
-            style={{ color: rank.kleur }}
+            style={{ color: levelDef.color }}
           >
-            {rank.naam}
+            {levelDef.title}
           </span>
         </div>
         <span className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
-          LVL {level}{prestige > 0 && <span style={{ color: 'var(--color-accent-gold)' }}> ✦{prestige}</span>}
+          LVL {levelDef.level}
         </span>
       </div>
 
@@ -110,15 +108,18 @@ function RankBadge({ points }: { points: number }) {
       <div>
         <div className="flex justify-between font-mono text-[10px] mb-1" style={{ color: 'var(--color-text-muted)' }}>
           <span>{points} XP total</span>
-          <span>{xpInLevel}/10 to next level</span>
+          {levelProgress.max > 0
+            ? <span>{levelProgress.current}/{levelProgress.max} to next level</span>
+            : <span>MAX LEVEL</span>
+          }
         </div>
         <div className="h-[4px] w-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}>
           <motion.div
             className="h-full"
             initial={{ width: 0 }}
-            animate={{ width: `${pct}%` }}
+            animate={{ width: `${levelProgress.percent}%` }}
             transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }}
-            style={{ backgroundColor: rank.kleur }}
+            style={{ backgroundColor: levelDef.color }}
           />
         </div>
       </div>
@@ -143,6 +144,12 @@ export default function ProfielPage() {
   const [newPassword, setNewPassword] = useState('')
   const [pwSaving, setPwSaving] = useState(false)
   const [pwMessage, setPwMessage] = useState('')
+  // Flair settings
+  const [leaderboardVisible, setLeaderboardVisible] = useState(true)
+  const [customTitle, setCustomTitle] = useState('')
+  const [accentColor, setAccentColor] = useState('#F59E0B')
+  const [flairSaving, setFlairSaving] = useState(false)
+  const [flairMessage, setFlairMessage] = useState('')
 
   useEffect(() => {
     if (!session?.user?.id) return
@@ -162,6 +169,10 @@ export default function ProfielPage() {
           setMemberSince((member.membership_started_at as string) || null)
           setPoints((member.points as number) || 0)
           setHasPassword(!!member.has_password)
+          // Flair settings
+          setLeaderboardVisible(member.leaderboard_visible !== false)
+          setCustomTitle((member.custom_title as string) || '')
+          setAccentColor((member.accent_color as string) || '#F59E0B')
         }
       })
       .finally(() => setLoading(false))
@@ -216,11 +227,35 @@ export default function ProfielPage() {
     setTimeout(() => setPwMessage(''), 4000)
   }
 
+  async function handleFlairSave() {
+    setFlairSaving(true)
+    setFlairMessage('')
+
+    const levelDef = getLevelForXp(points)
+    const body: Record<string, unknown> = {
+      leaderboard_visible: leaderboardVisible,
+    }
+    if (levelDef.level >= 6) body.accent_color = accentColor
+    if (levelDef.level >= 8 && customTitle.trim()) body.custom_title = customTitle.trim()
+    else if (levelDef.level >= 8) body.custom_title = null
+
+    const res = await fetch('/api/profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+
+    setFlairMessage(res.ok ? 'flair.saved' : 'error: save_failed')
+    setFlairSaving(false)
+    setTimeout(() => setFlairMessage(''), 3000)
+  }
+
   // ── Character name derived from email ───────────────────────────────────────
   const username = session?.user?.email?.split('@')[0]?.toUpperCase() || 'USER'
   const email = session?.user?.email || ''
   const isAdmin = ADMIN_EMAILS.includes(email)
-  const rank = getRank(points)
+  const levelDef = getLevelForXp(points)
+  const currentLevel = levelDef.level
 
   // ── Loading skeleton ─────────────────────────────────────────────────────────
   if (loading) {
@@ -259,7 +294,7 @@ export default function ProfielPage() {
             }}
           />
           <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
-            character.settings · {rank.naam} · lvl {getLevel(points)}
+            character.settings · {levelDef.title} · lvl {levelDef.level}
           </span>
         </div>
         <h1
@@ -525,6 +560,181 @@ export default function ProfielPage() {
           >
             <span style={{ color: 'rgba(239,68,68,0.5)' }}>▲</span>
             <span>// password must be ≥8 characters · never share your credentials</span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ── FLAIR.CONFIG — full width ─────────────────────────────────────────── */}
+      <motion.div
+        className="relative overflow-hidden mt-5"
+        style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+      >
+        <CornerDecorations color="var(--color-accent-gold)" />
+        <PanelHeader label="flair.config" color="var(--color-accent-gold)" />
+
+        <div className="p-5 space-y-6">
+
+          {/* Leaderboard zichtbaarheid */}
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
+                leaderboard.visibility
+              </p>
+              <p className="text-sm mt-0.5" style={{ color: 'var(--color-text)' }}>
+                Toon mij op het leaderboard
+              </p>
+            </div>
+            <button
+              role="switch"
+              aria-checked={leaderboardVisible}
+              onClick={() => setLeaderboardVisible(!leaderboardVisible)}
+              className="relative w-11 h-6 rounded-full flex-shrink-0 transition-colors duration-200 cursor-pointer"
+              style={{
+                backgroundColor: leaderboardVisible ? 'var(--color-accent-gold)' : 'rgba(255,255,255,0.1)',
+                border: '1px solid',
+                borderColor: leaderboardVisible ? 'var(--color-accent-gold)' : 'rgba(255,255,255,0.15)',
+              }}
+            >
+              <span
+                className="absolute top-0.5 w-5 h-5 rounded-full transition-transform duration-200"
+                style={{
+                  backgroundColor: leaderboardVisible ? 'var(--color-bg)' : 'rgba(255,255,255,0.4)',
+                  transform: leaderboardVisible ? 'translateX(21px)' : 'translateX(2px)',
+                }}
+              />
+            </button>
+          </div>
+
+          {/* Divider */}
+          <div style={{ borderTop: '1px dashed rgba(255,255,255,0.06)' }} />
+
+          {/* Custom title */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label
+                className="font-mono text-[10px] uppercase tracking-[0.2em]"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                custom.title
+              </label>
+              {currentLevel < 8 && (
+                <span
+                  className="font-mono text-[10px] px-2 py-0.5"
+                  style={{
+                    color: 'rgba(245,158,11,0.7)',
+                    backgroundColor: 'rgba(245,158,11,0.06)',
+                    border: '1px solid rgba(245,158,11,0.15)',
+                  }}
+                >
+                  🔒 Unlock op Level 8
+                </span>
+              )}
+            </div>
+            <input
+              type="text"
+              value={customTitle}
+              onChange={(e) => setCustomTitle(e.target.value.slice(0, 30))}
+              placeholder={currentLevel >= 8 ? 'The Bug Whisperer' : '// unlock op level 8'}
+              disabled={currentLevel < 8}
+              maxLength={30}
+              className="w-full py-2.5 px-3 text-sm outline-none transition-all duration-200 disabled:opacity-40"
+              style={{
+                backgroundColor: 'var(--color-bg)',
+                color: currentLevel < 8 ? 'var(--color-text-muted)' : 'var(--color-text)',
+                border: '1px solid var(--color-border)',
+                fontFamily: 'var(--font-mono)',
+              }}
+              onFocus={(e) => { if (currentLevel >= 8) e.currentTarget.style.borderColor = 'var(--color-accent-gold)' }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--color-border)' }}
+            />
+            <p className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
+              {customTitle.length}/30 chars · verschijnt op je ledenpas
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div style={{ borderTop: '1px dashed rgba(255,255,255,0.06)' }} />
+
+          {/* Accent color */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label
+                className="font-mono text-[10px] uppercase tracking-[0.2em]"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                accent.color
+              </label>
+              {currentLevel < 6 && (
+                <span
+                  className="font-mono text-[10px] px-2 py-0.5"
+                  style={{
+                    color: 'rgba(245,158,11,0.7)',
+                    backgroundColor: 'rgba(245,158,11,0.06)',
+                    border: '1px solid rgba(245,158,11,0.15)',
+                  }}
+                >
+                  🔒 Unlock op Level 6
+                </span>
+              )}
+            </div>
+            <div className={`flex flex-wrap gap-2 ${currentLevel < 6 ? 'opacity-40 pointer-events-none' : ''}`}>
+              {['#EF4444', '#F59E0B', '#22C55E', '#3B82F6', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316'].map((color) => (
+                <button
+                  key={color}
+                  onClick={() => setAccentColor(color)}
+                  disabled={currentLevel < 6}
+                  className="w-8 h-8 rounded-full transition-transform duration-150 cursor-pointer hover:scale-110 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: color,
+                    boxShadow: accentColor === color
+                      ? `0 0 0 2px var(--color-bg), 0 0 0 4px ${color}`
+                      : 'none',
+                    transform: accentColor === color ? 'scale(1.1)' : undefined,
+                  }}
+                  aria-label={color}
+                  title={color}
+                />
+              ))}
+            </div>
+            <p className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
+              // gebruikt als highlight op je ledenpas en profiel
+            </p>
+          </div>
+
+          {/* Save button */}
+          <div className="flex items-center gap-4 pt-1">
+            <motion.button
+              onClick={handleFlairSave}
+              disabled={flairSaving}
+              className="relative overflow-hidden font-mono text-[11px] uppercase tracking-[0.2em] py-2.5 px-5 transition-all duration-200 disabled:opacity-50"
+              style={{
+                backgroundColor: flairSaving ? 'rgba(242,158,24,0.12)' : 'var(--color-accent-gold)',
+                color: flairSaving ? 'var(--color-accent-gold)' : 'var(--color-bg)',
+                border: '1px solid var(--color-accent-gold)',
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              {flairSaving ? '// saving...' : '> save.flair()'}
+            </motion.button>
+
+            {flairMessage && (
+              <motion.span
+                className="font-mono text-[11px]"
+                initial={{ opacity: 0, x: -4 }}
+                animate={{ opacity: 1, x: 0 }}
+                style={{
+                  color: flairMessage.startsWith('error')
+                    ? 'var(--color-accent-red)'
+                    : 'var(--color-accent-green)',
+                }}
+              >
+                {flairMessage}
+              </motion.span>
+            )}
           </div>
         </div>
       </motion.div>

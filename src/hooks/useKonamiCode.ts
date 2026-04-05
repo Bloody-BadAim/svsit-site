@@ -36,6 +36,11 @@ export function useKonamiCode(onActivate: () => void): KonamiState {
           if (next === KONAMI_SEQUENCE.length) {
             setActivated(true);
             stableOnActivate();
+            fetch('/api/easter-egg', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ triggerId: 'konami' }),
+            }).catch(() => {/* silently ignore — user may not be logged in */});
             return 0;
           }
           return next;
