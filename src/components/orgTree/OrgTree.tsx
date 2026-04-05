@@ -196,7 +196,7 @@ export default function OrgTree() {
         <div className="mb-16 md:mb-24">
           <div className="flex items-center gap-4 mb-4">
             <span className="font-mono text-xs text-[var(--color-accent-gold)] tracking-[0.3em] uppercase">
-              03
+              05
             </span>
             <span className="w-12 h-px bg-[var(--color-accent-gold)]" />
           </div>
@@ -365,37 +365,37 @@ export default function OrgTree() {
         </div>
       </div>
 
-        {/* ── Commissie Aanmelding CTA ── */}
-        <div className="text-center mt-16 md:mt-24 pb-8">
-          <h2
-            className="text-2xl md:text-4xl font-bold uppercase tracking-tight mb-4"
-            style={{ fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif", color: 'var(--color-text)' }}
-          >
-            Wil je meedoen?
-          </h2>
-          <p className="font-mono text-sm md:text-base text-[var(--color-text-muted)] mb-8 max-w-md mx-auto leading-relaxed">
-            Onze commissies zoeken altijd nieuwe leden.
-            Geen ervaring nodig, alleen motivatie.
-          </p>
-          <a
-            href="https://forms.office.com/Pages/ResponsePage.aspx?id=HrsHCfwhb0eIQwLQnOtZp5Gb5Qz7gPZNhhsylBIlKC9UN01YN1EzTEFBMVFaRkhNSVdOU1pDRVpRNC4u"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block px-8 py-4 font-mono font-bold text-base tracking-wide transition-transform hover:scale-[1.03]"
-            style={{
-              backgroundColor: 'var(--color-accent-gold)',
-              color: 'var(--color-bg)',
-            }}
-          >
-            MELD JE AAN
+      {/* ── Commissie Aanmelding CTA ── */}
+      <div className="text-center mt-16 md:mt-24 pb-8">
+        <h2
+          className="text-2xl md:text-4xl font-bold uppercase tracking-tight mb-4"
+          style={{ fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif", color: 'var(--color-text)' }}
+        >
+          Wil je meedoen?
+        </h2>
+        <p className="font-mono text-sm md:text-base text-[var(--color-text-muted)] mb-8 max-w-md mx-auto leading-relaxed">
+          Onze commissies zoeken altijd nieuwe leden.
+          Geen ervaring nodig, alleen motivatie.
+        </p>
+        <a
+          href="https://forms.office.com/Pages/ResponsePage.aspx?id=HrsHCfwhb0eIQwLQnOtZp5Gb5Qz7gPZNhhsylBIlKC9UN01YN1EzTEFBMVFaRkhNSVdOU1pDRVpRNC4u"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block px-8 py-4 font-mono font-bold text-base tracking-wide transition-transform hover:scale-[1.03]"
+          style={{
+            backgroundColor: 'var(--color-accent-gold)',
+            color: 'var(--color-bg)',
+          }}
+        >
+          MELD JE AAN
+        </a>
+        <p className="font-mono text-xs text-[#71717A] mt-4">
+          Of stuur een mail naar{" "}
+          <a href="mailto:bestuur@svsit.nl" className="hover:text-[var(--color-text)] transition-colors">
+            bestuur@svsit.nl
           </a>
-          <p className="font-mono text-xs text-[#71717A] mt-4">
-            Of stuur een mail naar{" "}
-            <a href="mailto:bestuur@svsit.nl" className="hover:text-[var(--color-text)] transition-colors">
-              bestuur@svsit.nl
-            </a>
-          </p>
-        </div>
+        </p>
+      </div>
 
       {/* ── Selected Person Card Overlay ── */}
       <AnimatePresence>

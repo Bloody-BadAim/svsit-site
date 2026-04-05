@@ -335,7 +335,7 @@ export default function Hero() {
 
             {/* Amsterdam × marks — brand identity */}
             <div
-              className={`flex items-center gap-3 mt-16 font-mono text-sm opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.8s_forwards]" : ""
+              className={`flex items-center gap-3 mt-1 font-mono text-sm opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.8s_forwards]" : ""
                 }`}
             >
               <span className="w-8 h-px bg-[var(--color-text-muted)] opacity-40" />

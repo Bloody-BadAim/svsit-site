@@ -133,14 +133,14 @@ export default function Board() {
       className="relative py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-24"
     >
       <div className="max-w-[1400px] mx-auto">
-        <SectionLabel number="05" label="bestuur xi" />
+        <SectionLabel number="06" label="sit bestuur" />
 
         <div className="mb-12 md:mb-16">
           <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight uppercase">
             Bestuur XI
           </h2>
           <p className="font-mono text-sm text-[var(--color-text-muted)] mt-3">
-            2025/2026
+            2026/2027
           </p>
         </div>
 

@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 import { ADMIN_EMAILS } from '@/lib/constants'
-import { LayoutDashboard, CreditCard, User, Trophy, Shield, LogOut, Menu, X } from 'lucide-react'
+import { LayoutDashboard, CreditCard, User, Trophy, Shield, LogOut, Menu, X, Zap, Palette, ShoppingBag } from 'lucide-react'
 
 function CoinPill({ userId }: { userId: string }) {
   const [coins, setCoins] = useState<number | null>(null)
@@ -33,8 +33,11 @@ function CoinPill({ userId }: { userId: string }) {
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
   { href: '/dashboard/ledenpas', label: 'Ledenpas', Icon: CreditCard },
-  { href: '/dashboard/profiel', label: 'Profiel', Icon: User },
+  { href: '/dashboard/xp', label: 'XP', Icon: Zap },
   { href: '/dashboard/rewards', label: 'Rewards', Icon: Trophy },
+  { href: '/dashboard/card-editor', label: 'Card Editor', Icon: Palette },
+  { href: '/dashboard/shop', label: 'Shop', Icon: ShoppingBag },
+  { href: '/dashboard/profiel', label: 'Profiel', Icon: User },
 ]
 
 export default function DashboardNav() {

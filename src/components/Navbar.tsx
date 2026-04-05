@@ -9,6 +9,7 @@ const navLinks = [
   { href: "/#events", label: "Events" },
   { href: "/organisatie", label: "Organisatie" },
   { href: "/over-ons", label: "Het Bestuur" },
+  { href: "/leaderboard", label: "Leaderboard" },
 ];
 
 export default function Navbar() {

@@ -105,7 +105,17 @@
       "Bash(npm rebuild:*)",
       "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))",
       "Bash(node -e \"const s = require\\(''''stripe''''\\); console.log\\(s.Stripe?.LATEST_API_VERSION || ''''check source''''\\)\")",
-      "mcp__claude_ai_Vercel__list_deployments"
+      "mcp__claude_ai_Vercel__list_deployments",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/supabase -name *.sql)",
+      "Bash(bash /home/matin/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh --project-dir /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website)",
+      "Bash(! test:*)",
+      "Bash(curl:*)",
+      "Bash(git checkout:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx --prefix /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website task-update 24 completed)",
+      "Bash(cat:*)",
+      "Bash(git stash:*)",
+      "Bash(git merge:*)"
     ]
   },
   "outputStyle": "default",
