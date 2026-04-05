@@ -78,7 +78,7 @@ export async function grantXp(params: {
     .select('id')
     .eq('status', 'active')
     .limit(1)
-    .single()
+    .maybeSingle()
 
   if (activeBoss) {
     await supabase.rpc('increment_boss_contribution', {

@@ -7,7 +7,7 @@ export async function getActiveBoss(): Promise<BossFight | null> {
   const supabase = createServiceClient()
   const { data } = await supabase.from('boss_fights')
     .select('*').in('status', ['announced', 'active'])
-    .order('created_at', { ascending: false }).limit(1).single()
+    .order('created_at', { ascending: false }).limit(1).maybeSingle()
   return data ? mapBossRow(data) : null
 }
 
@@ -28,14 +28,14 @@ export async function getBossContributions(bossId: string) {
 export async function getMemberContribution(bossId: string, memberId: string): Promise<number> {
   const supabase = createServiceClient()
   const { data } = await supabase.from('boss_fight_contributions')
-    .select('xp_contributed').eq('boss_fight_id', bossId).eq('member_id', memberId).single()
+    .select('xp_contributed').eq('boss_fight_id', bossId).eq('member_id', memberId).maybeSingle()
   return (data?.xp_contributed as number) ?? 0
 }
 
 export async function checkBossStatus(bossId: string): Promise<'active' | 'defeated' | 'failed'> {
   const supabase = createServiceClient()
   const { data: boss } = await supabase.from('boss_fights')
-    .select('hp, current_hp, deadline, status').eq('id', bossId).single()
+    .select('hp, current_hp, deadline, status').eq('id', bossId).maybeSingle()
 
   if (!boss) return 'failed'
   if ((boss.status as string) === 'defeated') return 'defeated'
