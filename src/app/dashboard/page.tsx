@@ -32,20 +32,25 @@ export default async function DashboardPage({
     .eq('id', session.user.id)
     .single()
 
-  const { data: scans } = await supabase
-    .from('scans')
-    .select('*')
-    .eq('member_id', session.user.id)
-    .order('created_at', { ascending: false })
-    .limit(10)
+  const [scansResult, completedChallengesResult, memberStats] = await Promise.all([
+    supabase
+      .from('scans')
+      .select('*')
+      .eq('member_id', session.user.id)
+      .order('created_at', { ascending: false })
+      .limit(10),
+    supabase
+      .from('challenge_submissions')
+      .select('id, challenge_id, created_at, status')
+      .eq('member_id', session.user.id)
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false })
+      .limit(10),
+    calculateStats(session.user.id),
+  ])
 
-  const { data: completedChallenges } = await supabase
-    .from('challenge_submissions')
-    .select('id, challenge_id, created_at, status')
-    .eq('member_id', session.user.id)
-    .eq('status', 'approved')
-    .order('created_at', { ascending: false })
-    .limit(10)
+  const scans = scansResult.data
+  const completedChallenges = completedChallengesResult.data
 
   const challengeIds = (completedChallenges || []).map(s => s.challenge_id)
   const { data: challengeDetails } = challengeIds.length > 0
@@ -76,14 +81,12 @@ export default async function DashboardPage({
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     .slice(0, 10)
 
-  const memberStats = await calculateStats(session.user.id)
-
   const points = (member?.points as number) || 0
   const levelDef = getLevelForXp(points)
   const username = (member?.email as string)?.split('@')[0] || 'lid'
 
   return (
-    <div className="max-w-5xl">
+    <div>
       {/* Welcome banner */}
       {isWelcome && (
         <div

@@ -112,7 +112,7 @@ export default async function LedenpasPage() {
   const maxStat = Math.max(...stats.map(s => s.value), 1)
 
   return (
-    <div className="max-w-5xl space-y-8">
+    <div className="space-y-8">
       {/* Section label */}
       <div>
         <div className="flex items-center gap-4 mb-4">

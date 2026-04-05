@@ -309,7 +309,7 @@ export default async function ShopPage({
   })
 
   return (
-    <div className="max-w-6xl">
+    <div>
       {/* Page header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">

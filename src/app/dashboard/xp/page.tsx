@@ -41,7 +41,7 @@ export default async function XpPage() {
   }>
 
   return (
-    <div className="max-w-3xl space-y-8">
+    <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold font-mono text-white mb-1">HOE VERDIEN IK XP?</h1>
         <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>

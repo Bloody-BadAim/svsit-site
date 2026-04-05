@@ -26,7 +26,7 @@ export default function DashboardLayout({
         />
         <EasterEggTimeCheck />
         <DashboardNav />
-        <main className="relative z-[1] pt-16 lg:pt-0 lg:ml-64 pb-20 lg:pb-8 px-4 sm:px-6 lg:px-10 py-8">
+        <main className="relative z-[1] pt-16 lg:pt-0 lg:ml-64 pb-20 lg:pb-8 px-4 sm:px-6 lg:px-6 py-8">
           {children}
         </main>
       </div>

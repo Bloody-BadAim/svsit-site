@@ -223,7 +223,7 @@ export default function ProfielPage() {
   // ── Loading skeleton ─────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="max-w-5xl space-y-4">
+      <div className="space-y-4">
         {[1, 2, 3].map((i) => (
           <motion.div
             key={i}
@@ -238,7 +238,7 @@ export default function ProfielPage() {
   }
 
   return (
-    <div className="max-w-5xl">
+    <div>
       {/* ── Page header ──────────────────────────────────────────────────────── */}
       <motion.div
         className="mb-10"
