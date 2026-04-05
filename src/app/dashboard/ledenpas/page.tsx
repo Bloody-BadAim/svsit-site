@@ -5,6 +5,10 @@ import type { Role } from '@/types/database'
 import { calculateStats } from '@/lib/rewards'
 import { CARD_SKINS } from '@/lib/cardSkins'
 import LedenpasClient from '@/components/dashboard/LedenpasClient'
+import { getEquippedAccessories } from '@/lib/inventoryEngine'
+import type { MemberCardEquipment } from '@/components/MemberCard'
+import { RARITY_CONFIG } from '@/types/gamification'
+import type { BadgeRarity } from '@/types/gamification'
 
 export const metadata = {
   title: 'Ledenpas — SIT',
@@ -43,6 +47,62 @@ export default async function LedenpasPage() {
   const activeSkin = (member.active_skin as string) || 'default'
   const activeBadges = (member.active_badges as string[]) || []
   const memberStats = await calculateStats(session.user.id)
+
+  // Fetch equipped accessories from card editor and map to MemberCard format
+  const cardEquipment = await getEquippedAccessories(member.id as string)
+
+  // Look up definitions for equipped items to get display values
+  const equippedAccessoryIds = [
+    cardEquipment.frameId,
+    cardEquipment.petId,
+    cardEquipment.effectId,
+    ...cardEquipment.stickers.map(s => s.accessoryId),
+  ].filter(Boolean) as string[]
+
+  let equipment: MemberCardEquipment | undefined
+
+  if (equippedAccessoryIds.length > 0 || cardEquipment.accentColor || cardEquipment.customTitle) {
+    const { data: defs } = await supabase
+      .from('accessory_definitions')
+      .select('id, name, rarity, category, preview_data')
+      .in('id', equippedAccessoryIds.length > 0 ? equippedAccessoryIds : ['__none__'])
+
+    const defMap = new Map((defs ?? []).map(d => [d.id as string, d]))
+
+    const frameDef = cardEquipment.frameId ? defMap.get(cardEquipment.frameId) : null
+    const petDef = cardEquipment.petId ? defMap.get(cardEquipment.petId) : null
+    const effectDef = cardEquipment.effectId ? defMap.get(cardEquipment.effectId) : null
+
+    const frameColor = frameDef
+      ? (frameDef.rarity === 'mythic'
+          ? 'conic-gradient(from 0deg, #f59e0b, #ef4444, #8b5cf6, #3b82f6, #22c55e, #f59e0b)'
+          : RARITY_CONFIG[frameDef.rarity as BadgeRarity]?.color)
+      : undefined
+
+    const petEmoji = petDef
+      ? ((petDef.preview_data as Record<string, unknown> | null)?.emoji as string | undefined)
+      : undefined
+
+    const effectName = effectDef?.name as string | undefined
+
+    const mappedStickers = cardEquipment.stickers
+      .map(s => {
+        const stickerDef = defMap.get(s.accessoryId)
+        const emoji = (stickerDef?.preview_data as Record<string, unknown> | null)?.emoji as string | undefined
+        if (!emoji) return null
+        return { id: s.accessoryId, x: s.x, y: s.y, emoji }
+      })
+      .filter((s): s is { id: string; x: number; y: number; emoji: string } => s !== null)
+
+    equipment = {
+      frameColor,
+      petEmoji,
+      effectName,
+      stickers: mappedStickers.length > 0 ? mappedStickers : undefined,
+      accentColor: cardEquipment.accentColor ?? undefined,
+      customTitle: cardEquipment.customTitle ?? undefined,
+    }
+  }
 
   const stats = [
     { key: 'code',   label: 'CODE',   value: memberStats.code,   color: '#22C55E' },
@@ -93,6 +153,7 @@ export default async function LedenpasPage() {
             skin={activeSkin}
             memberId={member.id as string}
             unlockedSkins={unlockedSkins}
+            equipment={equipment}
           />
         </div>
 

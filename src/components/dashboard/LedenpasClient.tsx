@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
 import { Download } from 'lucide-react'
 import MemberCard from '@/components/MemberCard'
-import type { MemberCardData } from '@/components/MemberCard'
+import type { MemberCardData, MemberCardEquipment } from '@/components/MemberCard'
 import SkinSelector from '@/components/dashboard/SkinSelector'
 
 interface LedenpasClientProps {
@@ -12,9 +12,10 @@ interface LedenpasClientProps {
   skin: string
   memberId: string
   unlockedSkins: string[]
+  equipment?: MemberCardEquipment
 }
 
-export default function LedenpasClient({ data, skin: initialSkin, memberId, unlockedSkins }: LedenpasClientProps) {
+export default function LedenpasClient({ data, skin: initialSkin, memberId, unlockedSkins, equipment }: LedenpasClientProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const [downloading, setDownloading] = useState(false)
   const [activeSkin, setActiveSkin] = useState(initialSkin)
@@ -58,6 +59,7 @@ export default function LedenpasClient({ data, skin: initialSkin, memberId, unlo
           className="w-full max-w-[400px]"
           showQR
           data={{ ...data, skin: activeSkin }}
+          equipment={equipment}
         />
       </div>
 
