@@ -126,27 +126,6 @@ export default function BadgeIcon({
 
   return (
     <>
-      <style>{`
-        @keyframes badge-shimmer {
-          0%, 100% { filter: brightness(1); }
-          50% { filter: brightness(1.35) drop-shadow(0 0 4px rgba(59,130,246,0.6)); }
-        }
-        @keyframes badge-pulse {
-          0%, 100% { box-shadow: 0 0 12px rgba(139,92,246,0.5); }
-          50% { box-shadow: 0 0 20px rgba(139,92,246,0.75), 0 0 32px rgba(139,92,246,0.25); }
-        }
-        @keyframes badge-particle-rotate {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes badge-rainbow-border {
-          0%   { filter: hue-rotate(0deg) brightness(1.2); box-shadow: 0 0 16px rgba(255,80,80,0.4); }
-          33%  { filter: hue-rotate(120deg) brightness(1.2); box-shadow: 0 0 16px rgba(80,255,80,0.4); }
-          66%  { filter: hue-rotate(240deg) brightness(1.2); box-shadow: 0 0 16px rgba(80,80,255,0.4); }
-          100% { filter: hue-rotate(360deg) brightness(1.2); box-shadow: 0 0 16px rgba(255,80,80,0.4); }
-        }
-      `}</style>
-
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
         {/* Legendary particle ring wrapper */}
         {isLegendary ? (
