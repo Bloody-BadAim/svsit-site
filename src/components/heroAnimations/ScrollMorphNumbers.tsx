@@ -31,9 +31,14 @@ export default function ScrollMorphNumbers() {
       return
     }
 
-    if (scrollRatio > 0.92) {
-      setVisible(false)
-      return
+    // Hide in footer (check if footer is in view)
+    const footer = document.getElementById('footer')
+    if (footer) {
+      const footerRect = footer.getBoundingClientRect()
+      if (footerRect.top < window.innerHeight * 0.5) {
+        setVisible(false)
+        return
+      }
     }
 
     // Find which section the viewport center is in
