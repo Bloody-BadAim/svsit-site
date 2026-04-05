@@ -5,7 +5,6 @@ import { toPng } from 'html-to-image'
 import { Download } from 'lucide-react'
 import MemberCard from '@/components/MemberCard'
 import type { MemberCardData, MemberCardEquipment } from '@/components/MemberCard'
-import SkinSelector from '@/components/dashboard/SkinSelector'
 
 interface LedenpasClientProps {
   data: MemberCardData
@@ -15,10 +14,9 @@ interface LedenpasClientProps {
   equipment?: MemberCardEquipment
 }
 
-export default function LedenpasClient({ data, skin: initialSkin, memberId, unlockedSkins, equipment }: LedenpasClientProps) {
+export default function LedenpasClient({ data, skin: initialSkin, equipment }: LedenpasClientProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const [downloading, setDownloading] = useState(false)
-  const [activeSkin, setActiveSkin] = useState(initialSkin)
 
   async function handleDownload() {
     if (!cardRef.current) return
@@ -58,7 +56,7 @@ export default function LedenpasClient({ data, skin: initialSkin, memberId, unlo
         <MemberCard
           className="w-full max-w-[400px]"
           showQR
-          data={{ ...data, skin: activeSkin }}
+          data={{ ...data, skin: initialSkin }}
           equipment={equipment}
         />
       </div>
@@ -76,13 +74,6 @@ export default function LedenpasClient({ data, skin: initialSkin, memberId, unlo
         <Download size={16} />
         {downloading ? 'Downloaden...' : 'Download als PNG'}
       </button>
-
-      <SkinSelector
-        memberId={memberId}
-        activeSkin={activeSkin}
-        unlockedSkins={unlockedSkins}
-        onSkinChange={setActiveSkin}
-      />
     </div>
   )
 }

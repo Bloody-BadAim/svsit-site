@@ -26,11 +26,16 @@ export async function getEquippedAccessories(memberId: string): Promise<CardEqui
   }
 
   for (const row of data ?? []) {
-    const def = row.accessory_definitions as { category: string } | null
+    const def = row.accessory_definitions as { category: string; preview_data?: Record<string, unknown> | null } | null
     if (!def) continue
     const accessoryId = row.accessory_id as string
     switch (def.category) {
-      case 'skin': equipment.skinId = accessoryId; break
+      case 'skin': {
+        // Prefer preview_data.skinId (maps to CARD_SKINS id), fall back to accessory UUID
+        const legacySkinId = (def.preview_data?.skinId as string | undefined) ?? accessoryId
+        equipment.skinId = legacySkinId
+        break
+      }
       case 'frame': equipment.frameId = accessoryId; break
       case 'pet': equipment.petId = accessoryId; break
       case 'effect': equipment.effectId = accessoryId; break

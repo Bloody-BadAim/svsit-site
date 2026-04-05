@@ -2,9 +2,11 @@
 
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { Lock, PawPrint } from 'lucide-react'
+import { Lock } from 'lucide-react'
 import { RARITY_CONFIG } from '@/types/gamification'
 import type { AccessoryCategory, BadgeRarity, UnlockRule } from '@/types/gamification'
+import MemberCard from '@/components/MemberCard'
+import type { MemberCardEquipment } from '@/components/MemberCard'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -87,16 +89,6 @@ function getRarityColor(rarity: BadgeRarity): string {
   return RARITY_CONFIG[rarity].color
 }
 
-function getRarityBorderStyle(rarity: BadgeRarity): React.CSSProperties {
-  if (rarity === 'mythic') {
-    return {
-      borderImage: 'conic-gradient(from 0deg, #f59e0b, #ef4444, #8b5cf6, #3b82f6, #22c55e, #f59e0b) 1',
-      borderWidth: 2,
-      borderStyle: 'solid',
-    }
-  }
-  return { border: `2px solid ${RARITY_CONFIG[rarity].color}` }
-}
 
 function unlockLabel(rule: UnlockRule | null, shopPrice: number | null): string {
   if (rule) {
@@ -131,14 +123,29 @@ function CardPreview({ equippedMap, member, accentColor }: CardPreviewProps) {
   const petDef = pet?.accessory_definitions
   const effectDef = effect?.accessory_definitions
 
-  // Determine card background from skin preview_data or fallback
-  const skinBg = (skinDef?.preview_data?.background as string | undefined) ?? '#111113'
+  // Build equipment object for MemberCard
   const frameColor = frameDef
     ? getRarityColor(frameDef.rarity)
-    : accentColor || 'rgba(255,255,255,0.08)'
-  const frameBorderStyle: React.CSSProperties = frameDef
-    ? getRarityBorderStyle(frameDef.rarity)
-    : { border: `2px solid ${accentColor || 'rgba(255,255,255,0.08)'}` }
+    : undefined
+
+  const petEmoji = petDef
+    ? (petDef.preview_data?.emoji as string | undefined)
+    : undefined
+
+  const effectName = effectDef?.name
+
+  const equipment: MemberCardEquipment = {
+    frameColor,
+    petEmoji,
+    effectName,
+    accentColor: accentColor || undefined,
+    customTitle: member.custom_title ?? undefined,
+  }
+
+  // Skin: use the skin id stored in the skin accessory definition, or fall back to member.active_skin
+  const activeSkin = skinDef
+    ? (skinDef.preview_data?.skinId as string | undefined) ?? member.active_skin
+    : member.active_skin
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -146,116 +153,20 @@ function CardPreview({ equippedMap, member, accentColor }: CardPreviewProps) {
         live preview
       </span>
 
-      {/* Card container */}
-      <div
-        className="relative overflow-hidden"
-        style={{
-          width: 220,
-          height: 320,
-          background: skinBg,
-          ...frameBorderStyle,
-          borderRadius: 12,
+      <MemberCard
+        style={{ width: 260 }}
+        data={{
+          name: 'preview',
+          role: 'member',
+          commissie: null,
+          points: (member.current_level ?? 1) * 100,
+          skin: activeSkin,
         }}
-      >
-        {/* Skin texture / pattern overlay */}
-        {(skinDef?.preview_data?.pattern as string | undefined) && (
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage: `url(${skinDef!.preview_data!.pattern as string})`,
-              backgroundSize: 'cover',
-            }}
-          />
-        )}
-
-        {/* Effect overlay */}
-        {effectDef && (
-          <div
-            className="absolute inset-0 flex items-center justify-center pointer-events-none"
-            style={{ zIndex: 2 }}
-          >
-            <span
-              className="font-mono text-[9px] uppercase tracking-[0.15em] px-2 py-0.5 rounded"
-              style={{
-                color: 'rgba(255,255,255,0.3)',
-                background: 'rgba(0,0,0,0.3)',
-                backdropFilter: 'blur(4px)',
-              }}
-            >
-              {effectDef.name}
-            </span>
-          </div>
-        )}
-
-        {/* SIT logo placeholder */}
-        <div className="absolute top-4 left-4 flex items-center gap-1.5" style={{ zIndex: 3 }}>
-          <span className="font-mono text-sm font-bold" style={{ color: accentColor || '#F59E0B' }}>
-            {'{'}SIT{'}'}
-          </span>
-        </div>
-
-        {/* Level badge */}
-        <div
-          className="absolute top-4 right-4 font-mono text-[10px] px-1.5 py-0.5 rounded"
-          style={{
-            backgroundColor: `${accentColor || '#F59E0B'}22`,
-            border: `1px solid ${accentColor || '#F59E0B'}44`,
-            color: accentColor || '#F59E0B',
-            zIndex: 3,
-          }}
-        >
-          L{member.current_level}
-        </div>
-
-        {/* Card content area */}
-        <div
-          className="absolute bottom-0 left-0 right-0 p-3"
-          style={{
-            background: 'linear-gradient(0deg, rgba(0,0,0,0.7) 0%, transparent 100%)',
-            zIndex: 3,
-          }}
-        >
-          {/* Custom title */}
-          {member.custom_title && (
-            <div
-              className="font-mono text-[9px] uppercase tracking-[0.2em] mb-1"
-              style={{ color: accentColor || '#F59E0B' }}
-            >
-              {member.custom_title}
-            </div>
-          )}
-          {/* Frame color preview bar */}
-          {frameDef && (
-            <div
-              className="h-0.5 w-full mb-2 rounded-full"
-              style={{ background: frameColor, opacity: 0.6 }}
-            />
-          )}
-        </div>
-
-        {/* Pet — bottom right corner */}
-        {petDef && (
-          <div
-            className="absolute bottom-3 right-3 font-mono text-lg"
-            style={{ zIndex: 4 }}
-            title={petDef.name}
-          >
-            {(petDef.preview_data?.emoji as string | undefined) ?? <PawPrint className="w-5 h-5" style={{ color: 'var(--color-accent-gold)' }} />}
-          </div>
-        )}
-
-        {/* Corner decoration */}
-        <div
-          className="absolute bottom-0 right-0 w-12 h-12"
-          style={{
-            background: `radial-gradient(circle at bottom right, ${accentColor || '#F59E0B'}22, transparent 70%)`,
-            zIndex: 1,
-          }}
-        />
-      </div>
+        equipment={equipment}
+      />
 
       {/* Equipped summary */}
-      <div className="w-full space-y-1 font-mono text-[10px]" style={{ maxWidth: 220 }}>
+      <div className="w-full space-y-1 font-mono text-[10px]" style={{ maxWidth: 260 }}>
         {(['skin', 'frame', 'pet', 'effect'] as AccessoryCategory[]).map((cat) => {
           const row = equippedMap.get(cat)
           return (
@@ -317,19 +228,15 @@ function AccessoryItem({ def, owned, isEquipped, onEquip, onUnequip }: Accessory
             : 'rgba(255,255,255,0.03)',
           border: isEquipped
             ? `2px solid ${rarityColor}`
-            : '1px solid rgba(255,255,255,0.06)',
+            : isLocked
+              ? `1px dashed rgba(255,255,255,0.06)`
+              : '1px solid rgba(255,255,255,0.08)',
+          boxShadow: isEquipped
+            ? `0 0 10px ${rarityColor}44`
+            : 'none',
           opacity: isLocked ? 0.45 : 1,
         }}
       >
-        {/* Rarity glow on equipped */}
-        {isEquipped && (
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              boxShadow: `inset 0 0 12px ${rarityColor}22`,
-            }}
-          />
-        )}
 
         {/* Content area */}
         <div className="absolute inset-0 flex items-center justify-center">

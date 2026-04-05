@@ -47,7 +47,8 @@ export default async function LedenpasPage() {
   const unlockedSkins = isAdmin
     ? CARD_SKINS.map(s => s.id)
     : ['default', ...((rewards || []).map(r => r.reward_id as string))]
-  const activeSkin = (member.active_skin as string) || 'default'
+  // V2 skin (from member_accessories equipped) takes precedence over legacy active_skin
+  const activeSkin = cardEquipment.skinId ?? ((member.active_skin as string) || 'default')
   const activeBadges = (member.active_badges as string[]) || []
 
   // Look up definitions for equipped items to get display values
