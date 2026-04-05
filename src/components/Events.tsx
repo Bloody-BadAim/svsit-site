@@ -470,7 +470,7 @@ function EventCard({
       </div>
 
       {/* Card body */}
-      <div style={{ padding: "16px 20px 20px" }}>
+      <div style={{ padding: "12px 14px 16px" }} className="sm:!p-5">
         <div className="flex items-baseline gap-2" style={{ marginBottom: 6 }}>
           <span
             className="font-display text-[26px] font-extrabold leading-none"
@@ -646,7 +646,7 @@ function DetailPanel({
       {/* Console header */}
       <div
         className="border-b border-white/5"
-        style={{ padding: "12px 20px" }}
+        style={{ padding: "10px 14px" }}
       >
         <span className="font-mono text-[11px] text-[var(--color-text-muted)]">
           {">"} event.inspect(
@@ -654,12 +654,12 @@ function DetailPanel({
         </span>
       </div>
 
-      <div style={{ padding: "24px" }}>
+      <div style={{ padding: "16px 16px 20px" }} className="sm:!p-6">
         {/* Big date */}
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 16 }}>
           <span
             className="font-display font-extrabold leading-none block"
-            style={{ fontSize: "clamp(60px, 7vw, 76px)", color: c }}
+            style={{ fontSize: "clamp(40px, 7vw, 76px)", color: c }}
           >
             {fDay(shown.date)}
           </span>
@@ -740,9 +740,9 @@ function DetailPanel({
           {shown.status === "NEXT" && (
             <a
               href="#"
-              className="inline-flex items-center font-mono text-[13px] font-bold tracking-wider uppercase transition-[transform,opacity,color] duration-200 cursor-pointer hover:scale-[1.02]"
+              className="inline-flex items-center font-mono text-xs sm:text-[13px] font-bold tracking-wider uppercase transition-[transform,opacity,color] duration-200 cursor-pointer hover:scale-[1.02]"
               style={{
-                padding: "12px 28px",
+                padding: "10px 20px",
                 gap: 8,
                 background: c,
                 color: "#09090B",
