@@ -1,20 +1,23 @@
 'use client'
 
 import { motion, useReducedMotion } from 'motion/react'
-import { LEVELS, getLevelForXp, getLevelProgress } from '@/lib/levelEngine'
+import { LEVELS, getLevelForXp, getLevelProgress, getTierColor } from '@/lib/levelEngine'
 
 interface ProgressionTrackerProps {
   // Legacy prop — kept for call-site compatibility, ignored internally
-  currentRank: string
-  points: number
+  currentRank?: string
+  /** Member's total XP — also accepted as total_xp for call-site flexibility */
+  points?: number
+  total_xp?: number
 }
 
-export default function ProgressionTracker({ points }: ProgressionTrackerProps) {
+export default function ProgressionTracker({ points, total_xp }: ProgressionTrackerProps) {
   const shouldReduceMotion = useReducedMotion()
-  const currentLevelDef = getLevelForXp(points)
+  const totalXp = total_xp ?? points ?? 0
+  const currentLevelDef = getLevelForXp(totalXp)
   const currentIndex = currentLevelDef.level - 1
   const nextLevelDef = LEVELS[currentIndex + 1] ?? null
-  const levelProgress = getLevelProgress(points)
+  const levelProgress = getLevelProgress(totalXp)
 
   // Progress between current and next level (0-1)
   const segmentProgress = levelProgress.max > 0 ? levelProgress.current / levelProgress.max : 1
@@ -36,7 +39,7 @@ export default function ProgressionTracker({ points }: ProgressionTrackerProps) 
           progression.rank
         </span>
         <span className="font-mono text-xs" style={{ color: currentLevelDef.color }}>
-          {points} XP
+          {totalXp} XP
         </span>
       </div>
 
@@ -110,12 +113,14 @@ export default function ProgressionTracker({ points }: ProgressionTrackerProps) 
 
                   {/* Level name */}
                   <span
-                    className="font-mono text-[10px] sm:text-xs uppercase tracking-wider mt-3 text-center"
+                    className="font-mono text-[10px] sm:text-xs uppercase tracking-wider mt-3 text-center leading-tight"
                     style={{
                       color: isLocked ? 'rgba(255,255,255,0.2)' : isActive ? lvl.color : 'var(--color-text-muted)',
                       fontWeight: isActive ? 700 : 400,
                     }}
                   >
+                    <span style={{ opacity: isLocked ? 0.5 : 0.7 }}>L{lvl.level}</span>
+                    <br />
                     {lvl.title}
                   </span>
 
@@ -160,7 +165,7 @@ export default function ProgressionTracker({ points }: ProgressionTrackerProps) 
               volgende: <span style={{ color: nextLevelDef.color }}>{nextLevelDef.title}</span>
             </span>
             <span style={{ color: 'var(--color-text-muted)' }}>
-              <span style={{ color: currentLevelDef.color }}>{nextLevelDef.cumulativeXp - points}</span> xp nodig
+              <span style={{ color: currentLevelDef.color }}>{nextLevelDef.cumulativeXp - totalXp}</span> xp nodig
             </span>
           </motion.div>
         )}
