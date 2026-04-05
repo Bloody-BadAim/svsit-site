@@ -115,7 +115,9 @@
       "Bash(npx --prefix /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website task-update 24 completed)",
       "Bash(cat:*)",
       "Bash(git stash:*)",
-      "Bash(git merge:*)"
+      "Bash(git merge:*)",
+      "mcp__plugin_figma_figma__whoami",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f -name *mail* -o -name *email*)"
     ]
   },
   "outputStyle": "default",

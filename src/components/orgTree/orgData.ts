@@ -48,7 +48,7 @@ export const bestuur: Person[] = [
   },
   {
     id: "idil",
-    name: "Idil Yilmaz",
+    name: "Idil",
     role: "Secretaris",
     accentColor: "#EF4444",
     commissies: ["pr-socials", "fun-events", "ai4hva"],
