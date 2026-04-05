@@ -65,7 +65,8 @@ export async function equipAccessory(memberId: string, accessoryId: string, posi
     .single()
 
   if (!accessory) return false
-  const def = accessory.accessory_definitions as { category: string } | null
+  const raw = accessory.accessory_definitions as unknown
+  const def = (Array.isArray(raw) ? raw[0] : raw) as { category: string } | null
   if (!def) return false
   const category = def.category as AccessoryCategory
 
@@ -77,7 +78,8 @@ export async function equipAccessory(memberId: string, accessoryId: string, posi
       .eq('equipped', true)
 
     for (const item of currentEquipped ?? []) {
-      const itemDef = item.accessory_definitions as { category: string } | null
+      const itemRaw = item.accessory_definitions as unknown
+      const itemDef = (Array.isArray(itemRaw) ? itemRaw[0] : itemRaw) as { category: string } | null
       if (itemDef?.category === category) {
         await supabase.from('member_accessories')
           .update({ equipped: false, position: null })
