@@ -454,7 +454,7 @@ export default function TicketEmail({
                     fontFamily: C.heading,
                     fontSize: "36px",
                     fontWeight: "900",
-                    color: price === "GRATIS" ? C.green : C.green,
+                    color: price === "GRATIS" ? C.green : C.gold,
                     textAlign: "center",
                     letterSpacing: "0.02em",
                     margin: "0",

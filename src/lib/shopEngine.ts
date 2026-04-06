@@ -55,6 +55,17 @@ export async function purchaseItem(
 
   const price = item.shop_price as number
 
+  // 1. Check if item already owned (before any coin deduction)
+  const { data: existing } = await supabase
+    .from('member_accessories')
+    .select('id')
+    .eq('member_id', memberId)
+    .eq('accessory_id', accessoryId)
+    .single()
+
+  if (existing) return { success: false, error: 'Je hebt dit item al' }
+
+  // 2. Check coin balance and deduct
   if (!isAdmin) {
     const { data: member } = await supabase
       .from('members')
@@ -66,23 +77,14 @@ export async function purchaseItem(
     if ((member.coins_balance as number) < price)
       return { success: false, error: 'Niet genoeg coins' }
 
-    // Deduct coins
+    // 3. Deduct coins
     await supabase
       .from('members')
       .update({ coins_balance: (member.coins_balance as number) - price })
       .eq('id', memberId)
   }
 
-  const { data: existing } = await supabase
-    .from('member_accessories')
-    .select('id')
-    .eq('member_id', memberId)
-    .eq('accessory_id', accessoryId)
-    .single()
-
-  if (existing) return { success: false, error: 'Je hebt dit item al' }
-
-  // Add to inventory
+  // 4. Add to inventory
   await supabase
     .from('member_accessories')
     .insert({ member_id: memberId, accessory_id: accessoryId, acquired_via: 'shop' })
@@ -92,7 +94,7 @@ export async function purchaseItem(
     .from('shop_transactions')
     .insert({ member_id: memberId, accessory_id: accessoryId, coins_spent: isAdmin ? 0 : price })
 
-  // Decrease stock
+  // 5. Decrease stock
   if (item.stock !== null) {
     await supabase
       .from('accessory_definitions')

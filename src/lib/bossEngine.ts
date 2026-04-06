@@ -7,9 +7,18 @@ export async function getActiveBoss(): Promise<BossFight | null> {
   const supabase = createServiceClient()
   const { data } = await supabase.from('boss_fights')
     .select('id, name, description, hp, current_hp, artwork_url, status, announced_at, starts_at, deadline, base_reward_xp, base_reward_badge_id, top_reward_accessory_id, created_at')
-    .in('status', ['announced', 'active'])
     .order('created_at', { ascending: false }).limit(1).maybeSingle()
-  return data ? mapBossRow(data) : null
+  if (!data) return null
+
+  const boss = mapBossRow(data)
+
+  // Only return active/announced bosses, or recently defeated/failed (within 24h) for the widget
+  if (boss.status === 'defeated' || boss.status === 'failed') {
+    const cutoff = Date.now() - 24 * 60 * 60 * 1000
+    if (new Date(boss.createdAt).getTime() < cutoff) return null
+  }
+
+  return boss
 }
 
 export async function getBossContributions(bossId: string) {
@@ -33,22 +42,47 @@ export async function getMemberContribution(bossId: string, memberId: string): P
   return (data?.xp_contributed as number) ?? 0
 }
 
-export async function checkBossStatus(bossId: string): Promise<'active' | 'defeated' | 'failed'> {
+export async function checkBossStatus(bossId: string): Promise<'announced' | 'active' | 'defeated' | 'failed'> {
   const supabase = createServiceClient()
   const { data: boss } = await supabase.from('boss_fights')
-    .select('hp, current_hp, deadline, status').eq('id', bossId).maybeSingle()
+    .select('hp, current_hp, deadline, starts_at, status').eq('id', bossId).maybeSingle()
 
   if (!boss) return 'failed'
   if ((boss.status as string) === 'defeated') return 'defeated'
 
+  // Transition announced → active when startsAt has passed (atomic CAS)
+  if ((boss.status as string) === 'announced') {
+    if (new Date() >= new Date(boss.starts_at as string)) {
+      const { data: updated } = await supabase.from('boss_fights')
+        .update({ status: 'active' })
+        .eq('id', bossId)
+        .eq('status', 'announced')
+        .select('id')
+        .maybeSingle()
+      if (!updated) return 'announced'
+    } else {
+      return 'announced'
+    }
+  }
+
   if ((boss.current_hp as number) >= (boss.hp as number)) {
-    await supabase.from('boss_fights').update({ status: 'defeated' }).eq('id', bossId)
-    await grantBossRewards(bossId)
+    // Atomic: only update if still active (prevents double reward granting)
+    const { data: updated } = await supabase.from('boss_fights')
+      .update({ status: 'defeated' })
+      .eq('id', bossId)
+      .eq('status', 'active')
+      .select('id')
+      .maybeSingle()
+    if (updated) await grantBossRewards(bossId)
     return 'defeated'
   }
 
   if (new Date() > new Date(boss.deadline as string)) {
-    await supabase.from('boss_fights').update({ status: 'failed' }).eq('id', bossId)
+    // Atomic: only update if still active (prevents double transition)
+    await supabase.from('boss_fights')
+      .update({ status: 'failed' })
+      .eq('id', bossId)
+      .eq('status', 'active')
     return 'failed'
   }
 

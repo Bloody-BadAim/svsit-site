@@ -27,11 +27,12 @@ export default async function CardEditorPage() {
 
   const member = memberResult.data
   const isAdmin = member?.is_admin || member?.role === 'bestuur'
+  const equippedRows = (inventoryResult.data ?? []).filter((r: any) => r.equipped)
 
   return (
     <CardEditor
       inventory={inventoryResult.data ?? []}
-      equipped={[]}
+      equipped={equippedRows}
       allDefinitions={definitionsResult.data ?? []}
       member={member ?? {
         current_level: 1,

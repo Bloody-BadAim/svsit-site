@@ -7,7 +7,7 @@ import { RARITY_CONFIG } from '@/types/gamification'
 import type { AccessoryCategory, BadgeRarity, UnlockRule } from '@/types/gamification'
 import MemberCard from '@/components/MemberCard'
 import type { MemberCardEquipment } from '@/components/MemberCard'
-import { PET_MAP } from '@/components/pets'
+import { resolvePetComponent } from '@/components/pets'
 import { getRarityColor } from '@/lib/badgeDefs'
 import { getSkin, CARD_SKINS } from '@/lib/cardSkins'
 
@@ -102,7 +102,7 @@ function unlockLabel(rule: UnlockRule | null, shopPrice: number | null): string 
 // ---------------------------------------------------------------------------
 
 function PetPreview({ petId, size = 28 }: { petId: string; size?: number }) {
-  const PetComponent = PET_MAP[petId]
+  const PetComponent = resolvePetComponent(petId)
   if (PetComponent) return <PetComponent size={size} />
   return <div className="w-6 h-6 rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }} />
 }
@@ -138,26 +138,94 @@ function SkinPreview({ skinId }: { skinId: string }) {
   )
 }
 
-function FramePreview({ rarity }: { rarity: BadgeRarity }) {
-  const color = getRarityBorder(rarity)
-  const isGradient = color.includes('gradient')
+function FramePreview({ def }: { def: AccessoryDefinition }) {
+  const name = def.name.toLowerCase()
+
+  let outerStyle: React.CSSProperties = {}
+  let innerStyle: React.CSSProperties = {}
+
+  if (name.includes('neon')) {
+    // Neon Frame — cyan electric glow
+    outerStyle = {
+      background: 'rgba(0,255,255,0.08)',
+      border: '2px solid #00e5ff',
+      boxShadow: '0 0 12px rgba(0,229,255,0.5), inset 0 0 8px rgba(0,229,255,0.15)',
+    }
+    innerStyle = {
+      border: '1.5px solid #00e5ff',
+      boxShadow: '0 0 6px rgba(0,229,255,0.4)',
+      opacity: 0.7,
+    }
+  } else if (name.includes('matrix')) {
+    // Matrix Frame — green scanline pattern
+    outerStyle = {
+      background: 'repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,255,70,0.12) 3px, rgba(0,255,70,0.12) 4px)',
+      border: '2px solid #00ff46',
+      boxShadow: '0 0 10px rgba(0,255,70,0.3)',
+    }
+    innerStyle = {
+      border: '1.5px solid #00ff46',
+      opacity: 0.5,
+      background: 'rgba(0,255,70,0.06)',
+    }
+  } else if (name.includes('gold')) {
+    // Gold Frame — gold shimmer gradient
+    outerStyle = {
+      background: 'linear-gradient(135deg, #b8860b, #ffd700, #daa520, #ffd700, #b8860b)',
+      boxShadow: '0 0 14px rgba(255,215,0,0.4)',
+    }
+    innerStyle = {
+      border: '1.5px solid rgba(255,215,0,0.8)',
+      background: 'rgba(0,0,0,0.3)',
+      opacity: 0.8,
+    }
+  } else if (name.includes('ice') || name.includes('crystal')) {
+    // Ice Crystal Frame — blue/white crystalline
+    outerStyle = {
+      background: 'linear-gradient(135deg, rgba(173,216,230,0.2), rgba(135,206,250,0.15), rgba(255,255,255,0.1))',
+      border: '2px solid #87cefa',
+      boxShadow: '0 0 10px rgba(135,206,250,0.35), inset 0 0 6px rgba(255,255,255,0.1)',
+    }
+    innerStyle = {
+      border: '1.5px solid rgba(173,216,230,0.7)',
+      background: 'linear-gradient(45deg, rgba(255,255,255,0.08), rgba(135,206,250,0.12))',
+      opacity: 0.7,
+    }
+  } else if (name.includes('fire') || name.includes('flame')) {
+    // Fire Frame — red/orange flame gradient
+    outerStyle = {
+      background: 'linear-gradient(180deg, #ef4444, #f97316, #facc15)',
+      boxShadow: '0 0 14px rgba(239,68,68,0.45)',
+    }
+    innerStyle = {
+      border: '1.5px solid rgba(250,204,21,0.7)',
+      background: 'rgba(0,0,0,0.3)',
+      opacity: 0.8,
+    }
+  } else {
+    // Fallback — rarity-based (for unknown frames)
+    const color = getRarityBorder(def.rarity)
+    const isGradient = color.includes('gradient')
+    outerStyle = {
+      background: isGradient ? color : undefined,
+      backgroundColor: isGradient ? undefined : `${color}15`,
+      border: isGradient ? undefined : `2px solid ${color}`,
+      boxShadow: `0 0 8px ${getRarityColor(def.rarity)}44`,
+    }
+    innerStyle = {
+      border: `1.5px solid ${getRarityColor(def.rarity)}`,
+      opacity: 0.5,
+    }
+  }
+
   return (
     <div
       className="w-full h-full rounded flex items-center justify-center"
-      style={{
-        background: isGradient ? color : undefined,
-        backgroundColor: isGradient ? undefined : `${color}15`,
-        border: isGradient ? undefined : `2px solid ${color}`,
-        boxShadow: `0 0 8px ${getRarityColor(rarity)}44`,
-      }}
+      style={outerStyle}
     >
-      {/* Inner frame shape */}
       <div
         className="w-[60%] h-[60%] rounded-sm"
-        style={{
-          border: `1.5px solid ${getRarityColor(rarity)}`,
-          opacity: 0.5,
-        }}
+        style={innerStyle}
       />
     </div>
   )
@@ -216,7 +284,7 @@ function ItemVisual({ def }: { def: AccessoryDefinition }) {
     case 'skin':
       return skinId ? <SkinPreview skinId={skinId} /> : <SkinPreview skinId="default" />
     case 'frame':
-      return <FramePreview rarity={def.rarity} />
+      return <FramePreview def={def} />
     case 'effect':
       return <EffectPreview effectName={def.name} rarity={def.rarity} />
     case 'sticker':
@@ -581,15 +649,19 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
     }
   }
 
-  // Equipped map (category -> row)
+  // Equipped map (category -> row) — stickers stored separately (multiple allowed)
   const [equippedMap, setEquippedMap] = useState<Map<AccessoryCategory, MemberAccessoryRow>>(() => {
     const m = new Map<AccessoryCategory, MemberAccessoryRow>()
     for (const row of equipped) {
       const def = row.accessory_definitions
-      if (def) m.set(def.category, row)
+      if (def && def.category !== 'sticker') m.set(def.category, row)
     }
     return m
   })
+
+  const [equippedStickers, setEquippedStickers] = useState<MemberAccessoryRow[]>(() =>
+    equipped.filter((r) => r.accessory_definitions?.category === 'sticker')
+  )
 
   const [accentColor, setAccentColor] = useState(member.accent_color ?? '#F59E0B')
 
@@ -644,16 +716,30 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
 
     const frameColor = frameDef ? getRarityBorder(frameDef.rarity) : undefined
 
+    // Resolve pet identifier: prefer preview_data.petId, fall back to emoji,
+    // then derive from the accessory name (e.g. "Debug Bug" → "pet_debug_bug")
     const petEmoji = petDef
-      ? ((petDef.preview_data?.petId as string | undefined) ?? (petDef.preview_data?.emoji as string | undefined))
+      ? ((petDef.preview_data?.petId as string | undefined)
+        ?? (petDef.preview_data?.emoji as string | undefined)
+        ?? `pet_${petDef.name.toLowerCase().replace(/\s+/g, '_')}`)
       : undefined
 
     const effectName = effectDef?.name
+
+    // Build stickers array from equipped stickers
+    const stickers = equippedStickers.slice(0, 3).map((row) => {
+      const emoji = (row.accessory_definitions?.preview_data?.emoji as string)
+        || (row.accessory_definitions?.preview_data?.content as string)
+        || '?'
+      const pos = row.position ?? { x: 50, y: 50 }
+      return { id: row.accessory_id, x: pos.x, y: pos.y, emoji }
+    })
 
     const equipment: MemberCardEquipment = {
       frameColor,
       petEmoji,
       effectName,
+      stickers: stickers.length > 0 ? stickers : undefined,
       accentColor: accentColor || undefined,
       customTitle: member.custom_title ?? undefined,
     }
@@ -680,11 +766,19 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
         const row = ownedMap.get(accessoryId)
         if (row?.accessory_definitions) {
           const cat = row.accessory_definitions.category
-          setEquippedMap((prev) => {
-            const next = new Map(prev)
-            next.set(cat, { ...row, equipped: true })
-            return next
-          })
+          if (cat === 'sticker') {
+            setEquippedStickers((prev) => {
+              if (prev.length >= 3) return prev // max 3
+              if (prev.some((s) => s.accessory_id === accessoryId)) return prev
+              return [...prev, { ...row, equipped: true }]
+            })
+          } else {
+            setEquippedMap((prev) => {
+              const next = new Map(prev)
+              next.set(cat, { ...row, equipped: true })
+              return next
+            })
+          }
         }
       }
     } finally {
@@ -705,11 +799,15 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
         const row = ownedMap.get(accessoryId)
         if (row?.accessory_definitions) {
           const cat = row.accessory_definitions.category
-          setEquippedMap((prev) => {
-            const next = new Map(prev)
-            next.delete(cat)
-            return next
-          })
+          if (cat === 'sticker') {
+            setEquippedStickers((prev) => prev.filter((s) => s.accessory_id !== accessoryId))
+          } else {
+            setEquippedMap((prev) => {
+              const next = new Map(prev)
+              next.delete(cat)
+              return next
+            })
+          }
         }
       }
     } finally {
@@ -852,7 +950,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
           <div ref={tabBarRef} className="flex">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id
-              const equippedInTab = equippedMap.has(tab.id)
+              const equippedInTab = tab.id === 'sticker' ? equippedStickers.length > 0 : equippedMap.has(tab.id)
               return (
                 <button
                   key={tab.id}
@@ -926,7 +1024,9 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
                 <div className="grid grid-cols-3 gap-3">
                   {tabDefs.map((def, i) => {
                     const owned = ownedMap.get(def.id)
-                    const isEquipped = equippedMap.get(def.category)?.accessory_id === def.id
+                    const isEquipped = def.category === 'sticker'
+                      ? equippedStickers.some((s) => s.accessory_id === def.id)
+                      : equippedMap.get(def.category)?.accessory_id === def.id
                     return (
                       <GridItem
                         key={def.id}

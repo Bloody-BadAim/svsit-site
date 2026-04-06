@@ -80,7 +80,8 @@ export async function grantXp(params: {
     .limit(1)
     .maybeSingle()
 
-  if (activeBoss) {
+  // Skip boss contribution for XP that comes from boss rewards or badge unlocks
+  if (activeBoss && params.source !== 'boss_fight' && params.source !== 'badge_unlock') {
     await supabase.rpc('increment_boss_contribution', {
       p_boss_id: activeBoss.id,
       p_member_id: params.memberId,

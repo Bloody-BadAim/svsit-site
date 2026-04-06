@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import { Swords, Check, X, AlertTriangle, Users } from 'lucide-react'
+import { useState, useCallback, useEffect } from 'react'
+import { Swords, Check, X, AlertTriangle, Users, Pencil, Trash2, Play, Square } from 'lucide-react'
 import { BADGE_DEFS } from '@/lib/badgeDefs'
 import type { BossFight } from '@/types/gamification'
 
@@ -27,6 +27,20 @@ const labelStyle: React.CSSProperties = {
   letterSpacing: '0.08em',
   display: 'block',
   marginBottom: 4,
+}
+
+const actionBtnBase: React.CSSProperties = {
+  fontFamily: 'var(--font-mono)',
+  fontSize: 11,
+  fontWeight: 700,
+  textTransform: 'uppercase',
+  letterSpacing: '0.06em',
+  padding: '4px 10px',
+  cursor: 'pointer',
+  backgroundColor: 'transparent',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 4,
 }
 
 // ─── Status badge config ───────────────────────────────────────────────────────
@@ -142,17 +156,187 @@ function HpBar({ currentHp, hp }: { currentHp: number; hp: number }) {
   )
 }
 
+// ─── Edit form interface ────────────────────────────────────────────────────
+
+interface EditForm {
+  name: string
+  description: string
+  hp: string
+  startsAt: string
+  deadline: string
+  baseRewardXp: string
+  baseRewardBadgeId: string
+}
+
+function isoToDatetimeLocal(iso: string): string {
+  if (!iso) return ''
+  const d = new Date(iso)
+  const pad = (n: number) => n.toString().padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+function bossToEditForm(boss: BossFight): EditForm {
+  return {
+    name: boss.name,
+    description: boss.description ?? '',
+    hp: String(boss.hp),
+    startsAt: isoToDatetimeLocal(boss.startsAt),
+    deadline: isoToDatetimeLocal(boss.deadline),
+    baseRewardXp: String(boss.baseRewardXp),
+    baseRewardBadgeId: boss.baseRewardBadgeId ?? '',
+  }
+}
+
 // ─── Boss Card ────────────────────────────────────────────────────────────────
 
 function BossCard({
   boss,
   contributorCount,
+  onUpdate,
+  onDelete,
 }: {
   boss: BossFight
   contributorCount: number
+  onUpdate: (updated: BossFight) => void
+  onDelete: (id: string) => void
 }) {
-  const cfg     = STATUS_CONFIG[boss.status]
+  const [editing, setEditing] = useState(false)
+  const [editForm, setEditForm] = useState<EditForm>(bossToEditForm(boss))
+  const [saving, setSaving] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const cfg = STATUS_CONFIG[boss.status]
   const isActive = boss.status === 'active'
+
+  // ── Inline edit handlers ──────────────────────────────────────────────
+
+  const handleStartEdit = () => {
+    setEditForm(bossToEditForm(boss))
+    setError(null)
+    setEditing(true)
+  }
+
+  const handleCancelEdit = () => {
+    setEditing(false)
+    setError(null)
+  }
+
+  const handleSaveEdit = async () => {
+    setSaving(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/admin/boss', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: boss.id,
+          name: editForm.name,
+          description: editForm.description || null,
+          hp: parseInt(editForm.hp, 10),
+          startsAt: editForm.startsAt,
+          deadline: editForm.deadline,
+          baseRewardXp: editForm.baseRewardXp ? parseInt(editForm.baseRewardXp, 10) : 0,
+          baseRewardBadgeId: editForm.baseRewardBadgeId || null,
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok || json.error) throw new Error(json.error ?? 'Opslaan mislukt')
+
+      // Map snake_case response back to camelCase BossFight
+      const d = json.boss
+      const updated: BossFight = {
+        id: d.id,
+        name: d.name,
+        description: d.description ?? '',
+        hp: d.hp,
+        currentHp: d.current_hp,
+        artworkUrl: d.artwork_url ?? null,
+        status: d.status,
+        announcedAt: d.announced_at,
+        startsAt: d.starts_at,
+        deadline: d.deadline,
+        baseRewardXp: d.base_reward_xp,
+        baseRewardBadgeId: d.base_reward_badge_id,
+        topRewardAccessoryId: d.top_reward_accessory_id,
+        createdAt: d.created_at,
+      }
+      onUpdate(updated)
+      setEditing(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Onbekende fout')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // ── Status transition handlers ────────────────────────────────────────
+
+  const handleStatusChange = async (newStatus: string) => {
+    setSaving(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/admin/boss', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: boss.id, status: newStatus }),
+      })
+      const json = await res.json()
+      if (!res.ok || json.error) throw new Error(json.error ?? 'Status wijzigen mislukt')
+
+      const d = json.boss
+      const updated: BossFight = {
+        id: d.id,
+        name: d.name,
+        description: d.description ?? '',
+        hp: d.hp,
+        currentHp: d.current_hp,
+        artworkUrl: d.artwork_url ?? null,
+        status: d.status,
+        announcedAt: d.announced_at,
+        startsAt: d.starts_at,
+        deadline: d.deadline,
+        baseRewardXp: d.base_reward_xp,
+        baseRewardBadgeId: d.base_reward_badge_id,
+        topRewardAccessoryId: d.top_reward_accessory_id,
+        createdAt: d.created_at,
+      }
+      onUpdate(updated)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Onbekende fout')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // ── Delete handler ────────────────────────────────────────────────────
+
+  const handleDelete = async () => {
+    if (boss.status === 'defeated') {
+      setError('Kan verslagen boss niet verwijderen')
+      return
+    }
+    if (!window.confirm(`Weet je zeker dat je "${boss.name}" wil verwijderen?`)) return
+
+    setDeleting(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/admin/boss', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: boss.id }),
+      })
+      const json = await res.json()
+      if (!res.ok || json.error) throw new Error(json.error ?? 'Verwijderen mislukt')
+      onDelete(boss.id)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Onbekende fout')
+    } finally {
+      setDeleting(false)
+    }
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────
 
   return (
     <div
@@ -168,80 +352,275 @@ function BossCard({
     >
       {isActive && <CornerDecorations />}
 
-      {/* Header row */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-        <div style={{ minWidth: 0 }}>
-          <p
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 14,
-              fontWeight: 700,
-              color: 'var(--color-text)',
-              marginBottom: 2,
-            }}
-          >
-            {boss.name}
-          </p>
-          {boss.description && (
-            <p
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 11,
-                color: 'var(--color-text-muted)',
-                marginBottom: 4,
-              }}
-            >
-              {boss.description}
+      {editing ? (
+        /* ── Inline edit mode ────────────────────────────────────── */
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={labelStyle}>Naam</label>
+              <input
+                type="text"
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                style={inputStyle}
+              />
+            </div>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={labelStyle}>Beschrijving</label>
+              <textarea
+                rows={2}
+                value={editForm.description}
+                onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                style={{ ...inputStyle, resize: 'vertical' }}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>HP</label>
+              <input
+                type="number"
+                min={1000}
+                value={editForm.hp}
+                onChange={(e) => setEditForm({ ...editForm, hp: e.target.value })}
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Base Reward XP</label>
+              <input
+                type="number"
+                min={0}
+                value={editForm.baseRewardXp}
+                onChange={(e) => setEditForm({ ...editForm, baseRewardXp: e.target.value })}
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Startdatum</label>
+              <input
+                type="datetime-local"
+                value={editForm.startsAt}
+                onChange={(e) => setEditForm({ ...editForm, startsAt: e.target.value })}
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Deadline</label>
+              <input
+                type="datetime-local"
+                value={editForm.deadline}
+                onChange={(e) => setEditForm({ ...editForm, deadline: e.target.value })}
+                style={inputStyle}
+              />
+            </div>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={labelStyle}>Base Reward Badge</label>
+              <select
+                value={editForm.baseRewardBadgeId}
+                onChange={(e) => setEditForm({ ...editForm, baseRewardBadgeId: e.target.value })}
+                style={inputStyle}
+              >
+                <option value="">-- geen badge --</option>
+                {BADGE_DEFS.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    [{b.rarity.toUpperCase()}] {b.name} — {b.id}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {error && (
+            <p style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--color-accent-red)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 8 }}>
+              <AlertTriangle size={13} style={{ flexShrink: 0 }} />
+              {error}
             </p>
           )}
+
+          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+            <button
+              onClick={handleSaveEdit}
+              disabled={saving}
+              style={{
+                ...actionBtnBase,
+                color: 'var(--color-accent-gold)',
+                border: '1px solid var(--color-accent-gold)',
+                opacity: saving ? 0.5 : 1,
+              }}
+            >
+              <Check size={12} />
+              {saving ? 'Opslaan...' : 'Opslaan'}
+            </button>
+            <button
+              onClick={handleCancelEdit}
+              disabled={saving}
+              style={{
+                ...actionBtnBase,
+                color: 'var(--color-text-muted)',
+                border: '1px solid var(--color-border)',
+              }}
+            >
+              <X size={12} />
+              Annuleren
+            </button>
+          </div>
         </div>
+      ) : (
+        /* ── Normal display mode ─────────────────────────────────── */
+        <>
+          {/* Header row */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+            <div style={{ minWidth: 0 }}>
+              <p
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: 'var(--color-text)',
+                  marginBottom: 2,
+                }}
+              >
+                {boss.name}
+              </p>
+              {boss.description && (
+                <p
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 11,
+                    color: 'var(--color-text-muted)',
+                    marginBottom: 4,
+                  }}
+                >
+                  {boss.description}
+                </p>
+              )}
+            </div>
 
-        {/* Status pill */}
-        <span
-          style={{
-            flexShrink: 0,
-            fontFamily: 'var(--font-mono)',
-            fontSize: 10,
-            fontWeight: 700,
-            letterSpacing: '0.07em',
-            padding: '2px 9px',
-            borderRadius: 2,
-            color: cfg.color,
-            backgroundColor: cfg.bg,
-            border: `1px solid ${cfg.color}44`,
-          }}
-        >
-          {cfg.label}
-        </span>
-      </div>
+            {/* Status pill */}
+            <span
+              style={{
+                flexShrink: 0,
+                fontFamily: 'var(--font-mono)',
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: '0.07em',
+                padding: '2px 9px',
+                borderRadius: 2,
+                color: cfg.color,
+                backgroundColor: cfg.bg,
+                border: `1px solid ${cfg.color}44`,
+              }}
+            >
+              {cfg.label}
+            </span>
+          </div>
 
-      {/* HP bar */}
-      <HpBar currentHp={boss.currentHp} hp={boss.hp} />
+          {/* HP bar */}
+          <HpBar currentHp={boss.currentHp} hp={boss.hp} />
 
-      {/* Meta row */}
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '4px 16px',
-          marginTop: 10,
-          fontFamily: 'var(--font-mono)',
-          fontSize: 11,
-          color: 'var(--color-text-muted)',
-        }}
-      >
-        <span>Start: {formatDate(boss.startsAt)}</span>
-        <span>Deadline: {formatDate(boss.deadline)}</span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <Users size={11} />
-          {contributorCount} bijdragers
-        </span>
-        {boss.baseRewardXp > 0 && (
-          <span style={{ color: 'var(--color-accent-gold)' }}>
-            +{boss.baseRewardXp} XP reward
-          </span>
-        )}
-      </div>
+          {/* Meta row */}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '4px 16px',
+              marginTop: 10,
+              fontFamily: 'var(--font-mono)',
+              fontSize: 11,
+              color: 'var(--color-text-muted)',
+            }}
+          >
+            <span>Start: {formatDate(boss.startsAt)}</span>
+            <span>Deadline: {formatDate(boss.deadline)}</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <Users size={11} />
+              {contributorCount} bijdragers
+            </span>
+            {boss.baseRewardXp > 0 && (
+              <span style={{ color: 'var(--color-accent-gold)' }}>
+                +{boss.baseRewardXp} XP reward
+              </span>
+            )}
+          </div>
+
+          {/* Error feedback */}
+          {error && (
+            <p style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--color-accent-red)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 8 }}>
+              <AlertTriangle size={13} style={{ flexShrink: 0 }} />
+              {error}
+            </p>
+          )}
+
+          {/* Action buttons row */}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 6,
+              marginTop: 12,
+              paddingTop: 10,
+              borderTop: '1px solid var(--color-border)',
+            }}
+          >
+            <button
+              onClick={handleStartEdit}
+              style={{
+                ...actionBtnBase,
+                color: 'var(--color-accent-gold)',
+                border: '1px solid var(--color-accent-gold)',
+              }}
+            >
+              <Pencil size={11} />
+              Bewerken
+            </button>
+
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              style={{
+                ...actionBtnBase,
+                color: '#EF4444',
+                border: '1px solid #EF4444',
+                opacity: deleting ? 0.5 : 1,
+              }}
+            >
+              <Trash2 size={11} />
+              {deleting ? 'Bezig...' : 'Verwijderen'}
+            </button>
+
+            {boss.status === 'announced' && (
+              <button
+                onClick={() => handleStatusChange('active')}
+                disabled={saving}
+                style={{
+                  ...actionBtnBase,
+                  color: '#3B82F6',
+                  border: '1px solid #3B82F6',
+                  opacity: saving ? 0.5 : 1,
+                }}
+              >
+                <Play size={11} />
+                Activeren
+              </button>
+            )}
+
+            {boss.status === 'active' && (
+              <button
+                onClick={() => handleStatusChange('failed')}
+                disabled={saving}
+                style={{
+                  ...actionBtnBase,
+                  color: '#EF4444',
+                  border: '1px solid #EF4444',
+                  opacity: saving ? 0.5 : 1,
+                }}
+              >
+                <Square size={11} />
+                Stoppen
+              </button>
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }
@@ -258,14 +637,39 @@ export default function BossManager({
   const [creating, setCreating]     = useState(false)
   const [createError, setCreateError]   = useState<string | null>(null)
   const [createSuccess, setCreateSuccess] = useState(false)
+  const [contributorCounts, setContributorCounts] = useState<Record<string, number>>({})
 
-  // Contributor counts are fetched lazily — for now kept at 0 to avoid N+1 on
-  // the initial server fetch. Could be enriched via a separate API call later.
-  const contributorCounts: Record<string, number> = {}
+  // Fetch contributor count for the active boss via public /api/boss endpoint
+  useEffect(() => {
+    async function fetchContributors() {
+      try {
+        const res = await fetch('/api/boss')
+        if (!res.ok) return
+        const json = await res.json()
+        if (json.boss && json.contributions) {
+          setContributorCounts((prev) => ({
+            ...prev,
+            [json.boss.id]: json.contributions.contributors ?? 0,
+          }))
+        }
+      } catch {
+        // Silently fail — contributor counts are non-critical
+      }
+    }
+    fetchContributors()
+  }, [bosses])
 
   const activeBoss = bosses.find(
     (b) => b.status === 'active' || b.status === 'announced'
   )
+
+  const handleBossUpdate = useCallback((updated: BossFight) => {
+    setBosses((prev) => prev.map((b) => (b.id === updated.id ? updated : b)))
+  }, [])
+
+  const handleBossDelete = useCallback((id: string) => {
+    setBosses((prev) => prev.filter((b) => b.id !== id))
+  }, [])
 
   const handleCreate = useCallback(
     async (e: React.FormEvent) => {
@@ -293,8 +697,27 @@ export default function BossManager({
         const json = await res.json()
         if (!res.ok || json.error) throw new Error(json.error ?? 'Aanmaken mislukt')
 
+        // Map snake_case response back to camelCase BossFight
+        const d = json.boss
+        const newBoss: BossFight = {
+          id: d.id,
+          name: d.name,
+          description: d.description ?? '',
+          hp: d.hp,
+          currentHp: d.current_hp,
+          artworkUrl: d.artwork_url ?? null,
+          status: d.status,
+          announcedAt: d.announced_at,
+          startsAt: d.starts_at,
+          deadline: d.deadline,
+          baseRewardXp: d.base_reward_xp,
+          baseRewardBadgeId: d.base_reward_badge_id,
+          topRewardAccessoryId: d.top_reward_accessory_id,
+          createdAt: d.created_at,
+        }
+
         // Prepend the new boss to the list
-        setBosses((prev) => [json.boss as BossFight, ...prev])
+        setBosses((prev) => [newBoss, ...prev])
         setForm(EMPTY_FORM)
         setCreateSuccess(true)
         setTimeout(() => setCreateSuccess(false), 3000)
@@ -574,6 +997,8 @@ export default function BossManager({
                 key={boss.id}
                 boss={boss}
                 contributorCount={contributorCounts[boss.id] ?? 0}
+                onUpdate={handleBossUpdate}
+                onDelete={handleBossDelete}
               />
             ))}
           </div>

@@ -92,13 +92,15 @@ export async function equipAccessory(memberId: string, accessoryId: string, posi
       }
     }
   } else {
+    // Count only equipped stickers (not all equipped accessories)
     const { count } = await supabase
       .from('member_accessories')
-      .select('id', { count: 'exact', head: true })
+      .select('id, accessory_definitions!inner(category)', { count: 'exact', head: true })
       .eq('member_id', memberId)
       .eq('equipped', true)
-    // Sticker limit: max 3 — generous cap here, real enforcement is in the card editor
-    if ((count ?? 0) >= 10) return false
+      .eq('accessory_definitions.category', 'sticker')
+    // Sticker limit: max 3
+    if ((count ?? 0) >= 3) return false
   }
 
   const { error } = await supabase.from('member_accessories')

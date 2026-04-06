@@ -9,7 +9,7 @@ import QRCode from "react-qr-code";
 import { getSkin } from "@/lib/cardSkins";
 import BadgeIcon from "@/components/badges/BadgeIcon";
 import { getBadgeDef, getRarityColor } from "@/lib/badgeDefs";
-import { PET_MAP } from "@/components/pets";
+import { resolvePetComponent } from "@/components/pets";
 
 // Maps DB effect names (case-insensitive) to internal render keys
 const EFFECT_MAP: Record<string, string> = {
@@ -575,7 +575,8 @@ export default function MemberCard({
 
           {/* ── Accessory: Pet (bottom-right corner, z-40) ── */}
           {equipment?.petEmoji && (() => {
-            const PetComponent = PET_MAP[equipment.petEmoji];
+            const PetComponent = resolvePetComponent(equipment.petEmoji);
+            if (!PetComponent) return null;
             return (
               <div
                 className="absolute bottom-3 right-3 pointer-events-none select-none z-40"
@@ -583,10 +584,9 @@ export default function MemberCard({
                 style={{
                   animation: "petBounce 1.8s ease-in-out infinite",
                   filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.7))",
-                  ...(PetComponent ? {} : { fontSize: 26, lineHeight: 1 }),
                 }}
               >
-                {PetComponent ? <PetComponent size={36} /> : equipment.petEmoji}
+                <PetComponent size={36} />
               </div>
             );
           })()}

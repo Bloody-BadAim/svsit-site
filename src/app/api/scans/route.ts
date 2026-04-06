@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { checkAndGrantAutoBadges } from '@/lib/rewards'
+import { grantXp, calculateXpReward } from '@/lib/xpEngine'
 
 // GET — Scan geschiedenis per event (admin only)
 export async function GET(req: NextRequest) {
@@ -89,6 +90,16 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (scanError) throw scanError
+
+    // Grant XP (also handles coins, XP ledger, and boss fight contribution)
+    const xpAmount = calculateXpReward('scan', { eventName: event_name, points })
+    await grantXp({
+      memberId: member_id,
+      amount: xpAmount,
+      source: 'scan',
+      sourceId: scan.id,
+      category: category || 'social',
+    })
 
     // Bereken stats en ken rewards automatisch toe
     await checkAndGrantAutoBadges(member_id)

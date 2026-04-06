@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer'
 import QRCode from 'qrcode'
 import { render } from '@react-email/components'
 import TicketEmail from '@/emails/ticketEmail'
+import PasswordResetEmail from '@/emails/passwordResetEmail'
 
 // ── Gmail SMTP transport (all outbound email) ──
 
@@ -24,40 +25,9 @@ export async function sendPasswordResetEmail(
 ) {
   const firstName = name?.split(' ')[0] || to.split('@')[0]
 
-  const html = `
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 480px; margin: 0 auto;">
-      <div style="background: #09090B; padding: 32px; border-radius: 8px;">
-        <div style="font-family: 'Courier New', monospace; font-size: 18px; font-weight: bold; margin-bottom: 24px;">
-          <span style="color: #F59E0B;">{</span>
-          <span style="color: #FAFAFA;">SIT</span>
-          <span style="color: #F59E0B;">}</span>
-        </div>
-
-        <p style="color: #FAFAFA; font-size: 15px; line-height: 1.6; margin: 0 0 16px 0;">
-          Hoi ${firstName},
-        </p>
-
-        <p style="color: #A1A1AA; font-size: 14px; line-height: 1.6; margin: 0 0 24px 0;">
-          We hebben de SIT website vernieuwd. Klik hieronder om je wachtwoord in te stellen en toegang te krijgen tot je account, events en je member card.
-        </p>
-
-        <a href="${resetUrl}" style="display: inline-block; padding: 14px 28px; background: #F59E0B; color: #09090B; text-decoration: none; font-weight: bold; font-size: 14px; font-family: 'Courier New', monospace; border-radius: 4px;">
-          WACHTWOORD INSTELLEN
-        </a>
-
-        <p style="color: #71717A; font-size: 12px; line-height: 1.6; margin: 24px 0 0 0;">
-          Deze link is 7 dagen geldig. Als je geen lid bent van SIT, kun je deze mail negeren.
-        </p>
-
-        <div style="border-top: 1px solid #27272A; margin-top: 24px; padding-top: 16px;">
-          <p style="color: #71717A; font-size: 12px; margin: 0;">
-            SIT &mdash; Studievereniging ICT<br>
-            Hogeschool van Amsterdam
-          </p>
-        </div>
-      </div>
-    </div>
-  `
+  const html = await render(
+    PasswordResetEmail({ firstName, resetUrl })
+  )
 
   const transporter = getSmtpTransporter()
   await transporter.sendMail({

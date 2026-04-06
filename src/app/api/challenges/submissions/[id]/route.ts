@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { ADMIN_EMAILS } from '@/lib/constants'
 import { checkAndGrantAutoBadges } from '@/lib/rewards'
+import { grantXp } from '@/lib/xpEngine'
 import type { SubmissionStatus } from '@/types/database'
 
 // PATCH — Approve or reject a challenge submission (admin only)
@@ -45,8 +46,25 @@ export async function PATCH(
       return NextResponse.json({ data: null, error: 'Submission niet gevonden', meta: null }, { status: 404 })
     }
 
-    // If approved: recalculate stats and grant rewards
+    // If approved: grant XP, recalculate stats and grant rewards
     if (status === 'approved') {
+      // Fetch challenge points to grant XP
+      const { data: challenge } = await supabase
+        .from('challenges')
+        .select('points, category')
+        .eq('id', data.challenge_id)
+        .single()
+
+      if (challenge) {
+        await grantXp({
+          memberId: data.member_id,
+          amount: challenge.points,
+          source: 'challenge',
+          sourceId: id,
+          category: challenge.category,
+        })
+      }
+
       await checkAndGrantAutoBadges(data.member_id)
     }
 
