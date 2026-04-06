@@ -720,7 +720,7 @@ export default function Events() {
                     {doneList.map((event, i) => (
                       <div key={event.id} className="relative">
                         <span
-                          className="absolute w-2 h-2 rounded-full"
+                          className="event-node-dot absolute w-2 h-2 rounded-full"
                           style={{
                             left: "calc(-2rem - 3px)",
                             top: 16,
@@ -741,7 +741,7 @@ export default function Events() {
         {/* ── TBA placeholder at end ── */}
         <div className="relative flex items-center gap-4 py-4">
           <span
-            className="absolute w-2 h-2 rounded-full"
+            className="event-node-dot absolute w-2 h-2 rounded-full"
             style={{
               left: "calc(-2rem - 3px)",
               top: "50%",
