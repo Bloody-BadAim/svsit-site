@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
+import { render } from '@react-email/components'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import MemberEmail from '@/emails/memberEmail'
@@ -21,11 +22,16 @@ interface MemberRow {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function getResend() {
-  if (!process.env.RESEND_API_KEY) {
-    throw new Error('RESEND_API_KEY is niet geconfigureerd')
-  }
-  return new Resend(process.env.RESEND_API_KEY)
+function getSmtpTransporter() {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  })
 }
 
 /** Derive first name from email address (e.g. matin.khajehfard@hva.nl → Matin) */
@@ -144,33 +150,35 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ sent: 0, failed: 0, message: 'Geen ontvangers gevonden' })
     }
 
-    // Send emails via Resend (batch of up to 100 at a time)
-    const resend = getResend()
+    // Send emails via Gmail SMTP (batch of 10 at a time to avoid rate limits)
+    const transporter = getSmtpTransporter()
+    const from = process.env.SMTP_FROM || 'SIT <matin.khajehfard@svsit.nl>'
     let sent = 0
     let failed = 0
 
-    const BATCH_SIZE = 100
+    const BATCH_SIZE = 10
     for (let i = 0; i < members.length; i += BATCH_SIZE) {
       const batch = members.slice(i, i + BATCH_SIZE)
 
       const results = await Promise.allSettled(
-        batch.map((member) => {
+        batch.map(async (member) => {
           const voornaam = getVoornaam(member.email)
-          return resend.emails.send({
-            from: 'SIT <bestuur@svsit.nl>',
-            to: member.email,
-            subject,
-            react: MemberEmail({ voornaam, subject, body: emailBody }),
-          })
+          const html = await render(MemberEmail({ voornaam, subject, body: emailBody }))
+          return transporter.sendMail({ from, to: member.email, subject, html })
         })
       )
 
       for (const result of results) {
-        if (result.status === 'fulfilled' && !result.value.error) {
+        if (result.status === 'fulfilled') {
           sent++
         } else {
           failed++
         }
+      }
+
+      // Small delay between batches to respect Gmail rate limits
+      if (i + BATCH_SIZE < members.length) {
+        await new Promise((r) => setTimeout(r, 500))
       }
     }
 

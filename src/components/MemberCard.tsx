@@ -631,21 +631,36 @@ export default function MemberCard({
                     className="absolute inset-0 pointer-events-none z-50 overflow-hidden"
                     aria-hidden="true"
                   >
-                    {Array.from({ length: 12 }).map((_, i) => (
+                    {Array.from({ length: 10 }).map((_, i) => (
                       <div
                         key={i}
-                        className="absolute left-0 right-0"
+                        className="absolute flex flex-col gap-px items-center"
                         style={{
-                          top: `${(i / 12) * 100}%`,
-                          height: 1,
-                          background: "rgba(0,255,70,0.08)",
-                          animation: `matrixScan 3s linear ${(i * 0.25).toFixed(2)}s infinite`,
+                          left: `${i * 10 + 2}%`,
+                          top: 0,
+                          animation: `matrixRain ${2.5 + i * 0.35}s linear infinite`,
+                          animationDelay: `${(i * 0.2).toFixed(2)}s`,
                         }}
-                      />
+                      >
+                        {Array.from({ length: 8 }).map((_, j) => (
+                          <span
+                            key={j}
+                            className="font-mono leading-none select-none"
+                            style={{
+                              fontSize: 9,
+                              color: "#22C55E",
+                              opacity: 0.08 + j * 0.04,
+                              textShadow: j >= 6 ? "0 0 4px rgba(34,197,94,0.4)" : undefined,
+                            }}
+                          >
+                            {String.fromCharCode(0x30A0 + ((i * 7 + j * 13) % 96))}
+                          </span>
+                        ))}
+                      </div>
                     ))}
                     <div
                       className="absolute inset-0"
-                      style={{ background: "rgba(0,255,70,0.03)" }}
+                      style={{ background: "rgba(0,255,70,0.02)" }}
                     />
                   </div>
                 )}

@@ -130,9 +130,19 @@
       "Bash(pkill -f 'next build')",
       "Bash(git rm:*)",
       "Bash(git reset:*)",
-      "Bash(git diff:*)"
+      "Bash(git diff:*)",
+      "mcp__claude_ai_Notion__notion-fetch",
+      "mcp__claude_ai_Notion__notion-search",
+      "Bash(/home/matin/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh --project-dir /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website)",
+      "Bash(kill -0 193893)",
+      "Bash(/home/matin/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/stop-server.sh /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/.superpowers/brainstorm/193885-1775483274)",
+      "Bash(/home/matin/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh --project-dir /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website --host 0.0.0.0 --url-host localhost)"
     ]
   },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase"
+  ],
   "outputStyle": "default",
   "prefersReducedMotion": false
 }

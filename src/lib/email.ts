@@ -1,9 +1,9 @@
-import { Resend } from 'resend'
 import nodemailer from 'nodemailer'
 import QRCode from 'qrcode'
+import { render } from '@react-email/components'
 import TicketEmail from '@/emails/ticketEmail'
 
-// ── Gmail SMTP transport (password reset, bulk mails) ──
+// ── Gmail SMTP transport (all outbound email) ──
 
 function getSmtpTransporter() {
   return nodemailer.createTransport({
@@ -68,13 +68,6 @@ export async function sendPasswordResetEmail(
   })
 }
 
-function getResend() {
-  if (!process.env.RESEND_API_KEY) {
-    throw new Error('RESEND_API_KEY is niet geconfigureerd')
-  }
-  return new Resend(process.env.RESEND_API_KEY)
-}
-
 interface SendTicketParams {
   to: string
   buyerName: string
@@ -124,27 +117,28 @@ export async function sendTicketEmail(params: SendTicketParams) {
   const priceStr =
     params.paidAmount === 0 ? 'GRATIS' : `€${(params.paidAmount / 100).toFixed(0)}`
 
-  // Send via Resend
-  const { data, error } = await getResend().emails.send({
-    from: 'SIT <noreply@svsit.nl>',
+  // Render React Email template to HTML
+  const html = await render(TicketEmail({
+    eventTitle: params.eventTitle,
+    eventDate: dateStr,
+    eventTime: timeStr,
+    eventLocation: params.eventLocation || 'TBA',
+    buyerName: params.buyerName || params.buyerEmail.split('@')[0],
+    buyerEmail: params.buyerEmail,
+    isMember: params.isMember,
+    ticketNumber: params.ticketNumber,
+    price: priceStr,
+    qrCodeDataUrl,
+  }))
+
+  // Send via Gmail SMTP
+  const transporter = getSmtpTransporter()
+  await transporter.sendMail({
+    from: process.env.SMTP_FROM || 'SIT <matin.khajehfard@svsit.nl>',
     to: params.to,
     subject: `Je ticket voor ${params.eventTitle} — {SIT}`,
-    react: TicketEmail({
-      eventTitle: params.eventTitle,
-      eventDate: dateStr,
-      eventTime: timeStr,
-      eventLocation: params.eventLocation || 'TBA',
-      buyerName: params.buyerName || params.buyerEmail.split('@')[0],
-      buyerEmail: params.buyerEmail,
-      isMember: params.isMember,
-      ticketNumber: params.ticketNumber,
-      price: priceStr,
-      qrCodeDataUrl,
-    }),
+    html,
   })
-
-  if (error) throw new Error(`Email failed: ${error.message}`)
-  return data
 }
 
 // Generate ticket number: #SIT-2026-XXXX

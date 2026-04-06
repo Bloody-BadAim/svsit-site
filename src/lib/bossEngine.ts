@@ -88,7 +88,7 @@ async function grantBossRewards(bossId: string): Promise<void> {
 function mapBossRow(row: Record<string, unknown>): BossFight {
   return {
     id: row.id as string, name: row.name as string, description: row.description as string,
-    hp: row.hp as number, currentHp: row.current_hp as number,
+    hp: (row.hp as number) ?? 0, currentHp: (row.current_hp as number) ?? 0,
     artworkUrl: row.artwork_url as string | null, status: row.status as BossFight['status'],
     announcedAt: row.announced_at as string | null, startsAt: row.starts_at as string,
     deadline: row.deadline as string, baseRewardXp: row.base_reward_xp as number,

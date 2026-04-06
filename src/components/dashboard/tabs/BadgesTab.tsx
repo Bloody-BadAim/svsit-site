@@ -35,13 +35,13 @@ const RARITY_FILTERS: Array<BadgeRarity | 'all'> = [
 // ---------------------------------------------------------------------------
 
 function EquippedSlots({
-  equippedIds,
+  slottedBadges,
   maxSlots,
   onUnequip,
   onSlotClick,
   saving,
 }: {
-  equippedIds: string[]
+  slottedBadges: (string | null)[]
   maxSlots: number
   onUnequip: (badgeId: string) => void
   onSlotClick: (slotIndex: number) => void
@@ -72,7 +72,7 @@ function EquippedSlots({
           className="font-mono text-[10px] uppercase tracking-[0.2em]"
           style={{ color: 'var(--color-text-muted)' }}
         >
-          equipped ({equippedIds.length}/{maxSlots})
+          equipped ({slottedBadges.filter(Boolean).length}/{maxSlots})
         </span>
         <div className="flex items-center gap-2">
           <span
@@ -93,7 +93,7 @@ function EquippedSlots({
       <div className="px-5 py-4">
         <div className="flex flex-wrap gap-3">
           {Array.from({ length: maxSlots }).map((_, i) => {
-            const badgeId = equippedIds[i]
+            const badgeId = slottedBadges[i]
             const badge = badgeId ? BADGE_DEFS.find((b) => b.id === badgeId) : null
 
             return (
@@ -447,16 +447,28 @@ export default function BadgesTab({
 
   const [rarityFilter, setRarityFilter] = useState<BadgeRarity | 'all'>('all')
   const [selectedBadgeId, setSelectedBadgeId] = useState<string | null>(null)
-  const [currentEquipped, setCurrentEquipped] = useState<string[]>(
-    equippedBadges.map((e) => e.badgeId)
-  )
+  // Track badge→slot mapping (1-based slots)
+  const [slotMap, setSlotMap] = useState<Map<string, number>>(() => {
+    const m = new Map<string, number>()
+    for (const e of equippedBadges) m.set(e.badgeId, e.slot)
+    return m
+  })
   const [saving, setSaving] = useState(false)
 
   // Admins see all badges as unlocked
   const effectiveEarnedIds = isAdmin ? BADGE_DEFS.map(b => b.id) : earnedBadgeIds
 
   const earnedSet = new Set(effectiveEarnedIds)
-  const equippedSet = new Set(currentEquipped)
+  const equippedSet = new Set(slotMap.keys())
+  const equippedCount = slotMap.size
+
+  // Build slot→badge array for rendering (index i = slot i+1)
+  const slottedBadges: (string | null)[] = Array.from({ length: maxSlots }, (_, i) => {
+    for (const [bid, s] of slotMap) {
+      if (s === i + 1) return bid
+    }
+    return null
+  })
 
   // Sort: mythic first, then by earned status
   const sortedBadges = [...BADGE_DEFS].sort((a, b) => {
@@ -480,35 +492,50 @@ export default function BadgesTab({
   async function toggleBadge(badgeId: string) {
     if (!earnedSet.has(badgeId)) return
 
-    let updated: string[]
-    if (equippedSet.has(badgeId)) {
-      updated = currentEquipped.filter((id) => id !== badgeId)
-    } else {
-      if (currentEquipped.length >= maxSlots) return
-      updated = [...currentEquipped, badgeId]
-    }
+    const prevMap = new Map(slotMap)
+    const isEquipping = !equippedSet.has(badgeId)
 
-    setCurrentEquipped(updated)
-    setSaving(true)
+    if (isEquipping) {
+      if (equippedCount >= maxSlots) return
+      // Find first free slot (1-based)
+      const usedSlots = new Set(slotMap.values())
+      let freeSlot = 1
+      while (usedSlots.has(freeSlot) && freeSlot <= maxSlots) freeSlot++
+      if (freeSlot > maxSlots) return
 
-    try {
-      const isEquipping = !equippedSet.has(badgeId)
-      const res = await fetch('/api/badges', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          badgeId,
-          action: isEquipping ? 'equip' : 'unequip',
-          slot: isEquipping ? updated.length - 1 : undefined,
-        }),
-      })
-      if (!res.ok) {
-        setCurrentEquipped(currentEquipped)
+      setSlotMap(new Map([...slotMap, [badgeId, freeSlot]]))
+      setSaving(true)
+
+      try {
+        const res = await fetch('/api/badges', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ badgeId, action: 'equip', slot: freeSlot }),
+        })
+        if (!res.ok) setSlotMap(prevMap)
+      } catch {
+        setSlotMap(prevMap)
+      } finally {
+        setSaving(false)
       }
-    } catch {
-      setCurrentEquipped(currentEquipped)
-    } finally {
-      setSaving(false)
+    } else {
+      const newMap = new Map(slotMap)
+      newMap.delete(badgeId)
+      setSlotMap(newMap)
+      setSaving(true)
+
+      try {
+        const res = await fetch('/api/badges', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ badgeId, action: 'unequip' }),
+        })
+        if (!res.ok) setSlotMap(prevMap)
+      } catch {
+        setSlotMap(prevMap)
+      } finally {
+        setSaving(false)
+      }
     }
   }
 
@@ -534,14 +561,14 @@ export default function BadgesTab({
   // Find earnedAt for selected badge (we only have the ids, no date in this tab props)
   // Show detail panel below grid
   const canEquipSelected = selectedBadgeId
-    ? earnedSet.has(selectedBadgeId) && !equippedSet.has(selectedBadgeId) && currentEquipped.length < maxSlots
+    ? earnedSet.has(selectedBadgeId) && !equippedSet.has(selectedBadgeId) && equippedCount < maxSlots
     : false
 
   return (
     <div className="space-y-6">
       {/* 1. Equipped Slots */}
       <EquippedSlots
-        equippedIds={currentEquipped}
+        slottedBadges={slottedBadges}
         maxSlots={maxSlots}
         onUnequip={handleUnequip}
         onSlotClick={handleSlotClick}
@@ -622,7 +649,7 @@ export default function BadgesTab({
             earnedAt={null}
             isEquipped={equippedSet.has(selectedBadgeId)}
             canEquip={canEquipSelected}
-            slotsFulled={currentEquipped.length >= maxSlots}
+            slotsFulled={equippedCount >= maxSlots}
             onEquip={() => handleEquip(selectedBadgeId)}
             onUnequip={() => handleUnequip(selectedBadgeId)}
             onClose={() => setSelectedBadgeId(null)}

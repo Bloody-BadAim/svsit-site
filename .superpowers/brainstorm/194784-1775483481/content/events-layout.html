@@ -1,0 +1,205 @@
+<h2>Events Layout: Welke richting?</h2>
+<p class="subtitle">Kies de layout die het beste past bij SIT's tech/fun identity. Denk aan: overzicht, categorisering, en aanmeldflow.</p>
+
+<div class="cards">
+  <!-- Option A: Vertical Timeline -->
+  <div class="card" data-choice="timeline" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#09090B;padding:24px;min-height:320px;position:relative;overflow:hidden;">
+      <!-- Energy line decoration -->
+      <div style="position:absolute;top:0;left:50%;width:2px;height:100%;background:linear-gradient(180deg,transparent,#F59E0B,#EF4444,#3B82F6,transparent);opacity:0.4;"></div>
+
+      <!-- Timeline dots -->
+      <div style="position:absolute;top:40px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:#22C55E;box-shadow:0 0 12px #22C55E88;"></div>
+      <div style="position:absolute;top:120px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:#F59E0B;box-shadow:0 0 12px #F59E0B88;"></div>
+      <div style="position:absolute;top:200px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:#3B82F6;box-shadow:0 0 12px #3B82F688;"></div>
+      <div style="position:absolute;top:270px;left:50%;transform:translateX(-50%);width:10px;height:10px;border-radius:50%;border:2px dashed rgba(255,255,255,0.2);"></div>
+
+      <!-- Cards left/right -->
+      <div style="position:absolute;top:24px;left:12%;width:34%;padding:12px;border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.05);">
+        <div style="font-family:monospace;font-size:9px;color:#22C55E;letter-spacing:2px;margin-bottom:4px;">16 APR</div>
+        <div style="font-size:12px;color:#fafafa;font-weight:bold;">Kroegentocht</div>
+        <div style="font-family:monospace;font-size:9px;color:rgba(255,255,255,0.4);margin-top:4px;">SVO &middot; SOCIAL</div>
+      </div>
+
+      <div style="position:absolute;top:104px;right:12%;width:34%;padding:12px;border:1px solid rgba(245,158,11,0.3);background:rgba(245,158,11,0.05);">
+        <div style="font-family:monospace;font-size:9px;color:#F59E0B;letter-spacing:2px;margin-bottom:4px;">23 APR</div>
+        <div style="font-size:12px;color:#fafafa;font-weight:bold;">Hackathon</div>
+        <div style="font-family:monospace;font-size:9px;color:rgba(255,255,255,0.4);margin-top:4px;">TECH &middot; SIT EIGEN</div>
+      </div>
+
+      <div style="position:absolute;top:184px;left:12%;width:34%;padding:12px;border:1px solid rgba(59,130,246,0.3);background:rgba(59,130,246,0.05);">
+        <div style="font-family:monospace;font-size:9px;color:#3B82F6;letter-spacing:2px;margin-bottom:4px;">30 APR</div>
+        <div style="font-size:12px;color:#fafafa;font-weight:bold;">CERN Lezing</div>
+        <div style="font-family:monospace;font-size:9px;color:rgba(255,255,255,0.4);margin-top:4px;">EDUCATIE</div>
+      </div>
+
+      <div style="position:absolute;top:255px;right:12%;width:34%;padding:12px;border:1px dashed rgba(255,255,255,0.1);background:rgba(255,255,255,0.02);">
+        <div style="font-family:monospace;font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:2px;margin-bottom:4px;">TBA</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.3);font-weight:bold;">Meer komt eraan...</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A: Vertical Timeline</h3>
+      <p>Zigzag tijdlijn met energy line in het midden. Cards links/rechts afwisselend. Kleur per categorie. Scroll animaties met GSAP. Duidelijke chronologische flow.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Sterke chronologische overzicht</li>
+          <li>Energy lines passen perfect</li>
+          <li>Schaalbaar met veel events</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Veel verticale ruimte</li>
+          <li>Detail info vereist expand/modal</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: Grid + Sidebar Detail -->
+  <div class="card" data-choice="grid-sidebar" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#09090B;padding:24px;min-height:320px;display:flex;gap:12px;">
+      <!-- Left: Grid -->
+      <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+        <!-- Filter pills -->
+        <div style="display:flex;gap:4px;margin-bottom:4px;">
+          <span style="font-family:monospace;font-size:8px;padding:2px 6px;background:#F59E0B;color:#09090B;">ALLES</span>
+          <span style="font-family:monospace;font-size:8px;padding:2px 6px;border:1px solid rgba(34,197,94,0.4);color:#22C55E;">SOCIAL</span>
+          <span style="font-family:monospace;font-size:8px;padding:2px 6px;border:1px solid rgba(239,68,68,0.4);color:#EF4444;">TECH</span>
+          <span style="font-family:monospace;font-size:8px;padding:2px 6px;border:1px solid rgba(59,130,246,0.4);color:#3B82F6;">EDU</span>
+        </div>
+        <!-- Cards grid -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div style="padding:10px;border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.05);border-left:3px solid #22C55E;">
+            <div style="font-family:monospace;font-size:7px;color:#22C55E;">16 APR</div>
+            <div style="font-size:10px;color:#fafafa;font-weight:bold;margin-top:2px;">Kroegentocht</div>
+          </div>
+          <div style="padding:10px;border:2px solid rgba(245,158,11,0.5);background:rgba(245,158,11,0.08);border-left:3px solid #F59E0B;">
+            <div style="font-family:monospace;font-size:7px;color:#F59E0B;">23 APR</div>
+            <div style="font-size:10px;color:#fafafa;font-weight:bold;margin-top:2px;">Hackathon</div>
+            <div style="font-family:monospace;font-size:7px;color:#F59E0B;margin-top:3px;">&#9654; SELECTED</div>
+          </div>
+          <div style="padding:10px;border:1px solid rgba(59,130,246,0.3);background:rgba(59,130,246,0.05);border-left:3px solid #3B82F6;">
+            <div style="font-family:monospace;font-size:7px;color:#3B82F6;">30 APR</div>
+            <div style="font-size:10px;color:#fafafa;font-weight:bold;margin-top:2px;">CERN Lezing</div>
+          </div>
+          <div style="padding:10px;border:1px dashed rgba(255,255,255,0.1);background:rgba(255,255,255,0.02);">
+            <div style="font-family:monospace;font-size:7px;color:rgba(255,255,255,0.3);">TBA</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">Meer...</div>
+          </div>
+        </div>
+      </div>
+      <!-- Right: Detail panel -->
+      <div style="width:42%;border:1px solid rgba(245,158,11,0.3);background:rgba(245,158,11,0.03);padding:12px;">
+        <div style="font-family:monospace;font-size:8px;color:#F59E0B;letter-spacing:2px;margin-bottom:8px;">// EVENT.DETAIL</div>
+        <div style="font-size:14px;color:#fafafa;font-weight:bold;margin-bottom:6px;">Hackathon</div>
+        <div style="font-family:monospace;font-size:8px;color:rgba(255,255,255,0.5);line-height:1.6;">
+          23 april 2026<br>
+          09:00 - 21:00<br>
+          HvA Campus<br><br>
+        </div>
+        <div style="font-family:monospace;font-size:8px;color:rgba(255,255,255,0.35);line-height:1.5;margin-bottom:10px;">
+          24 uur coderen in teams. Bouw iets cools, win prijzen.
+        </div>
+        <div style="display:flex;gap:4px;">
+          <span style="font-family:monospace;font-size:7px;padding:2px 5px;background:#F59E0B;color:#09090B;">TECH</span>
+          <span style="font-family:monospace;font-size:7px;padding:2px 5px;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.4);">SIT EIGEN</span>
+        </div>
+        <div style="margin-top:12px;padding:8px;background:#F59E0B;color:#09090B;font-family:monospace;font-size:9px;font-weight:bold;text-align:center;letter-spacing:1px;cursor:pointer;">
+          AANMELDEN &rarr;
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B: Grid + Sticky Detail (huidige stijl, verbeterd)</h3>
+      <p>Vergelijkbaar met de huidige Events component maar met betere categorisering, filters, en aanmeld CTA. Klik op card voor detail sidebar. Behoud huidige tech aesthetic.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Bewezen patroon, werkt al</li>
+          <li>Compact, alles in beeld</li>
+          <li>Filter + detail in een view</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Minder visueel impactvol</li>
+          <li>Lijkt op veel andere sites</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option C: Hybrid -->
+  <div class="card" data-choice="hybrid" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#09090B;padding:24px;min-height:320px;position:relative;overflow:hidden;">
+      <!-- Energy line left side -->
+      <div style="position:absolute;top:0;left:24px;width:2px;height:100%;background:linear-gradient(180deg,transparent,#F59E0B 20%,#EF4444 50%,#3B82F6 80%,transparent);opacity:0.5;"></div>
+
+      <!-- Next up: featured card -->
+      <div style="margin-left:40px;margin-bottom:16px;">
+        <div style="font-family:monospace;font-size:8px;color:#22C55E;letter-spacing:3px;margin-bottom:6px;">
+          &#9679; VOLGENDE EVENT
+        </div>
+        <div style="padding:16px;border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.05);position:relative;">
+          <div style="position:absolute;top:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,#22C55E,transparent);"></div>
+          <div style="display:flex;justify-content:space-between;align-items:start;">
+            <div>
+              <div style="font-size:16px;color:#fafafa;font-weight:bold;">Kroegentocht</div>
+              <div style="font-family:monospace;font-size:9px;color:rgba(255,255,255,0.5);margin-top:4px;">16 april &middot; 20:00 &middot; Amsterdam Centrum</div>
+              <div style="display:flex;gap:4px;margin-top:6px;">
+                <span style="font-family:monospace;font-size:7px;padding:2px 5px;background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.3);">SVO</span>
+                <span style="font-family:monospace;font-size:7px;padding:2px 5px;background:rgba(34,197,94,0.15);color:#22C55E;border:1px solid rgba(34,197,94,0.3);">SOCIAL</span>
+              </div>
+            </div>
+            <div style="padding:6px 12px;background:#22C55E;color:#09090B;font-family:monospace;font-size:9px;font-weight:bold;letter-spacing:1px;white-space:nowrap;">
+              TICKETS OPEN
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming list -->
+      <div style="margin-left:40px;">
+        <div style="font-family:monospace;font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:3px;margin-bottom:8px;">
+          BINNENKORT
+        </div>
+        <!-- Compact list items with timeline dots -->
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.03);">
+            <div style="width:6px;height:6px;border-radius:50%;background:#F59E0B;flex-shrink:0;"></div>
+            <div style="font-family:monospace;font-size:8px;color:#F59E0B;width:44px;">23 APR</div>
+            <div style="font-size:10px;color:#fafafa;font-weight:bold;flex:1;">Hackathon</div>
+            <div style="font-family:monospace;font-size:7px;color:rgba(255,255,255,0.3);padding:2px 5px;border:1px solid rgba(255,255,255,0.1);">TECH</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid rgba(59,130,246,0.2);background:rgba(59,130,246,0.03);">
+            <div style="width:6px;height:6px;border-radius:50%;background:#3B82F6;flex-shrink:0;"></div>
+            <div style="font-family:monospace;font-size:8px;color:#3B82F6;width:44px;">30 APR</div>
+            <div style="font-size:10px;color:#fafafa;font-weight:bold;flex:1;">CERN Lezing</div>
+            <div style="font-family:monospace;font-size:7px;color:rgba(255,255,255,0.3);padding:2px 5px;border:1px solid rgba(255,255,255,0.1);">EDU</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px dashed rgba(255,255,255,0.06);">
+            <div style="width:6px;height:6px;border-radius:50%;border:1px dashed rgba(255,255,255,0.2);flex-shrink:0;"></div>
+            <div style="font-family:monospace;font-size:8px;color:rgba(255,255,255,0.2);width:44px;">TBA</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.2);flex:1;">Meer events worden aangekondigd</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C: Hybrid — Featured + Compact List</h3>
+      <p>Volgende event groot uitgelicht met CTA, daarna compacte lijst met energy line aan de zijkant. Tickets status direct zichtbaar. Kleur per categorie. Click voor detail expand of modal.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Meest belangrijke event springt eruit</li>
+          <li>Ticket status direct duidelijk</li>
+          <li>Compact maar informatief</li>
+          <li>Energy line + kleur = SIT vibes</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Minder "wow" dan full timeline</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;">
+  <p class="subtitle">Mijn aanbeveling: <strong>C (Hybrid)</strong> — het volgende event prominent met directe ticket CTA, compact overzicht van wat er aankomt, energy lines voor de SIT tech vibe. Praktisch voor bezoekers (eerstejaars weten meteen wat er is en hoe ze meedoen) en visueel onderscheidend.</p>
+</div>

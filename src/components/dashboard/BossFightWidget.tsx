@@ -164,7 +164,9 @@ function ActiveState({ boss, contributions, myContribution }: {
   contributions: BossData['contributions']
   myContribution: number
 }) {
-  const hpPercent = Math.min(100, Math.max(0, (boss.currentHp / boss.hp) * 100))
+  const hp = boss.hp || 0
+  const currentHp = boss.currentHp || 0
+  const hpPercent = hp > 0 ? Math.min(100, Math.max(0, (currentHp / hp) * 100)) : 0
   const countdown = useCountdown(new Date(boss.deadline))
   const prevHpRef = useRef(hpPercent)
   const [damageTick, setDamageTick] = useState(false)
@@ -221,7 +223,7 @@ function ActiveState({ boss, contributions, myContribution }: {
           <div className="flex items-center justify-between text-[11px] font-mono mb-1.5">
             <span className="text-gray-400 flex items-center gap-1">
               <Flame size={11} className="text-red-500" />
-              {boss.currentHp.toLocaleString('nl-NL')} / {boss.hp.toLocaleString('nl-NL')} HP
+              {currentHp.toLocaleString('nl-NL')} / {hp.toLocaleString('nl-NL')} HP
             </span>
             <span className="text-gray-600">{Math.round(hpPercent)}%</span>
           </div>
