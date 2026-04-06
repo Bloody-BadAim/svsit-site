@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Flame, Coins } from 'lucide-react'
 import MyCardTab from '@/components/dashboard/tabs/MyCardTab'
 import QuestsTab from '@/components/dashboard/tabs/QuestsTab'
@@ -58,11 +59,21 @@ const TABS: { id: Tab; label: string }[] = [
 ]
 
 // ---------------------------------------------------------------------------
-// Main component
+// Inner component (needs Suspense boundary because of useSearchParams)
 // ---------------------------------------------------------------------------
 
-export default function DashboardClient(props: DashboardClientProps) {
-  const [activeTab, setActiveTab] = useState<Tab>('card')
+function DashboardContent(props: DashboardClientProps) {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const initialTab = searchParams.get('tab') as Tab | null
+  const [activeTab, setActiveTab] = useState<Tab>(
+    initialTab && ['card', 'quests', 'badges'].includes(initialTab) ? initialTab : 'card'
+  )
+
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab)
+    router.replace(`/dashboard?tab=${tab}`, { scroll: false })
+  }
 
   const {
     level, levelTitle, tierColor, xpCurrent, xpMax, xpPercent,
@@ -151,7 +162,7 @@ export default function DashboardClient(props: DashboardClientProps) {
         {TABS.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabChange(tab.id)}
             className="px-5 py-2.5 text-xs font-mono tracking-wider transition-colors cursor-pointer"
             style={{
               color: activeTab === tab.id ? 'var(--color-accent-gold)' : 'rgba(255,255,255,0.3)',
@@ -161,15 +172,6 @@ export default function DashboardClient(props: DashboardClientProps) {
             {tab.label}
           </button>
         ))}
-
-        {/* Shop link (not a tab, separate page) */}
-        <a
-          href="/dashboard/shop"
-          className="px-5 py-2.5 text-xs font-mono tracking-wider transition-colors relative"
-          style={{ color: 'rgba(255,255,255,0.3)' }}
-        >
-          SHOP
-        </a>
       </div>
 
       {/* Tab content */}
@@ -189,5 +191,17 @@ export default function DashboardClient(props: DashboardClientProps) {
       {activeTab === 'quests' && <QuestsTab {...questsTabProps} />}
       {activeTab === 'badges' && <BadgesTab {...badgesTabProps} />}
     </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Main export — wraps in Suspense (required for useSearchParams)
+// ---------------------------------------------------------------------------
+
+export default function DashboardClient(props: DashboardClientProps) {
+  return (
+    <Suspense fallback={<div />}>
+      <DashboardContent {...props} />
+    </Suspense>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { QrCode, Palette, Share2, Lock, ChevronRight, Zap, Target } from 'lucide-react'
 import MemberCard from '@/components/MemberCard'
 import type { MemberCardData, MemberCardEquipment } from '@/components/MemberCard'
@@ -114,14 +114,23 @@ function FlipCard({
 
 function ActivityRow({ item }: { item: ActivityItem }) {
   const time = new Date(item.created_at)
-  const now = new Date()
-  const isToday = time.toDateString() === now.toDateString()
-  const yesterday = new Date(now)
-  yesterday.setDate(yesterday.getDate() - 1)
-  const isYesterday = time.toDateString() === yesterday.toDateString()
-
   const timeStr = `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`
-  const dateLabel = isToday ? 'vandaag' : isYesterday ? 'gisteren' : time.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })
+
+  // Use state to avoid hydration mismatch from new Date() on server vs client
+  const [dateLabel, setDateLabel] = useState<string>(
+    time.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })
+  )
+
+  useEffect(() => {
+    const now = new Date()
+    const yesterday = new Date(now)
+    yesterday.setDate(yesterday.getDate() - 1)
+    const isToday = time.toDateString() === now.toDateString()
+    const isYesterday = time.toDateString() === yesterday.toDateString()
+    setDateLabel(
+      isToday ? 'vandaag' : isYesterday ? 'gisteren' : time.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })
+    )
+  }, [item.created_at])
 
   const isBadge = item.type === 'badge'
   const isChallenge = item.type === 'challenge'
