@@ -468,40 +468,66 @@ export function IconNoLife({ size = 20, color = 'currentColor' }: IconProps): Re
   )
 }
 
-// 29. IconKonami — gamepad / controller
+// 29. IconKonami — retro pixel arrow sequence (up up down down left right)
 export function IconKonami({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="8" width="20" height="12" rx="4" />
-      <line x1="7" y1="12" x2="7" y2="16" />
-      <line x1="5" y1="14" x2="9" y2="14" />
-      <line x1="15" y1="12" x2="15" y2="12.01" strokeWidth={3} />
-      <line x1="17" y1="14" x2="17" y2="14.01" strokeWidth={3} />
-      <line x1="13" y1="14" x2="13" y2="14.01" strokeWidth={3} />
-      <line x1="15" y1="16" x2="15" y2="16.01" strokeWidth={3} />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {/* Pixel grid gamepad with D-pad and arrow sequence */}
+      <rect x="4" y="8" width="16" height="12" rx="3" stroke={color} strokeWidth={1.5} />
+      {/* D-pad */}
+      <path d="M8 12V16M6 14H10" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
+      {/* Arrow sequence dots — the konami code */}
+      <circle cx="15" cy="11.5" r="1" fill={color} opacity="0.9" />
+      <circle cx="17.5" cy="13" r="1" fill={color} opacity="0.7" />
+      <circle cx="15" cy="14.5" r="1" fill={color} opacity="0.5" />
+      <circle cx="17.5" cy="16" r="1" fill={color} opacity="0.3" />
+      {/* Top arrows — up up */}
+      <path d="M9 5L12 2L15 5" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M10 7L12 5L14 7" stroke={color} strokeWidth={1} strokeLinecap="round" opacity="0.5" />
     </svg>
   )
 }
 
-// 30. IconFirstBdfl — crown with jewel
+// 30. IconFirstBdfl — ornate crown with 3 jewels and radiant lines
 export function IconFirstBdfl({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M2 4l4 8 6-6 6 6 4-8v14H2V4Z" />
-      <circle cx="12" cy="6" r="1.5" />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {/* Radiant lines behind crown */}
+      <line x1="12" y1="1" x2="12" y2="4" stroke={color} strokeWidth={0.8} opacity="0.3" />
+      <line x1="6" y1="3" x2="8" y2="5" stroke={color} strokeWidth={0.8} opacity="0.3" />
+      <line x1="18" y1="3" x2="16" y2="5" stroke={color} strokeWidth={0.8} opacity="0.3" />
+      {/* Crown body — elaborate */}
+      <path d="M3 8L6 14H18L21 8L17 12L12 6L7 12L3 8Z" stroke={color} strokeWidth={1.5} strokeLinejoin="round" fill={color} fillOpacity="0.1" />
+      {/* Crown base */}
+      <rect x="5" y="14" width="14" height="3" rx="1" stroke={color} strokeWidth={1.5} fill={color} fillOpacity="0.08" />
+      {/* Base detail line */}
+      <line x1="7" y1="19" x2="17" y2="19" stroke={color} strokeWidth={1} opacity="0.4" />
+      <line x1="6" y1="20" x2="18" y2="20" stroke={color} strokeWidth={1.5} opacity="0.2" />
+      {/* 3 jewels */}
+      <circle cx="8" cy="11" r="1.2" fill={color} opacity="0.8" />
+      <circle cx="12" cy="9" r="1.5" fill={color} opacity="0.9" />
+      <circle cx="16" cy="11" r="1.2" fill={color} opacity="0.8" />
     </svg>
   )
 }
 
-// 31. IconFounderXi — roman numeral XI inside a diamond
+// 31. IconFounderXi — shield with XI monogram and laurel wreath
 export function IconFounderXi({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="12 2 22 12 12 22 2 12" />
-      <line x1="9" y1="8" x2="9" y2="16" />
-      <line x1="12" y1="8" x2="12" y2="16" />
-      <line x1="15" y1="8" x2="15" y2="16" />
-      <line x1="9" y1="12" x2="15" y2="12" />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {/* Shield shape */}
+      <path d="M12 2L3 6V12C3 16.97 7.03 21 12 22C16.97 21 21 16.97 21 12V6L12 2Z" stroke={color} strokeWidth={1.5} fill={color} fillOpacity="0.06" />
+      {/* Inner shield border */}
+      <path d="M12 4.5L5.5 7.5V12C5.5 15.87 8.36 19.2 12 20C15.64 19.2 18.5 15.87 18.5 12V7.5L12 4.5Z" stroke={color} strokeWidth={0.6} opacity="0.3" />
+      {/* XI monogram — bold and centered */}
+      <text x="12" y="14.5" textAnchor="middle" fontFamily="monospace" fontSize="8" fontWeight="bold" fill={color} opacity="0.9">XI</text>
+      {/* Laurel branches */}
+      <path d="M5 18C6.5 16 8 15 9 15" stroke={color} strokeWidth={0.8} opacity="0.4" strokeLinecap="round" />
+      <path d="M5.5 17C7 15.5 8 14.5 9 14.5" stroke={color} strokeWidth={0.6} opacity="0.3" strokeLinecap="round" />
+      <path d="M19 18C17.5 16 16 15 15 15" stroke={color} strokeWidth={0.8} opacity="0.4" strokeLinecap="round" />
+      <path d="M18.5 17C17 15.5 16 14.5 15 14.5" stroke={color} strokeWidth={0.6} opacity="0.3" strokeLinecap="round" />
+      {/* Star above shield */}
+      <path d="M12 1L12.4 2L13.2 2L12.6 2.5L12.8 3.3L12 2.8L11.2 3.3L11.4 2.5L10.8 2L11.6 2Z" fill={color} opacity="0.6" />
     </svg>
   )
 }
