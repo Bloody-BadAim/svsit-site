@@ -452,9 +452,10 @@ export default function BadgesTab({
   )
   const [saving, setSaving] = useState(false)
 
-  void isAdmin
+  // Admins see all badges as unlocked
+  const effectiveEarnedIds = isAdmin ? BADGE_DEFS.map(b => b.id) : earnedBadgeIds
 
-  const earnedSet = new Set(earnedBadgeIds)
+  const earnedSet = new Set(effectiveEarnedIds)
   const equippedSet = new Set(currentEquipped)
 
   // Sort: mythic first, then by earned status
@@ -557,7 +558,7 @@ export default function BadgesTab({
               className="font-mono text-[10px] px-1.5 py-0.5"
               style={{ color: 'var(--color-accent-gold)', border: '1px solid rgba(242,158,24,0.2)' }}
             >
-              {earnedBadgeIds.length}/{BADGE_DEFS.length}
+              {effectiveEarnedIds.length}/{BADGE_DEFS.length}
             </span>
           </div>
           <RarityFilter active={rarityFilter} onChange={setRarityFilter} />
