@@ -3,14 +3,7 @@
 import { useState, useEffect } from 'react'
 import { ROLLEN } from '@/lib/constants'
 import { getLevelForXp } from '@/lib/levelEngine'
-import type { Role } from '@/types/database'
-
-interface DbCommissie {
-  id: string
-  slug: string
-  naam: string
-  beschrijving: string | null
-}
+import type { Role, DbCommissie } from '@/types/database'
 
 interface MemberDetail {
   id: string

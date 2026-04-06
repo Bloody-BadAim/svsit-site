@@ -14,7 +14,8 @@ export interface Person {
   type: "bestuur" | "lid";
 }
 
-export interface Commissie {
+/** Commissie definition for the org tree visualisation */
+export interface OrgCommissie {
   id: string;
   name: string;
   color: string;
@@ -22,6 +23,9 @@ export interface Commissie {
   leden: string[];
   status?: string;
 }
+
+/** @deprecated Use OrgCommissie instead */
+export type Commissie = OrgCommissie;
 
 // ── Bestuur ──
 
@@ -84,7 +88,7 @@ export const leden: Person[] = [
 
 // ── Commissies ──
 
-export const commissies: Commissie[] = [
+export const commissies: OrgCommissie[] = [
   {
     id: "pr-socials",
     name: "PR & Socials",
@@ -151,11 +155,11 @@ export function getPersonById(id: string): Person | undefined {
   return allPersons.find((p) => p.id === id);
 }
 
-export function getCommissieById(id: string): Commissie | undefined {
+export function getCommissieById(id: string): OrgCommissie | undefined {
   return commissies.find((c) => c.id === id);
 }
 
-export function getPersonCommissies(personId: string): Commissie[] {
+export function getPersonCommissies(personId: string): OrgCommissie[] {
   return commissies.filter(
     (c) => c.voorzitters.includes(personId) || c.leden.includes(personId)
   );

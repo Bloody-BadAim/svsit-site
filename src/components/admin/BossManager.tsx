@@ -4,31 +4,10 @@ import { useState, useCallback, useEffect } from 'react'
 import { Swords, Check, X, AlertTriangle, Users, Pencil, Trash2, Play, Square } from 'lucide-react'
 import { BADGE_DEFS } from '@/lib/badgeDefs'
 import { mapBossRow } from '@/lib/bossMappers'
+import { formatDate } from '@/lib/utils'
+import { inputStyle, labelStyle } from '@/components/admin/adminStyles'
+import { CornerDecorations } from '@/components/ui/CornerDecorations'
 import type { BossFight } from '@/types/gamification'
-
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
-const inputStyle: React.CSSProperties = {
-  backgroundColor: 'var(--color-bg)',
-  color: 'var(--color-text)',
-  border: '1px solid var(--color-border)',
-  fontFamily: 'var(--font-mono)',
-  fontSize: 13,
-  padding: '6px 10px',
-  outline: 'none',
-  width: '100%',
-  borderRadius: 0,
-}
-
-const labelStyle: React.CSSProperties = {
-  color: 'var(--color-text-muted)',
-  fontFamily: 'var(--font-mono)',
-  fontSize: 11,
-  textTransform: 'uppercase' as const,
-  letterSpacing: '0.08em',
-  display: 'block',
-  marginBottom: 4,
-}
 
 const actionBtnBase: React.CSSProperties = {
   fontFamily: 'var(--font-mono)',
@@ -54,38 +33,6 @@ const STATUS_CONFIG: Record<
   active:    { label: 'ACTIVE',    color: '#3B82F6', bg: 'rgba(59,130,246,0.1)'  },
   defeated:  { label: 'DEFEATED',  color: '#22C55E', bg: 'rgba(34,197,94,0.1)'   },
   failed:    { label: 'FAILED',    color: '#EF4444', bg: 'rgba(239,68,68,0.1)'   },
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleString('nl-NL', {
-    day:    'numeric',
-    month:  'short',
-    year:   'numeric',
-    hour:   '2-digit',
-    minute: '2-digit',
-  })
-}
-
-function CornerDecorations() {
-  const s = (pos: React.CSSProperties): React.CSSProperties => ({
-    position: 'absolute',
-    width: 10,
-    height: 10,
-    borderColor: 'var(--color-accent-gold)',
-    borderStyle: 'solid',
-    borderWidth: 0,
-    ...pos,
-  })
-  return (
-    <>
-      <span style={s({ top: 0, left: 0,  borderTopWidth: 2, borderLeftWidth: 2  })} />
-      <span style={s({ top: 0, right: 0, borderTopWidth: 2, borderRightWidth: 2 })} />
-      <span style={s({ bottom: 0, left: 0,  borderBottomWidth: 2, borderLeftWidth: 2  })} />
-      <span style={s({ bottom: 0, right: 0, borderBottomWidth: 2, borderRightWidth: 2 })} />
-    </>
-  )
 }
 
 // ─── Form defaults ─────────────────────────────────────────────────────────────

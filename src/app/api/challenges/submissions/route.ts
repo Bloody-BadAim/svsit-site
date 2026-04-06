@@ -1,15 +1,12 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { requireAdmin, handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
-import { ADMIN_EMAILS } from '@/lib/constants'
 
 // GET — List all pending submissions (admin only)
 export async function GET() {
   try {
-    const session = await auth()
-    if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
-      return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
-    }
+    const result = await requireAdmin()
+    if ('error' in result) return result.error
 
     const supabase = createServiceClient()
 
@@ -54,7 +51,6 @@ export async function GET() {
 
     return NextResponse.json({ data: enriched, error: null, meta: { count: enriched.length } })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ data: null, error: message, meta: null }, { status: 500 })
+    return handleError(err)
   }
 }

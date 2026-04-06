@@ -1,12 +1,16 @@
 import type { Role, StatCategory } from '@/types/database'
 
-export interface Commissie {
+/** Lightweight commissie option used in registration forms and admin filters */
+export interface CommissieOption {
   id: string
   naam: string
   beschrijving: string
 }
 
-export const COMMISSIES: Commissie[] = [
+/** @deprecated Use CommissieOption instead */
+export type Commissie = CommissieOption
+
+export const COMMISSIES: CommissieOption[] = [
   { id: 'gameit', naam: 'GameIT', beschrijving: 'Game nights, toernooien, en game dev showcases' },
   { id: 'ai4hva', naam: 'AI4HvA', beschrijving: 'AI workshops, hackathons, en de AI community' },
   { id: 'pr-socials', naam: 'PR & Socials', beschrijving: 'Content maken, socials beheren, SIT zichtbaar maken' },

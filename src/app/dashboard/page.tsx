@@ -291,9 +291,10 @@ export default async function DashboardPage({
     const effectDef = cardEquipment.effectId ? defMap.get(cardEquipment.effectId) : null
 
     const frameColor = frameDef
-      ? (frameDef.rarity === 'mythic'
-        ? 'conic-gradient(from 0deg, #f59e0b, #ef4444, #8b5cf6, #3b82f6, #22c55e, #f59e0b)'
-        : RARITY_CONFIG[frameDef.rarity as BadgeRarity]?.color)
+      ? ((frameDef.preview_data as Record<string, unknown> | null)?.color as string | undefined)
+        ?? (frameDef.rarity === 'mythic'
+          ? 'conic-gradient(from 0deg, #f59e0b, #ef4444, #8b5cf6, #3b82f6, #22c55e, #f59e0b)'
+          : RARITY_CONFIG[frameDef.rarity as BadgeRarity]?.color)
       : undefined
 
     const petEmoji = petDef

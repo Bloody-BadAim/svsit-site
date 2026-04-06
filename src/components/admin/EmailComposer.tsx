@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Mail, Send, Users, AlertTriangle, Check, X, FileText } from 'lucide-react'
+import { inputStyle as baseInputStyle, labelStyle as baseLabelStyle } from '@/components/admin/adminStyles'
+import { CornerDecorations } from '@/components/ui/CornerDecorations'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -77,29 +79,10 @@ const FILTER_OPTIONS: FilterOption[] = [
   { value: 'commissie', label: 'Commissieleden',             description: 'Leden in een of meer commissies'        },
 ]
 
-// ─── Shared input/label styles ────────────────────────────────────────────────
+// ─── Shared input/label styles (with EmailComposer overrides) ────────────────
 
-const inputStyle: React.CSSProperties = {
-  backgroundColor: 'var(--color-bg)',
-  color: 'var(--color-text)',
-  border: '1px solid var(--color-border)',
-  fontFamily: 'var(--font-mono)',
-  fontSize: 13,
-  padding: '8px 12px',
-  outline: 'none',
-  width: '100%',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  color: 'var(--color-text-muted)',
-  fontFamily: 'var(--font-mono)',
-  fontSize: 11,
-  textTransform: 'uppercase' as const,
-  letterSpacing: '0.08em',
-  display: 'block',
-  marginBottom: 6,
-}
+const inputStyle: React.CSSProperties = { ...baseInputStyle, padding: '8px 12px', boxSizing: 'border-box' }
+const labelStyle: React.CSSProperties = { ...baseLabelStyle, marginBottom: 6 }
 
 // ─── Live email preview (approximates the template) ───────────────────────────
 
@@ -201,19 +184,6 @@ function EmailPreview({ subject, body }: { subject: string; body: string }) {
         <div style={{ flex: 1, backgroundColor: '#EF4444' }} />
       </div>
     </div>
-  )
-}
-
-// ─── Corner decoration ────────────────────────────────────────────────────────
-
-function CornerDecorations() {
-  return (
-    <>
-      <span style={{ position: 'absolute', top: 0,    left: 0,  width: 10, height: 10, borderTop:    '2px solid var(--color-accent-gold)', borderLeft:   '2px solid var(--color-accent-gold)' }} />
-      <span style={{ position: 'absolute', top: 0,    right: 0, width: 10, height: 10, borderTop:    '2px solid var(--color-accent-gold)', borderRight:  '2px solid var(--color-accent-gold)' }} />
-      <span style={{ position: 'absolute', bottom: 0, left: 0,  width: 10, height: 10, borderBottom: '2px solid var(--color-accent-gold)', borderLeft:   '2px solid var(--color-accent-gold)' }} />
-      <span style={{ position: 'absolute', bottom: 0, right: 0, width: 10, height: 10, borderBottom: '2px solid var(--color-accent-gold)', borderRight:  '2px solid var(--color-accent-gold)' }} />
-    </>
   )
 }
 

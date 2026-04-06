@@ -6,7 +6,8 @@ export type StatCategory = 'code' | 'social' | 'learn' | 'impact'
 export type ChallengeType = 'quest' | 'track_milestone' | 'achievement'
 export type SubmissionStatus = 'pending' | 'approved' | 'rejected'
 
-export interface Commissie {
+/** Database row from the `commissies` table */
+export interface DbCommissie {
   id: string
   slug: string
   naam: string
@@ -14,10 +15,13 @@ export interface Commissie {
   emoji: string | null
 }
 
+/** @deprecated Use DbCommissie instead */
+export type Commissie = DbCommissie
+
 export interface MemberCommissie {
   commissie_id: string
   role_in_commissie: string
-  commissies: Commissie
+  commissies: DbCommissie
 }
 
 export interface Member {

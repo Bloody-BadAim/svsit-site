@@ -4,16 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { getLevelForXp, getLevelProgress } from '@/lib/levelEngine'
-
-// ─── Corner decoration component ──────────────────────────────────────────────
-function CornerDecorations({ color = 'var(--color-accent-gold)' }: { color?: string }) {
-  return (
-    <>
-      <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2" style={{ borderColor: color }} />
-      <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
-    </>
-  )
-}
+import { CornerDecorations } from '@/components/ui/CornerDecorations'
 
 // ─── Panel header ──────────────────────────────────────────────────────────────
 function PanelHeader({ label, color = 'var(--color-text-muted)' }: { label: string; color?: string }) {

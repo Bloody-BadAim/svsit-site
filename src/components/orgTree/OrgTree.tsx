@@ -12,7 +12,7 @@ import {
   getPersonCommissies,
   getCommissieMembers,
   type Person,
-  type Commissie,
+  type OrgCommissie,
 } from "./orgData";
 
 // ═══════════════════════════════════════════════════════════
@@ -536,7 +536,7 @@ function CommissieCluster({
   onClickPerson,
   isPersonConnected,
 }: {
-  commissie: Commissie;
+  commissie: OrgCommissie;
   isConnected: boolean;
   isActive: boolean;
   hoveredPerson: string | null;

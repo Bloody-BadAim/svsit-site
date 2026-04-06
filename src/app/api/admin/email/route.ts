@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { render } from '@react-email/components'
-import { auth } from '@/lib/auth'
+import { requireAdmin, handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 import MemberEmail from '@/emails/memberEmail'
 
@@ -114,20 +114,8 @@ async function fetchMembers(filter: EmailFilter): Promise<MemberRow[]> {
 
 export async function POST(req: NextRequest) {
   try {
-    // Auth check
-    const session = await auth()
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
-    }
-    const supabase = createServiceClient()
-    const { data: adminCheck } = await supabase
-      .from('members')
-      .select('is_admin')
-      .eq('id', session.user.id)
-      .single()
-    if (!adminCheck?.is_admin) {
-      return NextResponse.json({ error: 'Niet geautoriseerd' }, { status: 403 })
-    }
+    const result = await requireAdmin()
+    if ('error' in result) return result.error
 
     // Parse body
     const body = await req.json() as EmailRequestBody
@@ -184,8 +172,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ sent, failed })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return handleError(err)
   }
 }
 
@@ -193,19 +180,8 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
-    }
-    const supabase = createServiceClient()
-    const { data: adminCheck } = await supabase
-      .from('members')
-      .select('is_admin')
-      .eq('id', session.user.id)
-      .single()
-    if (!adminCheck?.is_admin) {
-      return NextResponse.json({ error: 'Niet geautoriseerd' }, { status: 403 })
-    }
+    const result = await requireAdmin()
+    if ('error' in result) return result.error
 
     const { searchParams } = new URL(req.url)
     const filter = (searchParams.get('filter') ?? 'all') as EmailFilter
@@ -213,7 +189,6 @@ export async function GET(req: NextRequest) {
     const members = await fetchMembers(filter)
     return NextResponse.json({ count: members.length })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return handleError(err)
   }
 }

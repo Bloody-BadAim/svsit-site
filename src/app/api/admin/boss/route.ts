@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { requireAdmin, handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
-    }
-
-    if (!session.user.isAdmin) {
-      return NextResponse.json({ error: 'Niet geautoriseerd' }, { status: 403 })
-    }
+    const result = await requireAdmin()
+    if ('error' in result) return result.error
 
     const body = await req.json()
     const { name, description, hp, startsAt, deadline, baseRewardXp, baseRewardBadgeId, topRewardAccessoryId } = body as {
@@ -52,8 +46,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ boss: data })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return handleError(err)
   }
 }
 
@@ -61,14 +54,8 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
-    }
-
-    if (!session.user.isAdmin) {
-      return NextResponse.json({ error: 'Niet geautoriseerd' }, { status: 403 })
-    }
+    const result = await requireAdmin()
+    if ('error' in result) return result.error
 
     const body = await req.json()
     const { id, name, description, hp, startsAt, deadline, baseRewardXp, baseRewardBadgeId, status } = body as {
@@ -114,8 +101,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json({ boss: data })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return handleError(err)
   }
 }
 
@@ -123,14 +109,8 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
-    }
-
-    if (!session.user.isAdmin) {
-      return NextResponse.json({ error: 'Niet geautoriseerd' }, { status: 403 })
-    }
+    const result = await requireAdmin()
+    if ('error' in result) return result.error
 
     const body = await req.json()
     const { id } = body as { id: string }
@@ -175,7 +155,6 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return handleError(err)
   }
 }

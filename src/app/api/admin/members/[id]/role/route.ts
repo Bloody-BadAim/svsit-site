@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { requireAdmin, handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 import type { Role } from '@/types/database'
 
@@ -10,14 +10,8 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
-    }
-
-    if (!session.user.isAdmin) {
-      return NextResponse.json({ error: 'Niet geautoriseerd' }, { status: 403 })
-    }
+    const result = await requireAdmin()
+    if ('error' in result) return result.error
 
     const { id } = await params
     const body = await req.json()
@@ -40,7 +34,6 @@ export async function PATCH(
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return handleError(err)
   }
 }

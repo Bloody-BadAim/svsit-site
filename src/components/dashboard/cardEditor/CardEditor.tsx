@@ -714,7 +714,9 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
       }
     }
 
-    const frameColor = frameDef ? getRarityBorder(frameDef.rarity) : undefined
+    const frameColor = frameDef
+      ? (frameDef.preview_data?.color as string | undefined) ?? getRarityBorder(frameDef.rarity)
+      : undefined
 
     const petEmoji = petDef ? derivePetId(petDef) : undefined
 

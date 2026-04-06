@@ -3,6 +3,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useScannerStore } from '@/stores/useScannerStore'
 import { Check, X } from 'lucide-react'
+import { formatDate } from '@/lib/utils'
+import { inputStyle, labelStyle } from '@/components/admin/adminStyles'
+import { CornerDecorations } from '@/components/ui/CornerDecorations'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -71,16 +74,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   impact: 'Impact',
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleString('nl-NL', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
 function euroCents(euros: string): number {
   const n = parseFloat(euros)
   return isNaN(n) ? 0 : Math.round(n * 100)
@@ -102,70 +95,6 @@ const EMPTY_FORM: CreateForm = {
   price_members: '',
   price_nonmembers: '',
   capacity: '',
-}
-
-// ─── Corner decoration ────────────────────────────────────────────────────────
-
-function CornerDecorations() {
-  return (
-    <>
-      <span
-        style={{
-          position: 'absolute', top: 0, left: 0,
-          width: 10, height: 10,
-          borderTop: '2px solid var(--color-accent-gold)',
-          borderLeft: '2px solid var(--color-accent-gold)',
-        }}
-      />
-      <span
-        style={{
-          position: 'absolute', top: 0, right: 0,
-          width: 10, height: 10,
-          borderTop: '2px solid var(--color-accent-gold)',
-          borderRight: '2px solid var(--color-accent-gold)',
-        }}
-      />
-      <span
-        style={{
-          position: 'absolute', bottom: 0, left: 0,
-          width: 10, height: 10,
-          borderBottom: '2px solid var(--color-accent-gold)',
-          borderLeft: '2px solid var(--color-accent-gold)',
-        }}
-      />
-      <span
-        style={{
-          position: 'absolute', bottom: 0, right: 0,
-          width: 10, height: 10,
-          borderBottom: '2px solid var(--color-accent-gold)',
-          borderRight: '2px solid var(--color-accent-gold)',
-        }}
-      />
-    </>
-  )
-}
-
-// ─── Input helpers ────────────────────────────────────────────────────────────
-
-const inputStyle: React.CSSProperties = {
-  backgroundColor: 'var(--color-bg)',
-  color: 'var(--color-text)',
-  border: '1px solid var(--color-border)',
-  fontFamily: 'var(--font-mono)',
-  fontSize: 13,
-  padding: '6px 10px',
-  outline: 'none',
-  width: '100%',
-}
-
-const labelStyle: React.CSSProperties = {
-  color: 'var(--color-text-muted)',
-  fontFamily: 'var(--font-mono)',
-  fontSize: 11,
-  textTransform: 'uppercase',
-  letterSpacing: '0.08em',
-  display: 'block',
-  marginBottom: 4,
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────

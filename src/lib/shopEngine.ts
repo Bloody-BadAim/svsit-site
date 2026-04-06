@@ -45,6 +45,7 @@ export async function purchaseItem(
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = createServiceClient()
 
+  // Fetch item definition (price + stock)
   const { data: item } = await supabase
     .from('accessory_definitions')
     .select('shop_price, stock')
@@ -55,46 +56,42 @@ export async function purchaseItem(
 
   const price = item.shop_price as number
 
-  // 1. Check if item already owned (before any coin deduction)
-  const { data: existing } = await supabase
-    .from('member_accessories')
-    .select('id')
-    .eq('member_id', memberId)
-    .eq('accessory_id', accessoryId)
-    .single()
-
-  if (existing) return { success: false, error: 'Je hebt dit item al' }
-
-  // 2. Check coin balance and deduct
-  if (!isAdmin) {
-    const { data: member } = await supabase
-      .from('members')
-      .select('coins_balance')
-      .eq('id', memberId)
+  // Admin bypass: free purchase, skip atomic balance check
+  if (isAdmin) {
+    // Still check duplicate ownership
+    const { data: existing } = await supabase
+      .from('member_accessories')
+      .select('id')
+      .eq('member_id', memberId)
+      .eq('accessory_id', accessoryId)
       .single()
 
-    if (!member) return { success: false, error: 'Lid niet gevonden' }
-    if ((member.coins_balance as number) < price)
-      return { success: false, error: 'Niet genoeg coins' }
+    if (existing) return { success: false, error: 'Je hebt dit item al' }
 
-    // 3. Deduct coins
     await supabase
-      .from('members')
-      .update({ coins_balance: (member.coins_balance as number) - price })
-      .eq('id', memberId)
+      .from('member_accessories')
+      .insert({ member_id: memberId, accessory_id: accessoryId, acquired_via: 'shop' })
+
+    await supabase
+      .from('shop_transactions')
+      .insert({ member_id: memberId, accessory_id: accessoryId, coins_spent: 0 })
+  } else {
+    // Atomic purchase via Supabase RPC — prevents TOCTOU race condition
+    // The RPC checks duplicate ownership, verifies balance, deducts coins,
+    // inserts accessory, and logs transaction in a single transaction.
+    const { data: result, error } = await supabase.rpc('purchase_item', {
+      p_member_id: memberId,
+      p_accessory_id: accessoryId,
+      p_price: price,
+    })
+
+    if (error) return { success: false, error: error.message }
+
+    const rpcResult = result as { success: boolean; error?: string }
+    if (!rpcResult.success) return { success: false, error: rpcResult.error }
   }
 
-  // 4. Add to inventory
-  await supabase
-    .from('member_accessories')
-    .insert({ member_id: memberId, accessory_id: accessoryId, acquired_via: 'shop' })
-
-  // Log transaction (coins_spent = 0 for admins)
-  await supabase
-    .from('shop_transactions')
-    .insert({ member_id: memberId, accessory_id: accessoryId, coins_spent: isAdmin ? 0 : price })
-
-  // 5. Decrease stock
+  // Decrease stock (outside RPC — not race-critical since stock is advisory)
   if (item.stock !== null) {
     await supabase
       .from('accessory_definitions')
