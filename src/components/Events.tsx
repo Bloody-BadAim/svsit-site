@@ -14,7 +14,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 type EventStatus = "DONE" | "NEXT" | "TBA";
 
-type EventCategory = "social" | "workshop" | "gaming" | "kennis";
+type EventCategory = "social" | "workshop" | "gaming" | "talks";
 
 interface SitEvent {
   id: string;
@@ -68,14 +68,14 @@ const CATEGORY_FILTERS: { key: string; label: string }[] = [
   { key: "social", label: "SOCIAL" },
   { key: "workshop", label: "WORKSHOP" },
   { key: "gaming", label: "GAMING" },
-  { key: "kennis", label: "KENNIS" },
+  { key: "talks", label: "TALKS" },
 ];
 
 const CATEGORY_LABELS: Record<EventCategory, string> = {
   social: "SOCIAL",
   workshop: "WORKSHOP",
   gaming: "GAMING",
-  kennis: "KENNIS",
+  talks: "TALKS",
 };
 
 const FALLBACK_EVENTS: SitEvent[] = [
@@ -99,7 +99,7 @@ const FALLBACK_EVENTS: SitEvent[] = [
     status: "NEXT",
     type: "SIT eigen",
     category: "workshop",
-    color: BRAND.red,
+    color: BRAND.green,
   },
   {
     id: "dnd",
@@ -110,7 +110,7 @@ const FALLBACK_EVENTS: SitEvent[] = [
     status: "TBA",
     type: "Samenwerking",
     category: "gaming",
-    color: BRAND.green,
+    color: BRAND.red,
   },
   {
     id: "cern",
@@ -119,7 +119,7 @@ const FALLBACK_EVENTS: SitEvent[] = [
     location: "HvA Amstelcampus",
     status: "TBA",
     type: "Samenwerking",
-    category: "kennis",
+    category: "talks",
     color: BRAND.blue,
   },
 ];
