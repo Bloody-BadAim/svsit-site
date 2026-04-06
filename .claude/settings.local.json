@@ -153,7 +153,8 @@
       "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) -exec wc -l {} +)",
       "Bash(for f:*)",
       "Bash(do echo:*)",
-      "Read(//mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/**)"
+      "Read(//mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/**)",
+      "Bash(npx sharp-cli:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

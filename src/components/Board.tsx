@@ -31,7 +31,7 @@ const members: Member[] = [
   {
     name: "Riley",
     role: "Penningmeester",
-    image: "/bestuur/riley.png",
+    image: "/bestuur/riley.webp",
     initials: "RL",
     accent: "var(--color-accent-blue)",
     accentHex: "#3B82F6",
@@ -41,7 +41,7 @@ const members: Member[] = [
   {
     name: "Hugo",
     role: "Algemeen bestuurslid",
-    image: "/bestuur/hugo.png",
+    image: "/bestuur/hugo.webp",
     initials: "HG",
     accent: "var(--color-accent-red)",
     accentHex: "#EF4444",

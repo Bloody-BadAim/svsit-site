@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
+import { handleError } from '@/lib/apiAuth'
 import { stripe } from '@/lib/stripe'
 import { createServiceClient } from '@/lib/supabase'
 import { sendTicketEmail, generateTicketNumber } from '@/lib/email'
@@ -30,8 +31,7 @@ export async function GET(
     if (error) throw error
     return NextResponse.json({ data, error: null, meta: { count } })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ data: null, error: message, meta: null }, { status: 500 })
+    return handleError(err)
   }
 }
 
@@ -194,7 +194,6 @@ export async function POST(
       { status: 201 }
     )
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ data: null, error: message, meta: null }, { status: 500 })
+    return handleError(err)
   }
 }

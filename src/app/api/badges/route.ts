@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
+import { handleError } from '@/lib/apiAuth'
 import { equipBadge, unequipBadge } from '@/lib/badgeEngine'
 import { getBadgeSlotCount } from '@/lib/levelEngine'
 import { createServiceClient } from '@/lib/supabase'
@@ -43,7 +44,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Onbekende action' }, { status: 400 })
     }
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return handleError(err)
   }
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
+import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 
 // GET — Lid ophalen (eigen profiel of admin)
@@ -42,13 +43,13 @@ export async function GET(
       const record = data as Record<string, unknown>
       record.has_password = !!data.password_hash
       record.password_hash = undefined
-      record.membership_active = !!data.stripe_subscription_id
+      // Respect the DB membership_active flag (bestuur = gratis lid, geen Stripe)
+      record.membership_active = data.membership_active || !!data.stripe_subscription_id
     }
 
     return NextResponse.json({ data, error: null, meta: null })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ data: null, error: message, meta: null }, { status: 500 })
+    return handleError(err)
   }
 }
 
@@ -79,8 +80,7 @@ export async function DELETE(
     if (error) throw error
     return NextResponse.json({ success: true })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return handleError(err)
   }
 }
 
@@ -126,19 +126,18 @@ export async function PATCH(
       .from('members')
       .update(updateData)
       .eq('id', id)
-      .select('id, email, student_number, role, commissie, total_xp, current_level, stripe_subscription_id')
+      .select('id, email, student_number, role, commissie, total_xp, current_level, membership_active, stripe_subscription_id')
       .single()
 
     if (error) throw error
 
     if (data) {
       const record = data as Record<string, unknown>
-      record.membership_active = !!data.stripe_subscription_id
+      record.membership_active = data.membership_active || !!data.stripe_subscription_id
     }
 
     return NextResponse.json({ data, error: null, meta: null })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ data: null, error: message, meta: null }, { status: 500 })
+    return handleError(err)
   }
 }

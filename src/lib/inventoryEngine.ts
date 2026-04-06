@@ -1,6 +1,22 @@
 import { createServiceClient } from '@/lib/supabase'
 import type { MemberAccessory, AccessoryCategory, CardEquipment } from '@/types/gamification'
 
+/** Raw accessory definition row as returned by the Supabase join */
+export interface AccessoryDefRow {
+  id: string
+  name: string
+  rarity: string
+  category: string
+  preview_data: Record<string, unknown> | null
+}
+
+/** Extended result from getEquippedAccessories — includes the raw defs so callers skip a follow-up query */
+export interface EquippedAccessoriesResult {
+  equipment: CardEquipment
+  /** Map of accessory ID → definition (only for equipped items) */
+  definitions: Map<string, AccessoryDefRow>
+}
+
 export async function getInventory(memberId: string): Promise<MemberAccessory[]> {
   const supabase = createServiceClient()
   const { data } = await supabase
@@ -12,11 +28,20 @@ export async function getInventory(memberId: string): Promise<MemberAccessory[]>
   return (data ?? []).map(mapAccessoryRow)
 }
 
-export async function getEquippedAccessories(memberId: string): Promise<CardEquipment> {
+/**
+ * Fetch equipped accessories with their definitions in a single join query.
+ *
+ * @param memberData — If provided, skips the extra members query for accent_color/custom_title.
+ *   Pass these from the member row you already fetched.
+ */
+export async function getEquippedAccessories(
+  memberId: string,
+  memberData?: { accent_color: string | null; custom_title: string | null },
+): Promise<EquippedAccessoriesResult> {
   const supabase = createServiceClient()
   const { data } = await supabase
     .from('member_accessories')
-    .select('*, accessory_definitions(*)')
+    .select('*, accessory_definitions(id, name, rarity, category, preview_data)')
     .eq('member_id', memberId)
     .eq('equipped', true)
 
@@ -25,10 +50,22 @@ export async function getEquippedAccessories(memberId: string): Promise<CardEqui
     stickers: [], accentColor: null, customTitle: null,
   }
 
+  const definitions = new Map<string, AccessoryDefRow>()
+
   for (const row of data ?? []) {
-    const def = row.accessory_definitions as { category: string; preview_data?: Record<string, unknown> | null } | null
+    const def = row.accessory_definitions as { id: string; name: string; rarity: string; category: string; preview_data?: Record<string, unknown> | null } | null
     if (!def) continue
     const accessoryId = row.accessory_id as string
+
+    // Store the definition for callers that need it
+    definitions.set(accessoryId, {
+      id: def.id,
+      name: def.name,
+      rarity: def.rarity,
+      category: def.category,
+      preview_data: def.preview_data ?? null,
+    })
+
     switch (def.category) {
       case 'skin': {
         // Prefer preview_data.skinId (maps to CARD_SKINS id), fall back to accessory UUID
@@ -47,16 +84,22 @@ export async function getEquippedAccessories(memberId: string): Promise<CardEqui
     }
   }
 
-  const { data: member } = await supabase
-    .from('members')
-    .select('accent_color, custom_title')
-    .eq('id', memberId)
-    .single()
+  // Use pre-fetched member data when available, otherwise query
+  if (memberData) {
+    equipment.accentColor = memberData.accent_color ?? null
+    equipment.customTitle = memberData.custom_title ?? null
+  } else {
+    const { data: member } = await supabase
+      .from('members')
+      .select('accent_color, custom_title')
+      .eq('id', memberId)
+      .single()
 
-  equipment.accentColor = (member?.accent_color as string) ?? null
-  equipment.customTitle = (member?.custom_title as string) ?? null
+    equipment.accentColor = (member?.accent_color as string) ?? null
+    equipment.customTitle = (member?.custom_title as string) ?? null
+  }
 
-  return equipment
+  return { equipment, definitions }
 }
 
 export async function equipAccessory(memberId: string, accessoryId: string, position?: { x: number; y: number }): Promise<boolean> {

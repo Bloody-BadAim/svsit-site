@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 
 export async function GET(req: NextRequest) {
@@ -97,7 +98,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ top10: sanitizedTop10, bubble })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ data: null, error: message, meta: null }, { status: 500 })
+    return handleError(err)
   }
 }

@@ -33,7 +33,15 @@ export default async function DashboardPage({
   const supabase = createServiceClient()
 
   // -------------------------------------------------------------------------
-  // Parallel data fetching
+  // Parallel data fetching — optimized to minimize query count
+  //
+  // Eliminated queries vs. original:
+  //  - Merged two member_badges queries (#8 + #15) into one
+  //  - Removed separate "approved challenge submissions" query (#6)
+  //    — use allSubmissions (#10) and filter in JS instead
+  //  - challenge_submissions now joins challenges() — no waterfall query
+  //  - getEquippedAccessories returns definitions — no follow-up query
+  //  - getEquippedAccessories receives member data — no internal members query
   // -------------------------------------------------------------------------
 
   const now = new Date().toISOString()
@@ -41,10 +49,8 @@ export default async function DashboardPage({
   const [
     memberResult,
     memberStats,
-    cardEquipment,
     activeBoss,
     scansResult,
-    challengeSubmissionsResult,
     activeChallengesResult,
     memberBadgesResult,
     skinRewardsResult,
@@ -53,7 +59,6 @@ export default async function DashboardPage({
     allSubmissionsResult,
     milestonesResult,
     xpHistoryResult,
-    equippedBadgesResult,
   ] = await Promise.all([
     // 1. Member data with commissies
     supabase
@@ -68,13 +73,10 @@ export default async function DashboardPage({
     // 2. Stats
     calculateStats(memberId, isAdmin),
 
-    // 3. Equipped accessories
-    getEquippedAccessories(memberId),
-
-    // 4. Active boss
+    // 3. Active boss
     getActiveBoss(),
 
-    // 5. Recent scans (last 10)
+    // 4. Recent scans (last 10)
     supabase
       .from('scans')
       .select('id, points, reason, event_name, category, created_at')
@@ -82,43 +84,34 @@ export default async function DashboardPage({
       .order('created_at', { ascending: false })
       .limit(10),
 
-    // 6. Recent approved challenge submissions (last 10)
-    supabase
-      .from('challenge_submissions')
-      .select('id, challenge_id, created_at, status')
-      .eq('member_id', memberId)
-      .eq('status', 'approved')
-      .order('created_at', { ascending: false })
-      .limit(10),
-
-    // 7. Active challenges/quests
+    // 5. Active challenges/quests
     supabase
       .from('challenges')
       .select('id, title, description, points, category, type, active_until')
       .or(`active_until.is.null,active_until.gte.${now}`)
       .eq('type', 'quest'),
 
-    // 8. Member badges (earned)
+    // 6. Member badges — single query with earned_at AND equipped_slot (merged old #8 + #15)
     supabase
       .from('member_badges')
-      .select('badge_id, earned_at')
+      .select('badge_id, earned_at, equipped_slot')
       .eq('member_id', memberId),
 
-    // 9. Unlocked skins
+    // 7. Unlocked skins
     supabase
       .from('rewards')
       .select('reward_id')
       .eq('member_id', memberId)
       .eq('type', 'skin_unlock'),
 
-    // 10. XP transactions today (for daily XP count)
+    // 8. XP transactions today (for daily XP count)
     supabase
       .from('xp_transactions')
       .select('amount')
       .eq('member_id', memberId)
       .gte('created_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
 
-    // 11. Recent scans for streak calculation (last 30 days)
+    // 9. Recent scans for streak calculation (last 30 days)
     supabase
       .from('scans')
       .select('created_at')
@@ -126,47 +119,53 @@ export default async function DashboardPage({
       .gte('created_at', new Date(Date.now() - 30 * 86400000).toISOString())
       .order('created_at', { ascending: false }),
 
-    // 12. All challenge submissions for this member (quests + tracks)
+    // 10. All challenge submissions with challenge details via join (eliminates waterfall)
     supabase
       .from('challenge_submissions')
-      .select('id, challenge_id, status, created_at')
+      .select('id, challenge_id, status, created_at, challenges(id, title, points, category)')
       .eq('member_id', memberId),
 
-    // 13. Track milestones
+    // 11. Track milestones
     supabase
       .from('challenges')
       .select('id, title, track_id, track_order')
       .eq('type', 'track_milestone')
       .order('track_order', { ascending: true }),
 
-    // 14. XP history (last 50)
+    // 12. XP history (last 50)
     supabase
       .from('xp_transactions')
       .select('id, amount, source, category, created_at')
       .eq('member_id', memberId)
       .order('created_at', { ascending: false })
       .limit(50),
-
-    // 15. Equipped badge slots
-    supabase
-      .from('member_badges')
-      .select('badge_id, equipped_slot')
-      .eq('member_id', memberId)
-      .not('equipped_slot', 'is', null),
   ])
 
   const member = memberResult.data
   if (!member) redirect('/login')
 
   // -------------------------------------------------------------------------
-  // Process challenge submissions -> activity items
+  // Second parallel batch — equipped accessories needs member data from batch 1
   // -------------------------------------------------------------------------
 
-  const completedChallenges = challengeSubmissionsResult.data ?? []
-  const challengeIds = completedChallenges.map(s => s.challenge_id)
-  const { data: challengeDetails } = challengeIds.length > 0
-    ? await supabase.from('challenges').select('id, title, points, category').in('id', challengeIds)
-    : { data: [] as { id: string; title: string; points: number; category: string }[] }
+  const cardEquipmentResult = await getEquippedAccessories(memberId, {
+    accent_color: member.accent_color as string | null,
+    custom_title: member.custom_title as string | null,
+  })
+  const cardEquipment = cardEquipmentResult.equipment
+  const accessoryDefMap = cardEquipmentResult.definitions
+
+  // -------------------------------------------------------------------------
+  // Process challenge submissions -> activity items (no waterfall — data comes from join)
+  // -------------------------------------------------------------------------
+
+  const allSubmissionRows = allSubmissionsResult.data ?? []
+
+  // Derive "recent approved" from allSubmissions instead of a separate query
+  const completedChallenges = allSubmissionRows
+    .filter(s => s.status === 'approved')
+    .sort((a, b) => new Date(b.created_at as string).getTime() - new Date(a.created_at as string).getTime())
+    .slice(0, 10)
 
   // -------------------------------------------------------------------------
   // Build activity items (scans + challenges, sorted by date, max 10)
@@ -183,9 +182,7 @@ export default async function DashboardPage({
       category: s.category as string | null,
     })),
     ...completedChallenges.map(s => {
-      const challenge = (challengeDetails ?? []).find(
-        (c: { id: string; title: string; points: number; category: string }) => c.id === s.challenge_id
-      )
+      const challenge = s.challenges as unknown as { id: string; title: string; points: number; category: string } | null
       return {
         id: s.id as string,
         type: 'challenge' as const,
@@ -266,29 +263,15 @@ export default async function DashboardPage({
   }
 
   // -------------------------------------------------------------------------
-  // Equipment mapping (same pattern as ledenpas page)
+  // Equipment mapping — uses definitions from getEquippedAccessories (no extra query)
   // -------------------------------------------------------------------------
-
-  const equippedAccessoryIds = [
-    cardEquipment.frameId,
-    cardEquipment.petId,
-    cardEquipment.effectId,
-    ...cardEquipment.stickers.map(s => s.accessoryId),
-  ].filter(Boolean) as string[]
 
   let equipmentProp: MemberCardEquipment | undefined
 
-  if (equippedAccessoryIds.length > 0 || cardEquipment.accentColor || cardEquipment.customTitle) {
-    const { data: defs } = await supabase
-      .from('accessory_definitions')
-      .select('id, name, rarity, category, preview_data')
-      .in('id', equippedAccessoryIds.length > 0 ? equippedAccessoryIds : ['__none__'])
-
-    const defMap = new Map((defs ?? []).map(d => [d.id as string, d]))
-
-    const frameDef = cardEquipment.frameId ? defMap.get(cardEquipment.frameId) : null
-    const petDef = cardEquipment.petId ? defMap.get(cardEquipment.petId) : null
-    const effectDef = cardEquipment.effectId ? defMap.get(cardEquipment.effectId) : null
+  if (accessoryDefMap.size > 0 || cardEquipment.accentColor || cardEquipment.customTitle) {
+    const frameDef = cardEquipment.frameId ? accessoryDefMap.get(cardEquipment.frameId) : null
+    const petDef = cardEquipment.petId ? accessoryDefMap.get(cardEquipment.petId) : null
+    const effectDef = cardEquipment.effectId ? accessoryDefMap.get(cardEquipment.effectId) : null
 
     const frameColor = frameDef
       ? ((frameDef.preview_data as Record<string, unknown> | null)?.color as string | undefined)
@@ -309,7 +292,7 @@ export default async function DashboardPage({
 
     const mappedStickers = cardEquipment.stickers
       .map(s => {
-        const stickerDef = defMap.get(s.accessoryId)
+        const stickerDef = accessoryDefMap.get(s.accessoryId)
         const emoji = (stickerDef?.preview_data as Record<string, unknown> | null)?.emoji as string | undefined
         if (!emoji) return null
         return { id: s.accessoryId, x: s.x, y: s.y, emoji }
@@ -344,14 +327,17 @@ export default async function DashboardPage({
   const username = (member.email as string)?.split('@')[0] || 'lid'
 
   // -------------------------------------------------------------------------
-  // BadgesTab props (declared early so cardData can use equippedBadges)
+  // BadgesTab props — derived from single merged member_badges query
   // -------------------------------------------------------------------------
 
-  const earnedBadgeIds = (memberBadgesResult.data ?? []).map(b => b.badge_id as string)
-  const equippedBadges = (equippedBadgesResult.data ?? []).map(b => ({
-    badgeId: b.badge_id as string,
-    slot: b.equipped_slot as number,
-  }))
+  const allBadgeRows = memberBadgesResult.data ?? []
+  const earnedBadgeIds = allBadgeRows.map(b => b.badge_id as string)
+  const equippedBadges = allBadgeRows
+    .filter(b => b.equipped_slot != null)
+    .map(b => ({
+      badgeId: b.badge_id as string,
+      slot: b.equipped_slot as number,
+    }))
   const maxSlots = getBadgeSlotCount(levelDef.level)
 
   // -------------------------------------------------------------------------
@@ -384,7 +370,7 @@ export default async function DashboardPage({
     activeUntil: (c.active_until as string) ?? null,
   }))
 
-  const allSubmissions = (allSubmissionsResult.data ?? []).map(s => ({
+  const allSubmissions = allSubmissionRows.map(s => ({
     challengeId: s.challenge_id as string,
     status: s.status as string,
     createdAt: s.created_at as string,

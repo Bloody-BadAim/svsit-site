@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
+import { handleError } from '@/lib/apiAuth'
 import { equipAccessory, unequipAccessory, updateStickerPosition } from '@/lib/inventoryEngine'
 
 export async function POST(req: NextRequest) {
@@ -17,8 +18,7 @@ export async function POST(req: NextRequest) {
     const success = await equipAccessory(session.user.id, accessoryId, position)
     return NextResponse.json({ success })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return handleError(err)
   }
 }
 
@@ -36,8 +36,7 @@ export async function DELETE(req: NextRequest) {
     const success = await unequipAccessory(session.user.id, accessoryId)
     return NextResponse.json({ success })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return handleError(err)
   }
 }
 
@@ -55,7 +54,6 @@ export async function PATCH(req: NextRequest) {
     const success = await updateStickerPosition(session.user.id, accessoryId, position)
     return NextResponse.json({ success })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return handleError(err)
   }
 }

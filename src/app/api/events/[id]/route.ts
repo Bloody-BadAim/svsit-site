@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
+import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 import type { StatCategory } from '@/types/database'
 
@@ -35,8 +36,7 @@ export async function GET(
       meta: null,
     })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ data: null, error: message, meta: null }, { status: 500 })
+    return handleError(err)
   }
 }
 
@@ -113,8 +113,7 @@ export async function PATCH(
 
     return NextResponse.json({ data, error: null, meta: null })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ data: null, error: message, meta: null }, { status: 500 })
+    return handleError(err)
   }
 }
 
@@ -148,7 +147,6 @@ export async function DELETE(
 
     return NextResponse.json({ data, error: null, meta: null })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout'
-    return NextResponse.json({ data: null, error: message, meta: null }, { status: 500 })
+    return handleError(err)
   }
 }
