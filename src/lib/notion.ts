@@ -7,6 +7,8 @@ const notion = new Client({
 // Data source (collection) ID — NOT the database page ID
 const EVENT_DATA_SOURCE_ID = '2f5be6edc1a98117bb4c000b42a59c22'
 
+export type EventCategory = 'social' | 'programma'
+
 export interface NotionEvent {
   id: string
   name: string
@@ -18,30 +20,13 @@ export interface NotionEvent {
   link?: string
   status: 'done' | 'next' | 'tba'
   type: string
-  tags: string[]
+  category: EventCategory
   color: string
 }
 
-const TYPE_TAGS: Record<string, string[]> = {
-  'SIT eigen': ['SIT', 'SOCIAL'],
-  'SVO gezamenlijk': ['SVO', 'SOCIAL'],
-  'Samenwerking': ['COLLAB'],
-  'Extern': ['EXTERN'],
-}
-
-const TAG_COLORS: Record<string, string> = {
-  SOCIAL: '#F59E0B',
-  SIT: '#F59E0B',
-  SVO: '#F59E0B',
-  COLLAB: '#3B82F6',
-  EXTERN: '#6B7280',
-}
-
-function getEventColor(tags: string[]): string {
-  for (const tag of tags) {
-    if (TAG_COLORS[tag]) return TAG_COLORS[tag]
-  }
-  return '#F59E0B'
+const CATEGORY_COLORS: Record<EventCategory, string> = {
+  social: '#F59E0B',
+  programma: '#3B82F6',
 }
 
 function getRichText(prop: unknown): string | undefined {
@@ -85,9 +70,7 @@ export async function getNotionEvents(): Promise<NotionEvent[]> {
       const dateInfo = getDate(props.Date)
       const notionStatus = getSelect(props.Status)
       const type = getSelect(props.Type) || ''
-
-      // Derive tags from Type
-      const tags = TYPE_TAGS[type] ?? ['SOCIAL']
+      const category = (getSelect(props.Categorie) === 'programma' ? 'programma' : 'social') as EventCategory
 
       // Map status
       let status: 'done' | 'next' | 'tba'
@@ -116,8 +99,8 @@ export async function getNotionEvents(): Promise<NotionEvent[]> {
         link: getUrl(props.Link),
         status,
         type,
-        tags,
-        color: getEventColor(tags),
+        category,
+        color: CATEGORY_COLORS[category],
       }
     })
   } catch (error) {

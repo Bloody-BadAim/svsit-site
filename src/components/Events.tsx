@@ -14,6 +14,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 type EventStatus = "DONE" | "NEXT" | "TBA";
 
+type EventCategory = "social" | "programma";
+
 interface SitEvent {
   id: string;
   title: string;
@@ -25,7 +27,7 @@ interface SitEvent {
   link?: string;
   status: EventStatus;
   type: string;
-  tags: string[];
+  category: EventCategory;
   color: string;
 }
 
@@ -40,7 +42,7 @@ interface NotionEventResponse {
   link?: string;
   status: "done" | "next" | "tba";
   type: string;
-  tags: string[];
+  category: EventCategory;
   color: string;
 }
 
@@ -61,12 +63,16 @@ const MONTHS = [
 const fDay = (d: Date) => d.getDate();
 const fMonth = (d: Date) => MONTHS[d.getMonth()];
 
-const CATEGORY_FILTERS = [
+const CATEGORY_FILTERS: { key: string; label: string }[] = [
   { key: "all", label: "ALLES" },
-  { key: "social", label: "SOCIAL", match: ["SIT", "SOCIAL", "SVO"] },
-  { key: "tech", label: "TECH", match: ["TECH", "AI"] },
-  { key: "edu", label: "EDUCATIE", match: ["COLLAB", "EXTERN", "EDUCATIE", "CARRIERE"] },
-] as const;
+  { key: "social", label: "SOCIAL" },
+  { key: "programma", label: "PROGRAMMA" },
+];
+
+const CATEGORY_LABELS: Record<EventCategory, string> = {
+  social: "SOCIAL",
+  programma: "PROGRAMMA",
+};
 
 const FALLBACK_EVENTS: SitEvent[] = [
   {
@@ -77,7 +83,7 @@ const FALLBACK_EVENTS: SitEvent[] = [
     time: "20:00",
     status: "NEXT",
     type: "SVO gezamenlijk",
-    tags: ["SVO", "SOCIAL"],
+    category: "social",
     color: BRAND.gold,
   },
   {
@@ -88,8 +94,8 @@ const FALLBACK_EVENTS: SitEvent[] = [
     time: "09:00",
     status: "NEXT",
     type: "SIT eigen",
-    tags: ["SIT", "SOCIAL"],
-    color: BRAND.gold,
+    category: "programma",
+    color: BRAND.blue,
   },
   {
     id: "techborrel",
@@ -98,7 +104,7 @@ const FALLBACK_EVENTS: SitEvent[] = [
     location: "met de opleiding",
     status: "TBA",
     type: "SIT eigen",
-    tags: ["SIT", "SOCIAL"],
+    category: "social",
     color: BRAND.gold,
   },
   {
@@ -108,7 +114,7 @@ const FALLBACK_EVENTS: SitEvent[] = [
     location: "HvA Amstelcampus",
     status: "TBA",
     type: "Samenwerking",
-    tags: ["COLLAB"],
+    category: "programma",
     color: BRAND.blue,
   },
 ];
@@ -132,7 +138,7 @@ function notionToSitEvent(e: NotionEventResponse): SitEvent {
     link: e.link,
     status: statusMap[e.status] ?? "TBA",
     type: e.type || "SIT eigen",
-    tags: e.tags ?? [],
+    category: e.category || "social",
     color: e.color || BRAND.gold,
   };
 }
@@ -182,13 +188,6 @@ function downloadIcs(e: SitEvent) {
   a.download = `${e.id}-sit.ics`;
   a.click();
   URL.revokeObjectURL(url);
-}
-
-function tagColor(tag: string): string {
-  if (["SIT", "SOCIAL", "SVO"].includes(tag)) return BRAND.gold;
-  if (["TECH", "AI"].includes(tag)) return BRAND.blue;
-  if (["COLLAB", "EXTERN", "EDUCATIE", "CARRIERE"].includes(tag)) return BRAND.red;
-  return "rgba(255,255,255,0.3)";
 }
 
 // ─── FeaturedCard ─────────────────────────────────────────────────────────────
@@ -274,21 +273,29 @@ function FeaturedCard({ event, inView }: { event: SitEvent; inView: boolean }) {
           </span>
         </div>
 
-        {/* Tags */}
+        {/* Category + Type */}
         <div className="flex flex-wrap gap-2 mb-5">
-          {event.tags.map((tag) => (
+          <span
+            className="font-mono text-[10px] tracking-widest px-2 py-0.5 rounded-sm uppercase"
+            style={{
+              color: event.color,
+              border: `1px solid ${event.color}50`,
+              background: `${event.color}10`,
+            }}
+          >
+            {CATEGORY_LABELS[event.category]}
+          </span>
+          {event.type && (
             <span
-              key={tag}
               className="font-mono text-[10px] tracking-widest px-2 py-0.5 rounded-sm uppercase"
               style={{
-                color: tagColor(tag),
-                border: `1px solid ${tagColor(tag)}50`,
-                background: `${tagColor(tag)}10`,
+                color: "rgba(255,255,255,0.35)",
+                border: "1px solid rgba(255,255,255,0.08)",
               }}
             >
-              {tag}
+              {event.type}
             </span>
-          ))}
+          )}
         </div>
 
         {/* Description */}
@@ -378,7 +385,7 @@ function CompactItem({ event, index }: { event: SitEvent; index: number }) {
           {event.title}
         </span>
 
-        {/* Type tag */}
+        {/* Category tag */}
         <span
           className="hidden sm:inline font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded-sm flex-shrink-0"
           style={{
@@ -387,7 +394,7 @@ function CompactItem({ event, index }: { event: SitEvent; index: number }) {
             background: `${event.color}0d`,
           }}
         >
-          {event.type}
+          {CATEGORY_LABELS[event.category]}
         </span>
 
         {/* Chevron */}
@@ -578,11 +585,7 @@ export default function Events() {
   const filterFn = useCallback(
     (event: SitEvent) => {
       if (filter === "all") return true;
-      const filterDef = CATEGORY_FILTERS.find((f) => f.key === filter);
-      if (!filterDef || !("match" in filterDef)) return true;
-      return event.tags.some((tag) =>
-        (filterDef as { key: string; label: string; match: readonly string[] }).match.includes(tag)
-      );
+      return event.category === filter;
     },
     [filter]
   );
