@@ -744,6 +744,46 @@ export default function EventsPage() {
                           Tickets
                         </p>
 
+                        {/* Attendance summary */}
+                        {eventTickets && eventTickets.length > 0 && (() => {
+                          const paidCount = eventTickets.filter(
+                            (t) => t.status === 'paid' || t.status === 'checked_in'
+                          ).length
+                          const checkedInCount = eventTickets.filter(
+                            (t) => t.status === 'checked_in'
+                          ).length
+                          const pct = paidCount > 0 ? Math.round((checkedInCount / paidCount) * 100) : 0
+                          return (
+                            <div
+                              style={{
+                                display: 'flex',
+                                gap: 16,
+                                padding: '8px 12px',
+                                marginBottom: 10,
+                                backgroundColor: 'rgba(245,158,11,0.04)',
+                                border: '1px solid rgba(245,158,11,0.12)',
+                              }}
+                            >
+                              <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-text-muted)' }}>
+                                  Attendance:
+                                </span>
+                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--color-accent-green)' }}>
+                                  {checkedInCount} / {paidCount} aanwezig ({pct}%)
+                                </span>
+                              </div>
+                              <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-text-muted)' }}>
+                                  No-shows:
+                                </span>
+                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: paidCount - checkedInCount > 0 ? 'var(--color-accent-red)' : 'var(--color-text-muted)' }}>
+                                  {paidCount - checkedInCount}
+                                </span>
+                              </div>
+                            </div>
+                          )
+                        })()}
+
                         {loadingTickets ? (
                           <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>
                             Laden…

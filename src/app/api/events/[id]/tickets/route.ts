@@ -43,10 +43,11 @@ export async function POST(
   try {
     const { id: eventId } = await params
     const body = await req.json()
-    const { email, name, member_id } = body as {
+    const { email, name, member_id, isMember } = body as {
       email: string
       name?: string
       member_id?: string
+      isMember?: boolean
     }
 
     if (!email) {
@@ -84,6 +85,9 @@ export async function POST(
       }
     }
 
+    // Determine member status: explicit isMember flag takes priority, fallback to member_id presence
+    const memberFlag = isMember ?? !!member_id
+
     // 3. Gratis event: ticket direct aanmaken met status 'paid'
     if (!event.is_paid) {
       const ticketNumber = generateTicketNumber()
@@ -99,7 +103,7 @@ export async function POST(
           paid_amount: 0,
           ticket_number: ticketNumber,
         })
-        .select('id, event_id, member_id, email, name, status, stripe_session_id, paid_amount, created_at, checked_in_at')
+        .select('id, event_id, member_id, email, name, status, stripe_session_id, paid_amount, created_at, checked_in_at, ticket_number')
         .single()
 
       if (insertError) throw insertError
@@ -110,7 +114,7 @@ export async function POST(
           to: email,
           buyerName: name ?? email.split('@')[0],
           buyerEmail: email,
-          isMember: !!member_id,
+          isMember: memberFlag,
           eventTitle: event.title as string,
           eventDate: new Date(event.date as string),
           eventEndDate: event.end_date ? new Date(event.end_date as string) : null,
@@ -127,8 +131,12 @@ export async function POST(
     }
 
     // 4. Betaald event: Stripe checkout session aanmaken
-    const price = member_id ? event.price_members : event.price_nonmembers
-    const priceInCents = Math.round(price * 100)
+    // Prices in db are stored in cents
+    const priceInCents = (memberFlag && event.price_members !== null)
+      ? event.price_members
+      : event.price_nonmembers
+
+    const ticketNumber = generateTicketNumber()
 
     // Maak eerst een pending ticket aan zodat we het ID in de Stripe metadata kunnen zetten
     const { data: ticket, error: insertError } = await supabase
@@ -140,8 +148,9 @@ export async function POST(
         name: name ?? null,
         status: 'pending',
         paid_amount: priceInCents,
+        ticket_number: ticketNumber,
       })
-      .select('id, event_id, member_id, email, name, status, stripe_session_id, paid_amount, created_at, checked_in_at')
+      .select('id, event_id, member_id, email, name, status, stripe_session_id, paid_amount, created_at, checked_in_at, ticket_number')
       .single()
 
     if (insertError) throw insertError
@@ -164,9 +173,10 @@ export async function POST(
         type: 'event_ticket',
         event_id: eventId,
         ticket_id: ticket.id as string,
+        is_member: memberFlag ? 'true' : 'false',
       },
-      success_url: `${process.env.NEXTAUTH_URL}/dashboard?ticket=success`,
-      cancel_url: `${process.env.NEXTAUTH_URL}/dashboard?ticket=cancelled`,
+      success_url: `${process.env.NEXTAUTH_URL}/events/${eventId}?ticket=success`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/events/${eventId}?ticket=cancelled`,
     })
 
     // Sla Stripe session ID op bij het ticket

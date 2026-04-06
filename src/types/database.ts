@@ -95,6 +95,7 @@ export interface Ticket {
   status: 'pending' | 'paid' | 'cancelled' | 'checked_in'
   stripe_session_id: string | null
   paid_amount: number
+  ticket_number: string | null
   created_at: string
   checked_in_at: string | null
 }

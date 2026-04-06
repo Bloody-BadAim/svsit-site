@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 import { ADMIN_EMAILS } from '@/lib/constants'
-import { LayoutDashboard, User, Shield, LogOut, Menu, X, ShoppingBag, Coins } from 'lucide-react'
+import { LayoutDashboard, User, Shield, LogOut, Menu, X, ShoppingBag, Coins, Ticket } from 'lucide-react'
 
 function CoinPill({ userId, isAdmin }: { userId: string; isAdmin: boolean }) {
   const [coins, setCoins] = useState<number | null>(null)
@@ -36,6 +36,7 @@ function CoinPill({ userId, isAdmin }: { userId: string; isAdmin: boolean }) {
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
+  { href: '/dashboard/tickets', label: 'Tickets', Icon: Ticket },
   { href: '/dashboard/shop', label: 'Shop', Icon: ShoppingBag },
   { href: '/dashboard/profiel', label: 'Profiel', Icon: User },
 ]
