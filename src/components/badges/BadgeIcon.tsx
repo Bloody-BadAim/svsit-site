@@ -474,7 +474,7 @@ function InfinityCrystalIcon({ size }: { size: number }) {
 }
 
 // ─── Mythic Badge ─────────────────────────────────────────────────────────────
-function MythicBadge({ size }: { size: number }) {
+function MythicBadge({ size, children }: { size: number; children: ReactElement }) {
   const dim = size + 16
   const outerDim = dim + 18
 
@@ -607,8 +607,10 @@ function MythicBadge({ size }: { size: number }) {
           </svg>
         </div>
 
-        {/* Infinity crystal icon */}
-        <InfinityCrystalIcon size={size} />
+        {/* Actual badge icon with white glow filter */}
+        <div style={{ position: 'relative', zIndex: 2, filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.5))' }}>
+          {children}
+        </div>
       </div>
     </div>
   )
@@ -659,7 +661,11 @@ export default function BadgeIcon({
       </LockedBadge>
     )
   } else if (rarity === 'mythic') {
-    badgeElement = <MythicBadge size={size} />
+    badgeElement = (
+      <MythicBadge size={size}>
+        <IconComponent size={size} color="#ffffff" />
+      </MythicBadge>
+    )
   } else if (rarity === 'legendary') {
     badgeElement = (
       <LegendaryBadge size={size}>

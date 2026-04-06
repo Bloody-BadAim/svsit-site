@@ -30,7 +30,7 @@ export async function GET(
     membership_active, membership_started_at, membership_expires_at,
     stripe_subscription_id, stripe_customer_id, active_skin, password_hash,
     is_admin, created_at,
-    member_commissies ( commissie_id, role_in_commissie, commissies ( id, slug, naam, emoji ) )
+    member_commissies ( commissie_id, role_in_commissie, commissies ( id, slug, naam ) )
   `)
       .eq('id', id)
       .single()
