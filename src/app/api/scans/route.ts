@@ -91,18 +91,18 @@ export async function POST(req: NextRequest) {
 
     if (scanError) throw scanError
 
-    // Grant XP (also handles coins, XP ledger, and boss fight contribution)
+    // Grant XP + auto-badges in parallel (independent operations)
     const xpAmount = calculateXpReward('scan', { eventName: event_name, points })
-    await grantXp({
-      memberId: member_id,
-      amount: xpAmount,
-      source: 'scan',
-      sourceId: scan.id,
-      category: category || 'social',
-    })
-
-    // Bereken stats en ken rewards automatisch toe
-    await checkAndGrantAutoBadges(member_id)
+    await Promise.all([
+      grantXp({
+        memberId: member_id,
+        amount: xpAmount,
+        source: 'scan',
+        sourceId: scan.id,
+        category: category || 'social',
+      }),
+      checkAndGrantAutoBadges(member_id),
+    ])
 
     return NextResponse.json({ data: scan, error: null, meta: null }, { status: 201 })
   } catch (err) {

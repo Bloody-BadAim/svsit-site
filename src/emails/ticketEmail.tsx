@@ -11,6 +11,7 @@ import {
   Img,
   Hr,
 } from "@react-email/components";
+import { C, SitLogo } from "./components/EmailLayout";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -30,74 +31,17 @@ interface TicketEmailProps {
 }
 
 // ---------------------------------------------------------------------------
-// Design tokens (inline — required by email clients)
+// Ticket-specific token extension (adds heading font)
 // ---------------------------------------------------------------------------
 
-const C = {
-  bg: "#09090B",
-  surface: "#111113",
-  surfaceAlt: "#18181B",
-  border: "rgba(255,255,255,0.08)",
-  text: "#FAFAFA",
-  muted: "#6B7280",
-  gold: "#F29E18",
-  green: "#22C55E",
-  blue: "#3B82F6",
-  red: "#EF4444",
-  mono: "'JetBrains Mono','Fira Code','SF Mono','Courier New',monospace",
-  heading:
-    "'Big Shoulders Display','Impact','Arial Black',sans-serif",
+const TC = {
+  ...C,
+  heading: "'Big Shoulders Display','Impact','Arial Black',sans-serif",
 } as const;
 
 // ---------------------------------------------------------------------------
 // Small building blocks
 // ---------------------------------------------------------------------------
-
-function SitLogo() {
-  return (
-    <table cellPadding={0} cellSpacing={0} style={{ borderCollapse: "collapse" }}>
-      <tbody>
-        <tr>
-          <td>
-            {/* {SIT} wordmark */}
-            <Text
-              style={{
-                fontFamily: C.mono,
-                fontSize: "28px",
-                fontWeight: "700",
-                letterSpacing: "0.04em",
-                color: C.text,
-                margin: "0 0 4px 0",
-                lineHeight: "1",
-              }}
-            >
-              <span style={{ color: C.gold }}>{`{`}</span>
-              SIT
-              <span style={{ color: C.gold }}>{`}`}</span>
-            </Text>
-
-            {/* × × × colour marks */}
-            <Text
-              style={{
-                fontFamily: C.mono,
-                fontSize: "11px",
-                letterSpacing: "0.25em",
-                margin: "0",
-                lineHeight: "1",
-              }}
-            >
-              <span style={{ color: C.red }}>×</span>
-              {" "}
-              <span style={{ color: C.gold }}>×</span>
-              {" "}
-              <span style={{ color: C.green }}>×</span>
-            </Text>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  );
-}
 
 function TerminalDot({ color }: { color: string }) {
   return (
@@ -226,7 +170,7 @@ export default function TicketEmail({
                 {/* Event title — BIG */}
                 <Text
                   style={{
-                    fontFamily: C.heading,
+                    fontFamily: TC.heading,
                     fontSize: "32px",
                     fontWeight: "900",
                     color: C.text,
@@ -451,7 +395,7 @@ export default function TicketEmail({
                 {/* Price */}
                 <Text
                   style={{
-                    fontFamily: C.heading,
+                    fontFamily: TC.heading,
                     fontSize: "36px",
                     fontWeight: "900",
                     color: price === "GRATIS" ? C.green : C.gold,

@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { Swords, Check, X, AlertTriangle, Users, Pencil, Trash2, Play, Square } from 'lucide-react'
 import { BADGE_DEFS } from '@/lib/badgeDefs'
+import { mapBossRow } from '@/lib/bossMappers'
 import type { BossFight } from '@/types/gamification'
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
@@ -89,7 +90,7 @@ function CornerDecorations() {
 
 // ─── Form defaults ─────────────────────────────────────────────────────────────
 
-interface CreateForm {
+interface BossForm {
   name:               string
   description:        string
   hp:                 string
@@ -99,7 +100,7 @@ interface CreateForm {
   baseRewardBadgeId:  string
 }
 
-const EMPTY_FORM: CreateForm = {
+const EMPTY_FORM: BossForm = {
   name:              '',
   description:       '',
   hp:                '5000',
@@ -156,17 +157,7 @@ function HpBar({ currentHp, hp }: { currentHp: number; hp: number }) {
   )
 }
 
-// ─── Edit form interface ────────────────────────────────────────────────────
-
-interface EditForm {
-  name: string
-  description: string
-  hp: string
-  startsAt: string
-  deadline: string
-  baseRewardXp: string
-  baseRewardBadgeId: string
-}
+// ─── Edit form helpers ──────────────────────────────────────────────────────
 
 function isoToDatetimeLocal(iso: string): string {
   if (!iso) return ''
@@ -175,7 +166,7 @@ function isoToDatetimeLocal(iso: string): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-function bossToEditForm(boss: BossFight): EditForm {
+function bossToEditForm(boss: BossFight): BossForm {
   return {
     name: boss.name,
     description: boss.description ?? '',
@@ -201,7 +192,7 @@ function BossCard({
   onDelete: (id: string) => void
 }) {
   const [editing, setEditing] = useState(false)
-  const [editForm, setEditForm] = useState<EditForm>(bossToEditForm(boss))
+  const [editForm, setEditForm] = useState<BossForm>(bossToEditForm(boss))
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -243,24 +234,7 @@ function BossCard({
       const json = await res.json()
       if (!res.ok || json.error) throw new Error(json.error ?? 'Opslaan mislukt')
 
-      // Map snake_case response back to camelCase BossFight
-      const d = json.boss
-      const updated: BossFight = {
-        id: d.id,
-        name: d.name,
-        description: d.description ?? '',
-        hp: d.hp,
-        currentHp: d.current_hp,
-        artworkUrl: d.artwork_url ?? null,
-        status: d.status,
-        announcedAt: d.announced_at,
-        startsAt: d.starts_at,
-        deadline: d.deadline,
-        baseRewardXp: d.base_reward_xp,
-        baseRewardBadgeId: d.base_reward_badge_id,
-        topRewardAccessoryId: d.top_reward_accessory_id,
-        createdAt: d.created_at,
-      }
+      const updated = mapBossRow(json.boss as Record<string, unknown>)
       onUpdate(updated)
       setEditing(false)
     } catch (err) {
@@ -284,23 +258,7 @@ function BossCard({
       const json = await res.json()
       if (!res.ok || json.error) throw new Error(json.error ?? 'Status wijzigen mislukt')
 
-      const d = json.boss
-      const updated: BossFight = {
-        id: d.id,
-        name: d.name,
-        description: d.description ?? '',
-        hp: d.hp,
-        currentHp: d.current_hp,
-        artworkUrl: d.artwork_url ?? null,
-        status: d.status,
-        announcedAt: d.announced_at,
-        startsAt: d.starts_at,
-        deadline: d.deadline,
-        baseRewardXp: d.base_reward_xp,
-        baseRewardBadgeId: d.base_reward_badge_id,
-        topRewardAccessoryId: d.top_reward_accessory_id,
-        createdAt: d.created_at,
-      }
+      const updated = mapBossRow(json.boss as Record<string, unknown>)
       onUpdate(updated)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Onbekende fout')
@@ -633,7 +591,7 @@ export default function BossManager({
   initialBossFights: BossFight[]
 }) {
   const [bosses, setBosses]         = useState<BossFight[]>(initialBossFights)
-  const [form, setForm]             = useState<CreateForm>(EMPTY_FORM)
+  const [form, setForm]             = useState<BossForm>(EMPTY_FORM)
   const [creating, setCreating]     = useState(false)
   const [createError, setCreateError]   = useState<string | null>(null)
   const [createSuccess, setCreateSuccess] = useState(false)
@@ -697,24 +655,7 @@ export default function BossManager({
         const json = await res.json()
         if (!res.ok || json.error) throw new Error(json.error ?? 'Aanmaken mislukt')
 
-        // Map snake_case response back to camelCase BossFight
-        const d = json.boss
-        const newBoss: BossFight = {
-          id: d.id,
-          name: d.name,
-          description: d.description ?? '',
-          hp: d.hp,
-          currentHp: d.current_hp,
-          artworkUrl: d.artwork_url ?? null,
-          status: d.status,
-          announcedAt: d.announced_at,
-          startsAt: d.starts_at,
-          deadline: d.deadline,
-          baseRewardXp: d.base_reward_xp,
-          baseRewardBadgeId: d.base_reward_badge_id,
-          topRewardAccessoryId: d.top_reward_accessory_id,
-          createdAt: d.created_at,
-        }
+        const newBoss = mapBossRow(json.boss as Record<string, unknown>)
 
         // Prepend the new boss to the list
         setBosses((prev) => [newBoss, ...prev])

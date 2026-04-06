@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Lock, X as XIcon, Save, ChevronRight, Eye, Coins } from 'lucide-react'
 import { RARITY_CONFIG } from '@/types/gamification'
 import type { AccessoryCategory, BadgeRarity, UnlockRule } from '@/types/gamification'
 import MemberCard from '@/components/MemberCard'
 import type { MemberCardEquipment } from '@/components/MemberCard'
-import { resolvePetComponent } from '@/components/pets'
+import { resolvePetComponent, derivePetId } from '@/components/pets'
 import { getRarityColor } from '@/lib/badgeDefs'
 import { getSkin, CARD_SKINS } from '@/lib/cardSkins'
 
@@ -716,13 +716,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
 
     const frameColor = frameDef ? getRarityBorder(frameDef.rarity) : undefined
 
-    // Resolve pet identifier: prefer preview_data.petId, fall back to emoji,
-    // then derive from the accessory name (e.g. "Debug Bug" → "pet_debug_bug")
-    const petEmoji = petDef
-      ? ((petDef.preview_data?.petId as string | undefined)
-        ?? (petDef.preview_data?.emoji as string | undefined)
-        ?? `pet_${petDef.name.toLowerCase().replace(/\s+/g, '_')}`)
-      : undefined
+    const petEmoji = petDef ? derivePetId(petDef) : undefined
 
     const effectName = effectDef?.name
 
@@ -751,7 +745,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
     return { equipment, activeSkin }
   }
 
-  const { equipment, activeSkin } = buildEquipment()
+  const { equipment, activeSkin } = useMemo(() => buildEquipment(), [equippedMap, equippedStickers, hoverPreview, accentColor, member.custom_title, member.active_skin])
 
   // Equip/unequip handlers
   const handleEquip = useCallback(async (accessoryId: string) => {

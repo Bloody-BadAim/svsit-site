@@ -10,6 +10,7 @@ import { RARITY_CONFIG } from '@/types/gamification'
 import type { BadgeRarity } from '@/types/gamification'
 import type { Role } from '@/types/database'
 import type { MemberCardEquipment } from '@/components/MemberCard'
+import { derivePetId } from '@/components/pets'
 import DashboardClient from '@/components/dashboard/DashboardClient'
 
 export const metadata = {
@@ -295,13 +296,8 @@ export default async function DashboardPage({
           : RARITY_CONFIG[frameDef.rarity as BadgeRarity]?.color)
       : undefined
 
-    // Resolve pet identifier: prefer preview_data.petId, fall back to emoji,
-    // then derive from the accessory name (e.g. "Debug Bug" → "pet_debug_bug")
-    const petPreview = petDef?.preview_data as Record<string, unknown> | null
     const petEmoji = petDef
-      ? ((petPreview?.petId as string | undefined)
-        ?? (petPreview?.emoji as string | undefined)
-        ?? `pet_${(petDef.name as string).toLowerCase().replace(/\s+/g, '_')}`)
+      ? derivePetId({ name: petDef.name as string, preview_data: petDef.preview_data as Record<string, unknown> | null })
       : undefined
 
     const effectName = effectDef?.name as string | undefined
