@@ -150,7 +150,10 @@
       "mcp__plugin_supabase_supabase__apply_migration",
       "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" -o -name \"*.js\" -o -name \"*.jsx\" \\\\\\) -exec wc -l {} +)",
       "Bash(sort -k2)",
-      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) -exec wc -l {} +)"
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) -exec wc -l {} +)",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/**)"
     ]
   },
   "enableAllProjectMcpServers": true,
