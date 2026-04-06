@@ -19,6 +19,7 @@ export function getMaxEquippableSlots(level: number): number {
 }
 
 export function getRarityColor(rarity: BadgeRarity): string {
+  if (rarity === 'mythic') return '#F59E0B'
   return RARITY_CONFIG[rarity].color
 }
 

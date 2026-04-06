@@ -9,20 +9,8 @@ import QRCode from "react-qr-code";
 import { getSkin } from "@/lib/cardSkins";
 import BadgeIcon from "@/components/badges/BadgeIcon";
 import { getBadgeDef } from "@/lib/badgeDefs";
-import { RARITY_CONFIG } from "@/types/gamification";
-import * as Pets from "@/components/pets";
-
-const PET_MAP: Partial<Record<string, (props: { size?: number }) => React.ReactElement>> = {
-  pet_ghost: Pets.PetGhost,
-  pet_pixel_cat: Pets.PetPixelCat,
-  pet_octocat: Pets.PetOctocat,
-  pet_clippy: Pets.PetClippy,
-  pet_debug_bug: Pets.PetDebugBug,
-  pet_baby_dragon: Pets.PetBabyDragon,
-  pet_robot: Pets.PetRobot,
-  pet_rubber_duck: Pets.PetRubberDuck,
-  pet_konami_snake: Pets.PetKonamiSnake,
-};
+import { getRarityColor } from "@/lib/badgeEngine";
+import { PET_MAP } from "@/components/pets";
 
 // Maps DB effect names (case-insensitive) to internal render keys
 const EFFECT_MAP: Record<string, string> = {
@@ -475,7 +463,7 @@ export default function MemberCard({
                         .map((badgeId) => {
                           const badgeDef = getBadgeDef(badgeId);
                           const rarity = badgeDef?.rarity ?? 'common';
-                          const rarityColor = rarity === 'mythic' ? '#ff80ff' : RARITY_CONFIG[rarity].color;
+                          const rarityColor = getRarityColor(rarity);
                           return (
                             <div
                               key={badgeId}

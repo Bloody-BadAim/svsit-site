@@ -158,16 +158,16 @@ export default function JoinCta() {
                 name: 'JOUW NAAM',
                 role: 'member',
                 commissie: 'Jouw commissie',
-                total_xp: 449,
+                total_xp: 0,
                 skin: 'skin_neon_city',
-                activeBadges: ['badge_first_event', 'badge_streak_3', 'badge_borrel_5'],
-                dynamicStats: { code: 7, social: 5, learn: 8, impact: 4 },
+                activeBadges: ['badge_first_event', 'badge_streak_3', 'badge_first_bdfl'],
+                dynamicStats: { code: 0, social: 0, learn: 0, impact: 0 },
               }}
               equipment={{
-                frameColor: '#EC4899',
+                frameColor: 'var(--color-accent-gold)',
                 petEmoji: 'pet_robot',
                 effectName: 'Sparkle',
-                accentColor: '#EC4899',
+                accentColor: 'var(--color-accent-gold)',
                 customTitle: 'JOUW TITEL HIER',
                 stickers: [
                   { id: '1', x: 15, y: 75, emoji: 'SIT' },

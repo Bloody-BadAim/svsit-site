@@ -7,7 +7,8 @@ import { RARITY_CONFIG } from '@/types/gamification'
 import type { AccessoryCategory, BadgeRarity, UnlockRule } from '@/types/gamification'
 import MemberCard from '@/components/MemberCard'
 import type { MemberCardEquipment } from '@/components/MemberCard'
-import * as Pets from '@/components/pets'
+import { PET_MAP } from '@/components/pets'
+import { getRarityColor } from '@/lib/badgeEngine'
 import { getSkin, CARD_SKINS } from '@/lib/cardSkins'
 
 // ---------------------------------------------------------------------------
@@ -71,22 +72,6 @@ const TABS: TabDef[] = [
 ]
 
 // ---------------------------------------------------------------------------
-// Pet component map
-// ---------------------------------------------------------------------------
-
-const PET_MAP: Partial<Record<string, (props: { size?: number }) => React.ReactElement>> = {
-  pet_ghost: Pets.PetGhost,
-  pet_pixel_cat: Pets.PetPixelCat,
-  pet_octocat: Pets.PetOctocat,
-  pet_clippy: Pets.PetClippy,
-  pet_debug_bug: Pets.PetDebugBug,
-  pet_baby_dragon: Pets.PetBabyDragon,
-  pet_robot: Pets.PetRobot,
-  pet_rubber_duck: Pets.PetRubberDuck,
-  pet_konami_snake: Pets.PetKonamiSnake,
-}
-
-// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
@@ -94,11 +79,6 @@ const PRESET_COLORS = [
   '#F59E0B', '#3B82F6', '#EF4444', '#22C55E',
   '#8B5CF6', '#EC4899', '#F97316', '#14B8A6',
 ]
-
-function getRarityColor(rarity: BadgeRarity): string {
-  if (rarity === 'mythic') return '#F59E0B'
-  return RARITY_CONFIG[rarity].color
-}
 
 function getRarityBorder(rarity: BadgeRarity): string {
   if (rarity === 'mythic') return 'conic-gradient(from 0deg, #f59e0b, #ef4444, #8b5cf6, #3b82f6, #22c55e, #f59e0b)'
