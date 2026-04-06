@@ -14,7 +14,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 type EventStatus = "DONE" | "NEXT" | "TBA";
 
-type EventCategory = "social" | "programma";
+type EventCategory = "social" | "workshop" | "gaming" | "kennis";
 
 interface SitEvent {
   id: string;
@@ -66,12 +66,16 @@ const fMonth = (d: Date) => MONTHS[d.getMonth()];
 const CATEGORY_FILTERS: { key: string; label: string }[] = [
   { key: "all", label: "ALLES" },
   { key: "social", label: "SOCIAL" },
-  { key: "programma", label: "PROGRAMMA" },
+  { key: "workshop", label: "WORKSHOP" },
+  { key: "gaming", label: "GAMING" },
+  { key: "kennis", label: "KENNIS" },
 ];
 
 const CATEGORY_LABELS: Record<EventCategory, string> = {
   social: "SOCIAL",
-  programma: "PROGRAMMA",
+  workshop: "WORKSHOP",
+  gaming: "GAMING",
+  kennis: "KENNIS",
 };
 
 const FALLBACK_EVENTS: SitEvent[] = [
@@ -94,18 +98,19 @@ const FALLBACK_EVENTS: SitEvent[] = [
     time: "09:00",
     status: "NEXT",
     type: "SIT eigen",
-    category: "programma",
-    color: BRAND.blue,
+    category: "workshop",
+    color: BRAND.red,
   },
   {
-    id: "techborrel",
-    title: "Tech + Borrel",
-    date: new Date("2026-05-15T16:00:00"),
-    location: "met de opleiding",
+    id: "dnd",
+    title: "SIT x MODUS D&D Avond",
+    date: new Date("2026-05-15T18:00:00"),
+    location: "WBH 5e verdieping",
+    time: "18:00",
     status: "TBA",
-    type: "SIT eigen",
-    category: "social",
-    color: BRAND.gold,
+    type: "Samenwerking",
+    category: "gaming",
+    color: BRAND.green,
   },
   {
     id: "cern",
@@ -114,7 +119,7 @@ const FALLBACK_EVENTS: SitEvent[] = [
     location: "HvA Amstelcampus",
     status: "TBA",
     type: "Samenwerking",
-    category: "programma",
+    category: "kennis",
     color: BRAND.blue,
   },
 ];
