@@ -35,16 +35,23 @@ export default function Hero() {
     );
   }, []);
 
-  // Typing animation — starts after hydration, skipped if reduced motion
+  // Typing animation — runs only on return visits (intro overlay already played),
+  // and only if the user hasn't seen it this session and reduced motion is off.
+  // This ensures the hero h1 text is always present in the DOM (good for LCP).
   useEffect(() => {
-    if (reducedMotion) {
-      setJsReady(true);
+    setJsReady(true);
+    if (reducedMotion) return;
+    // Only run typing animation on return visits (session already marked by IntroOverlay)
+    // On first visit, IntroOverlay handles the compile animation — hero text stays visible.
+    const seen = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('sit-intro-seen');
+    if (!seen) {
+      // First visit: IntroOverlay is showing — keep hero text visible but faded under overlay
+      // (phase stays "done", text stays "{SIT}", animation classes fire immediately after overlay)
       return;
     }
-    // Reset to empty and re-type after JS hydration
+    // Return visit: run the typing animation as a nice touch
     setTypedText("");
     setPhase("typing");
-    setJsReady(true);
     let i = 0;
     const typeInterval = setInterval(() => {
       if (i < fullText.length) {
@@ -55,7 +62,6 @@ export default function Hero() {
         clearInterval(typeInterval);
       }
     }, 180);
-
     return () => clearInterval(typeInterval);
   }, [reducedMotion]);
 

@@ -136,12 +136,13 @@ export default function BackgroundStreaks() {
       ref={containerRef}
       className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
       aria-hidden="true"
+      style={{ contain: "layout style paint", willChange: "transform" }}
     >
       {/* ── Left bundle: 5 brand-color diagonal lines ── */}
       <div
         ref={leftRef}
         className="absolute -left-16 -top-[30%] w-[500px] h-[160%]"
-        style={{ transform: "rotate(-22deg)", transformOrigin: "top left" }}
+        style={{ transform: "rotate(-22deg)", transformOrigin: "top left", willChange: "transform" }}
       >
         {leftBundle.map((streak, i) => (
           <div key={`left-${i}`} className="absolute h-full" style={{ left: streak.x }}>
@@ -202,7 +203,7 @@ export default function BackgroundStreaks() {
       <div
         ref={rightRef}
         className="absolute -right-8 -top-[40%] w-[300px] h-[160%]"
-        style={{ transform: "rotate(-22deg)", transformOrigin: "top right" }}
+        style={{ transform: "rotate(-22deg)", transformOrigin: "top right", willChange: "transform" }}
       >
         {rightEcho.map((streak, i) => (
           <div key={`right-${i}`} className="absolute h-full" style={{ left: streak.x }}>

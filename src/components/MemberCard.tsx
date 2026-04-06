@@ -124,14 +124,15 @@ export default function MemberCard({
 
   // Border wrapper: frame color overrides default skin border
   const frameColor = equipment?.frameColor;
+  // For animated skins, we render a rotating child div using transform: rotate()
+  // (GPU-composited) instead of animating --border-angle on the background property.
   const borderWrapperStyle: React.CSSProperties = frameColor
     ? {
         background: frameColor,
         boxShadow: `0 0 16px 2px ${frameColor}66, 0 0 32px 4px ${frameColor}33`,
       }
     : {
-        background: skinDef.border,
-        ...(skinDef.animated ? { animation: "borderRotate 8s linear infinite" } : {}),
+        background: skinDef.animated ? "transparent" : skinDef.border,
       };
 
   // XP bar color: accentColor override or default gold
@@ -165,6 +166,19 @@ export default function MemberCard({
         className="relative p-[2px] overflow-hidden"
         style={borderWrapperStyle}
       >
+        {/* Animated border: rotating conic gradient using transform (GPU composited) */}
+        {!frameColor && skinDef.animated && (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: skinDef.border,
+              animation: "borderTrailRotate 8s linear infinite",
+              willChange: "transform",
+              transformOrigin: "center center",
+            }}
+          />
+        )}
         {/* Card body */}
         <div
           className="relative overflow-hidden"
