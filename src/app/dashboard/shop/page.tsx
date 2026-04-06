@@ -291,11 +291,19 @@ export default async function ShopPage({
   const tabParam = (typeof params.tab === 'string' ? params.tab : 'alles') as CategoryFilter
   const activeTab: CategoryFilter = CATEGORIES.includes(tabParam) ? tabParam : 'alles'
 
+  // Map tab names (plural) to DB category values (singular)
+  const TAB_TO_CATEGORY: Record<string, string> = {
+    pets: 'pet',
+    frames: 'frame',
+    effects: 'effect',
+    stickers: 'sticker',
+  }
+
   // Filter items by tab
   const filteredItems =
     activeTab === 'alles'
       ? allItems
-      : allItems.filter((item) => item.category === activeTab)
+      : allItems.filter((item) => item.category === (TAB_TO_CATEGORY[activeTab] ?? activeTab))
 
   // Sort: featured first, then by rarity order, then by name
   const rarityOrder = ['legendary', 'epic', 'rare', 'uncommon', 'common']
@@ -379,7 +387,7 @@ export default async function ShopPage({
           const count =
             cat === 'alles'
               ? allItems.length
-              : allItems.filter((i) => i.category === cat).length
+              : allItems.filter((i) => i.category === (TAB_TO_CATEGORY[cat] ?? cat)).length
 
           return (
             <a
