@@ -59,7 +59,7 @@ export default async function DashboardPage({
       .from('members')
       .select(`id, email, role, total_xp, coins_balance, current_level,
         custom_title, accent_color, is_admin, active_skin,
-        leaderboard_visible, commissie, membership_active, membership_started_at,
+        leaderboard_visible, commissie,
         member_commissies ( commissie_id, commissies ( slug, naam ) )`)
       .eq('id', memberId)
       .single(),
@@ -215,21 +215,9 @@ export default async function DashboardPage({
   let nextUnlock = null
   if (nextLevelDef) {
     // Find a skin that unlocks at the next level
-    const nextSkin = CARD_SKINS.find(s => {
-      if (s.unlockType !== 'rank') return false
-      // Match by level progression — rough heuristic
-      const skinLevelMap: Record<string, number> = {
-        skin_bronze: 3,
-        skin_silver: 5,
-        skin_silver_matrix: 5,
-        skin_gold: 7,
-        skin_gold_circuit: 7,
-        skin_prestige: 9,
-        skin_legendary: 10,
-        skin_bdfl: 12,
-      }
-      return skinLevelMap[s.id] === nextLevelDef.level
-    })
+    const nextSkin = CARD_SKINS.find(s =>
+      s.unlockType === 'level' && parseInt(s.unlockRequirement) === nextLevelDef.level
+    )
 
     nextUnlock = {
       skinName: nextSkin?.naam ?? `Level ${nextLevelDef.level}: ${nextLevelDef.title}`,
@@ -307,8 +295,9 @@ export default async function DashboardPage({
           : RARITY_CONFIG[frameDef.rarity as BadgeRarity]?.color)
       : undefined
 
+    const petPreview = petDef?.preview_data as Record<string, unknown> | null
     const petEmoji = petDef
-      ? ((petDef.preview_data as Record<string, unknown> | null)?.emoji as string | undefined)
+      ? ((petPreview?.petId as string | undefined) ?? (petPreview?.emoji as string | undefined))
       : undefined
 
     const effectName = effectDef?.name as string | undefined

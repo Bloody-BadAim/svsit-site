@@ -129,7 +129,7 @@ function CardPreview({ equippedMap, member, accentColor }: CardPreviewProps) {
     : undefined
 
   const petEmoji = petDef
-    ? (petDef.preview_data?.emoji as string | undefined)
+    ? ((petDef.preview_data?.petId as string | undefined) ?? (petDef.preview_data?.emoji as string | undefined))
     : undefined
 
   const effectName = effectDef?.name

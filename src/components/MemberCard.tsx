@@ -24,6 +24,17 @@ const PET_MAP: Partial<Record<string, (props: { size?: number }) => React.ReactE
   pet_konami_snake: Pets.PetKonamiSnake,
 };
 
+// Maps DB effect names (case-insensitive) to internal render keys
+const EFFECT_MAP: Record<string, string> = {
+  sparkle: "sparkles",
+  sparkles: "sparkles",
+  "matrix rain": "matrix",
+  matrix: "matrix",
+  snow: "snow",
+  scanlines: "scanlines",
+  smoke: "smoke",
+};
+
 const BARCODE_BARS = [
   2, 1, 3, 1, 2, 1, 1, 3, 2, 1, 3, 1, 1, 2, 1, 3, 1, 2, 2, 1, 1, 3, 1, 2, 1, 1, 3, 2, 1, 2,
 ];
@@ -533,59 +544,127 @@ export default function MemberCard({
           })()}
 
           {/* ── Accessory: Effect overlay (z-50, pointer-events none) ── */}
-          {equipment?.effectName === "sparkles" && (
-            <div
-              className="absolute inset-0 pointer-events-none z-50 overflow-hidden"
-              aria-hidden="true"
-              style={{ animation: "sparklesFade 3s ease-in-out infinite" }}
-            >
-              {/* Static sparkle dots at fixed positions */}
-              {([
-                [12, 18], [28, 42], [55, 12], [72, 35], [88, 60],
-                [40, 70], [65, 85], [20, 80], [80, 22], [50, 50],
-              ] as [number, number][]).map(([x, y], i) => (
-                <div
-                  key={i}
-                  className="absolute rounded-full"
-                  style={{
-                    left: `${x}%`,
-                    top: `${y}%`,
-                    width: i % 3 === 0 ? 3 : 2,
-                    height: i % 3 === 0 ? 3 : 2,
-                    background: equipment.accentColor ?? "#FBBF24",
-                    opacity: 0,
-                    animation: `sparkleDot 2.4s ease-in-out ${(i * 0.22).toFixed(2)}s infinite`,
-                  }}
-                />
-              ))}
-            </div>
-          )}
+          {(() => {
+            const effectKey = equipment?.effectName
+              ? (EFFECT_MAP[equipment.effectName.toLowerCase()] ?? equipment.effectName.toLowerCase())
+              : null
+            if (!effectKey) return null
+            return (
+              <>
+                {effectKey === "sparkles" && (
+                  <div
+                    className="absolute inset-0 pointer-events-none z-50 overflow-hidden"
+                    aria-hidden="true"
+                    style={{ animation: "sparklesFade 3s ease-in-out infinite" }}
+                  >
+                    {([
+                      [12, 18], [28, 42], [55, 12], [72, 35], [88, 60],
+                      [40, 70], [65, 85], [20, 80], [80, 22], [50, 50],
+                    ] as [number, number][]).map(([x, y], i) => (
+                      <div
+                        key={i}
+                        className="absolute rounded-full"
+                        style={{
+                          left: `${x}%`,
+                          top: `${y}%`,
+                          width: i % 3 === 0 ? 3 : 2,
+                          height: i % 3 === 0 ? 3 : 2,
+                          background: equipment?.accentColor ?? "#FBBF24",
+                          opacity: 0,
+                          animation: `sparkleDot 2.4s ease-in-out ${(i * 0.22).toFixed(2)}s infinite`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
 
-          {equipment?.effectName === "matrix" && (
-            <div
-              className="absolute inset-0 pointer-events-none z-50 overflow-hidden"
-              aria-hidden="true"
-            >
-              {/* Horizontal scanlines */}
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute left-0 right-0"
-                  style={{
-                    top: `${(i / 12) * 100}%`,
-                    height: 1,
-                    background: "rgba(0,255,70,0.08)",
-                    animation: `matrixScan 3s linear ${(i * 0.25).toFixed(2)}s infinite`,
-                  }}
-                />
-              ))}
-              {/* Green tint overlay */}
-              <div
-                className="absolute inset-0"
-                style={{ background: "rgba(0,255,70,0.03)" }}
-              />
-            </div>
-          )}
+                {effectKey === "matrix" && (
+                  <div
+                    className="absolute inset-0 pointer-events-none z-50 overflow-hidden"
+                    aria-hidden="true"
+                  >
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="absolute left-0 right-0"
+                        style={{
+                          top: `${(i / 12) * 100}%`,
+                          height: 1,
+                          background: "rgba(0,255,70,0.08)",
+                          animation: `matrixScan 3s linear ${(i * 0.25).toFixed(2)}s infinite`,
+                        }}
+                      />
+                    ))}
+                    <div
+                      className="absolute inset-0"
+                      style={{ background: "rgba(0,255,70,0.03)" }}
+                    />
+                  </div>
+                )}
+
+                {effectKey === "snow" && (
+                  <div
+                    className="absolute inset-0 pointer-events-none z-50 overflow-hidden"
+                    aria-hidden="true"
+                  >
+                    {([
+                      [10, -5], [25, -10], [40, -3], [55, -8], [70, -2],
+                      [85, -6], [18, -12], [60, -4], [78, -9], [33, -7],
+                      [47, -1], [90, -11], [5, -5], [63, -8], [82, -3],
+                    ] as [number, number][]).map(([x, startY], i) => (
+                      <div
+                        key={i}
+                        className="absolute rounded-full"
+                        style={{
+                          left: `${x}%`,
+                          top: `${startY}%`,
+                          width: i % 3 === 0 ? 3 : 2,
+                          height: i % 3 === 0 ? 3 : 2,
+                          background: "rgba(255,255,255,0.7)",
+                          animation: `snowFall ${3 + (i % 4)}s linear ${(i * 0.3).toFixed(2)}s infinite`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {effectKey === "scanlines" && (
+                  <div
+                    className="absolute inset-0 pointer-events-none z-50 overflow-hidden"
+                    aria-hidden="true"
+                    style={{
+                      background:
+                        "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.04) 3px, rgba(255,255,255,0.04) 4px)",
+                      animation: "scanlinesDrift 8s linear infinite",
+                    }}
+                  />
+                )}
+
+                {effectKey === "smoke" && (
+                  <div
+                    className="absolute inset-0 pointer-events-none z-50 overflow-hidden"
+                    aria-hidden="true"
+                  >
+                    {[20, 40, 60, 80, 30, 70, 50].map((x, i) => (
+                      <div
+                        key={i}
+                        className="absolute rounded-full"
+                        style={{
+                          left: `${x}%`,
+                          bottom: 0,
+                          width: 18 + (i % 3) * 8,
+                          height: 18 + (i % 3) * 8,
+                          background:
+                            "radial-gradient(ellipse at center, rgba(160,160,160,0.18) 0%, transparent 70%)",
+                          animation: `smokeRise ${4 + (i % 3)}s ease-out ${(i * 0.5).toFixed(2)}s infinite`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            )
+          })()}
         </div>
       </div>
     </div>

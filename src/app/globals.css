@@ -697,6 +697,25 @@ body::before {
   100% { opacity: 0; transform: translateY(4px); }
 }
 
+@keyframes snowFall {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  10%  { opacity: 0.8; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(110%) translateX(10px); opacity: 0; }
+}
+
+@keyframes scanlinesDrift {
+  0%   { background-position-y: 0; }
+  100% { background-position-y: 8px; }
+}
+
+@keyframes smokeRise {
+  0%   { transform: translateY(0) scale(1); opacity: 0; }
+  20%  { opacity: 0.35; }
+  80%  { opacity: 0.15; }
+  100% { transform: translateY(-80px) scale(2.5); opacity: 0; }
+}
+
 /* ── Badge rarity animations ── */
 
 /* Common: inner light sweep */
