@@ -718,6 +718,10 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
       ? (frameDef.preview_data?.color as string | undefined) ?? getRarityBorder(frameDef.rarity)
       : undefined
 
+    const frameStyle = frameDef
+      ? (frameDef.preview_data?.frameStyle as string | undefined)
+      : undefined
+
     const petEmoji = petDef ? derivePetId(petDef) : undefined
 
     const effectName = effectDef?.name
@@ -733,6 +737,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
 
     const equipment: MemberCardEquipment = {
       frameColor,
+      frameStyle,
       petEmoji,
       effectName,
       stickers: stickers.length > 0 ? stickers : undefined,

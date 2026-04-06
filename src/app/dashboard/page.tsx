@@ -297,6 +297,10 @@ export default async function DashboardPage({
           : RARITY_CONFIG[frameDef.rarity as BadgeRarity]?.color)
       : undefined
 
+    const frameStyle = frameDef
+      ? ((frameDef.preview_data as Record<string, unknown> | null)?.frameStyle as string | undefined)
+      : undefined
+
     const petEmoji = petDef
       ? derivePetId({ name: petDef.name as string, preview_data: petDef.preview_data as Record<string, unknown> | null })
       : undefined
@@ -314,6 +318,7 @@ export default async function DashboardPage({
 
     equipmentProp = {
       frameColor,
+      frameStyle,
       petEmoji,
       effectName,
       stickers: mappedStickers.length > 0 ? mappedStickers : undefined,

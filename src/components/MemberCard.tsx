@@ -59,11 +59,232 @@ export interface MemberCardData {
 
 export interface MemberCardEquipment {
   frameColor?: string;
+  frameStyle?: string;
   petEmoji?: string;
   effectName?: string;
   stickers?: Array<{ id: string; x: number; y: number; emoji: string }>;
   accentColor?: string;
   customTitle?: string;
+}
+
+// ── Frame style definitions ──
+
+interface FrameVisuals {
+  borderStyle: React.CSSProperties;
+  glowStyle: React.CSSProperties;
+  cornerColor: string;
+  /** Extra overlay elements rendered inside the border wrapper */
+  overlayElements?: React.ReactNode;
+}
+
+function getFrameVisuals(frameStyle: string | undefined, frameColor: string | undefined): FrameVisuals | null {
+  if (!frameStyle && !frameColor) return null;
+
+  switch (frameStyle) {
+    case 'neon': {
+      const c = '#00e5ff';
+      return {
+        borderStyle: {
+          background: c,
+          boxShadow: `0 0 20px ${c}55, 0 0 40px ${c}22`,
+        },
+        glowStyle: {
+          background: `radial-gradient(ellipse at center, ${c}30 0%, transparent 70%)`,
+        },
+        cornerColor: c,
+        overlayElements: (
+          <>
+            {/* Neon pulse overlay */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                boxShadow: `inset 0 0 30px ${c}18`,
+                animation: 'frameNeonPulse 2s ease-in-out infinite',
+                willChange: 'opacity',
+              }}
+            />
+            {/* Scanline overlay */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: `repeating-linear-gradient(0deg, transparent, transparent 4px, ${c}08 4px, ${c}08 5px)`,
+                opacity: 0.5,
+              }}
+            />
+          </>
+        ),
+      };
+    }
+
+    case 'matrix': {
+      const c = '#00ff46';
+      return {
+        borderStyle: {
+          background: `repeating-linear-gradient(180deg, ${c}, ${c}88 3px, ${c}22 6px, ${c} 9px)`,
+          backgroundSize: '100% 18px',
+          animation: 'frameMatrixScroll 1.5s linear infinite',
+          boxShadow: `0 0 16px ${c}44`,
+        },
+        glowStyle: {
+          background: `radial-gradient(ellipse at center, ${c}25 0%, transparent 70%)`,
+        },
+        cornerColor: c,
+        overlayElements: (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `rgba(0, 255, 70, 0.02)`,
+            }}
+          />
+        ),
+      };
+    }
+
+    case 'gold': {
+      return {
+        borderStyle: {
+          background: 'linear-gradient(135deg, #b8860b, #ffd700, #daa520, #ffd700, #b8860b)',
+          backgroundSize: '200% 200%',
+          animation: 'frameGoldShimmer 3s ease-in-out infinite',
+          boxShadow: '0 0 20px #ffd70044',
+          willChange: 'background-position',
+        },
+        glowStyle: {
+          background: 'radial-gradient(ellipse at center, #ffd70030 0%, transparent 70%)',
+        },
+        cornerColor: '#ffd700',
+        overlayElements: (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'linear-gradient(105deg, transparent 40%, rgba(255,215,0,0.06) 45%, rgba(255,215,0,0.12) 50%, rgba(255,215,0,0.06) 55%, transparent 60%)',
+              backgroundSize: '200% 100%',
+              animation: 'frameGoldSweep 4s ease-in-out infinite',
+              willChange: 'background-position',
+            }}
+          />
+        ),
+      };
+    }
+
+    case 'ice': {
+      const c1 = '#87cefa';
+      const c2 = '#e0f0ff';
+      return {
+        borderStyle: {
+          background: `linear-gradient(135deg, ${c1}, ${c2}, ${c1}, ${c2}, ${c1})`,
+          boxShadow: `0 0 16px ${c1}44`,
+        },
+        glowStyle: {
+          background: `radial-gradient(ellipse at center, ${c1}25 0%, transparent 70%)`,
+        },
+        cornerColor: c1,
+        overlayElements: (
+          <>
+            {/* Frost sparkle overlay */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none overflow-hidden"
+              style={{ zIndex: 26 }}
+            >
+              {([
+                [8, 15], [22, 55], [45, 8], [68, 42], [85, 18],
+                [35, 78], [75, 72], [15, 88], [55, 30], [92, 58],
+              ] as [number, number][]).map(([x, y], i) => (
+                <div
+                  key={i}
+                  className="absolute rounded-full"
+                  style={{
+                    left: `${x}%`,
+                    top: `${y}%`,
+                    width: i % 3 === 0 ? 3 : 2,
+                    height: i % 3 === 0 ? 3 : 2,
+                    background: '#ffffff',
+                    opacity: 0,
+                    animation: `frameIceSparkle 3s ease-in-out ${(i * 0.28).toFixed(2)}s infinite`,
+                    willChange: 'opacity',
+                  }}
+                />
+              ))}
+            </div>
+            {/* Subtle blue frost overlay */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: `radial-gradient(ellipse at 30% 20%, ${c1}0a 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, ${c1}0a 0%, transparent 50%)`,
+              }}
+            />
+          </>
+        ),
+      };
+    }
+
+    case 'fire': {
+      return {
+        borderStyle: {
+          background: 'linear-gradient(135deg, #ff6b35, #ef4444, #f59e0b, #ef4444, #ff6b35)',
+          backgroundSize: '300% 300%',
+          animation: 'frameFireShift 2s ease-in-out infinite',
+          boxShadow: '0 0 20px #ff6b3555, 0 0 40px #ef444422',
+          willChange: 'background-position',
+        },
+        glowStyle: {
+          background: 'radial-gradient(ellipse at center, #ff6b3530 0%, transparent 70%)',
+        },
+        cornerColor: '#ff6b35',
+        overlayElements: (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none overflow-hidden"
+          >
+            {/* Ember particles */}
+            {([
+              [15, 85], [30, 90], [50, 88], [70, 92], [85, 86],
+            ] as [number, number][]).map(([x, y], i) => (
+              <div
+                key={i}
+                className="absolute rounded-full"
+                style={{
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  width: 2,
+                  height: 2,
+                  background: i % 2 === 0 ? '#f59e0b' : '#ff6b35',
+                  opacity: 0,
+                  animation: `frameFireEmber 2.5s ease-out ${(i * 0.4).toFixed(2)}s infinite`,
+                  willChange: 'transform, opacity',
+                }}
+              />
+            ))}
+          </div>
+        ),
+      };
+    }
+
+    default: {
+      // Fallback: use frameColor as-is (legacy behavior, but safe)
+      if (!frameColor) return null;
+      // Detect if frameColor is a gradient (contains 'gradient')
+      const isGradient = frameColor.includes('gradient');
+      return {
+        borderStyle: {
+          background: frameColor,
+          boxShadow: isGradient ? undefined : `0 0 16px 2px ${frameColor}66, 0 0 32px 4px ${frameColor}33`,
+        },
+        glowStyle: {
+          background: isGradient
+            ? 'radial-gradient(ellipse at center, rgba(245,158,11,0.15) 0%, transparent 70%)'
+            : `radial-gradient(ellipse at center, ${frameColor}30 0%, transparent 70%)`,
+        },
+        cornerColor: isGradient ? '#f59e0b' : frameColor,
+      };
+    }
+  }
 }
 
 export default function MemberCard({
@@ -109,15 +330,13 @@ export default function MemberCard({
   const activeBadges = data?.activeBadges;
   const badges = data?.badges || DEFAULT_BADGES;
 
-  // Border wrapper: frame color overrides default skin border
+  // Border wrapper: frame visuals override default skin border
   const frameColor = equipment?.frameColor;
+  const frameVisuals = getFrameVisuals(equipment?.frameStyle, frameColor);
   // For animated skins, we render a rotating child div using transform: rotate()
   // (GPU-composited) instead of animating --border-angle on the background property.
-  const borderWrapperStyle: React.CSSProperties = frameColor
-    ? {
-        background: frameColor,
-        boxShadow: `0 0 16px 2px ${frameColor}66, 0 0 32px 4px ${frameColor}33`,
-      }
+  const borderWrapperStyle: React.CSSProperties = frameVisuals
+    ? frameVisuals.borderStyle
     : {
         background: skinDef.animated ? "transparent" : skinDef.border,
       };
@@ -143,9 +362,11 @@ export default function MemberCard({
       <div
         className="absolute -inset-6 pointer-events-none"
         aria-hidden="true"
-        style={{
-          background: `radial-gradient(ellipse at center, ${skinDef.glowColor} 0%, transparent 70%)`,
-        }}
+        style={
+          frameVisuals?.glowStyle ?? {
+            background: `radial-gradient(ellipse at center, ${skinDef.glowColor} 0%, transparent 70%)`,
+          }
+        }
       />
 
       {/* Gradient border */}
@@ -154,7 +375,7 @@ export default function MemberCard({
         style={borderWrapperStyle}
       >
         {/* Animated border: rotating conic gradient using transform (GPU composited) */}
-        {!frameColor && skinDef.animated && (
+        {!frameVisuals && skinDef.animated && (
           <div
             aria-hidden="true"
             className="absolute inset-0 pointer-events-none"
@@ -218,48 +439,57 @@ export default function MemberCard({
           />
 
           {/* Frame corner decorations — only if frame equipped */}
-          {equipment?.frameColor && (
-            <>
-              {/* Top-left corner bracket */}
-              <div style={{
-                position: 'absolute', top: 6, left: 6, width: 16, height: 16, zIndex: 25,
-                borderTop: `2px solid ${equipment.frameColor}`,
-                borderLeft: `2px solid ${equipment.frameColor}`,
-                opacity: 0.7,
-                pointerEvents: 'none',
-              }} aria-hidden="true" />
-              {/* Top-right corner bracket */}
-              <div style={{
-                position: 'absolute', top: 6, right: 6, width: 16, height: 16, zIndex: 25,
-                borderTop: `2px solid ${equipment.frameColor}`,
-                borderRight: `2px solid ${equipment.frameColor}`,
-                opacity: 0.7,
-                pointerEvents: 'none',
-              }} aria-hidden="true" />
-              {/* Bottom-left corner bracket */}
-              <div style={{
-                position: 'absolute', bottom: 6, left: 6, width: 16, height: 16, zIndex: 25,
-                borderBottom: `2px solid ${equipment.frameColor}`,
-                borderLeft: `2px solid ${equipment.frameColor}`,
-                opacity: 0.7,
-                pointerEvents: 'none',
-              }} aria-hidden="true" />
-              {/* Bottom-right corner bracket */}
-              <div style={{
-                position: 'absolute', bottom: 6, right: 6, width: 16, height: 16, zIndex: 25,
-                borderBottom: `2px solid ${equipment.frameColor}`,
-                borderRight: `2px solid ${equipment.frameColor}`,
-                opacity: 0.7,
-                pointerEvents: 'none',
-              }} aria-hidden="true" />
-              {/* Center horizontal lines */}
-              <div style={{
-                position: 'absolute', left: 6, right: 6, top: '50%', height: 1, zIndex: 25,
-                background: `linear-gradient(90deg, ${equipment.frameColor}33, transparent 20%, transparent 80%, ${equipment.frameColor}33)`,
-                pointerEvents: 'none',
-              }} aria-hidden="true" />
-            </>
-          )}
+          {frameVisuals && (() => {
+            const cc = frameVisuals.cornerColor;
+            return (
+              <>
+                {/* Top-left corner bracket */}
+                <div style={{
+                  position: 'absolute', top: 6, left: 6, width: 16, height: 16, zIndex: 25,
+                  borderTop: `2px solid ${cc}`,
+                  borderLeft: `2px solid ${cc}`,
+                  opacity: 0.8,
+                  pointerEvents: 'none',
+                  filter: `drop-shadow(0 0 3px ${cc}66)`,
+                }} aria-hidden="true" />
+                {/* Top-right corner bracket */}
+                <div style={{
+                  position: 'absolute', top: 6, right: 6, width: 16, height: 16, zIndex: 25,
+                  borderTop: `2px solid ${cc}`,
+                  borderRight: `2px solid ${cc}`,
+                  opacity: 0.8,
+                  pointerEvents: 'none',
+                  filter: `drop-shadow(0 0 3px ${cc}66)`,
+                }} aria-hidden="true" />
+                {/* Bottom-left corner bracket */}
+                <div style={{
+                  position: 'absolute', bottom: 6, left: 6, width: 16, height: 16, zIndex: 25,
+                  borderBottom: `2px solid ${cc}`,
+                  borderLeft: `2px solid ${cc}`,
+                  opacity: 0.8,
+                  pointerEvents: 'none',
+                  filter: `drop-shadow(0 0 3px ${cc}66)`,
+                }} aria-hidden="true" />
+                {/* Bottom-right corner bracket */}
+                <div style={{
+                  position: 'absolute', bottom: 6, right: 6, width: 16, height: 16, zIndex: 25,
+                  borderBottom: `2px solid ${cc}`,
+                  borderRight: `2px solid ${cc}`,
+                  opacity: 0.8,
+                  pointerEvents: 'none',
+                  filter: `drop-shadow(0 0 3px ${cc}66)`,
+                }} aria-hidden="true" />
+                {/* Center horizontal accent lines */}
+                <div style={{
+                  position: 'absolute', left: 6, right: 6, top: '50%', height: 1, zIndex: 25,
+                  background: `linear-gradient(90deg, ${cc}33, transparent 20%, transparent 80%, ${cc}33)`,
+                  pointerEvents: 'none',
+                }} aria-hidden="true" />
+                {/* Frame-specific overlay effects */}
+                {frameVisuals.overlayElements}
+              </>
+            );
+          })()}
 
           {/* Skin stamp */}
           {skinDef.stamp && (
