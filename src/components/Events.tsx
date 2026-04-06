@@ -14,7 +14,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 type EventStatus = "DONE" | "NEXT" | "TBA";
 
-type EventCategory = "social" | "workshop" | "gaming" | "talks";
+type EventCategory = "Social" | "Code" | "Game" | "Career";
 
 interface SitEvent {
   id: string;
@@ -60,22 +60,23 @@ const MONTHS = [
   "JUL","AUG","SEP","OKT","NOV","DEC",
 ];
 
-const fDay = (d: Date) => d.getDate();
-const fMonth = (d: Date) => MONTHS[d.getMonth()];
+const isValidDate = (d: Date) => !isNaN(d.getTime());
+const fDay = (d: Date) => isValidDate(d) ? d.getDate() : "?";
+const fMonth = (d: Date) => isValidDate(d) ? MONTHS[d.getMonth()] : "TBA";
 
 const CATEGORY_FILTERS: { key: string; label: string }[] = [
   { key: "all", label: "ALLES" },
-  { key: "social", label: "SOCIAL" },
-  { key: "workshop", label: "WORKSHOP" },
-  { key: "gaming", label: "GAMING" },
-  { key: "talks", label: "TALKS" },
+  { key: "Social", label: "SOCIAL" },
+  { key: "Code", label: "CODE" },
+  { key: "Game", label: "GAME" },
+  { key: "Career", label: "CAREER" },
 ];
 
 const CATEGORY_LABELS: Record<EventCategory, string> = {
-  social: "SOCIAL",
-  workshop: "WORKSHOP",
-  gaming: "GAMING",
-  talks: "TALKS",
+  Social: "SOCIAL",
+  Code: "CODE",
+  Game: "GAME",
+  Career: "CAREER",
 };
 
 const FALLBACK_EVENTS: SitEvent[] = [
@@ -87,7 +88,7 @@ const FALLBACK_EVENTS: SitEvent[] = [
     time: "20:00",
     status: "NEXT",
     type: "SVO gezamenlijk",
-    category: "social",
+    category: "Social",
     color: BRAND.gold,
   },
   {
@@ -98,7 +99,7 @@ const FALLBACK_EVENTS: SitEvent[] = [
     time: "09:00",
     status: "NEXT",
     type: "SIT eigen",
-    category: "workshop",
+    category: "Code",
     color: BRAND.green,
   },
   {
@@ -109,7 +110,7 @@ const FALLBACK_EVENTS: SitEvent[] = [
     time: "18:00",
     status: "TBA",
     type: "Samenwerking",
-    category: "gaming",
+    category: "Game",
     color: BRAND.red,
   },
   {
@@ -119,7 +120,7 @@ const FALLBACK_EVENTS: SitEvent[] = [
     location: "HvA Amstelcampus",
     status: "TBA",
     type: "Samenwerking",
-    category: "talks",
+    category: "Career",
     color: BRAND.blue,
   },
 ];
@@ -143,7 +144,7 @@ function notionToSitEvent(e: NotionEventResponse): SitEvent {
     link: e.link,
     status: statusMap[e.status] ?? "TBA",
     type: e.type || "SIT eigen",
-    category: e.category || "social",
+    category: e.category || "Social",
     color: e.color || BRAND.gold,
   };
 }

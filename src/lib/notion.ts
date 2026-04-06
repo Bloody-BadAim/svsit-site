@@ -7,7 +7,7 @@ const notion = new Client({
 // Data source (collection) ID — NOT the database page ID
 const EVENT_DATA_SOURCE_ID = '2f5be6edc1a98117bb4c000b42a59c22'
 
-export type EventCategory = 'social' | 'workshop' | 'gaming' | 'talks'
+export type EventCategory = 'Social' | 'Code' | 'Game' | 'Career'
 
 export interface NotionEvent {
   id: string
@@ -25,10 +25,10 @@ export interface NotionEvent {
 }
 
 const CATEGORY_COLORS: Record<EventCategory, string> = {
-  social: '#F59E0B',
-  workshop: '#22C55E',
-  gaming: '#EF4444',
-  talks: '#3B82F6',
+  Social: '#F59E0B',
+  Code: '#22C55E',
+  Game: '#EF4444',
+  Career: '#3B82F6',
 }
 
 function getRichText(prop: unknown): string | undefined {
@@ -73,7 +73,7 @@ export async function getNotionEvents(): Promise<NotionEvent[]> {
       const notionStatus = getSelect(props.Status)
       const type = getSelect(props.Type) || ''
       const rawCat = getSelect(props.Categorie)
-      const category: EventCategory = (rawCat === 'workshop' || rawCat === 'gaming' || rawCat === 'talks') ? rawCat : 'social'
+      const category: EventCategory = (rawCat === 'Code' || rawCat === 'Game' || rawCat === 'Career') ? rawCat : 'Social'
 
       // Map status
       let status: 'done' | 'next' | 'tba'
