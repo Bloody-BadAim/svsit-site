@@ -156,9 +156,10 @@ export default function ProfielPage() {
           } else if (member.commissie) {
             setCommissieNames([member.commissie as string])
           }
-          setMembershipActive(member.membership_active as boolean)
-          setExpiresAt(member.membership_expires_at as string | null)
-          setMemberSince((member.membership_started_at as string) || null)
+          const membershipActive = (member.membership_active as boolean | undefined) ?? (member.stripe_subscription_id != null ? !!member.stripe_subscription_id : true)
+          setMembershipActive(membershipActive)
+          setExpiresAt((member.membership_expires_at as string | null | undefined) ?? null)
+          setMemberSince((member.membership_started_at as string | undefined) ?? (member.created_at as string | undefined) ?? null)
           setPoints((member.total_xp as number) || 0)
           setHasPassword(!!member.has_password)
         }
@@ -408,16 +409,16 @@ export default function ProfielPage() {
             )}
 
             {/* Expires at */}
-            {expiresAt && (
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
-                  expires
-                </span>
-                <span className="font-mono text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
-                  {new Date(expiresAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </span>
-              </div>
-            )}
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
+                expires
+              </span>
+              <span className="font-mono text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
+                {expiresAt
+                  ? new Date(expiresAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })
+                  : 'Doorlopend'}
+              </span>
+            </div>
 
             {/* Divider */}
             <div style={{ borderTop: '1px dashed rgba(255,255,255,0.06)' }} />
