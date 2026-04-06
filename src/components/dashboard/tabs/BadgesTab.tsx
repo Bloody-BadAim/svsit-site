@@ -492,10 +492,15 @@ export default function BadgesTab({
     setSaving(true)
 
     try {
-      const res = await fetch(`/api/members/${memberId}`, {
-        method: 'PATCH',
+      const isEquipping = !equippedSet.has(badgeId)
+      const res = await fetch('/api/badges', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ active_badges: updated }),
+        body: JSON.stringify({
+          badgeId,
+          action: isEquipping ? 'equip' : 'unequip',
+          slot: isEquipping ? updated.length - 1 : undefined,
+        }),
       })
       if (!res.ok) {
         setCurrentEquipped(currentEquipped)
