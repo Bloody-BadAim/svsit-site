@@ -26,7 +26,7 @@ export async function GET(
       .from('members')
       .select(`
     id, email, student_number, role, commissie, commissie_voorstel,
-    total_xp, current_level, membership_active, membership_started_at, membership_expires_at,
+    total_xp, current_level, stripe_subscription_id,
     stripe_customer_id, active_skin, password_hash,
     is_admin, created_at,
     member_commissies ( commissie_id, role_in_commissie, commissies ( id, slug, naam, emoji ) )
@@ -38,8 +38,10 @@ export async function GET(
 
     // Stuur nooit de echte hash mee, alleen of er een wachtwoord is
     if (data) {
-      (data as Record<string, unknown>).has_password = !!data.password_hash;
-      (data as Record<string, unknown>).password_hash = undefined
+      const record = data as Record<string, unknown>
+      record.has_password = !!data.password_hash
+      record.password_hash = undefined
+      record.membership_active = !!data.stripe_subscription_id
     }
 
     return NextResponse.json({ data, error: null, meta: null })
@@ -105,7 +107,7 @@ export async function PATCH(
 
     // Welke velden mag het lid zelf updaten vs admin
     const allowedFields = isAdmin
-      ? ['student_number', 'role', 'commissie', 'commissie_voorstel', 'total_xp', 'membership_active', 'membership_expires_at', 'active_skin']
+      ? ['student_number', 'role', 'commissie', 'commissie_voorstel', 'total_xp', 'active_skin']
       : ['student_number', 'active_skin']
 
     const updateData: Record<string, unknown> = {}
@@ -123,10 +125,16 @@ export async function PATCH(
       .from('members')
       .update(updateData)
       .eq('id', id)
-      .select('id, email, student_number, role, commissie, total_xp, current_level, membership_active')
+      .select('id, email, student_number, role, commissie, total_xp, current_level, stripe_subscription_id')
       .single()
 
     if (error) throw error
+
+    if (data) {
+      const record = data as Record<string, unknown>
+      record.membership_active = !!data.stripe_subscription_id
+    }
+
     return NextResponse.json({ data, error: null, meta: null })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Onbekende fout'
