@@ -123,7 +123,9 @@
       "Bash(do cat:*)",
       "Bash(break)",
       "Bash(done)",
-      "mcp__plugin_supabase_supabase__list_tables"
+      "mcp__plugin_supabase_supabase__list_tables",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f \\\\\\(-name *.ts -o -name *.tsx \\\\\\))",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website -name *.sql -o -name *migration*)"
     ]
   },
   "outputStyle": "default",
