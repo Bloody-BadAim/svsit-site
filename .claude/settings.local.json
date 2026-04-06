@@ -136,7 +136,21 @@
       "Bash(/home/matin/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh --project-dir /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website)",
       "Bash(kill -0 193893)",
       "Bash(/home/matin/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/stop-server.sh /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/.superpowers/brainstorm/193885-1775483274)",
-      "Bash(/home/matin/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh --project-dir /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website --host 0.0.0.0 --url-host localhost)"
+      "Bash(/home/matin/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh --project-dir /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website --host 0.0.0.0 --url-host localhost)",
+      "mcp__claude_ai_Notion__notion-update-data-source",
+      "mcp__claude_ai_Notion__notion-update-page",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website -type f -name *admin*)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website -type f \\\\\\(-name *card* -o -name *shop* -o -name *pet* -o -name *customize* \\\\\\))",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src/app/api/admin -type f -name *.ts)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src/stores -name *admin* -o -name *scanner*)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -path */.next -prune -o -type f -name *Store* -o -name *store*)",
+      "Bash(wc:*)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website -name *.sql -type f ! -path */.claude/* ! -path */.next/* ! -path */node_modules/*)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/public -type f -name *boss* -o -name *svg)",
+      "mcp__plugin_supabase_supabase__apply_migration",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" -o -name \"*.js\" -o -name \"*.jsx\" \\\\\\) -exec wc -l {} +)",
+      "Bash(sort -k2)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) -exec wc -l {} +)"
     ]
   },
   "enableAllProjectMcpServers": true,
