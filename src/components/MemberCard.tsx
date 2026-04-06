@@ -216,6 +216,50 @@ export default function MemberCard({
             style={{ inset: 10, border: `1px solid ${skinDef.innerBorder || 'rgba(255,255,255,0.05)'}` }}
           />
 
+          {/* Frame corner decorations — only if frame equipped */}
+          {equipment?.frameColor && (
+            <>
+              {/* Top-left corner bracket */}
+              <div style={{
+                position: 'absolute', top: 6, left: 6, width: 16, height: 16, zIndex: 25,
+                borderTop: `2px solid ${equipment.frameColor}`,
+                borderLeft: `2px solid ${equipment.frameColor}`,
+                opacity: 0.7,
+                pointerEvents: 'none',
+              }} aria-hidden="true" />
+              {/* Top-right corner bracket */}
+              <div style={{
+                position: 'absolute', top: 6, right: 6, width: 16, height: 16, zIndex: 25,
+                borderTop: `2px solid ${equipment.frameColor}`,
+                borderRight: `2px solid ${equipment.frameColor}`,
+                opacity: 0.7,
+                pointerEvents: 'none',
+              }} aria-hidden="true" />
+              {/* Bottom-left corner bracket */}
+              <div style={{
+                position: 'absolute', bottom: 6, left: 6, width: 16, height: 16, zIndex: 25,
+                borderBottom: `2px solid ${equipment.frameColor}`,
+                borderLeft: `2px solid ${equipment.frameColor}`,
+                opacity: 0.7,
+                pointerEvents: 'none',
+              }} aria-hidden="true" />
+              {/* Bottom-right corner bracket */}
+              <div style={{
+                position: 'absolute', bottom: 6, right: 6, width: 16, height: 16, zIndex: 25,
+                borderBottom: `2px solid ${equipment.frameColor}`,
+                borderRight: `2px solid ${equipment.frameColor}`,
+                opacity: 0.7,
+                pointerEvents: 'none',
+              }} aria-hidden="true" />
+              {/* Center horizontal lines */}
+              <div style={{
+                position: 'absolute', left: 6, right: 6, top: '50%', height: 1, zIndex: 25,
+                background: `linear-gradient(90deg, ${equipment.frameColor}33, transparent 20%, transparent 80%, ${equipment.frameColor}33)`,
+                pointerEvents: 'none',
+              }} aria-hidden="true" />
+            </>
+          )}
+
           {/* Skin stamp */}
           {skinDef.stamp && (
             <div
@@ -259,13 +303,9 @@ export default function MemberCard({
                 className="w-20 h-20 shrink-0 flex items-center justify-center overflow-hidden"
                 style={{
                   background: showQR && qrData ? "#ffffff" : "rgba(255,255,255,0.03)",
-                  border: showQR && qrData ? "none" : "1px solid rgba(255,255,255,0.06)",
-                  ...(!showQR || !qrData
-                    ? {
-                        backgroundImage:
-                          "repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(245,158,11,0.03) 5px, rgba(245,158,11,0.03) 6px), repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(59,130,246,0.02) 5px, rgba(59,130,246,0.02) 6px)",
-                      }
-                    : {}),
+                  border: showQR && qrData ? "none" : "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 8,
+                  position: 'relative',
                 }}
               >
                 {showQR && qrData ? (
@@ -276,9 +316,16 @@ export default function MemberCard({
                     bgColor="#ffffff"
                     fgColor="#09090B"
                   />
+                ) : visibleStickers.length > 0 ? (
+                  <span style={{ fontSize: 36, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }}>
+                    {visibleStickers[0].emoji}
+                  </span>
                 ) : (
-                  <span className="font-mono text-sm text-[var(--color-text-muted)] opacity-30">
-                    {isPlaceholder ? "?????" : name.slice(0, 2).toUpperCase()}
+                  <span style={{
+                    fontSize: 24, fontWeight: 'bold', fontFamily: 'monospace',
+                    color: 'rgba(255,255,255,0.15)', letterSpacing: 2,
+                  }}>
+                    {isPlaceholder ? "??" : (data?.name || '??').slice(0, 2).toUpperCase()}
                   </span>
                 )}
               </div>
