@@ -1,0 +1,68 @@
+<h2>Welke card design richting past bij SIT?</h2>
+<p class="subtitle">Leden unlocken nieuwe card skins bij hogere ranks. Kies de stijl-richting.</p>
+
+<div class="cards">
+  <div class="card" data-choice="gaming" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#111;padding:24px;text-align:center;">
+      <div style="border:2px solid #F29E18;padding:16px;position:relative;background:linear-gradient(135deg,#0a0a0b,rgba(242,158,24,0.06))">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#F29E18,#3B82F6,#EF4444,#22C55E)"></div>
+        <div style="font-family:monospace;font-size:11px;color:#F29E18;letter-spacing:0.15em;margin-bottom:8px">{SIT} MEMBER CARD</div>
+        <div style="font-size:18px;font-weight:bold;color:#fff">MATIN</div>
+        <div style="font-size:10px;color:#6B7280;margin-top:4px">LVL 03 ★ GOLD</div>
+        <div style="display:flex;gap:4px;justify-content:center;margin-top:12px">
+          <div style="width:20px;height:20px;border:1px solid #F29E18;display:flex;align-items:center;justify-content:center;font-size:8px;color:#F29E18">✓</div>
+          <div style="width:20px;height:20px;border:1px solid #F29E18;display:flex;align-items:center;justify-content:center;font-size:8px;color:#F29E18">✓</div>
+          <div style="width:20px;height:20px;border:1px dashed #333;display:flex;align-items:center;justify-content:center;font-size:8px;color:#333">🔒</div>
+          <div style="width:20px;height:20px;border:1px dashed #333;display:flex;align-items:center;justify-content:center;font-size:8px;color:#333">🔒</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — RPG Inventory</h3>
+      <p>Huidige stijl verdiept. Elke rank krijgt een unieke border + glow kleur. Badges als vierkante slots. Pixel-achtige accenten. "Equipped skin" selector.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="holo" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#111;padding:24px;text-align:center;">
+      <div style="padding:16px;position:relative;background:linear-gradient(135deg,#0a0a0b,rgba(59,130,246,0.08));border:1px solid rgba(255,255,255,0.08);overflow:hidden">
+        <div style="position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.05) 45%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.05) 55%,transparent 60%);animation:none"></div>
+        <div style="font-family:monospace;font-size:11px;color:#3B82F6;letter-spacing:0.15em;margin-bottom:8px">{SIT}</div>
+        <div style="font-size:18px;font-weight:bold;color:#fff;letter-spacing:0.05em">MATIN</div>
+        <div style="font-size:10px;color:#C0C0C0;margin-top:4px">◆ GOLD TIER ◆</div>
+        <div style="height:2px;background:linear-gradient(90deg,transparent,#3B82F6,transparent);margin-top:12px;opacity:0.5"></div>
+        <div style="display:flex;gap:6px;justify-content:center;margin-top:10px">
+          <div style="width:8px;height:8px;border-radius:50%;background:#F29E18"></div>
+          <div style="width:8px;height:8px;border-radius:50%;background:#3B82F6"></div>
+          <div style="width:8px;height:8px;border-radius:50%;background:#22C55E"></div>
+          <div style="width:8px;height:8px;border-radius:50%;border:1px solid #333"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Holographic</h3>
+      <p>Premium collectible card gevoel. Holografische shine animatie. Subtiele iridescent borders. Badges als gekleurde dots. Zeldzame foil-varianten bij hoge ranks.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="terminal" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#111;padding:24px;text-align:center;">
+      <div style="padding:16px;position:relative;background:#0a0a0b;border:1px solid #1a1a1a;font-family:monospace;text-align:left;font-size:11px">
+        <div style="color:#22C55E;margin-bottom:6px">$ sit member --info</div>
+        <div style="color:#6B7280">name: <span style="color:#fff">matin.khajehfard</span></div>
+        <div style="color:#6B7280">rank: <span style="color:#F29E18">gold</span></div>
+        <div style="color:#6B7280">xp:   <span style="color:#3B82F6">15</span>/20</div>
+        <div style="color:#6B7280">badges: <span style="color:#F29E18">■</span><span style="color:#3B82F6">■</span><span style="color:#22C55E">■</span><span style="color:#333">□□</span></div>
+        <div style="margin-top:8px;color:#22C55E">$ _<span style="animation:blink 1s infinite">|</span></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Terminal</h3>
+      <p>Pure hacker aesthetic. Kaart als terminal output. Groene text op zwart. Elke rank verandert het "prompt theme". Badges als gekleurde blokken. CLI-inspired.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
+</style>

@@ -1,0 +1,388 @@
+<h2>Secties 2-5: Volledige Visual Redesign</h2>
+<p class="subtitle">Card skins, pet animaties, level-up ceremony, boss fight widget</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h3>2. Card Skins — Echte CSS Art</h3>
+  <p style="color:#aaa;font-size:13px;margin-bottom:16px;">Huidige skins zijn gradients + overlay patterns. Nieuw: elke skin is een mini kunstwerk met geanimeerde elementen.</p>
+
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;padding:30px 12px;background:#050507;border-radius:12px;">
+
+    <!-- Skin: Circuit Board -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="width:120px;height:170px;border-radius:8px;border:1.5px solid #22C55E;position:relative;overflow:hidden;background:#050507;box-shadow:0 0 20px rgba(34,197,94,0.2);">
+        <!-- Circuit traces -->
+        <svg width="120" height="170" viewBox="0 0 120 170" style="position:absolute;inset:0;opacity:0.15;">
+          <path d="M10 20H40L50 30H80" stroke="#22C55E" stroke-width="1" fill="none"/>
+          <path d="M20 50H60L70 60V90" stroke="#22C55E" stroke-width="1" fill="none"/>
+          <path d="M90 40V80L70 100H30" stroke="#22C55E" stroke-width="1" fill="none"/>
+          <path d="M50 120H100V150" stroke="#22C55E" stroke-width="1" fill="none"/>
+          <circle cx="40" cy="20" r="2" fill="#22C55E" opacity="0.5"/>
+          <circle cx="80" cy="30" r="2" fill="#22C55E" opacity="0.5"/>
+          <circle cx="70" cy="90" r="2" fill="#22C55E" opacity="0.5"/>
+          <circle cx="30" cy="100" r="2" fill="#22C55E" opacity="0.5"/>
+        </svg>
+        <!-- Animated pulse along traces -->
+        <div style="position:absolute;width:4px;height:4px;border-radius:50%;background:#22C55E;box-shadow:0 0 8px #22C55E;top:20px;left:10px;animation:tracePulse1 4s linear infinite;"></div>
+        <div style="position:absolute;width:3px;height:3px;border-radius:50%;background:#22C55E;box-shadow:0 0 6px #22C55E;top:50px;left:20px;animation:tracePulse2 5s linear infinite;"></div>
+        <div style="position:absolute;bottom:8px;left:8px;right:8px;font-family:monospace;font-size:7px;color:rgba(34,197,94,0.3);text-align:center;">CIRCUIT // L3</div>
+      </div>
+      <span style="font-family:monospace;font-size:9px;color:#22C55E;letter-spacing:1px;">CIRCUIT BOARD</span>
+    </div>
+
+    <!-- Skin: Nebula -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="width:120px;height:170px;border-radius:8px;border:1.5px solid #8B5CF6;position:relative;overflow:hidden;background:#050507;box-shadow:0 0 20px rgba(139,92,246,0.2);">
+        <!-- Nebula clouds -->
+        <div style="position:absolute;inset:0;">
+          <div style="position:absolute;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.2),transparent 70%);top:10%;left:-10%;animation:nebulaFloat1 8s ease-in-out infinite;"></div>
+          <div style="position:absolute;width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,rgba(236,72,153,0.15),transparent 70%);bottom:20%;right:-10%;animation:nebulaFloat2 10s ease-in-out infinite;"></div>
+          <div style="position:absolute;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.12),transparent 70%);top:50%;left:40%;animation:nebulaFloat1 6s ease-in-out infinite 2s;"></div>
+        </div>
+        <!-- Stars -->
+        <div style="position:absolute;width:1.5px;height:1.5px;border-radius:50%;background:white;top:15%;left:30%;animation:starTwinkle 3s ease-in-out infinite;"></div>
+        <div style="position:absolute;width:1px;height:1px;border-radius:50%;background:white;top:40%;left:70%;animation:starTwinkle 2.5s ease-in-out infinite 1s;"></div>
+        <div style="position:absolute;width:2px;height:2px;border-radius:50%;background:white;top:65%;left:20%;animation:starTwinkle 4s ease-in-out infinite 0.5s;"></div>
+        <div style="position:absolute;width:1px;height:1px;border-radius:50%;background:white;top:80%;left:55%;animation:starTwinkle 3s ease-in-out infinite 2s;"></div>
+        <div style="position:absolute;width:1.5px;height:1.5px;border-radius:50%;background:white;top:25%;left:85%;animation:starTwinkle 2s ease-in-out infinite 1.5s;"></div>
+        <div style="position:absolute;bottom:8px;left:8px;right:8px;font-family:monospace;font-size:7px;color:rgba(139,92,246,0.3);text-align:center;">NEBULA // L7</div>
+      </div>
+      <span style="font-family:monospace;font-size:9px;color:#8B5CF6;letter-spacing:1px;">NEBULA</span>
+    </div>
+
+    <!-- Skin: Magma -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="width:120px;height:170px;border-radius:8px;border:1.5px solid #EF4444;position:relative;overflow:hidden;background:#0a0505;box-shadow:0 0 20px rgba(239,68,68,0.2);">
+        <!-- Lava cracks -->
+        <svg width="120" height="170" viewBox="0 0 120 170" style="position:absolute;inset:0;">
+          <path d="M0 60Q30 55 60 70Q90 85 120 75" stroke="#EF4444" stroke-width="2" fill="none" opacity="0.15"/>
+          <path d="M0 60Q30 55 60 70Q90 85 120 75" stroke="#F59E0B" stroke-width="0.5" fill="none" opacity="0.3">
+            <animate attributeName="opacity" values="0.1;0.4;0.1" dur="3s" repeatCount="indefinite"/>
+          </path>
+          <path d="M0 120Q40 110 70 130Q100 140 120 125" stroke="#EF4444" stroke-width="2" fill="none" opacity="0.12"/>
+          <path d="M0 120Q40 110 70 130Q100 140 120 125" stroke="#F59E0B" stroke-width="0.5" fill="none" opacity="0.25">
+            <animate attributeName="opacity" values="0.1;0.35;0.1" dur="4s" repeatCount="indefinite" begin="1s"/>
+          </path>
+        </svg>
+        <!-- Heat shimmer -->
+        <div style="position:absolute;bottom:0;left:0;right:0;height:40%;background:linear-gradient(to top,rgba(239,68,68,0.06),transparent);animation:heatShimmer 3s ease-in-out infinite;"></div>
+        <!-- Ember particles -->
+        <div style="position:absolute;bottom:0;left:30%;width:2px;height:2px;border-radius:50%;background:#F59E0B;animation:ember2 3s ease-out infinite;opacity:0;"></div>
+        <div style="position:absolute;bottom:0;left:60%;width:1.5px;height:1.5px;border-radius:50%;background:#EF4444;animation:ember2 2.5s ease-out infinite 1s;opacity:0;"></div>
+        <div style="position:absolute;bottom:8px;left:8px;right:8px;font-family:monospace;font-size:7px;color:rgba(239,68,68,0.3);text-align:center;">MAGMA // L9</div>
+      </div>
+      <span style="font-family:monospace;font-size:9px;color:#EF4444;letter-spacing:1px;">MAGMA CORE</span>
+    </div>
+
+    <!-- Skin: Void (BDFL exclusive) -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="width:120px;height:170px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.3);position:relative;overflow:hidden;background:#020204;box-shadow:0 0 24px rgba(139,92,246,0.15),0 0 48px rgba(236,72,153,0.08);">
+        <!-- Void warp effect -->
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(139,92,246,0.08),transparent 60%);animation:voidPulse 4s ease-in-out infinite;"></div>
+        <!-- Event horizon ring -->
+        <div style="position:absolute;top:50%;left:50%;width:50px;height:50px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,0.08);animation:eventHorizon 6s linear infinite;"></div>
+        <div style="position:absolute;top:50%;left:50%;width:30px;height:30px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,0.05);animation:eventHorizon 4s linear infinite reverse;"></div>
+        <!-- Absorbed light particles being sucked in -->
+        <div style="position:absolute;top:20%;left:15%;width:2px;height:2px;border-radius:50%;background:white;animation:voidSuck 3s ease-in infinite;"></div>
+        <div style="position:absolute;top:30%;right:20%;width:1.5px;height:1.5px;border-radius:50%;background:#8B5CF6;animation:voidSuck 3.5s ease-in infinite 1s;"></div>
+        <div style="position:absolute;bottom:25%;left:25%;width:1px;height:1px;border-radius:50%;background:#EC4899;animation:voidSuck 4s ease-in infinite 2s;"></div>
+        <!-- Center void -->
+        <div style="position:absolute;top:50%;left:50%;width:8px;height:8px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#000,rgba(139,92,246,0.3));box-shadow:0 0 20px rgba(0,0,0,0.8);"></div>
+        <div style="position:absolute;bottom:8px;left:8px;right:8px;font-family:monospace;font-size:7px;color:rgba(255,255,255,0.2);text-align:center;">VOID // L12 BDFL</div>
+      </div>
+      <span style="font-family:monospace;font-size:9px;background:linear-gradient(90deg,#8B5CF6,#EC4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;">THE VOID</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h3>3. Pet Animaties — Personality Idle</h3>
+  <p style="color:#aaa;font-size:13px;margin-bottom:16px;">Pets zijn nu een emoji met een bounce. Nieuw: custom SVG creatures met idle animaties die personality hebben.</p>
+
+  <div style="display:flex;gap:32px;justify-content:center;flex-wrap:wrap;padding:30px 12px;background:#050507;border-radius:12px;">
+
+    <!-- Pet: Pixel Cat -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="width:48px;height:48px;position:relative;">
+        <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+          <!-- Body -->
+          <ellipse cx="16" cy="22" rx="8" ry="6" fill="#555" opacity="0.8"/>
+          <!-- Head -->
+          <circle cx="16" cy="14" r="7" fill="#666"/>
+          <!-- Ears -->
+          <path d="M10 8L12 12L8 12Z" fill="#777"/>
+          <path d="M22 8L24 12L20 12Z" fill="#777"/>
+          <!-- Eyes — blinking -->
+          <ellipse cx="13" cy="13" rx="1.5" ry="1.8" fill="#22C55E">
+            <animate attributeName="ry" values="1.8;0.3;1.8" dur="4s" repeatCount="indefinite" keyTimes="0;0.05;0.1" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+          </ellipse>
+          <ellipse cx="19" cy="13" rx="1.5" ry="1.8" fill="#22C55E">
+            <animate attributeName="ry" values="1.8;0.3;1.8" dur="4s" repeatCount="indefinite" keyTimes="0;0.05;0.1" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+          </ellipse>
+          <!-- Tail — wagging -->
+          <path d="M24 22Q28 18 26 14" stroke="#555" stroke-width="2" stroke-linecap="round" fill="none">
+            <animate attributeName="d" values="M24 22Q28 18 26 14;M24 22Q30 20 28 16;M24 22Q28 18 26 14" dur="2s" repeatCount="indefinite"/>
+          </path>
+        </svg>
+      </div>
+      <span style="font-family:monospace;font-size:9px;color:#666;letter-spacing:1px;">PIXEL CAT</span>
+    </div>
+
+    <!-- Pet: Robot -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="width:48px;height:48px;position:relative;">
+        <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+          <!-- Antenna -->
+          <line x1="16" y1="4" x2="16" y2="8" stroke="#3B82F6" stroke-width="1.5"/>
+          <circle cx="16" cy="3" r="2" fill="#3B82F6">
+            <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+          <!-- Head -->
+          <rect x="8" y="8" width="16" height="12" rx="2" fill="#2a2a2a" stroke="#3B82F6" stroke-width="0.8"/>
+          <!-- Eyes — scanning -->
+          <rect x="11" y="12" width="3" height="2" rx="0.5" fill="#3B82F6">
+            <animate attributeName="width" values="3;1;3" dur="3s" repeatCount="indefinite"/>
+          </rect>
+          <rect x="18" y="12" width="3" height="2" rx="0.5" fill="#3B82F6">
+            <animate attributeName="width" values="3;1;3" dur="3s" repeatCount="indefinite"/>
+          </rect>
+          <!-- Body -->
+          <rect x="10" y="21" width="12" height="8" rx="1" fill="#1a1a1a" stroke="#3B82F6" stroke-width="0.6"/>
+          <!-- Chest light -->
+          <circle cx="16" cy="25" r="1.5" fill="#3B82F6" opacity="0.6">
+            <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+      </div>
+      <span style="font-family:monospace;font-size:9px;color:#3B82F6;letter-spacing:1px;">ROBOT</span>
+    </div>
+
+    <!-- Pet: Dragon -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="width:48px;height:48px;position:relative;">
+        <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+          <!-- Body -->
+          <ellipse cx="16" cy="22" rx="7" ry="5" fill="#8B2500"/>
+          <!-- Wings -->
+          <path d="M8 18L3 10L10 16Z" fill="#A03000" opacity="0.7">
+            <animate attributeName="d" values="M8 18L3 10L10 16Z;M8 18L4 12L10 16Z;M8 18L3 10L10 16Z" dur="3s" repeatCount="indefinite"/>
+          </path>
+          <path d="M24 18L29 10L22 16Z" fill="#A03000" opacity="0.7">
+            <animate attributeName="d" values="M24 18L29 10L22 16Z;M24 18L28 12L22 16Z;M24 18L29 10L22 16Z" dur="3s" repeatCount="indefinite"/>
+          </path>
+          <!-- Head -->
+          <circle cx="16" cy="14" r="5" fill="#B03000"/>
+          <!-- Eyes -->
+          <circle cx="14" cy="13" r="1.2" fill="#F59E0B"/>
+          <circle cx="18" cy="13" r="1.2" fill="#F59E0B"/>
+          <!-- Horns -->
+          <path d="M12 10L10 5" stroke="#A03000" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M20 10L22 5" stroke="#A03000" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Fire breath — intermittent -->
+          <path d="M16 18L14 22L16 20L18 23L16 18Z" fill="#F59E0B" opacity="0">
+            <animate attributeName="opacity" values="0;0;0.7;0.9;0;0;0" dur="5s" repeatCount="indefinite"/>
+          </path>
+        </svg>
+      </div>
+      <span style="font-family:monospace;font-size:9px;color:#F59E0B;letter-spacing:1px;">BABY DRAGON</span>
+    </div>
+
+    <!-- Pet: Rubber Duck -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="width:48px;height:48px;position:relative;">
+        <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+          <!-- Body wobble -->
+          <g>
+            <animateTransform attributeName="transform" type="rotate" values="-3 16 24;3 16 24;-3 16 24" dur="2s" repeatCount="indefinite"/>
+            <!-- Body -->
+            <ellipse cx="16" cy="24" rx="9" ry="6" fill="#FBBF24"/>
+            <!-- Head -->
+            <circle cx="16" cy="15" r="6" fill="#FCD34D"/>
+            <!-- Beak -->
+            <path d="M20 16L24 15L20 14Z" fill="#F97316"/>
+            <!-- Eye -->
+            <circle cx="18" cy="13.5" r="1.2" fill="#1a1a1a"/>
+            <circle cx="18.4" cy="13.2" r="0.4" fill="white"/>
+          </g>
+        </svg>
+      </div>
+      <span style="font-family:monospace;font-size:9px;color:#FBBF24;letter-spacing:1px;">RUBBER DUCK</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h3>4. Level-Up Ceremony — Screen Takeover</h3>
+  <p style="color:#aaa;font-size:13px;margin-bottom:16px;">Huidige modal is confetti dots. Nieuw: volledige screen takeover met shockwave, particles, en dramatische reveal.</p>
+
+  <div style="background:#050507;border-radius:12px;padding:30px;position:relative;overflow:hidden;min-height:300px;display:flex;align-items:center;justify-content:center;">
+    <!-- Shockwave ring -->
+    <div style="position:absolute;width:200px;height:200px;border-radius:50%;border:2px solid rgba(245,158,11,0.3);animation:shockwave 3s ease-out infinite;"></div>
+    <div style="position:absolute;width:200px;height:200px;border-radius:50%;border:1px solid rgba(245,158,11,0.15);animation:shockwave 3s ease-out infinite 0.5s;"></div>
+
+    <!-- Radial light burst -->
+    <div style="position:absolute;width:4px;height:80px;background:linear-gradient(to bottom,transparent,rgba(245,158,11,0.3),transparent);transform-origin:center bottom;animation:lightRay 3s ease-out infinite;"></div>
+    <div style="position:absolute;width:4px;height:80px;background:linear-gradient(to bottom,transparent,rgba(59,130,246,0.2),transparent);transform-origin:center bottom;animation:lightRay 3s ease-out infinite 0.3s;transform:rotate(45deg);"></div>
+    <div style="position:absolute;width:4px;height:80px;background:linear-gradient(to bottom,transparent,rgba(239,68,68,0.2),transparent);transform-origin:center bottom;animation:lightRay 3s ease-out infinite 0.6s;transform:rotate(90deg);"></div>
+    <div style="position:absolute;width:4px;height:80px;background:linear-gradient(to bottom,transparent,rgba(34,197,94,0.2),transparent);transform-origin:center bottom;animation:lightRay 3s ease-out infinite 0.9s;transform:rotate(135deg);"></div>
+
+    <!-- Center content -->
+    <div style="position:relative;z-index:2;text-align:center;">
+      <div style="font-family:monospace;font-size:10px;color:rgba(245,158,11,0.5);letter-spacing:6px;text-transform:uppercase;margin-bottom:8px;animation:textFlicker 0.1s ease-in-out 3;">LEVEL UP</div>
+      <div style="font-family:monospace;font-size:48px;font-weight:900;color:#F59E0B;text-shadow:0 0 40px rgba(245,158,11,0.5),0 0 80px rgba(245,158,11,0.2);animation:levelReveal 1s cubic-bezier(0.16,1,0.3,1) forwards;">L8</div>
+      <div style="font-family:monospace;font-size:18px;color:white;margin-top:4px;letter-spacing:2px;">WIZARD</div>
+      <div style="font-family:monospace;font-size:10px;color:rgba(255,255,255,0.3);margin-top:12px;">4 badge slots unlocked</div>
+    </div>
+  </div>
+
+  <div style="background:#111;border-radius:8px;padding:16px;margin-top:12px;font-size:12px;color:#aaa;font-family:monospace;line-height:1.8;">
+    <div><span style="color:#F59E0B;">SEQUENCE:</span></div>
+    <div>1. Screen flash (white → fade) — 100ms</div>
+    <div>2. Shockwave rings expand outward — 500ms</div>
+    <div>3. Radial light rays burst from center — 300ms staggered</div>
+    <div>4. Level number slams in (scale 3→1, spring) — 400ms</div>
+    <div>5. Title fades up below — 200ms</div>
+    <div>6. Particle rain (tier colored) falls — continuous</div>
+    <div>7. Unlocked items slide in from bottom — 600ms</div>
+    <div>8. "NICE" button pulses — waiting for dismiss</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h3>5. Boss Fight Widget — War Room</h3>
+  <p style="color:#aaa;font-size:13px;margin-bottom:16px;">Huidige widget: simpele health bar. Nieuw: dramatische war room met pulserende HP, damage ticks, en boss artwork area.</p>
+
+  <div style="background:#050507;border-radius:12px;border:1px solid rgba(239,68,68,0.15);padding:0;overflow:hidden;position:relative;">
+    <!-- Top accent — danger stripes -->
+    <div style="height:3px;background:repeating-linear-gradient(90deg,#EF4444 0px,#EF4444 8px,transparent 8px,transparent 16px);opacity:0.4;"></div>
+
+    <div style="padding:20px 24px;">
+      <!-- Header -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div>
+          <div style="font-family:monospace;font-size:9px;color:rgba(239,68,68,0.5);letter-spacing:3px;text-transform:uppercase;">ACTIVE THREAT</div>
+          <div style="font-family:monospace;font-size:18px;font-weight:bold;color:white;margin-top:2px;">De Deadline Dragon</div>
+        </div>
+        <div style="font-family:monospace;font-size:11px;color:rgba(239,68,68,0.7);border:1px solid rgba(239,68,68,0.2);padding:4px 10px;border-radius:4px;animation:dangerPulse 2s ease-in-out infinite;">
+          6d 14u 23m
+        </div>
+      </div>
+
+      <!-- HP Bar — dramatic -->
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;font-family:monospace;font-size:10px;color:#666;margin-bottom:6px;">
+          <span>HP</span>
+          <span style="color:white;">3,247 <span style="color:#555;">/ 5,000</span></span>
+        </div>
+        <div style="height:8px;border-radius:4px;background:rgba(239,68,68,0.1);position:relative;overflow:hidden;">
+          <!-- Base HP fill -->
+          <div style="position:absolute;inset:0;width:65%;border-radius:4px;background:linear-gradient(90deg,#22C55E,#84CC16,#F59E0B);box-shadow:0 0 12px rgba(34,197,94,0.3);transition:width 1s;"></div>
+          <!-- Shimmer overlay -->
+          <div style="position:absolute;inset:0;width:65%;background:linear-gradient(90deg,transparent 40%,rgba(255,255,255,0.15) 50%,transparent 60%);animation:hpShimmer 2s linear infinite;"></div>
+          <!-- Damage tick flash -->
+          <div style="position:absolute;right:35%;top:0;bottom:0;width:3px;background:white;opacity:0;animation:damageTick 4s ease-out infinite;"></div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div style="display:flex;gap:20px;font-family:monospace;font-size:11px;">
+        <div>
+          <span style="color:#555;">Strijders</span>
+          <span style="color:white;margin-left:6px;">47</span>
+        </div>
+        <div>
+          <span style="color:#555;">Jouw DMG</span>
+          <span style="color:#F59E0B;margin-left:6px;font-weight:bold;">85 XP</span>
+        </div>
+        <div>
+          <span style="color:#555;">Rank</span>
+          <span style="color:#22C55E;margin-left:6px;">#12</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom danger stripes -->
+    <div style="height:2px;background:repeating-linear-gradient(90deg,#EF4444 0px,#EF4444 8px,transparent 8px,transparent 16px);opacity:0.2;"></div>
+  </div>
+</div>
+
+<style>
+  @keyframes tracePulse1 {
+    0% { left:10px; top:20px; opacity:0; }
+    10% { opacity:1; }
+    50% { left:80px; top:30px; opacity:0.5; }
+    100% { left:80px; top:30px; opacity:0; }
+  }
+  @keyframes tracePulse2 {
+    0% { left:20px; top:50px; opacity:0; }
+    10% { opacity:1; }
+    50% { left:70px; top:90px; opacity:0.5; }
+    100% { left:70px; top:90px; opacity:0; }
+  }
+  @keyframes nebulaFloat1 {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(10px,5px) scale(1.1); }
+  }
+  @keyframes nebulaFloat2 {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(-8px,-5px) scale(1.15); }
+  }
+  @keyframes starTwinkle {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+  @keyframes ember2 {
+    0% { transform: translateY(0); opacity: 0; }
+    15% { opacity: 0.8; }
+    100% { transform: translateY(-60px) translateX(10px); opacity: 0; }
+  }
+  @keyframes heatShimmer {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.7; }
+  }
+  @keyframes voidPulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+  @keyframes eventHorizon {
+    from { transform: translate(-50%,-50%) rotate(0deg); }
+    to { transform: translate(-50%,-50%) rotate(360deg); }
+  }
+  @keyframes voidSuck {
+    0% { transform: translate(0,0) scale(1); opacity: 0.6; }
+    100% { transform: translate(calc(50% - 50px), calc(50% - 50px)) scale(0); opacity: 0; }
+  }
+  @keyframes shockwave {
+    0% { transform: scale(0.3); opacity: 0.8; }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
+  @keyframes lightRay {
+    0% { height: 0; opacity: 0; }
+    30% { height: 80px; opacity: 0.5; }
+    100% { height: 120px; opacity: 0; }
+  }
+  @keyframes textFlicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  @keyframes levelReveal {
+    0% { transform: scale(3); opacity: 0; filter: blur(10px); }
+    100% { transform: scale(1); opacity: 1; filter: blur(0); }
+  }
+  @keyframes dangerPulse {
+    0%, 100% { border-color: rgba(239,68,68,0.2); color: rgba(239,68,68,0.5); }
+    50% { border-color: rgba(239,68,68,0.5); color: rgba(239,68,68,0.9); }
+  }
+  @keyframes hpShimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(150%); }
+  }
+  @keyframes damageTick {
+    0%, 90% { opacity: 0; }
+    92% { opacity: 0.8; }
+    100% { opacity: 0; }
+  }
+</style>
