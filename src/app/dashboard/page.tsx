@@ -66,7 +66,7 @@ export default async function DashboardPage({
       .single(),
 
     // 2. Stats
-    calculateStats(memberId),
+    calculateStats(memberId, isAdmin),
 
     // 3. Equipped accessories
     getEquippedAccessories(memberId),
@@ -292,8 +292,8 @@ export default async function DashboardPage({
 
     const frameColor = frameDef
       ? (frameDef.rarity === 'mythic'
-          ? 'conic-gradient(from 0deg, #f59e0b, #ef4444, #8b5cf6, #3b82f6, #22c55e, #f59e0b)'
-          : RARITY_CONFIG[frameDef.rarity as BadgeRarity]?.color)
+        ? 'conic-gradient(from 0deg, #f59e0b, #ef4444, #8b5cf6, #3b82f6, #22c55e, #f59e0b)'
+        : RARITY_CONFIG[frameDef.rarity as BadgeRarity]?.color)
       : undefined
 
     const petEmoji = petDef

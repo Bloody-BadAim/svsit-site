@@ -11,23 +11,19 @@ export interface MemberStats {
   total: number
 }
 
-export async function calculateStats(memberId: string): Promise<MemberStats> {
-  const supabase = createServiceClient()
-
+export async function calculateStats(
+  memberId: string,
+  isAdmin = false,
+): Promise<MemberStats> {
   // Admins and bestuur get max stats
-  const { data: memberCheck } = await supabase
-    .from('members')
-    .select('is_admin, role')
-    .eq('id', memberId)
-    .single()
-
-  if (memberCheck?.is_admin || memberCheck?.role === 'bestuur') {
+  if (isAdmin) {
     return { code: 999, social: 999, learn: 999, impact: 999, total: 3996 }
   }
 
+  const supabase = createServiceClient()
   const stats: MemberStats = { code: 0, social: 0, learn: 0, impact: 0, total: 0 }
 
-  // V2: XP transactions
+  // xp_transactions is the single source of truth (V1 data was migrated)
   const { data: transactions } = await supabase
     .from('xp_transactions')
     .select('amount, category')
@@ -40,43 +36,6 @@ export async function calculateStats(memberId: string): Promise<MemberStats> {
         stats[cat] += tx.amount as number
       }
       stats.total += tx.amount as number
-    }
-  }
-
-  // V1 fallback: scans (for members who earned XP before V2)
-  const { data: scans } = await supabase
-    .from('scans')
-    .select('points, category')
-    .eq('member_id', memberId)
-
-  if (scans) {
-    for (const scan of scans) {
-      const cat = scan.category as StatCategory | null
-      if (cat && cat in stats) {
-        stats[cat] += scan.points as number
-      }
-      stats.total += scan.points as number
-    }
-  }
-
-  // V1 fallback: approved challenge submissions
-  const { data: submissions } = await supabase
-    .from('challenge_submissions')
-    .select('challenges(category, points)')
-    .eq('member_id', memberId)
-    .eq('status', 'approved')
-
-  if (submissions) {
-    for (const sub of submissions) {
-      const raw = sub.challenges
-      const challenge = (Array.isArray(raw) ? raw[0] : raw) as { category: StatCategory; points: number } | null
-      if (challenge) {
-        const cat = challenge.category
-        if (cat in stats) {
-          stats[cat] += challenge.points
-        }
-        stats.total += challenge.points
-      }
     }
   }
 

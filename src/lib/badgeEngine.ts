@@ -1,26 +1,16 @@
 import { createServiceClient } from '@/lib/supabase'
 import { getBadgeSlotCount } from '@/lib/levelEngine'
-import { RARITY_CONFIG } from '@/types/gamification'
-import type { BadgeDef, BadgeRarity, MemberBadge } from '@/types/gamification'
+import type { BadgeDef, BadgeRarity } from '@/types/gamification'
 // Re-export so server-side code can import BADGE_DEFS from either location
 export { BADGE_DEFS } from '@/lib/badgeDefs'
-import { BADGE_DEFS } from '@/lib/badgeDefs'
+import { BADGE_DEFS, getBadgeDef } from '@/lib/badgeDefs'
 
 export function getBadgesByRarity(rarity: BadgeRarity): BadgeDef[] {
   return BADGE_DEFS.filter((b) => b.rarity === rarity)
 }
 
-export function getBadgeDef(badgeId: string): BadgeDef | undefined {
-  return BADGE_DEFS.find((b) => b.id === badgeId)
-}
-
 export function getMaxEquippableSlots(level: number): number {
   return getBadgeSlotCount(level)
-}
-
-export function getRarityColor(rarity: BadgeRarity): string {
-  if (rarity === 'mythic') return '#F59E0B'
-  return RARITY_CONFIG[rarity].color
 }
 
 export async function grantBadge(memberId: string, badgeId: string): Promise<boolean> {
@@ -49,25 +39,6 @@ export async function grantBadge(memberId: string, badgeId: string): Promise<boo
   }
 
   return true
-}
-
-export async function getEquippedBadges(memberId: string): Promise<MemberBadge[]> {
-  const supabase = createServiceClient()
-  const { data } = await supabase
-    .from('member_badges')
-    .select('id, member_id, badge_id, equipped, equipped_slot, earned_at')
-    .eq('member_id', memberId)
-    .eq('equipped', true)
-    .order('equipped_slot', { ascending: true })
-
-  return (data ?? []).map((row) => ({
-    id: row.id as string,
-    memberId: row.member_id as string,
-    badgeId: row.badge_id as string,
-    equipped: row.equipped as boolean,
-    equippedSlot: row.equipped_slot as number | null,
-    earnedAt: row.earned_at as string,
-  }))
 }
 
 export async function equipBadge(memberId: string, badgeId: string, slot: number, maxSlots: number): Promise<boolean> {

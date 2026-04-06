@@ -180,10 +180,10 @@ function FramePreview({ rarityColor }: { rarityColor: string }) {
     <div className="w-full h-full flex items-center justify-center">
       <div
         className="w-14 h-14 relative flex items-center justify-center"
-        style={{
-          border: `2px solid ${rarityColor}`,
-          boxShadow: `0 0 10px ${rarityColor}40, inset 0 0 10px ${rarityColor}10`,
-        }}
+      // style={{
+      //   border: `2px solid ${rarityColor}`,
+      //   boxShadow: `0 0 10px ${rarityColor}40, inset 0 0 10px ${rarityColor}10`,
+      // }}
       >
         <div
           className="absolute inset-0"
@@ -235,8 +235,8 @@ function ItemPreview({ item, rarityColor }: { item: ShopItem; rarityColor: strin
       return <PetPreview name={item.name} rarityColor={rarityColor} />
     case 'effect':
       return <EffectPreview name={item.name} rarityColor={rarityColor} />
-    case 'frame':
-      return <FramePreview rarityColor={rarityColor} />
+    // case 'frame':
+    //   return <FramePreview rarityColor={rarityColor} />
     case 'sticker':
       return <StickerPreview name={item.name} rarityColor={rarityColor} />
     default:
@@ -261,14 +261,14 @@ export function ShopItemCard({ item, owned, coinsBalance, index }: ShopItemCardP
   const borderColor = owned
     ? 'rgba(34,197,94,0.25)'
     : item.locked
-    ? 'rgba(255,255,255,0.04)'
-    : `${rarityColor}30`
+      ? 'rgba(255,255,255,0.04)'
+      : `${rarityColor}30`
 
   const glowShadow = owned
     ? '0 0 12px rgba(34,197,94,0.08)'
     : item.locked
-    ? 'none'
-    : `0 0 12px ${rarityColor}12`
+      ? 'none'
+      : `0 0 12px ${rarityColor}12`
 
   return (
     <motion.div

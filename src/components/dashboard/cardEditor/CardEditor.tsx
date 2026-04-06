@@ -2,14 +2,14 @@
 
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { Lock, X as XIcon, Save, ChevronRight, Eye, Coins } from 'lucide-react'
+import { Lock, Save, ChevronRight, Eye, Coins } from 'lucide-react'
 import { RARITY_CONFIG } from '@/types/gamification'
 import type { AccessoryCategory, BadgeRarity, UnlockRule } from '@/types/gamification'
 import MemberCard from '@/components/MemberCard'
 import type { MemberCardEquipment } from '@/components/MemberCard'
 import { resolvePetComponent, derivePetId } from '@/components/pets'
 import { getRarityColor } from '@/lib/badgeDefs'
-import { getSkin, CARD_SKINS } from '@/lib/cardSkins'
+import { getSkin } from '@/lib/cardSkins'
 
 // ---------------------------------------------------------------------------
 // Types

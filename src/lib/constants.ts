@@ -22,8 +22,6 @@ export const ROLLEN: Record<Role, { naam: string; beschrijving: string }> = {
   bestuur: { naam: 'Bestuur', beschrijving: 'Bestuurslid van SIT' },
 }
 
-export const LIDMAATSCHAP_PRIJS = 10 // euro per jaar
-
 export const ADMIN_EMAILS = [
   'matin.khajehfard@hva.nl',
   'voorzitter@svsit.nl',
@@ -47,9 +45,7 @@ export const STAT_CATEGORIES: StatCategoryDef[] = [
 ]
 
 // ---------------------------------------------------------------------------
-// V2: re-export from engines for backward compatibility
-// NOTE: BADGE_DEFS is NOT re-exported here — badgeEngine imports supabase (server-only).
-//       Import BADGE_DEFS directly from '@/lib/badgeEngine' in server components/routes only.
+// NOTE: Import LEVELS/getLevelForXp/etc. directly from '@/lib/levelEngine'.
+//       Import BADGE_DEFS directly from '@/lib/badgeDefs' (client-safe) or
+//       '@/lib/badgeEngine' (server-only).
 // ---------------------------------------------------------------------------
-export { LEVELS, getLevelForXp, getLevelProgress, getBadgeSlotCount } from '@/lib/levelEngine'
-export { RARITY_CONFIG } from '@/types/gamification'
