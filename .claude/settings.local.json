@@ -122,7 +122,8 @@
       "Bash(for d:*)",
       "Bash(do cat:*)",
       "Bash(break)",
-      "Bash(done)"
+      "Bash(done)",
+      "mcp__plugin_supabase_supabase__list_tables"
     ]
   },
   "outputStyle": "default",
