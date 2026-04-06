@@ -26,8 +26,9 @@ export async function GET(
       .from('members')
       .select(`
     id, email, student_number, role, commissie, commissie_voorstel,
-    total_xp, current_level, stripe_subscription_id,
-    stripe_customer_id, active_skin, password_hash,
+    total_xp, current_level, coins_balance, custom_title, accent_color, leaderboard_visible,
+    membership_active, membership_started_at, membership_expires_at,
+    stripe_subscription_id, stripe_customer_id, active_skin, password_hash,
     is_admin, created_at,
     member_commissies ( commissie_id, role_in_commissie, commissies ( id, slug, naam, emoji ) )
   `)

@@ -127,7 +127,8 @@
       "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src -type f \\\\\\(-name *.ts -o -name *.tsx \\\\\\))",
       "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website -name *.sql -o -name *migration*)",
       "mcp__claude_ai_Vercel__deploy_to_vercel",
-      "Bash(pkill -f 'next build')"
+      "Bash(pkill -f 'next build')",
+      "Bash(git rm:*)"
     ]
   },
   "outputStyle": "default",
