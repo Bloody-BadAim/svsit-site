@@ -159,7 +159,7 @@ export default function ProfielPage() {
           setMembershipActive(member.membership_active as boolean)
           setExpiresAt(member.membership_expires_at as string | null)
           setMemberSince((member.membership_started_at as string) || null)
-          setPoints((member.points as number) || 0)
+          setPoints((member.total_xp as number) || 0)
           setHasPassword(!!member.has_password)
         }
       })

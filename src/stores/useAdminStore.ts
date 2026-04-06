@@ -6,7 +6,7 @@ interface AdminFilters {
   status: 'all' | 'active' | 'expired'
   role: Role | 'all'
   commissie: string | 'all'
-  sortBy: 'email' | 'created_at' | 'points' | 'role'
+  sortBy: 'email' | 'created_at' | 'total_xp' | 'role'
   sortOrder: 'asc' | 'desc'
   pagina: number
   perPagina: number

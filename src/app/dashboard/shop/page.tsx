@@ -260,11 +260,11 @@ export default async function ShopPage({
   // Fetch member data (level + coins)
   const { data: member } = await supabase
     .from('members')
-    .select('points, coins_balance, role, is_admin')
+    .select('total_xp, coins_balance, role, is_admin')
     .eq('id', memberId)
     .single()
 
-  const points = (member?.points as number) ?? 0
+  const points = (member?.total_xp as number) ?? 0
   const isAdminMember = !!(member?.is_admin || member?.role === 'bestuur')
   const coinsBalance = isAdminMember ? 99999 : ((member?.coins_balance as number) ?? 0)
   const levelDef = getLevelForXp(points)

@@ -57,8 +57,8 @@ export default async function DashboardPage({
     // 1. Member data with commissies
     supabase
       .from('members')
-      .select(`id, email, role, points, total_xp, coins_balance, current_level,
-        custom_title, accent_color, is_admin, active_skin, active_badges,
+      .select(`id, email, role, total_xp, coins_balance, current_level,
+        custom_title, accent_color, is_admin, active_skin,
         leaderboard_visible, commissie, membership_active, membership_started_at,
         member_commissies ( commissie_id, commissies ( slug, naam ) )`)
       .eq('id', memberId)
@@ -203,7 +203,7 @@ export default async function DashboardPage({
   // Level calculations
   // -------------------------------------------------------------------------
 
-  const points = (member.points as number) || 0
+  const points = (member.total_xp as number) || 0
   const levelDef = getLevelForXp(points)
   const levelProgress = getLevelProgress(points)
   const nextLevelDef = getNextLevel(levelDef.level)
@@ -346,8 +346,18 @@ export default async function DashboardPage({
   // -------------------------------------------------------------------------
 
   const activeSkin = cardEquipment.skinId ?? ((member.active_skin as string) || 'default')
-  const activeBadges = (member.active_badges as string[]) || []
   const username = (member.email as string)?.split('@')[0] || 'lid'
+
+  // -------------------------------------------------------------------------
+  // BadgesTab props (declared early so cardData can use equippedBadges)
+  // -------------------------------------------------------------------------
+
+  const earnedBadgeIds = (memberBadgesResult.data ?? []).map(b => b.badge_id as string)
+  const equippedBadges = (equippedBadgesResult.data ?? []).map(b => ({
+    badgeId: b.badge_id as string,
+    slot: b.equipped_slot as number,
+  }))
+  const maxSlots = getBadgeSlotCount(levelDef.level)
 
   // -------------------------------------------------------------------------
   // Card data
@@ -357,10 +367,10 @@ export default async function DashboardPage({
     name: username,
     role: member.role as Role,
     commissie: commissieNaam,
-    points,
+    total_xp: points,
     memberId: member.id as string,
     email: member.email as string,
-    activeBadges,
+    activeBadges: equippedBadges.map(b => b.badgeId),
     dynamicStats: memberStats,
   }
 
@@ -412,17 +422,6 @@ export default async function DashboardPage({
     category: (tx.category as string) ?? null,
     createdAt: tx.created_at as string,
   }))
-
-  // -------------------------------------------------------------------------
-  // BadgesTab props
-  // -------------------------------------------------------------------------
-
-  const earnedBadgeIds = (memberBadgesResult.data ?? []).map(b => b.badge_id as string)
-  const equippedBadges = (equippedBadgesResult.data ?? []).map(b => ({
-    badgeId: b.badge_id as string,
-    slot: b.equipped_slot as number,
-  }))
-  const maxSlots = getBadgeSlotCount(levelDef.level)
 
   // -------------------------------------------------------------------------
   // Render

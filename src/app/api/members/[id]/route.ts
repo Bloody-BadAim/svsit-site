@@ -26,8 +26,8 @@ export async function GET(
       .from('members')
       .select(`
     id, email, student_number, role, commissie, commissie_voorstel,
-    points, membership_active, membership_started_at, membership_expires_at,
-    stripe_customer_id, active_skin, active_badges, password_hash,
+    total_xp, current_level, membership_active, membership_started_at, membership_expires_at,
+    stripe_customer_id, active_skin, password_hash,
     is_admin, created_at,
     member_commissies ( commissie_id, role_in_commissie, commissies ( id, slug, naam, emoji ) )
   `)
@@ -105,8 +105,8 @@ export async function PATCH(
 
     // Welke velden mag het lid zelf updaten vs admin
     const allowedFields = isAdmin
-      ? ['student_number', 'role', 'commissie', 'commissie_voorstel', 'points', 'membership_active', 'membership_expires_at', 'active_skin', 'active_badges']
-      : ['student_number', 'active_skin', 'active_badges']
+      ? ['student_number', 'role', 'commissie', 'commissie_voorstel', 'total_xp', 'membership_active', 'membership_expires_at', 'active_skin']
+      : ['student_number', 'active_skin']
 
     const updateData: Record<string, unknown> = {}
     for (const field of allowedFields) {
@@ -123,7 +123,7 @@ export async function PATCH(
       .from('members')
       .update(updateData)
       .eq('id', id)
-      .select('id, email, student_number, role, commissie, points, membership_active')
+      .select('id, email, student_number, role, commissie, total_xp, current_level, membership_active')
       .single()
 
     if (error) throw error

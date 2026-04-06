@@ -18,7 +18,8 @@ interface MemberDetail {
   student_number: string | null
   role: string
   commissie: string | null
-  points: number
+  total_xp: number
+  current_level: number
   membership_active: boolean
   membership_started_at: string | null
   is_admin: boolean
@@ -43,7 +44,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
   const [message, setMessage] = useState('')
   const [scanHistory, setScanHistory] = useState<{reason: string; points: number; created_at: string; category: string}[]>([])
 
-  const levelDef = getLevelForXp(member.points)
+  const levelDef = getLevelForXp(member.total_xp)
 
   useEffect(() => {
     fetch(`/api/members/${member.id}`)
@@ -230,7 +231,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg)' }}>
             <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>Punten</p>
             <p className="font-semibold" style={{ color: 'var(--color-accent-gold)' }}>
-              {member.points} <span className="text-xs font-normal" style={{ color: levelDef.color }}>({levelDef.title})</span>
+              {member.total_xp} <span className="text-xs font-normal" style={{ color: levelDef.color }}>({levelDef.title})</span>
             </p>
           </div>
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg)' }}>

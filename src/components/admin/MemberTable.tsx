@@ -16,7 +16,8 @@ interface MemberRow {
   student_number: string | null
   role: string
   commissie: string | null
-  points: number
+  total_xp: number
+  current_level: number
   membership_active: boolean
   membership_started_at: string | null
   is_admin: boolean
@@ -54,7 +55,7 @@ function exportCSV(members: MemberRow[]) {
     m.student_number || '',
     m.role,
     getCommissieNames(m).join(' | ') || '',
-    m.points.toString(),
+    m.total_xp.toString(),
     m.membership_active ? 'Actief' : 'Inactief',
     m.created_at ? new Date(m.created_at).toLocaleDateString('nl-NL') : ''
   ])
@@ -308,7 +309,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
                   <td className="px-4 py-3" style={{ color: 'var(--color-text-muted)' }}>
                     {names.length > 0 ? names.join(', ') : '\u2014'}
                   </td>
-                  <td className="px-4 py-3 font-bold" style={{ color: 'var(--color-accent-gold)' }}>{member.points}</td>
+                  <td className="px-4 py-3 font-bold" style={{ color: 'var(--color-accent-gold)' }}>{member.total_xp}</td>
                   <td className="px-4 py-3">
                     <span
                       className="inline-block w-2 h-2 rounded-full"

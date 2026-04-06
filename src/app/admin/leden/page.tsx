@@ -14,7 +14,8 @@ interface MemberRow {
   student_number: string | null
   role: string
   commissie: string | null
-  points: number
+  total_xp: number
+  current_level: number
   membership_active: boolean
   membership_started_at: string | null
   is_admin: boolean

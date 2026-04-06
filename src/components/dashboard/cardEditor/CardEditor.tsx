@@ -159,7 +159,7 @@ function CardPreview({ equippedMap, member, accentColor }: CardPreviewProps) {
           name: 'preview',
           role: 'member',
           commissie: null,
-          points: (member.current_level ?? 1) * 100,
+          total_xp: (member.current_level ?? 1) * 100,
           skin: activeSkin,
         }}
         equipment={equipment}

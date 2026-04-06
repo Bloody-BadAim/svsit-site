@@ -49,7 +49,7 @@ export interface MemberCardData {
   name: string;
   role: Role;
   commissie: string | null;
-  points: number;
+  total_xp: number;
   memberId?: string;
   email?: string;
   stats?: { label: string; color: string; fill: number }[];
@@ -87,7 +87,7 @@ export default function MemberCard({
   const name = data?.name || "Jouw Naam";
   const role = data?.role || "member";
   const commissie = data?.commissie;
-  const points = data?.points ?? 0;
+  const points = data?.total_xp ?? 0;
   const levelDef = getLevelForXp(points);
   const levelProg = getLevelProgress(points);
   const xpPercent = levelProg.percent;
