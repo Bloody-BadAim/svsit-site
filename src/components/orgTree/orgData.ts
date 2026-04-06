@@ -41,8 +41,8 @@ export const bestuur: Person[] = [
     type: "bestuur",
   },
   {
-    id: "riley",
-    name: "Riley",
+    id: "---",
+    name: "---",
     role: "Penningmeester",
     accentColor: "#3B82F6",
     commissies: ["gameit", "sponsoring"],
@@ -126,7 +126,7 @@ export const commissies: OrgCommissie[] = [
     name: "GameIT",
     color: "#8B5CF6",
     voorzitters: ["riley"],
-    leden: ["luuk", "wesley", "rosa"],
+    leden: ["luuk", "wesley", "rosa", "riley"],
     status: "Zoekt leden",
   },
   {
@@ -134,7 +134,7 @@ export const commissies: OrgCommissie[] = [
     name: "Sponsoring",
     color: "#F59E0B",
     voorzitters: ["matin"],
-    leden: ["hugo", "riley"],
+    leden: ["hugo"],
     status: "Zoekt leden",
   },
   {
