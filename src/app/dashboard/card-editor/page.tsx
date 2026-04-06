@@ -29,23 +29,20 @@ export default async function CardEditorPage() {
   const isAdmin = member?.is_admin || member?.role === 'bestuur'
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold font-mono text-white mb-6">CARD EDITOR</h1>
-      <CardEditor
-        inventory={inventoryResult.data ?? []}
-        equipped={[]}
-        allDefinitions={definitionsResult.data ?? []}
-        member={member ?? {
-          current_level: 1,
-          accent_color: null,
-          custom_title: null,
-          leaderboard_visible: true,
-          active_skin: 'default',
-          coins_balance: 0,
-        }}
-        memberId={session.user.id}
-        isAdmin={isAdmin}
-      />
-    </div>
+    <CardEditor
+      inventory={inventoryResult.data ?? []}
+      equipped={[]}
+      allDefinitions={definitionsResult.data ?? []}
+      member={member ?? {
+        current_level: 1,
+        accent_color: null,
+        custom_title: null,
+        leaderboard_visible: true,
+        active_skin: 'default',
+        coins_balance: 0,
+      }}
+      memberId={session.user.id}
+      isAdmin={isAdmin}
+    />
   )
 }
