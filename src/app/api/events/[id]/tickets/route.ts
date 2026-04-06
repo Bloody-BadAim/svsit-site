@@ -58,7 +58,7 @@ export async function POST(
     // 1. Haal event op
     const { data: event, error: eventError } = await supabase
       .from('events')
-      .select('*')
+      .select('id, title, date, end_date, location, is_paid, price_members, price_nonmembers, capacity, status')
       .eq('id', eventId)
       .single()
 
@@ -99,7 +99,7 @@ export async function POST(
           paid_amount: 0,
           ticket_number: ticketNumber,
         })
-        .select('*')
+        .select('id, event_id, member_id, email, name, status, stripe_session_id, paid_amount, created_at, checked_in_at')
         .single()
 
       if (insertError) throw insertError
@@ -141,7 +141,7 @@ export async function POST(
         status: 'pending',
         paid_amount: priceInCents,
       })
-      .select('*')
+      .select('id, event_id, member_id, email, name, status, stripe_session_id, paid_amount, created_at, checked_in_at')
       .single()
 
     if (insertError) throw insertError

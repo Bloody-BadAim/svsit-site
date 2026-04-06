@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
         event_id: event_id || null,
         category: category || 'social',
       })
-      .select('*')
+      .select('id, member_id, points, reason, scanned_by, event_name, event_id, category, created_at')
       .single()
 
     if (scanError) throw scanError

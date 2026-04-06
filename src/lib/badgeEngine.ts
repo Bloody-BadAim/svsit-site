@@ -54,7 +54,7 @@ export async function getEquippedBadges(memberId: string): Promise<MemberBadge[]
   const supabase = createServiceClient()
   const { data } = await supabase
     .from('member_badges')
-    .select('*')
+    .select('id, member_id, badge_id, equipped, equipped_slot, earned_at')
     .eq('member_id', memberId)
     .eq('equipped', true)
     .order('equipped_slot', { ascending: true })

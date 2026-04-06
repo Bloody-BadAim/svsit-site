@@ -4,7 +4,7 @@ export async function getShopItems(memberLevel: number, isAdmin = false) {
   const supabase = createServiceClient()
   const { data } = await supabase
     .from('accessory_definitions')
-    .select('*')
+    .select('id, name, description, category, rarity, shop_price, is_featured, is_limited_time, limited_time_end, stock, unlock_rule, preview_data, created_at')
     .not('shop_price', 'is', null)
     .order('rarity')
 

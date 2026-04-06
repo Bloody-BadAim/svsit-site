@@ -17,7 +17,6 @@ interface EmailRequestBody {
 interface MemberRow {
   id: string
   email: string
-  name?: string | null
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -29,12 +28,8 @@ function getResend() {
   return new Resend(process.env.RESEND_API_KEY)
 }
 
-/** Derive first name from full name or email address */
-function getVoornaam(email: string, name?: string | null): string {
-  if (name) {
-    return name.split(' ')[0]
-  }
-  // fall back to the part before the dot (e.g. matin.khajehfard@hva.nl → matin)
+/** Derive first name from email address (e.g. matin.khajehfard@hva.nl → Matin) */
+function getVoornaam(email: string): string {
   const local = email.split('@')[0]
   const firstPart = local.split('.')[0]
   return firstPart.charAt(0).toUpperCase() + firstPart.slice(1)
@@ -160,7 +155,7 @@ export async function POST(req: NextRequest) {
 
       const results = await Promise.allSettled(
         batch.map((member) => {
-          const voornaam = getVoornaam(member.email, member.name)
+          const voornaam = getVoornaam(member.email)
           return resend.emails.send({
             from: 'SIT <bestuur@svsit.nl>',
             to: member.email,

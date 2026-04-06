@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     // Track milestones: return all
     const { data, error } = await supabase
       .from('challenges')
-      .select('*')
+      .select('id, title, description, type, category, points, track_id, track_order, proof_required, proof_type, active_from, active_until, created_by, created_at')
       .or('type.eq.track_milestone,active_until.is.null,active_until.gt.' + new Date().toISOString())
       .order('created_at', { ascending: false })
 
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
         active_until: active_until ?? null,
         created_by: session.user.email,
       })
-      .select('*')
+      .select('id, title, description, type, category, points, track_id, track_order, proof_required, proof_type, active_from, active_until, created_by, created_at')
       .single()
 
     if (error) throw error

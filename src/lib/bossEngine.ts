@@ -6,7 +6,8 @@ import type { BossFight } from '@/types/gamification'
 export async function getActiveBoss(): Promise<BossFight | null> {
   const supabase = createServiceClient()
   const { data } = await supabase.from('boss_fights')
-    .select('*').in('status', ['announced', 'active'])
+    .select('id, name, description, hp, current_hp, artwork_url, status, announced_at, starts_at, deadline, base_reward_xp, base_reward_badge_id, top_reward_accessory_id, created_at')
+    .in('status', ['announced', 'active'])
     .order('created_at', { ascending: false }).limit(1).maybeSingle()
   return data ? mapBossRow(data) : null
 }

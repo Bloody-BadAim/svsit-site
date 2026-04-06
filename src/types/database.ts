@@ -26,8 +26,10 @@ export interface Member {
   password_hash: string | null
   student_number: string | null
   role: Role
+  /** @deprecated Use member_commissies table instead */
   commissie: string | null
   commissie_voorstel: string | null
+  /** @deprecated Use total_xp instead */
   points: number
   stripe_customer_id: string | null
   stripe_subscription_id: string | null
@@ -37,6 +39,7 @@ export interface Member {
   created_at: string
   updated_at: string
   active_skin: string
+  /** @deprecated Use member_badges table instead */
   active_badges: string[]
   is_admin: boolean
   total_xp: number

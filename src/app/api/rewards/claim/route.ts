@@ -5,15 +5,15 @@ import { LEVELS } from '@/lib/levelEngine'
 
 type MerchRewardId = 'merch_sticker_pack' | 'merch_hoodie' | 'merch_limited_edition'
 
-// Minimum rank required per merch item (by XP threshold)
-const MERCH_RANK_REQUIREMENTS: Record<MerchRewardId, number> = {
-  merch_sticker_pack: 50,    // Gold
-  merch_hoodie: 100,          // Platinum
-  merch_limited_edition: 200, // Diamond
+// Minimum level required per merch item
+const MERCH_LEVEL_REQUIREMENTS: Record<MerchRewardId, number> = {
+  merch_sticker_pack: 5,   // Developer
+  merch_hoodie: 8,          // Wizard
+  merch_limited_edition: 11, // Legend
 }
 
 const VALID_MERCH_IDS = new Set<MerchRewardId>(
-  Object.keys(MERCH_RANK_REQUIREMENTS) as MerchRewardId[]
+  Object.keys(MERCH_LEVEL_REQUIREMENTS) as MerchRewardId[]
 )
 
 // POST — Authenticated member claims their own merch reward
@@ -36,10 +36,10 @@ export async function POST(req: NextRequest) {
 
     const supabase = createServiceClient()
 
-    // Fetch member points to verify rank
+    // Fetch member level to verify rank
     const { data: member, error: memberError } = await supabase
       .from('members')
-      .select('id, points')
+      .select('id, current_level')
       .eq('id', session.user.id)
       .single()
 
@@ -47,13 +47,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ data: null, error: 'Lid niet gevonden', meta: null }, { status: 404 })
     }
 
-    const requiredPoints = MERCH_RANK_REQUIREMENTS[rewardId]
-    if ((member.points as number) < requiredPoints) {
-      // Find the level title for a friendly error
-      const level = LEVELS.find((l) => l.cumulativeXp === requiredPoints)
-      const rankName = level?.title ?? `${requiredPoints} XP`
+    const requiredLevel = MERCH_LEVEL_REQUIREMENTS[rewardId]
+    if ((member.current_level as number) < requiredLevel) {
+      const levelDef = LEVELS.find((l) => l.level === requiredLevel)
+      const rankName = levelDef?.title ?? `Level ${requiredLevel}`
       return NextResponse.json(
-        { data: null, error: `Je hebt rank ${rankName} nodig om dit te claimen`, meta: null },
+        { data: null, error: `Je hebt level ${requiredLevel} (${rankName}) nodig om dit te claimen`, meta: null },
         { status: 403 }
       )
     }
@@ -87,7 +86,7 @@ export async function POST(req: NextRequest) {
         },
         { onConflict: 'member_id,reward_id' }
       )
-      .select('*')
+      .select('id, member_id, type, reward_id, claimed_at, created_at')
       .single()
 
     if (error) throw error

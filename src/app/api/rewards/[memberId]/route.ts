@@ -24,7 +24,7 @@ export async function GET(
     const supabase = createServiceClient()
     const { data, error } = await supabase
       .from('rewards')
-      .select('*')
+      .select('id, member_id, type, reward_id, claimed_at, created_at')
       .eq('member_id', memberId)
       .order('created_at', { ascending: false })
 

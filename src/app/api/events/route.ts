@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     const supabase = createServiceClient()
     let query = supabase
       .from('events')
-      .select('*', { count: 'exact' })
+      .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, created_by, created_at', { count: 'exact' })
       .order('date', { ascending: true })
 
     if (status) {
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
         capacity: capacity ?? null,
         created_by: session.user.email,
       })
-      .select('*')
+      .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, created_by, created_at')
       .single()
 
     if (error) throw error

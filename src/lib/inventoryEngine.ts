@@ -5,7 +5,7 @@ export async function getInventory(memberId: string): Promise<MemberAccessory[]>
   const supabase = createServiceClient()
   const { data } = await supabase
     .from('member_accessories')
-    .select('*')
+    .select('id, member_id, accessory_id, equipped, position, acquired_via, acquired_at')
     .eq('member_id', memberId)
     .order('acquired_at', { ascending: false })
 

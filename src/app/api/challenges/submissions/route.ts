@@ -15,7 +15,7 @@ export async function GET() {
 
     const { data: submissions, error: submissionsError } = await supabase
       .from('challenge_submissions')
-      .select('*')
+      .select('id, challenge_id, member_id, proof_url, proof_text, status, reviewed_by, reviewed_at, created_at')
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
 

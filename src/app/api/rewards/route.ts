@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     const { data, error } = await supabase
       .from('rewards')
       .upsert({ member_id, type, reward_id }, { onConflict: 'member_id,reward_id' })
-      .select('*')
+      .select('id, member_id, type, reward_id, claimed_at, created_at')
       .single()
 
     if (error) throw error

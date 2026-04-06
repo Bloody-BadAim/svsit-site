@@ -18,7 +18,7 @@ export async function GET(
 
     const { data, error } = await supabase
       .from('scans')
-      .select('*')
+      .select('id, member_id, points, reason, scanned_by, event_name, event_id, category, created_at')
       .eq('member_id', memberId)
       .order('created_at', { ascending: false })
 
