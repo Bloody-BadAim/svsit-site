@@ -8,7 +8,7 @@ import type { AccessoryCategory, BadgeRarity, UnlockRule } from '@/types/gamific
 import MemberCard from '@/components/MemberCard'
 import type { MemberCardEquipment } from '@/components/MemberCard'
 import { PET_MAP } from '@/components/pets'
-import { getRarityColor } from '@/lib/badgeEngine'
+import { getRarityColor } from '@/lib/badgeDefs'
 import { getSkin, CARD_SKINS } from '@/lib/cardSkins'
 
 // ---------------------------------------------------------------------------

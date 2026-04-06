@@ -8,8 +8,7 @@ import type { Role } from "@/types/database";
 import QRCode from "react-qr-code";
 import { getSkin } from "@/lib/cardSkins";
 import BadgeIcon from "@/components/badges/BadgeIcon";
-import { getBadgeDef } from "@/lib/badgeDefs";
-import { getRarityColor } from "@/lib/badgeEngine";
+import { getBadgeDef, getRarityColor } from "@/lib/badgeDefs";
 import { PET_MAP } from "@/components/pets";
 
 // Maps DB effect names (case-insensitive) to internal render keys
