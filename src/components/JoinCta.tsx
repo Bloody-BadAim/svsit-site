@@ -152,7 +152,28 @@ export default function JoinCta() {
 
           {/* Right: member card */}
           <div ref={cardRef} className="flex justify-center lg:justify-end">
-            <MemberCard className="w-full max-w-[400px]" data={{ name: 'Jouw Naam', role: 'member', commissie: null, total_xp: 0, skin: 'skin_neon_city' }}>
+            <MemberCard
+              className="w-full max-w-[400px]"
+              data={{
+                name: 'JOUW NAAM',
+                role: 'member',
+                commissie: 'Jouw commissie',
+                total_xp: 449,
+                skin: 'skin_neon_city',
+                activeBadges: ['badge_first_event', 'badge_streak_3', 'badge_borrel_5'],
+                dynamicStats: { code: 7, social: 5, learn: 8, impact: 4 },
+              }}
+              equipment={{
+                frameColor: '#EC4899',
+                petEmoji: 'pet_robot',
+                effectName: 'Sparkle',
+                accentColor: '#EC4899',
+                customTitle: 'JOUW TITEL HIER',
+                stickers: [
+                  { id: '1', x: 15, y: 75, emoji: 'SIT' },
+                ],
+              }}
+            >
               <HoldToJoinButton href="/login" />
               <p className="font-mono text-[11px] text-[var(--color-text-muted)] opacity-40 mt-3 text-center">
                 200+ studenten gingen je voor
