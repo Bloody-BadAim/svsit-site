@@ -46,7 +46,7 @@ async function fetchMembers(filter: EmailFilter): Promise<MemberRow[]> {
   if (filter === 'all') {
     const { data, error } = await supabase
       .from('members')
-      .select('id, email, name')
+      .select('id, email')
       .eq('membership_active', true)
 
     if (error) throw error
@@ -68,7 +68,7 @@ async function fetchMembers(filter: EmailFilter): Promise<MemberRow[]> {
 
     const { data, error } = await supabase
       .from('members')
-      .select('id, email, name')
+      .select('id, email')
       .in('id', memberIds)
       .eq('membership_active', true)
 
@@ -79,7 +79,7 @@ async function fetchMembers(filter: EmailFilter): Promise<MemberRow[]> {
   if (filter === 'bestuur') {
     const { data, error } = await supabase
       .from('members')
-      .select('id, email, name')
+      .select('id, email')
       .eq('role', 'bestuur')
 
     if (error) throw error
@@ -99,7 +99,7 @@ async function fetchMembers(filter: EmailFilter): Promise<MemberRow[]> {
 
     const { data, error } = await supabase
       .from('members')
-      .select('id, email, name')
+      .select('id, email')
       .in('id', memberIds)
 
     if (error) throw error
