@@ -5,7 +5,9 @@ import { Star, Check, X } from "lucide-react";
 import { ROLLEN } from "@/lib/constants";
 import { getLevelForXp, getLevelProgress, getBadgeSlotCount } from "@/lib/levelEngine";
 import type { Role } from "@/types/database";
-import QRCode from "react-qr-code";
+import dynamic from "next/dynamic";
+
+const QRCode = dynamic(() => import("react-qr-code"), { ssr: false });
 import { getSkin } from "@/lib/cardSkins";
 import BadgeIcon from "@/components/badges/BadgeIcon";
 import { getBadgeDef, getRarityColor } from "@/lib/badgeDefs";
@@ -564,16 +566,14 @@ export default function MemberCard({
               {/* Info */}
               <div className="flex flex-col gap-1 min-w-0 pt-0.5">
                 <span className="font-mono text-base text-[var(--color-text)] font-bold tracking-wide">
-                  {name}
+                  {equipment?.customTitle || name}
                 </span>
-                {equipment?.customTitle && (
-                  <span
-                    className="font-mono text-[10px] uppercase tracking-[0.15em]"
-                    style={{ color: equipment.accentColor ?? "var(--color-accent-gold)", opacity: 0.8 }}
-                  >
-                    {equipment.customTitle}
-                  </span>
-                )}
+                <span
+                  className="font-mono text-[10px] uppercase tracking-[0.15em]"
+                  style={{ color: equipment?.accentColor ?? "var(--color-text-muted)", opacity: 0.7 }}
+                >
+                  {equipment?.customTitle ? name : ''}
+                </span>
                 <span className="font-mono text-[11px] text-[var(--color-text-muted)]">
                   CLASS:{" "}
                   <span className={isPlaceholder ? "opacity-50" : ""}>

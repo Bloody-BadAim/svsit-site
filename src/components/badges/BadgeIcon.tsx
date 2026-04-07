@@ -533,15 +533,15 @@ function MythicBadge({ size, children }: { size: number; children: ReactElement 
           zIndex: 1,
         }}
       >
-        {/* Inner glow field that shifts */}
+        {/* Inner glow field that shifts (GPU-composited via transform) */}
         <div
           style={{
             position: 'absolute',
-            inset: 0,
+            inset: '-20% -40%',
             background:
-              'radial-gradient(circle at 30% 50%, rgba(192,132,252,0.18) 0%, transparent 60%)',
+              'radial-gradient(circle at 50% 50%, rgba(192,132,252,0.18) 0%, transparent 50%)',
             animation: 'badge-glowShift 4s ease-in-out infinite',
-            backgroundSize: '200% 100%',
+            willChange: 'transform',
             pointerEvents: 'none',
           }}
         />

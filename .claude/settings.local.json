@@ -154,7 +154,11 @@
       "Bash(for f:*)",
       "Bash(do echo:*)",
       "Read(//mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/**)",
-      "Bash(npx sharp-cli:*)"
+      "Bash(npx sharp-cli:*)",
+      "Bash(kill 319957 319956)",
+      "Bash(while kill:*)",
+      "Bash(do sleep:*)",
+      "Bash(xargs kill:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

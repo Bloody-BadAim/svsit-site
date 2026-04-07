@@ -874,8 +874,8 @@ body::before {
   100% { transform: translateX(250%); }
 }
 @keyframes badge-glowShift {
-  0%, 100% { background-position: 30% 50%; }
-  50%       { background-position: 70% 50%; }
+  0%, 100% { transform: translateX(-20%); }
+  50%       { transform: translateX(20%); }
 }
 @keyframes badge-starburst {
   0%, 100% { opacity: 0.15; transform: scale(0.9); }

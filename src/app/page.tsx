@@ -1,17 +1,23 @@
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import About from "@/components/About";
-import WhyJoin from "@/components/WhyJoin";
-import Events from "@/components/Events";
-import EventTicker from "@/components/EventTicker";
-import JoinCta from "@/components/JoinCta";
-import Footer from "@/components/Footer";
-import BackgroundStreaks from "@/components/BackgroundStreaks";
 import PageScrollProgress from "@/components/PageScrollProgress";
-import SmoothScroll from "@/components/SmoothScroll";
-import SectionDivider from "@/components/SectionDivider";
 
+// Defer heavy client components that are not needed for initial paint (LCP)
+const SmoothScroll = dynamic(() => import("@/components/SmoothScroll"));
+const BackgroundStreaks = dynamic(() => import("@/components/BackgroundStreaks"));
+
+// Below-the-fold sections: code-split to reduce initial JS bundle
+// Each pulls in GSAP ScrollTrigger, motion, lucide-react, etc. only when needed
+const About = dynamic(() => import("@/components/About"));
+const WhyJoin = dynamic(() => import("@/components/WhyJoin"));
+const Events = dynamic(() => import("@/components/Events"));
+const EventTicker = dynamic(() => import("@/components/EventTicker"));
+const JoinCta = dynamic(() => import("@/components/JoinCta"));
+const Footer = dynamic(() => import("@/components/Footer"));
+const SectionDivider = dynamic(() => import("@/components/SectionDivider"));
+
+// Non-critical UI enhancements: deferred
 const CustomCursor = dynamic(() => import("@/components/CustomCursor"));
 const ConsoleEasterEgg = dynamic(() => import("@/components/ConsoleEasterEgg"));
 const KonamiGame = dynamic(() => import("@/components/KonamiGame"));

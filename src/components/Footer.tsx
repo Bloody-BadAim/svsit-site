@@ -193,17 +193,17 @@ export default function Footer() {
         {/* ZONE 3: HvA + Copyright */}
         <div data-footer-zone className="py-10 md:py-12">
           <div className="flex flex-col gap-1.5 mb-8">
-            <p className="font-mono text-xs text-[#71717A]">
+            <p className="font-mono text-xs text-[#A1A1AA]">
               Onderdeel van{" "}
               <span className="text-[#A78BFA]">HBO-ICT</span>
               {" "}&mdash; Hogeschool van Amsterdam
             </p>
-            <p className="font-mono text-[11px] text-[#52525B]">
+            <p className="font-mono text-[11px] text-[#71717A]">
               Software Engineering &middot; Cyber Security &middot; Game Development &middot; Business IT &amp; Management &middot; Technische Informatica
             </p>
           </div>
           <div className="flex items-center justify-between flex-wrap gap-4">
-            <p className="font-mono text-xs text-[#52525B] flex items-center gap-2">
+            <p className="font-mono text-xs text-[#71717A] flex items-center gap-2">
               <span>&copy; {year} SIT &mdash; Hogeschool van Amsterdam</span>
               <span className="inline-flex items-center gap-1.5" aria-hidden="true">
                 <span className="text-[var(--color-accent-red)] font-bold text-[10px]">&times;</span>
@@ -214,7 +214,7 @@ export default function Footer() {
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               aria-label="Terug naar boven"
-              className="font-mono text-xs text-[#52525B] hover:text-[var(--color-accent-gold)] transition-colors cursor-pointer"
+              className="font-mono text-xs text-[#71717A] hover:text-[var(--color-accent-gold)] transition-colors cursor-pointer"
             >
               scroll.toTop() &uarr;
             </button>

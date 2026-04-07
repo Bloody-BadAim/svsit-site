@@ -323,7 +323,7 @@ export default function MyCardTab({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 p-4 sm:p-6">
+    <div className="grid grid-cols-1 lg:grid-cols-[380px_300px] gap-6 p-4 sm:p-6">
       {/* Left column: Card + actions */}
       <div className="flex flex-col gap-4">
         <FlipCard
