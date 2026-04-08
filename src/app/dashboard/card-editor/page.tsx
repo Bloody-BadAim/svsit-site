@@ -20,7 +20,7 @@ export default async function CardEditorPage() {
       .order('rarity'),
     supabase
       .from('members')
-      .select('current_level, accent_color, custom_title, active_skin, coins_balance, is_admin, role, leaderboard_visible')
+      .select('current_level, accent_color, custom_title, active_skin, coins_balance, is_admin, role')
       .eq('id', session.user.id)
       .single(),
   ])
@@ -38,7 +38,6 @@ export default async function CardEditorPage() {
         current_level: 1,
         accent_color: null,
         custom_title: null,
-        leaderboard_visible: true,
         active_skin: 'default',
         coins_balance: 0,
       }}

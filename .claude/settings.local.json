@@ -158,7 +158,8 @@
       "Bash(kill 319957 319956)",
       "Bash(while kill:*)",
       "Bash(do sleep:*)",
-      "Bash(xargs kill:*)"
+      "Bash(xargs kill:*)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website -name *gamification* -o -name *leaderboard*)"
     ]
   },
   "enableAllProjectMcpServers": true,

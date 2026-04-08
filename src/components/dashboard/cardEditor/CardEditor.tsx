@@ -10,6 +10,7 @@ import type { MemberCardEquipment } from '@/components/MemberCard'
 import { resolvePetComponent, derivePetId } from '@/components/pets'
 import { getRarityColor } from '@/lib/badgeDefs'
 import { getSkin } from '@/lib/cardSkins'
+import { useToast } from '@/components/Toast'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -43,7 +44,6 @@ interface MemberData {
   current_level: number
   accent_color: string | null
   custom_title: string | null
-  leaderboard_visible: boolean
   active_skin: string
   coins_balance: number
 }
@@ -434,26 +434,23 @@ interface FlairPanelProps {
   memberLevel: number
   initialAccentColor: string | null
   initialCustomTitle: string | null
-  initialLeaderboardVisible: boolean
   onAccentColorChange: (color: string) => void
 }
 
-function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, initialLeaderboardVisible, onAccentColorChange }: FlairPanelProps) {
+function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, onAccentColorChange }: FlairPanelProps) {
   const [accentColor, setAccentColor] = useState(initialAccentColor ?? '#F59E0B')
   const [customTitle, setCustomTitle] = useState(initialCustomTitle ?? '')
-  const [leaderboardVisible, setLeaderboardVisible] = useState(initialLeaderboardVisible)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const canCustomTitle = memberLevel >= 8
   const canAccentColor = memberLevel >= 6
+  const { toast } = useToast()
 
   async function handleSave() {
     setSaving(true)
     setSaved(false)
     try {
-      const body: Record<string, unknown> = {
-        leaderboard_visible: leaderboardVisible,
-      }
+      const body: Record<string, unknown> = {}
       if (canAccentColor) body.accent_color = accentColor
       if (canCustomTitle && customTitle.trim()) body.custom_title = customTitle.trim()
       else if (canCustomTitle) body.custom_title = null
@@ -462,7 +459,14 @@ function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, initi
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      if (res.ok) setSaved(true)
+      if (res.ok) {
+        setSaved(true)
+        toast('Flair opgeslagen', 'success')
+      } else {
+        toast('Opslaan mislukt', 'error')
+      }
+    } catch {
+      toast('Opslaan mislukt', 'error')
     } finally {
       setSaving(false)
       setTimeout(() => setSaved(false), 2000)
@@ -571,31 +575,6 @@ function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, initi
         </div>
       </div>
 
-      {/* Leaderboard toggle */}
-      <div className="flex items-center justify-between gap-3">
-        <span className="font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.35)' }}>
-          Leaderboard
-        </span>
-        <button
-          role="switch"
-          aria-checked={leaderboardVisible}
-          onClick={() => setLeaderboardVisible(!leaderboardVisible)}
-          className="relative shrink-0 w-9 h-5 rounded-full transition-colors duration-200 cursor-pointer"
-          style={{
-            backgroundColor: leaderboardVisible ? 'var(--color-accent-gold)' : 'rgba(255,255,255,0.08)',
-            border: '1px solid',
-            borderColor: leaderboardVisible ? 'var(--color-accent-gold)' : 'rgba(255,255,255,0.1)',
-          }}
-        >
-          <span
-            className="absolute top-0.5 w-4 h-4 rounded-full transition-transform duration-200"
-            style={{
-              backgroundColor: leaderboardVisible ? 'var(--color-bg)' : 'rgba(255,255,255,0.35)',
-              transform: leaderboardVisible ? 'translateX(17px)' : 'translateX(1px)',
-            }}
-          />
-        </button>
-      </div>
 
       {/* Save */}
       <button
@@ -930,7 +909,6 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
             memberLevel={member.current_level ?? 1}
             initialAccentColor={member.accent_color}
             initialCustomTitle={member.custom_title}
-            initialLeaderboardVisible={member.leaderboard_visible ?? true}
             onAccentColorChange={setAccentColor}
           />
         </div>

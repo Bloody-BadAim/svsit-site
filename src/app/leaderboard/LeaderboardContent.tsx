@@ -248,7 +248,6 @@ function BubbleSection({ bubble }: { bubble: BubbleData }) {
     currentLevel: bubble.me.currentLevel,
     levelTitle: bubble.me.levelTitle,
     levelColor: bubble.me.levelColor,
-    visible: true,
   }
 
   return (

@@ -21,7 +21,6 @@ export interface LeaderEntry {
   currentLevel: number
   levelTitle: string
   levelColor: string
-  visible: boolean
 }
 
 export interface BubbleEntry {
@@ -58,7 +57,7 @@ export default async function LeaderboardPage() {
   // Fetch top 10 directly on server
   const { data: rawTop10 } = await supabase
     .from('members')
-    .select('id, email, total_xp, current_level, leaderboard_visible')
+    .select('id, email, display_name, total_xp, current_level')
     .eq('membership_active', true)
     .order('total_xp', { ascending: false })
     .limit(10)
@@ -68,12 +67,11 @@ export default async function LeaderboardPage() {
     return {
       position: i + 1,
       id: m.id as string,
-      name: m.leaderboard_visible ? (m.email as string).split('@')[0] : 'Anoniem Lid',
+      name: (m.display_name as string) || (m.email as string).split('@')[0],
       totalXp: (m.total_xp as number) ?? 0,
       currentLevel: (m.current_level as number) ?? 1,
       levelTitle: levelDef.title,
       levelColor: levelDef.color,
-      visible: m.leaderboard_visible as boolean,
     }
   })
 
@@ -84,7 +82,7 @@ export default async function LeaderboardPage() {
 
     const { data: member } = await supabase
       .from('members')
-      .select('total_xp, current_level, email, leaderboard_visible')
+      .select('total_xp, current_level, email, display_name')
       .eq('id', memberId)
       .single()
 
@@ -100,14 +98,14 @@ export default async function LeaderboardPage() {
       const [{ data: above }, { data: below }] = await Promise.all([
         supabase
           .from('members')
-          .select('id, email, total_xp, current_level, leaderboard_visible')
+          .select('id, email, display_name, total_xp, current_level')
           .eq('membership_active', true)
           .gt('total_xp', member.total_xp as number)
           .order('total_xp', { ascending: true })
           .limit(5),
         supabase
           .from('members')
-          .select('id, email, total_xp, current_level, leaderboard_visible')
+          .select('id, email, display_name, total_xp, current_level')
           .eq('membership_active', true)
           .lt('total_xp', member.total_xp as number)
           .order('total_xp', { ascending: false })
@@ -123,9 +121,7 @@ export default async function LeaderboardPage() {
         return {
           position: pos,
           id: m.id as string,
-          name: m.leaderboard_visible
-            ? (m.email as string).split('@')[0]
-            : 'Anoniem Lid',
+          name: (m.display_name as string) || (m.email as string).split('@')[0],
           totalXp: (m.total_xp as number) ?? 0,
           currentLevel: (m.current_level as number) ?? 1,
           levelTitle: lvl.title,
@@ -146,9 +142,7 @@ export default async function LeaderboardPage() {
         position,
         me: {
           id: memberId,
-          name: member.leaderboard_visible
-            ? (member.email as string).split('@')[0]
-            : 'Anoniem Lid',
+          name: (member.display_name as string) || (member.email as string).split('@')[0],
           totalXp: (member.total_xp as number) ?? 0,
           currentLevel: (member.current_level as number) ?? 1,
           levelTitle: meLvl.title,

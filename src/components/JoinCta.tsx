@@ -1,16 +1,86 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
 import HoldToJoinButton from "@/components/HoldToJoinButton";
 import MemberCard from "@/components/MemberCard";
 
+const CARD_VARIANTS = [
+  {
+    skin: 'skin_neon_city',
+    frameColor: 'var(--color-accent-gold)',
+    petEmoji: 'pet_robot',
+    effectName: 'Sparkle',
+    accentColor: 'var(--color-accent-gold)',
+    customTitle: 'NEON EXPLORER',
+    role: 'member' as const,
+    commissie: 'GameIT',
+    badges: ['badge_first_event', 'badge_streak_3', 'badge_first_bdfl'],
+  },
+  {
+    skin: 'skin_hologram',
+    frameColor: '#8B5CF6',
+    petEmoji: 'pet_ghost',
+    effectName: 'Hologram',
+    accentColor: '#8B5CF6',
+    customTitle: 'CYBER PIONEER',
+    role: 'contributor' as const,
+    commissie: 'AI4HvA',
+    badges: ['badge_hackathon', 'badge_streak_7', 'badge_mentor'],
+  },
+  {
+    skin: 'skin_aurora',
+    frameColor: '#22C55E',
+    petEmoji: 'pet_slime',
+    effectName: 'Aurora',
+    accentColor: '#22C55E',
+    customTitle: 'GREEN MACHINE',
+    role: 'member' as const,
+    commissie: 'Educatie',
+    badges: ['badge_first_event', 'badge_workshop', 'badge_streak_3'],
+  },
+  {
+    skin: 'skin_plasma',
+    frameColor: '#EF4444',
+    petEmoji: 'pet_flame',
+    effectName: 'Plasma',
+    accentColor: '#EF4444',
+    customTitle: 'CODE BREAKER',
+    role: 'mentor' as const,
+    commissie: 'Fun & Events',
+    badges: ['badge_borrel_5', 'badge_streak_14', 'badge_first_bdfl'],
+  },
+  {
+    skin: 'skin_glitch',
+    frameColor: '#3B82F6',
+    petEmoji: 'pet_cat',
+    effectName: 'Glitch',
+    accentColor: '#3B82F6',
+    customTitle: 'FULL STACK',
+    role: 'contributor' as const,
+    commissie: 'PR & Socials',
+    badges: ['badge_first_event', 'badge_hackathon', 'badge_streak_7'],
+  },
+  {
+    skin: 'skin_frost',
+    frameColor: '#06B6D4',
+    petEmoji: 'pet_penguin',
+    effectName: 'Frost',
+    accentColor: '#06B6D4',
+    customTitle: 'ICE COLD DEV',
+    role: 'member' as const,
+    commissie: 'Sponsoring',
+    badges: ['badge_streak_3', 'badge_first_bdfl', 'badge_borrel_5'],
+  },
+];
+
 export default function JoinCta() {
   const sectionRef = useRef<HTMLElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const variant = useMemo(() => CARD_VARIANTS[Math.floor(Math.random() * CARD_VARIANTS.length)], []);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -156,22 +226,20 @@ export default function JoinCta() {
               className="w-full max-w-[400px]"
               data={{
                 name: 'JOUW NAAM',
-                role: 'member',
-                commissie: 'Jouw commissie',
+                role: variant.role,
+                commissie: variant.commissie,
                 total_xp: 0,
-                skin: 'skin_neon_city',
-                activeBadges: ['badge_first_event', 'badge_streak_3', 'badge_first_bdfl'],
+                skin: variant.skin,
+                activeBadges: variant.badges,
                 dynamicStats: { code: 0, social: 0, learn: 0, impact: 0 },
               }}
               equipment={{
-                frameColor: 'var(--color-accent-gold)',
-                petEmoji: 'pet_robot',
-                effectName: 'Sparkle',
-                accentColor: 'var(--color-accent-gold)',
-                customTitle: 'JOUW TITEL HIER',
-                stickers: [
-                  { id: '1', x: 15, y: 75, emoji: 'SIT' },
-                ],
+                frameColor: variant.frameColor,
+                petEmoji: variant.petEmoji,
+                effectName: variant.effectName,
+                accentColor: variant.accentColor,
+                customTitle: variant.customTitle,
+                stickers: [],
               }}
             >
               <HoldToJoinButton href="/login" />

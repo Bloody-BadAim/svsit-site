@@ -26,10 +26,10 @@ export async function GET(
     const { data, error } = await supabase
       .from('members')
       .select(`
-    id, email, student_number, role, commissie, commissie_voorstel,
-    total_xp, current_level, coins_balance, custom_title, accent_color, leaderboard_visible,
+    id, email, display_name, student_number, role, commissie, commissie_voorstel,
+    total_xp, current_level, coins_balance, custom_title, accent_color,
     membership_active, membership_started_at, membership_expires_at,
-    stripe_subscription_id, stripe_customer_id, active_skin, password_hash,
+    stripe_customer_id, active_skin, password_hash,
     is_admin, created_at,
     member_commissies ( commissie_id, role_in_commissie, commissies ( id, slug, naam ) )
   `)
@@ -43,8 +43,6 @@ export async function GET(
       const record = data as Record<string, unknown>
       record.has_password = !!data.password_hash
       record.password_hash = undefined
-      // Respect the DB membership_active flag (bestuur = gratis lid, geen Stripe)
-      record.membership_active = data.membership_active || !!data.stripe_subscription_id
     }
 
     return NextResponse.json({ data, error: null, meta: null })
@@ -108,8 +106,8 @@ export async function PATCH(
 
     // Welke velden mag het lid zelf updaten vs admin
     const allowedFields = isAdmin
-      ? ['student_number', 'role', 'commissie', 'commissie_voorstel', 'total_xp', 'active_skin']
-      : ['student_number', 'active_skin']
+      ? ['student_number', 'role', 'commissie', 'commissie_voorstel', 'total_xp', 'active_skin', 'display_name']
+      : ['student_number', 'active_skin', 'display_name']
 
     const updateData: Record<string, unknown> = {}
     for (const field of allowedFields) {
@@ -126,15 +124,10 @@ export async function PATCH(
       .from('members')
       .update(updateData)
       .eq('id', id)
-      .select('id, email, student_number, role, commissie, total_xp, current_level, membership_active, stripe_subscription_id')
+      .select('id, email, student_number, role, commissie, total_xp, current_level, membership_active')
       .single()
 
     if (error) throw error
-
-    if (data) {
-      const record = data as Record<string, unknown>
-      record.membership_active = data.membership_active || !!data.stripe_subscription_id
-    }
 
     return NextResponse.json({ data, error: null, meta: null })
   } catch (err) {

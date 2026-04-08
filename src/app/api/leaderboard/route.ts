@@ -12,14 +12,14 @@ export async function GET(req: NextRequest) {
     const [top10Result, memberResult] = await Promise.all([
       supabase
         .from('members')
-        .select('id, email, total_xp, current_level, leaderboard_visible')
+        .select('id, email, display_name, total_xp, current_level')
         .eq('membership_active', true)
         .order('total_xp', { ascending: false })
         .limit(10),
       memberId
         ? supabase
             .from('members')
-            .select('total_xp, current_level, email, leaderboard_visible')
+            .select('total_xp, current_level, email, display_name')
             .eq('id', memberId)
             .single()
         : Promise.resolve({ data: null, error: null }),
@@ -27,14 +27,12 @@ export async function GET(req: NextRequest) {
 
     if (top10Result.error) throw top10Result.error
 
-    // Anonymize members who opted out
     const sanitizedTop10 = (top10Result.data ?? []).map((m, i) => ({
       position: i + 1,
       id: m.id,
-      name: m.leaderboard_visible ? (m.email as string).split('@')[0] : 'Anoniem Lid',
+      name: (m.display_name as string) || (m.email as string).split('@')[0],
       totalXp: m.total_xp,
       currentLevel: m.current_level,
-      visible: m.leaderboard_visible,
     }))
 
     let bubble = null
@@ -49,14 +47,14 @@ export async function GET(req: NextRequest) {
           .gt('total_xp', member.total_xp as number),
         supabase
           .from('members')
-          .select('id, email, total_xp, current_level, leaderboard_visible')
+          .select('id, email, display_name, total_xp, current_level')
           .eq('membership_active', true)
           .gt('total_xp', member.total_xp as number)
           .order('total_xp', { ascending: true })
           .limit(5),
         supabase
           .from('members')
-          .select('id, email, total_xp, current_level, leaderboard_visible')
+          .select('id, email, display_name, total_xp, current_level')
           .eq('membership_active', true)
           .lt('total_xp', member.total_xp as number)
           .order('total_xp', { ascending: false })
@@ -68,7 +66,7 @@ export async function GET(req: NextRequest) {
       const mapMember = (m: Record<string, unknown>, pos: number) => ({
         position: pos,
         id: m.id as string,
-        name: m.leaderboard_visible ? (m.email as string).split('@')[0] : 'Anoniem Lid',
+        name: (m.display_name as string) || (m.email as string).split('@')[0],
         totalXp: m.total_xp as number,
         currentLevel: m.current_level as number,
         isYou: m.id === memberId,
@@ -85,9 +83,7 @@ export async function GET(req: NextRequest) {
         position,
         me: {
           id: memberId,
-          name: member.leaderboard_visible
-            ? (member.email as string).split('@')[0]
-            : 'Anoniem Lid',
+          name: (member.display_name as string) || (member.email as string).split('@')[0],
           totalXp: member.total_xp as number,
           currentLevel: member.current_level as number,
         },

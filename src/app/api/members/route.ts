@@ -8,7 +8,7 @@ import { handleError } from '@/lib/apiAuth'
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { email: rawEmail, password, student_number, role, commissie, commissie_voorstel } = body
+    const { email: rawEmail, password, display_name, student_number, role, commissie, commissie_voorstel } = body
 
     if (!rawEmail) {
       return NextResponse.json({ data: null, error: 'Email is verplicht', meta: null }, { status: 400 })
@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
         commissie: commissie || null,
         commissie_voorstel: commissie_voorstel || null,
         student_number: student_number || null,
+        display_name: display_name || null,
       }
 
       if (password) {
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
     // Nieuw lid aanmaken
     const insertData: Record<string, unknown> = {
       email,
+      display_name: display_name || null,
       role: role || 'member',
       commissie: commissie || null,
       commissie_voorstel: commissie_voorstel || null,
@@ -92,7 +94,7 @@ export async function GET() {
     const supabase = createServiceClient()
     const { data, error, count } = await supabase
       .from('members')
-      .select(`id, email, student_number, role, commissie, total_xp, current_level, membership_active, membership_started_at, is_admin, created_at,
+      .select(`id, email, display_name, student_number, role, commissie, total_xp, current_level, membership_active, membership_started_at, is_admin, created_at,
         member_commissies ( commissie_id, commissies ( slug, naam ) )`, { count: 'exact' })
       .order('created_at', { ascending: false })
 

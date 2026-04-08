@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { QrCode, Palette, Share2, Lock, ChevronRight, Zap, Target } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { QrCode, Palette, Share2, Download, Lock, ChevronRight, Zap, Target, Check } from 'lucide-react'
+import { useToast } from '@/components/Toast'
 import MemberCard from '@/components/MemberCard'
 import type { MemberCardData, MemberCardEquipment } from '@/components/MemberCard'
 import { BossFightWidget } from '@/components/dashboard/BossFightWidget'
@@ -67,7 +68,7 @@ function FlipCard({
         }}
       >
         {/* Front: Member Card */}
-        <div style={{ backfaceVisibility: 'hidden' }}>
+        <div data-card style={{ backfaceVisibility: 'hidden' }}>
           <MemberCard
             data={{ ...cardData, skin: activeSkin }}
             equipment={equipment}
@@ -310,22 +311,61 @@ export default function MyCardTab({
   streak,
 }: MyCardTabProps) {
   const [showQR, setShowQR] = useState(false)
+  const [shareStatus, setShareStatus] = useState<'idle' | 'done'>('idle')
+  const cardRef = useRef<HTMLDivElement>(null)
+  const { toast } = useToast()
+
+  const captureCard = useCallback(async (): Promise<Blob | null> => {
+    const el = cardRef.current?.querySelector('[data-card]') as HTMLElement | null
+    if (!el) return null
+    const { toPng } = await import('html-to-image')
+    const dataUrl = await toPng(el, { pixelRatio: 2, backgroundColor: '#09090B' })
+    const res = await fetch(dataUrl)
+    return res.blob()
+  }, [])
 
   const handleShare = async () => {
-    const url = `https://svsit.nl/member/${memberId}`
-    if (navigator.clipboard) {
-      try {
-        await navigator.clipboard.writeText(url)
-      } catch {
-        // Silent fail
+    try {
+      const blob = await captureCard()
+      if (blob && navigator.share) {
+        const file = new File([blob], 'sit-card.png', { type: 'image/png' })
+        await navigator.share({ title: 'Mijn SIT Card', files: [file] })
+      } else {
+        await navigator.clipboard.writeText(`https://svsit.nl/member/${memberId}`)
+        toast('Link gekopieerd naar klembord', 'success')
       }
+      setShareStatus('done')
+      setTimeout(() => setShareStatus('idle'), 2000)
+    } catch {
+      // User cancelled share sheet -- not an error
+    }
+  }
+
+  const handleDownload = async () => {
+    try {
+      const blob = await captureCard()
+      if (!blob) {
+        toast('Kon kaart niet genereren', 'error')
+        return
+      }
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'sit-card.png'
+      a.click()
+      URL.revokeObjectURL(url)
+      setShareStatus('done')
+      setTimeout(() => setShareStatus('idle'), 2000)
+      toast('Kaart gedownload', 'success')
+    } catch {
+      toast('Download mislukt', 'error')
     }
   }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[380px_300px] gap-6 p-4 sm:p-6">
       {/* Left column: Card + actions */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4" ref={cardRef}>
         <FlipCard
           showQR={showQR}
           memberId={memberId}
@@ -335,7 +375,7 @@ export default function MyCardTab({
         />
 
         {/* Action buttons */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           <button
             onClick={() => setShowQR(!showQR)}
             className="flex flex-col items-center gap-1.5 py-3 px-2 text-xs font-mono tracking-wider transition-colors cursor-pointer"
@@ -346,7 +386,7 @@ export default function MyCardTab({
             }}
           >
             <QrCode size={16} />
-            <span className="text-[10px]">SCAN QR</span>
+            <span className="text-[10px]">QR</span>
           </button>
 
           <a
@@ -359,11 +399,11 @@ export default function MyCardTab({
             }}
           >
             <Palette size={16} />
-            <span className="text-[10px]">CUSTOMIZE</span>
+            <span className="text-[10px]">EDIT</span>
           </a>
 
           <button
-            onClick={handleShare}
+            onClick={handleDownload}
             className="flex flex-col items-center gap-1.5 py-3 px-2 text-xs font-mono tracking-wider transition-colors cursor-pointer"
             style={{
               border: '1px solid rgba(255,255,255,0.06)',
@@ -371,8 +411,21 @@ export default function MyCardTab({
               color: 'var(--color-text-muted)',
             }}
           >
-            <Share2 size={16} />
-            <span className="text-[10px]">SHARE</span>
+            <Download size={16} />
+            <span className="text-[10px]">SAVE</span>
+          </button>
+
+          <button
+            onClick={handleShare}
+            className="flex flex-col items-center gap-1.5 py-3 px-2 text-xs font-mono tracking-wider transition-colors cursor-pointer"
+            style={{
+              border: shareStatus === 'done' ? '1px solid #22C55E' : '1px solid rgba(255,255,255,0.06)',
+              backgroundColor: shareStatus === 'done' ? 'rgba(34,197,94,0.06)' : 'rgba(255,255,255,0.02)',
+              color: shareStatus === 'done' ? '#22C55E' : 'var(--color-text-muted)',
+            }}
+          >
+            {shareStatus === 'done' ? <Check size={16} /> : <Share2 size={16} />}
+            <span className="text-[10px]">{shareStatus === 'done' ? 'DONE' : 'SHARE'}</span>
           </button>
         </div>
       </div>

@@ -27,15 +27,15 @@ export interface MemberCommissie {
 export interface Member {
   id: string
   email: string
+  display_name: string | null
   password_hash: string | null
   student_number: string | null
   role: Role
-  /** @deprecated Use member_commissies table instead */
+  /** @deprecated Use member_commissies join table instead -- kept as fallback for members not yet migrated */
   commissie: string | null
   commissie_voorstel: string | null
-  /** @deprecated Use total_xp instead */
-  points: number
   stripe_customer_id: string | null
+  /** @deprecated Legacy -- SIT uses one-time payments, not subscriptions. Still written by webhook for backwards compat. */
   stripe_subscription_id: string | null
   membership_active: boolean
   membership_started_at: string | null
@@ -43,15 +43,12 @@ export interface Member {
   created_at: string
   updated_at: string
   active_skin: string
-  /** @deprecated Use member_badges table instead */
-  active_badges: string[]
   is_admin: boolean
   total_xp: number
   coins_balance: number
   current_level: number
   custom_title: string | null
   accent_color: string | null
-  leaderboard_visible: boolean
   member_commissies?: MemberCommissie[]
 }
 
@@ -82,6 +79,7 @@ export interface SitEvent {
   price_nonmembers: number
   capacity: number | null
   stripe_price_id: string | null
+  checkin_code: string | null
   created_by: string | null
   created_at: string
 }
