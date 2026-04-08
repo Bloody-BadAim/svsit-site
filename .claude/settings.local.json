@@ -159,7 +159,10 @@
       "Bash(while kill:*)",
       "Bash(do sleep:*)",
       "Bash(xargs kill:*)",
-      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website -name *gamification* -o -name *leaderboard*)"
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website -name *gamification* -o -name *leaderboard*)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src/app -type f -path */api/* -name *.ts)",
+      "Bash(mkdir -p /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src/app/api/events/[id]/checkin)",
+      "Bash(mkdir -p /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src/app/api/admin/events/[id]/checkin-code)"
     ]
   },
   "enableAllProjectMcpServers": true,
