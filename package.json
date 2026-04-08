@@ -47,10 +47,10 @@
     "zustand": "^5.0.12"
   },
   "browserslist": [
-    "Chrome >= 109",
-    "Firefox >= 115",
-    "Safari >= 16",
-    "Edge >= 109"
+    "Chrome >= 111",
+    "Firefox >= 111",
+    "Safari >= 16.4",
+    "Edge >= 111"
   ],
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -128,6 +128,7 @@ function getFrameVisuals(frameStyle: string | undefined, frameColor: string | un
           backgroundSize: '100% 18px',
           animation: 'frameMatrixScroll 1.5s linear infinite',
           boxShadow: `0 0 16px ${c}44`,
+          willChange: 'background-position',
         },
         glowStyle: {
           background: `radial-gradient(ellipse at center, ${c}25 0%, transparent 70%)`,
@@ -161,14 +162,19 @@ function getFrameVisuals(frameStyle: string | undefined, frameColor: string | un
         overlayElements: (
           <div
             aria-hidden="true"
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: 'linear-gradient(105deg, transparent 40%, rgba(255,215,0,0.06) 45%, rgba(255,215,0,0.12) 50%, rgba(255,215,0,0.06) 55%, transparent 60%)',
-              backgroundSize: '200% 100%',
-              animation: 'frameGoldSweep 4s ease-in-out infinite',
-              willChange: 'background-position',
-            }}
-          />
+            className="absolute inset-0 pointer-events-none overflow-hidden"
+          >
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                width: '200%',
+                background: 'linear-gradient(105deg, transparent 20%, rgba(255,215,0,0.06) 22.5%, rgba(255,215,0,0.12) 25%, rgba(255,215,0,0.06) 27.5%, transparent 30%)',
+                animation: 'frameGoldSweep 4s ease-in-out infinite',
+                willChange: 'transform',
+              }}
+            />
+          </div>
         ),
       };
     }
@@ -925,12 +931,21 @@ export default function MemberCard({
                   <div
                     className="absolute inset-0 pointer-events-none z-50 overflow-hidden"
                     aria-hidden="true"
-                    style={{
-                      background:
-                        "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.04) 3px, rgba(255,255,255,0.04) 4px)",
-                      animation: "scanlinesDrift 8s linear infinite",
-                    }}
-                  />
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: -8,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background:
+                          "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.04) 3px, rgba(255,255,255,0.04) 4px)",
+                        animation: "scanlinesDrift 8s linear infinite",
+                        willChange: "transform",
+                      }}
+                    />
+                  </div>
                 )}
 
                 {effectKey === "smoke" && (

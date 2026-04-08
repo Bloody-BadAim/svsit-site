@@ -112,97 +112,119 @@ export default function WhyJoin() {
       return;
     }
 
-    const ctx = gsap.context(() => {
-      if (!cardsRef.current) return;
-      const cards = cardsRef.current.querySelectorAll(".achievement-card");
+    let ctx: gsap.Context | null = null;
+    let cancelled = false;
 
-      cards.forEach((card, i) => {
-        const fromX = i % 2 === 0 ? -40 : 40;
+    // Defer ScrollTrigger setup until after first paint to avoid
+    // forced reflows from layout property reads during initial render
+    const hasIdleCb = "requestIdleCallback" in window;
+    const idleId: number = hasIdleCb
+      ? window.requestIdleCallback(initGsap)
+      : (setTimeout(initGsap, 1) as unknown as number);
 
-        gsap.fromTo(
-          card,
-          { opacity: 0, x: fromX, y: 20 },
-          {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            duration: 0.7,
-            ease: "back.out(1.2)",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 88%",
-              toggleActions: "play none none none",
-              once: true,
-            },
-            delay: i * 0.08,
-          }
-        );
+    function initGsap() {
+      if (cancelled) return;
 
-        // Ring fill
-        const ring = card.querySelector(".achievement-ring");
-        if (ring) {
-          const size = 72;
-          const r = (size - 8) / 2;
-          const circ = 2 * Math.PI * r;
+      ctx = gsap.context(() => {
+        if (!cardsRef.current) return;
+        const cards = cardsRef.current.querySelectorAll(".achievement-card");
+
+        cards.forEach((card, i) => {
+          const fromX = i % 2 === 0 ? -40 : 40;
+
           gsap.fromTo(
-            ring,
-            { strokeDashoffset: circ },
+            card,
+            { opacity: 0, x: fromX, y: 20 },
             {
-              strokeDashoffset: 0,
-              duration: 1.2,
-              ease: "power2.out",
+              opacity: 1,
+              x: 0,
+              y: 0,
+              duration: 0.7,
+              ease: "back.out(1.2)",
               scrollTrigger: {
                 trigger: card,
                 start: "top 88%",
                 toggleActions: "play none none none",
-              once: true,
+                once: true,
               },
-              delay: 0.3 + i * 0.08,
+              delay: i * 0.08,
             }
           );
-        }
 
-        // Stat counter
-        const statEl = card.querySelector(".stat-value") as HTMLElement | null;
-        if (statEl) {
-          const rawStat = statEl.getAttribute("data-stat") || "";
-          let target = 0;
-          let prefix = "";
-          let suffix = "";
-
-          if (rawStat === "20+") {
-            target = 20;
-            suffix = "+";
-          } else if (rawStat === "5") {
-            target = 5;
-          } else if (rawStat === "€10") {
-            target = 10;
-            prefix = "€";
+          // Ring fill
+          const ring = card.querySelector(".achievement-ring");
+          if (ring) {
+            const size = 72;
+            const r = (size - 8) / 2;
+            const circ = 2 * Math.PI * r;
+            gsap.fromTo(
+              ring,
+              { strokeDashoffset: circ },
+              {
+                strokeDashoffset: 0,
+                duration: 1.2,
+                ease: "power2.out",
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top 88%",
+                  toggleActions: "play none none none",
+                  once: true,
+                },
+                delay: 0.3 + i * 0.08,
+              }
+            );
           }
 
-          if (target > 0) {
-            const proxy = { val: 0 };
-            gsap.to(proxy, {
-              val: target,
-              duration: target > 10 ? 1.5 : 1.2,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: card,
-                start: "top 88%",
-                toggleActions: "play none none none",
-              once: true,
-              },
-              delay: 0.4 + i * 0.08,
-              onUpdate() {
-                statEl.textContent = prefix + Math.round(proxy.val) + suffix;
-              },
-            });
-          }
-        }
-      });
-    }, sectionRef);
+          // Stat counter
+          const statEl = card.querySelector(".stat-value") as HTMLElement | null;
+          if (statEl) {
+            const rawStat = statEl.getAttribute("data-stat") || "";
+            let target = 0;
+            let prefix = "";
+            let suffix = "";
 
-    return () => ctx.revert();
+            if (rawStat === "20+") {
+              target = 20;
+              suffix = "+";
+            } else if (rawStat === "5") {
+              target = 5;
+            } else if (rawStat === "€10") {
+              target = 10;
+              prefix = "€";
+            }
+
+            if (target > 0) {
+              const proxy = { val: 0 };
+              gsap.to(proxy, {
+                val: target,
+                duration: target > 10 ? 1.5 : 1.2,
+                ease: "power2.out",
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top 88%",
+                  toggleActions: "play none none none",
+                  once: true,
+                },
+                delay: 0.4 + i * 0.08,
+                onUpdate() {
+                  statEl.textContent = prefix + Math.round(proxy.val) + suffix;
+                },
+              });
+            }
+          }
+        });
+      }, sectionRef);
+    }
+
+    return () => {
+      cancelled = true;
+      if (hasIdleCb) {
+        window.cancelIdleCallback(idleId);
+      } else {
+        clearTimeout(idleId);
+      }
+      ctx?.revert();
+    };
   }, []);
 
   return (

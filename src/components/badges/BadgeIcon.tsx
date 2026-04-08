@@ -221,10 +221,20 @@ function EpicBadge({ size, children }: { size: number; iconColor: string; childr
         justifyContent: 'center',
         background: 'linear-gradient(145deg, #10071f, #0d0d0d)',
         border: '1.5px solid #8B5CF6',
-        animation: 'badge-epicPulse 2.5s ease-in-out infinite',
         overflow: 'hidden',
       }}
     >
+      {/* Pulsating glow overlay (composited via opacity instead of box-shadow) */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: -8,
+          boxShadow: '0 0 36px rgba(139,92,246,0.65), 0 0 72px rgba(139,92,246,0.25)',
+          animation: 'badge-epicPulse 2.5s ease-in-out infinite',
+          willChange: 'opacity',
+          pointerEvents: 'none',
+        }}
+      />
       {/* Pulsating energy core */}
       <div
         style={{
@@ -243,13 +253,16 @@ function EpicBadge({ size, children }: { size: number; iconColor: string; childr
       <div
         style={{
           position: 'absolute',
+          top: 0,
           left: 0,
           right: 0,
           height: 1,
           background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.6), transparent)',
           animation: 'badge-epicScanLine 2s linear infinite',
+          willChange: 'transform',
           pointerEvents: 'none',
-        }}
+          '--badge-h': `${dim}px`,
+        } as CSSProperties}
       />
       {/* Icon with flicker */}
       <div style={{ animation: 'badge-iconFlicker 4s ease-in-out infinite' }}>
@@ -718,7 +731,7 @@ export default function BadgeIcon({
               rarity === 'mythic' ? 'rgba(255,255,255,0.05)' : `${config.color}14`,
             whiteSpace: 'nowrap',
             ...(rarity === 'mythic'
-              ? { animation: 'badge-rainbow-border 3s linear infinite' }
+              ? { animation: 'badge-rainbow-border 3s linear infinite', willChange: 'filter' }
               : {}),
           }}
         >

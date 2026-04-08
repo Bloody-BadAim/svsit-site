@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
@@ -80,57 +80,82 @@ export default function JoinCta() {
   const sectionRef = useRef<HTMLElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const variant = useMemo(() => CARD_VARIANTS[Math.floor(Math.random() * CARD_VARIANTS.length)], []);
+  // Use a fixed default for SSR to avoid hydration mismatch, then randomize client-side
+  const [variant, setVariant] = useState(CARD_VARIANTS[0]);
+
+  useEffect(() => {
+    setVariant(CARD_VARIANTS[Math.floor(Math.random() * CARD_VARIANTS.length)]);
+  }, []);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
 
-    const ctx = gsap.context(() => {
-      if (prefersReducedMotion) return;
+    let ctx: gsap.Context | null = null;
+    let cancelled = false;
 
-      const sectionTrigger = {
-        trigger: sectionRef.current,
-        start: "top 80%",
-        toggleActions: "play none none none" as const,
-        once: true,
-      };
+    // Defer ScrollTrigger setup until after first paint
+    const hasIdleCb = "requestIdleCallback" in window;
+    const idleId: number = hasIdleCb
+      ? window.requestIdleCallback(initGsap)
+      : (setTimeout(initGsap, 1) as unknown as number);
 
-      // Left column stagger entrance
-      if (leftRef.current) {
-        const els = leftRef.current.querySelectorAll("[data-animate]");
-        gsap.fromTo(
-          Array.from(els),
-          { autoAlpha: 0, y: 24 },
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.7,
-            ease: "power3.out",
-            stagger: 0.1,
-            scrollTrigger: sectionTrigger,
-          }
-        );
+    function initGsap() {
+      if (cancelled) return;
+
+      ctx = gsap.context(() => {
+        const sectionTrigger = {
+          trigger: sectionRef.current,
+          start: "top 80%",
+          toggleActions: "play none none none" as const,
+          once: true,
+        };
+
+        // Left column stagger entrance
+        if (leftRef.current) {
+          const els = leftRef.current.querySelectorAll("[data-animate]");
+          gsap.fromTo(
+            Array.from(els),
+            { autoAlpha: 0, y: 24 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.7,
+              ease: "power3.out",
+              stagger: 0.1,
+              scrollTrigger: sectionTrigger,
+            }
+          );
+        }
+
+        // Card entrance
+        if (cardRef.current) {
+          gsap.fromTo(
+            cardRef.current,
+            { autoAlpha: 0, y: 40, scale: 0.96 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              duration: 1,
+              ease: "power3.out",
+              scrollTrigger: sectionTrigger,
+              delay: 0.2,
+            }
+          );
+        }
+      }, sectionRef);
+    }
+
+    return () => {
+      cancelled = true;
+      if (hasIdleCb) {
+        window.cancelIdleCallback(idleId);
+      } else {
+        clearTimeout(idleId);
       }
-
-      // Card entrance
-      if (cardRef.current) {
-        gsap.fromTo(
-          cardRef.current,
-          { autoAlpha: 0, y: 40, scale: 0.96 },
-          {
-            autoAlpha: 1,
-            y: 0,
-            scale: 1,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: sectionTrigger,
-            delay: 0.2,
-          }
-        );
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
+      ctx?.revert();
+    };
   }, []);
 
   return (

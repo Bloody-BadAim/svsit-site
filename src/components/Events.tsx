@@ -300,13 +300,14 @@ function FeaturedCard({ event, inView }: { event: SitEvent; inView: boolean }) {
           />
         </div>
 
-        {/* Scanline effect */}
+        {/* Scanline effect (composited via transform) */}
         <div
-          className="absolute left-0 right-0 h-[1px] pointer-events-none opacity-[0.07]"
+          className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none opacity-[0.07]"
           style={{
             background: event.color,
             animation: "eventScanline 4s linear infinite",
             boxShadow: `0 0 8px ${event.color}`,
+            willChange: "transform",
           }}
         />
 
@@ -688,41 +689,62 @@ export default function Events() {
   useEffect(() => {
     if (shouldReduceMotion || !lineRef.current) return;
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        lineRef.current,
-        { clipPath: "inset(100% 0 0 0)" },
-        {
-          clipPath: "inset(0% 0 0 0)",
-          duration: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 70%",
-            once: true,
-          },
-        }
-      );
+    let ctx: gsap.Context | null = null;
+    let cancelled = false;
 
-      gsap.fromTo(
-        ".event-node-dot",
-        { scale: 0, opacity: 0 },
-        {
-          scale: 1,
-          opacity: 1,
-          duration: 0.4,
-          stagger: 0.1,
-          ease: "back.out(2)",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 60%",
-            once: true,
-          },
-        }
-      );
-    }, sectionRef);
+    // Defer ScrollTrigger setup until after first paint
+    const hasIdleCb = "requestIdleCallback" in window;
+    const idleId: number = hasIdleCb
+      ? window.requestIdleCallback(initGsap)
+      : (setTimeout(initGsap, 1) as unknown as number);
 
-    return () => ctx.revert();
+    function initGsap() {
+      if (cancelled) return;
+
+      ctx = gsap.context(() => {
+        gsap.fromTo(
+          lineRef.current,
+          { clipPath: "inset(100% 0 0 0)" },
+          {
+            clipPath: "inset(0% 0 0 0)",
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 70%",
+              once: true,
+            },
+          }
+        );
+
+        gsap.fromTo(
+          ".event-node-dot",
+          { scale: 0, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: "back.out(2)",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 60%",
+              once: true,
+            },
+          }
+        );
+      }, sectionRef);
+    }
+
+    return () => {
+      cancelled = true;
+      if (hasIdleCb) {
+        window.cancelIdleCallback(idleId);
+      } else {
+        clearTimeout(idleId);
+      }
+      ctx?.revert();
+    };
   }, [shouldReduceMotion, events]);
 
   // ── Filter logic ──

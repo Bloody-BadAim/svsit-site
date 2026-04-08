@@ -65,6 +65,8 @@ function EffectPreview({ name, rarityColor }: { name: string; rarityColor: strin
   const lower = name.toLowerCase()
 
   if (lower.includes('matrix') || lower.includes('rain')) {
+    // Use deterministic characters seeded by index to avoid hydration mismatch
+    const MATRIX_CHARS = '!#$%&()*+/<=>?@[]^_{|}~0123456789ABCDEF';
     return (
       <div className="w-full h-full relative overflow-hidden flex items-center justify-center">
         {[...Array(6)].map((_, i) => (
@@ -75,7 +77,7 @@ function EffectPreview({ name, rarityColor }: { name: string; rarityColor: strin
           >
             {[...Array(5)].map((_, j) => (
               <span key={j} className="font-mono text-[8px] leading-none" style={{ color: '#22C55E', opacity: 0.3 + j * 0.12 }}>
-                {String.fromCharCode(33 + Math.floor(Math.random() * 60))}
+                {MATRIX_CHARS[(i * 5 + j * 7 + 3) % MATRIX_CHARS.length]}
               </span>
             ))}
           </div>

@@ -99,142 +99,10 @@ export default function About() {
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const ctx = gsap.context(() => {
-      // Word-by-word heading reveal
-      if (headingRef.current) {
-        const words = headingRef.current.querySelectorAll(".heading-word");
-        if (words.length && !prefersReducedMotion) {
-          gsap.fromTo(
-            Array.from(words),
-            { opacity: 0, y: 24, rotateX: -15 },
-            {
-              opacity: 1,
-              y: 0,
-              rotateX: 0,
-              duration: 0.6,
-              stagger: 0.06,
-              ease: "back.out(1.4)",
-              scrollTrigger: {
-                trigger: headingRef.current,
-                start: "top 85%",
-                toggleActions: "play none none none",
-                once: true,
-              },
-            }
-          );
-        }
+    let ctx: gsap.Context | null = null;
+    let cancelled = false;
 
-        // Gold text glow pulse on the ICT studenten words
-        const goldWords = headingRef.current.querySelectorAll(".heading-gold");
-        if (goldWords.length && !prefersReducedMotion) {
-          gsap.fromTo(
-            Array.from(goldWords),
-            { textShadow: "0 0 0px rgba(245, 158, 11, 0)" },
-            {
-              textShadow: "0 0 20px rgba(245, 158, 11, 0.4)",
-              duration: 0.5,
-              delay: HEADING_WORDS_1.length * 0.06 + 0.3,
-              scrollTrigger: {
-                trigger: headingRef.current,
-                start: "top 85%",
-                toggleActions: "play none none none",
-                once: true,
-              },
-              onComplete: function () {
-                gsap.to(Array.from(goldWords), {
-                  textShadow: "0 0 0px rgba(245, 158, 11, 0)",
-                  duration: 0.8,
-                  ease: "power2.out",
-                });
-              },
-            }
-          );
-        }
-      }
-
-      // Body text clip-path reveal
-      if (textRef.current && !prefersReducedMotion) {
-        gsap.fromTo(
-          textRef.current,
-          { clipPath: "inset(0 100% 0 0)" },
-          {
-            clipPath: "inset(0 0% 0 0)",
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: textRef.current,
-              start: "top 85%",
-              toggleActions: "play none none none",
-              once: true,
-            },
-            delay: 0.3,
-          }
-        );
-      }
-
-      // Accent line scale
-      if (accentRef.current && !prefersReducedMotion) {
-        gsap.fromTo(
-          accentRef.current,
-          { scaleX: 0 },
-          {
-            scaleX: 1,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: accentRef.current,
-              start: "top 85%",
-              toggleActions: "play none none none",
-              once: true,
-            },
-          }
-        );
-      }
-
-      // // Stats counter animation
-      // if (statsRef.current && !prefersReducedMotion) {
-      //   const statEls = statsRef.current.querySelectorAll(".stat-value");
-      //   statEls.forEach((el, i) => {
-      //     // const target = STATS[i].value;
-      //     const proxy = { val: 0 };
-      //     gsap.to(proxy, {
-      //       // val: target,
-      //       // duration: target > 100 ? 2 : 1.5,
-      //       ease: "power2.out",
-      //       scrollTrigger: {
-      //         trigger: statsRef.current,
-      //         start: "top 90%",
-      //         toggleActions: "play none none none",
-      //         once: true,
-      //       },
-      //       delay: i * 0.15,
-      //       onUpdate: () => {
-      //         (el as HTMLElement).textContent =
-      //           // Math.round(proxy.val).toString() + STATS[i].suffix;
-      //       },
-      //     });
-      //   });
-      // }
-
-      // Floating fragments parallax
-      if (fragmentsRef.current && !prefersReducedMotion) {
-        const frags = fragmentsRef.current.querySelectorAll(".floating-frag");
-        frags.forEach((frag) => {
-          gsap.to(frag, {
-            y: -40,
-            ease: "none",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1,
-            },
-          });
-        });
-      }
-    }, sectionRef);
-
-    // Observe code block for line-by-line reveal (outside GSAP context for proper cleanup)
+    // Observe code block for line-by-line reveal (independent of GSAP)
     let codeObserver: IntersectionObserver | null = null;
     if (codeRef.current) {
       codeObserver = new IntersectionObserver(
@@ -249,8 +117,135 @@ export default function About() {
       codeObserver.observe(codeRef.current);
     }
 
+    // Defer all GSAP/ScrollTrigger setup until after first paint to avoid
+    // forced reflows from getBoundingClientRect during initial render
+    const hasIdleCb = "requestIdleCallback" in window;
+    const idleId: number = hasIdleCb
+      ? window.requestIdleCallback(initGsap)
+      : (setTimeout(initGsap, 1) as unknown as number);
+
+    function initGsap() {
+      if (cancelled) return;
+
+      ctx = gsap.context(() => {
+        // Word-by-word heading reveal
+        if (headingRef.current) {
+          const words = headingRef.current.querySelectorAll(".heading-word");
+          if (words.length && !prefersReducedMotion) {
+            gsap.fromTo(
+              Array.from(words),
+              { opacity: 0, y: 24, rotateX: -15 },
+              {
+                opacity: 1,
+                y: 0,
+                rotateX: 0,
+                duration: 0.6,
+                stagger: 0.06,
+                ease: "back.out(1.4)",
+                scrollTrigger: {
+                  trigger: headingRef.current,
+                  start: "top 85%",
+                  toggleActions: "play none none none",
+                  once: true,
+                },
+              }
+            );
+          }
+
+          // Gold text glow pulse on the ICT studenten words
+          const goldWords = headingRef.current.querySelectorAll(".heading-gold");
+          if (goldWords.length && !prefersReducedMotion) {
+            gsap.fromTo(
+              Array.from(goldWords),
+              { textShadow: "0 0 0px rgba(245, 158, 11, 0)" },
+              {
+                textShadow: "0 0 20px rgba(245, 158, 11, 0.4)",
+                duration: 0.5,
+                delay: HEADING_WORDS_1.length * 0.06 + 0.3,
+                scrollTrigger: {
+                  trigger: headingRef.current,
+                  start: "top 85%",
+                  toggleActions: "play none none none",
+                  once: true,
+                },
+                onComplete: function () {
+                  gsap.to(Array.from(goldWords), {
+                    textShadow: "0 0 0px rgba(245, 158, 11, 0)",
+                    duration: 0.8,
+                    ease: "power2.out",
+                  });
+                },
+              }
+            );
+          }
+        }
+
+        // Body text clip-path reveal
+        if (textRef.current && !prefersReducedMotion) {
+          gsap.fromTo(
+            textRef.current,
+            { clipPath: "inset(0 100% 0 0)" },
+            {
+              clipPath: "inset(0 0% 0 0)",
+              duration: 0.8,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: textRef.current,
+                start: "top 85%",
+                toggleActions: "play none none none",
+                once: true,
+              },
+              delay: 0.3,
+            }
+          );
+        }
+
+        // Accent line scale
+        if (accentRef.current && !prefersReducedMotion) {
+          gsap.fromTo(
+            accentRef.current,
+            { scaleX: 0 },
+            {
+              scaleX: 1,
+              duration: 1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: accentRef.current,
+                start: "top 85%",
+                toggleActions: "play none none none",
+                once: true,
+              },
+            }
+          );
+        }
+
+        // Floating fragments parallax
+        if (fragmentsRef.current && !prefersReducedMotion) {
+          const frags = fragmentsRef.current.querySelectorAll(".floating-frag");
+          frags.forEach((frag) => {
+            gsap.to(frag, {
+              y: -40,
+              ease: "none",
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 1,
+              },
+            });
+          });
+        }
+      }, sectionRef);
+    }
+
     return () => {
-      ctx.revert();
+      cancelled = true;
+      if (hasIdleCb) {
+        window.cancelIdleCallback(idleId);
+      } else {
+        clearTimeout(idleId);
+      }
+      ctx?.revert();
       codeObserver?.disconnect();
     };
   }, []);
