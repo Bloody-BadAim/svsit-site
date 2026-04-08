@@ -235,7 +235,7 @@ function NextUnlockTeaser({ unlock }: { unlock: NextUnlock }) {
             className="h-full rounded-full transition-all duration-700"
             style={{
               width: `${unlock.progressPercent}%`,
-              background: 'linear-gradient(90deg, #22C55E, #84CC16)',
+              background: 'linear-gradient(90deg, #22C55E, #cc8c16ff)',
             }}
           />
         </div>

@@ -57,8 +57,9 @@ export default async function LeaderboardPage() {
   // Fetch top 10 directly on server
   const { data: rawTop10 } = await supabase
     .from('members')
-    .select('id, email, display_name, total_xp, current_level')
+    .select('id, email, display_name, total_xp, current_level, is_admin')
     .eq('membership_active', true)
+    .eq('is_admin', false)
     .order('total_xp', { ascending: false })
     .limit(10)
 
@@ -91,6 +92,7 @@ export default async function LeaderboardPage() {
         .from('members')
         .select('id', { count: 'exact', head: true })
         .eq('membership_active', true)
+        .eq('is_admin', false)
         .gt('total_xp', member.total_xp as number)
 
       const position = (aboveCount ?? 0) + 1
@@ -98,15 +100,17 @@ export default async function LeaderboardPage() {
       const [{ data: above }, { data: below }] = await Promise.all([
         supabase
           .from('members')
-          .select('id, email, display_name, total_xp, current_level')
+          .select('id, email, display_name, total_xp, current_level, is_admin')
           .eq('membership_active', true)
+          .eq('is_admin', false)
           .gt('total_xp', member.total_xp as number)
           .order('total_xp', { ascending: true })
           .limit(5),
         supabase
           .from('members')
-          .select('id, email, display_name, total_xp, current_level')
+          .select('id, email, display_name, total_xp, current_level, is_admin')
           .eq('membership_active', true)
+          .eq('is_admin', false)
           .lt('total_xp', member.total_xp as number)
           .order('total_xp', { ascending: false })
           .limit(5),
