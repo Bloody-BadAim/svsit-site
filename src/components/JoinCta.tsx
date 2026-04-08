@@ -137,7 +137,7 @@ export default function JoinCta() {
     <section
       ref={sectionRef}
       id="join"
-      className="relative flex items-center overflow-hidden py-20 md:py-24 lg:py-28 px-6 md:px-12 lg:px-24"
+      className="relative flex items-center overflow-hidden py-28 md:py-36 lg:py-44 px-6 md:px-12 lg:px-24"
     >
       {/* Background layers */}
       <div
@@ -193,18 +193,17 @@ export default function JoinCta() {
             {/* Heading */}
             <div data-animate>
               <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight uppercase">
-                Start Je
+                Jouw Squad
                 <br />
-                <span className="text-[var(--color-accent-gold)]">Avontuur</span>
+                <span className="text-[var(--color-accent-gold)]">Wacht</span>
               </h2>
             </div>
 
             {/* Description */}
             <p data-animate className="font-mono text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed mt-6 max-w-lg">
-              Word lid en ontvang je eigen digitale
-              <br />
-              <span className="text-[var(--color-text)]">SIT member card</span>.
-              {" "}Toegang tot alle events, workshops en de community.
+              Events, borrels, hackathons, workshops en een netwerk van{" "}
+              <span className="text-[var(--color-text)]">HBO-ICT studenten</span>{" "}
+              die dezelfde opleiding doorlopen. Van Software Engineering tot Game Dev, iedereen zit hier.
             </p>
 
             {/* Price */}

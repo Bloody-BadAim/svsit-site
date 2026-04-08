@@ -259,7 +259,7 @@ export default function About() {
     <section
       ref={sectionRef}
       id="about"
-      className="relative py-20 md:py-24 lg:py-28 px-6 md:px-12 lg:px-24 overflow-hidden"
+      className="relative py-28 md:py-36 lg:py-44 px-6 md:px-12 lg:px-24 overflow-hidden"
     >
       {/* ── Background depth layers ── */}
 

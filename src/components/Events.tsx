@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useReducedMotion, AnimatePresence } from "motion/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Calendar, MapPin, Clock, ExternalLink, ChevronDown } from "lucide-react";
+import { Calendar, MapPin, Clock, ExternalLink, ChevronDown, Zap, Users, Code, Gamepad2, Briefcase } from "lucide-react";
 import SectionLabel from "@/components/SectionLabel";
 import { TextScramble } from "@/components/ui/TextScramble";
 
@@ -64,12 +64,12 @@ const isValidDate = (d: Date) => !isNaN(d.getTime());
 const fDay = (d: Date) => isValidDate(d) ? d.getDate() : "?";
 const fMonth = (d: Date) => isValidDate(d) ? MONTHS[d.getMonth()] : "TBA";
 
-const CATEGORY_FILTERS: { key: string; label: string }[] = [
-  { key: "all", label: "ALLES" },
-  { key: "Social", label: "SOCIAL" },
-  { key: "Code", label: "CODE" },
-  { key: "Game", label: "GAME" },
-  { key: "Career", label: "CAREER" },
+const CATEGORY_FILTERS: { key: string; label: string; icon: typeof Zap }[] = [
+  { key: "all", label: "ALLES", icon: Zap },
+  { key: "Social", label: "SOCIAL", icon: Users },
+  { key: "Code", label: "CODE", icon: Code },
+  { key: "Game", label: "GAME", icon: Gamepad2 },
+  { key: "Career", label: "CAREER", icon: Briefcase },
 ];
 
 const CATEGORY_LABELS: Record<EventCategory, string> = {
@@ -77,6 +77,13 @@ const CATEGORY_LABELS: Record<EventCategory, string> = {
   Code: "CODE",
   Game: "GAME",
   Career: "CAREER",
+};
+
+const CATEGORY_COLORS: Record<string, string> = {
+  Social: BRAND.gold,
+  Code: BRAND.green,
+  Game: BRAND.red,
+  Career: BRAND.blue,
 };
 
 const FALLBACK_EVENTS: SitEvent[] = [
@@ -196,6 +203,53 @@ function downloadIcs(e: SitEvent) {
   URL.revokeObjectURL(url);
 }
 
+// ─── DateStub ─────────────────────────────────────────────────────────────────
+// Ticket-stub style date display with colored top bar
+
+function DateStub({ event, size = "sm" }: { event: SitEvent; size?: "sm" | "lg" }) {
+  const isLg = size === "lg";
+  return (
+    <div
+      className="relative flex-shrink-0 flex flex-col items-center overflow-hidden rounded-md"
+      style={{
+        width: isLg ? 64 : 48,
+        background: `${event.color}0a`,
+        border: `1px solid ${event.color}25`,
+      }}
+    >
+      {/* Top color bar */}
+      <div
+        className="w-full"
+        style={{
+          height: isLg ? 3 : 2,
+          background: event.color,
+        }}
+      />
+      {/* Day */}
+      <span
+        className="font-display font-bold leading-none"
+        style={{
+          fontSize: isLg ? 28 : 20,
+          color: event.color,
+          paddingTop: isLg ? 6 : 4,
+        }}
+      >
+        {fDay(event.date)}
+      </span>
+      {/* Month */}
+      <span
+        className="font-mono tracking-[0.15em] uppercase opacity-70 pb-1"
+        style={{
+          fontSize: isLg ? 10 : 8,
+          color: event.color,
+        }}
+      >
+        {fMonth(event.date)}
+      </span>
+    </div>
+  );
+}
+
 // ─── FeaturedCard ─────────────────────────────────────────────────────────────
 
 function FeaturedCard({ event, inView }: { event: SitEvent; inView: boolean }) {
@@ -206,144 +260,198 @@ function FeaturedCard({ event, inView }: { event: SitEvent; inView: boolean }) {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="relative rounded-lg overflow-hidden mb-3"
+      className="relative rounded-xl overflow-hidden mb-3 group/featured"
       style={{
-        background: `linear-gradient(135deg, ${event.color}12 0%, rgba(9,9,11,0.95) 60%)`,
-        border: `1px solid ${event.color}40`,
+        /* Animated gradient border via padding + background trick */
+        background: `
+          linear-gradient(var(--color-bg), var(--color-bg)) padding-box,
+          conic-gradient(from var(--event-border-angle, 0deg), ${event.color}, ${event.color}40, rgba(255,255,255,0.06), ${event.color}40, ${event.color}) border-box
+        `,
+        border: "1.5px solid transparent",
+        animation: "eventBorderRotate 8s linear infinite",
       }}
     >
-      {/* Top accent line */}
+      {/* Inner card with glass effect */}
       <div
-        className="absolute top-0 left-0 right-0 h-[2px]"
+        className="relative rounded-[10px] overflow-hidden"
         style={{
-          background: `linear-gradient(90deg, ${event.color}, ${event.color}00)`,
+          background: `linear-gradient(145deg, ${event.color}10 0%, rgba(9,9,11,0.97) 40%, rgba(9,9,11,0.99) 100%)`,
         }}
-      />
-
-      {/* Corner brackets */}
-      <span
-        className="absolute top-3 left-3 text-xs font-mono select-none"
-        style={{ color: event.color, opacity: 0.5 }}
       >
-        [
-      </span>
-      <span
-        className="absolute top-3 right-3 text-xs font-mono select-none"
-        style={{ color: event.color, opacity: 0.5 }}
-      >
-        ]
-      </span>
+        {/* Ambient glow behind the card (top-right) */}
+        <div
+          className="absolute -top-20 -right-20 w-60 h-60 rounded-full pointer-events-none"
+          style={{
+            background: `radial-gradient(circle, ${event.color}15 0%, transparent 70%)`,
+            animation: "eventGlowPulse 4s ease-in-out infinite",
+          }}
+        />
 
-      <div className="p-6 md:p-8">
-        {/* "Volgende event" badge */}
-        <div className="flex items-center gap-2 mb-4">
-          <span
-            className="inline-block w-2 h-2 rounded-full animate-pulse"
-            style={{ backgroundColor: BRAND.green }}
-          />
-          <span
-            className="font-mono text-xs tracking-[0.2em] uppercase"
-            style={{ color: BRAND.green }}
-          >
-            Volgende event
-          </span>
-        </div>
-
-        {/* Title with TextScramble */}
-        <TextScramble
-          as="h3"
-          className="font-display text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-5 leading-tight uppercase"
-          trigger={inView}
-          duration={0.6}
-          speed={0.03}
-          characterSet="#{}/<>[]!@$%^&*"
+        {/* Spotlight sweep overlay -- visible on hover */}
+        <div
+          className="absolute inset-0 pointer-events-none overflow-hidden opacity-0 group-hover/featured:opacity-100 transition-opacity duration-500"
         >
-          {event.title}
-        </TextScramble>
-
-        {/* Meta row */}
-        <div className="flex flex-wrap gap-4 mb-5 font-mono text-sm text-[var(--color-text-muted)]">
-          <span className="flex items-center gap-1.5">
-            <Calendar size={13} style={{ color: event.color }} />
-            {fDay(event.date)} {fMonth(event.date)}
-          </span>
-          {event.time && (
-            <span className="flex items-center gap-1.5">
-              <Clock size={13} style={{ color: event.color }} />
-              {event.time}
-            </span>
-          )}
-          <span className="flex items-center gap-1.5">
-            <MapPin size={13} style={{ color: event.color }} />
-            {event.location}
-          </span>
-        </div>
-
-        {/* Category + Type */}
-        <div className="flex flex-wrap gap-2 mb-5">
-          <span
-            className="font-mono text-[10px] tracking-widest px-2 py-0.5 rounded-sm uppercase"
+          <div
+            className="absolute inset-0 w-[40%]"
             style={{
-              color: event.color,
-              border: `1px solid ${event.color}50`,
-              background: `${event.color}10`,
+              background: `linear-gradient(90deg, transparent, ${event.color}08, transparent)`,
+              animation: "eventSpotlightSweep 3s ease-in-out infinite",
             }}
-          >
-            {CATEGORY_LABELS[event.category]}
-          </span>
-          {event.type && (
-            <span
-              className="font-mono text-[10px] tracking-widest px-2 py-0.5 rounded-sm uppercase"
-              style={{
-                color: "rgba(255,255,255,0.35)",
-                border: "1px solid rgba(255,255,255,0.08)",
-              }}
-            >
-              {event.type}
-            </span>
-          )}
+          />
         </div>
 
-        {/* Description */}
-        {event.description && (
-          <p className="text-sm text-[var(--color-text-muted)] leading-relaxed mb-6 max-w-xl">
-            {event.description}
-          </p>
-        )}
+        {/* Scanline effect */}
+        <div
+          className="absolute left-0 right-0 h-[1px] pointer-events-none opacity-[0.07]"
+          style={{
+            background: event.color,
+            animation: "eventScanline 4s linear infinite",
+            boxShadow: `0 0 8px ${event.color}`,
+          }}
+        />
 
-        {/* CTAs */}
-        <div className="flex flex-wrap items-center gap-3">
-          {ticket.clickable && event.link ? (
-            <a
-              href={event.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded font-mono text-xs uppercase tracking-wider font-semibold transition-opacity hover:opacity-80"
-              style={{ background: BRAND.green, color: "#000" }}
-            >
-              <ExternalLink size={12} />
-              {ticket.text}
-            </a>
-          ) : (
+        {/* Corner decorations -- SVG bracket shapes */}
+        <svg className="absolute top-3 left-3 w-4 h-4 opacity-30" viewBox="0 0 16 16" style={{ color: event.color }}>
+          <path d="M0 6V0h6" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+        <svg className="absolute top-3 right-3 w-4 h-4 opacity-30" viewBox="0 0 16 16" style={{ color: event.color }}>
+          <path d="M16 6V0h-6" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+        <svg className="absolute bottom-3 left-3 w-4 h-4 opacity-30" viewBox="0 0 16 16" style={{ color: event.color }}>
+          <path d="M0 10v6h6" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+        <svg className="absolute bottom-3 right-3 w-4 h-4 opacity-30" viewBox="0 0 16 16" style={{ color: event.color }}>
+          <path d="M16 10v6h-6" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+
+        <div className="relative p-6 md:p-8 lg:p-10">
+          {/* "Volgende event" badge */}
+          <div className="flex items-center gap-2.5 mb-5">
+            <span className="relative flex items-center justify-center w-2.5 h-2.5">
+              {/* Outer ping */}
+              <span
+                className="absolute inset-0 rounded-full animate-ping"
+                style={{ backgroundColor: BRAND.green, opacity: 0.4 }}
+              />
+              {/* Inner dot */}
+              <span
+                className="relative w-2 h-2 rounded-full"
+                style={{ backgroundColor: BRAND.green }}
+              />
+            </span>
             <span
-              className="inline-flex items-center px-4 py-2 rounded font-mono text-xs uppercase tracking-wider"
+              className="font-mono text-[11px] tracking-[0.2em] uppercase font-medium"
+              style={{ color: BRAND.green }}
+            >
+              Volgende event
+            </span>
+          </div>
+
+          {/* Title + Date row */}
+          <div className="flex items-start gap-5 mb-6">
+            <DateStub event={event} size="lg" />
+            <div className="flex-1 min-w-0">
+              {/* Title with TextScramble */}
+              <TextScramble
+                as="h3"
+                className="font-display text-2xl md:text-3xl lg:text-4xl font-bold text-[var(--color-text)] mb-3 leading-tight uppercase"
+                trigger={inView}
+                duration={0.6}
+                speed={0.03}
+                characterSet="#{}/<>[]!@$%^&*"
+              >
+                {event.title}
+              </TextScramble>
+
+              {/* Meta row */}
+              <div className="flex flex-wrap gap-x-5 gap-y-2 font-mono text-sm text-[var(--color-text-muted)]">
+                {event.time && (
+                  <span className="flex items-center gap-1.5">
+                    <Clock size={13} style={{ color: event.color }} />
+                    {event.time}
+                  </span>
+                )}
+                <span className="flex items-center gap-1.5">
+                  <MapPin size={13} style={{ color: event.color }} />
+                  {event.location}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Category + Type badges */}
+          <div className="flex flex-wrap gap-2 mb-5">
+            <span
+              className="font-mono text-[10px] tracking-widest px-2.5 py-1 rounded uppercase"
               style={{
-                color: ticket.color,
-                border: `1px solid ${ticket.color}`,
+                color: event.color,
+                border: `1px solid ${event.color}40`,
+                background: `${event.color}12`,
+                boxShadow: `0 0 12px ${event.color}08`,
               }}
             >
-              {ticket.text}
+              {CATEGORY_LABELS[event.category]}
             </span>
+            {event.type && (
+              <span
+                className="font-mono text-[10px] tracking-widest px-2.5 py-1 rounded uppercase"
+                style={{
+                  color: "rgba(255,255,255,0.35)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: "rgba(255,255,255,0.02)",
+                }}
+              >
+                {event.type}
+              </span>
+            )}
+          </div>
+
+          {/* Description */}
+          {event.description && (
+            <p className="text-sm text-[var(--color-text-muted)] leading-relaxed mb-6 max-w-xl">
+              {event.description}
+            </p>
           )}
 
-          <button
-            onClick={() => downloadIcs(event)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded font-mono text-xs uppercase tracking-wider text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
-            style={{ border: "1px solid var(--color-border)" }}
-          >
-            <Calendar size={11} />
-            + Agenda
-          </button>
+          {/* CTAs */}
+          <div className="flex flex-wrap items-center gap-3">
+            {ticket.clickable && event.link ? (
+              <a
+                href={event.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  background: BRAND.green,
+                  color: "#000",
+                  boxShadow: `0 0 20px ${BRAND.green}30`,
+                }}
+              >
+                <ExternalLink size={12} />
+                {ticket.text}
+              </a>
+            ) : (
+              <span
+                className="inline-flex items-center px-5 py-2.5 rounded-md font-mono text-xs uppercase tracking-wider"
+                style={{
+                  color: ticket.color,
+                  border: `1px solid ${ticket.color}60`,
+                  background: `${ticket.color}08`,
+                }}
+              >
+                {ticket.text}
+              </span>
+            )}
+
+            <button
+              onClick={() => downloadIcs(event)}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-md font-mono text-xs uppercase tracking-wider text-[var(--color-text-muted)] transition-all duration-200 hover:text-[var(--color-text)] hover:border-[var(--color-text-muted)]"
+              style={{ border: "1px solid var(--color-border)" }}
+            >
+              <Calendar size={11} />
+              + Agenda
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -359,7 +467,7 @@ function CompactItem({ event, index }: { event: SitEvent; index: number }) {
 
   return (
     <motion.div
-      className="relative event-node"
+      className="relative event-node group/compact"
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: isDone ? 0.4 : 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
@@ -368,40 +476,55 @@ function CompactItem({ event, index }: { event: SitEvent; index: number }) {
       {/* Clickable row */}
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="w-full flex items-center gap-4 py-3 text-left group"
+        className="w-full flex items-center gap-4 py-3.5 px-3 -mx-3 text-left rounded-lg transition-all duration-200 hover:bg-white/[0.02]"
         aria-expanded={expanded}
+        style={{
+          borderLeft: "2px solid transparent",
+        }}
+        onMouseEnter={(e) => {
+          if (!isDone) {
+            (e.currentTarget as HTMLElement).style.borderLeftColor = `${event.color}60`;
+          }
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLElement).style.borderLeftColor = "transparent";
+        }}
       >
-        {/* Date block */}
-        <div
-          className="font-mono text-sm leading-none w-[3.5rem] flex-shrink-0 text-right"
-          style={{ color: event.color }}
-        >
-          <div className="text-lg font-bold leading-none">{fDay(event.date)}</div>
-          <div className="text-[10px] tracking-widest mt-0.5 opacity-70">{fMonth(event.date)}</div>
+        {/* Date stub */}
+        <DateStub event={event} size="sm" />
+
+        {/* Title + location */}
+        <div className="flex-1 min-w-0">
+          <span className="block font-mono text-sm text-[var(--color-text)] group-hover/compact:text-white transition-colors truncate">
+            {event.title}
+          </span>
+          <span className="block font-mono text-[10px] text-[var(--color-text-muted)] mt-0.5 truncate">
+            <MapPin size={9} className="inline mr-1 -mt-px" style={{ color: event.color }} />
+            {event.location}
+          </span>
         </div>
-
-        {/* Separator dot */}
-        <span
-          className="w-1 h-1 rounded-full flex-shrink-0 opacity-40"
-          style={{ background: event.color }}
-        />
-
-        {/* Title */}
-        <span className="flex-1 font-mono text-sm text-[var(--color-text)] group-hover:text-white transition-colors truncate">
-          {event.title}
-        </span>
 
         {/* Category tag */}
         <span
-          className="hidden sm:inline font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded-sm flex-shrink-0"
+          className="hidden sm:inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded flex-shrink-0 transition-all duration-200"
           style={{
             color: event.color,
-            border: `1px solid ${event.color}40`,
-            background: `${event.color}0d`,
+            border: `1px solid ${event.color}30`,
+            background: `${event.color}08`,
           }}
         >
           {CATEGORY_LABELS[event.category]}
         </span>
+
+        {/* Time */}
+        {event.time && (
+          <span
+            className="hidden md:flex items-center gap-1 font-mono text-[10px] text-[var(--color-text-muted)] flex-shrink-0"
+          >
+            <Clock size={10} style={{ color: event.color, opacity: 0.6 }} />
+            {event.time}
+          </span>
+        )}
 
         {/* Chevron */}
         <ChevronDown
@@ -422,10 +545,10 @@ function CompactItem({ event, index }: { event: SitEvent; index: number }) {
             className="overflow-hidden"
           >
             <div
-              className="ml-[4.5rem] mb-4 pl-4 py-3 rounded-r"
+              className="ml-[4rem] mb-4 pl-4 py-3 rounded-md"
               style={{
-                borderLeft: `2px solid ${event.color}60`,
-                background: `${event.color}08`,
+                borderLeft: `2px solid ${event.color}50`,
+                background: `linear-gradient(135deg, ${event.color}08 0%, transparent 60%)`,
               }}
             >
               <div className="flex flex-wrap gap-4 mb-3 font-mono text-xs text-[var(--color-text-muted)]">
@@ -438,6 +561,10 @@ function CompactItem({ event, index }: { event: SitEvent; index: number }) {
                 <span className="flex items-center gap-1.5">
                   <MapPin size={11} style={{ color: event.color }} />
                   {event.location}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Calendar size={11} style={{ color: event.color }} />
+                  {fDay(event.date)} {fMonth(event.date)}
                 </span>
               </div>
 
@@ -453,16 +580,24 @@ function CompactItem({ event, index }: { event: SitEvent; index: number }) {
                     href={event.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded font-mono text-[10px] uppercase tracking-wider font-semibold transition-opacity hover:opacity-80"
-                    style={{ background: BRAND.green, color: "#000" }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md font-mono text-[10px] uppercase tracking-wider font-semibold transition-all duration-200 hover:opacity-80 hover:scale-[1.02] active:scale-[0.98]"
+                    style={{
+                      background: BRAND.green,
+                      color: "#000",
+                      boxShadow: `0 0 12px ${BRAND.green}20`,
+                    }}
                   >
                     <ExternalLink size={10} />
                     {ticket.text}
                   </a>
                 ) : (
                   <span
-                    className="inline-flex items-center px-3 py-1.5 rounded font-mono text-[10px] uppercase tracking-wider"
-                    style={{ color: ticket.color, border: `1px solid ${ticket.color}` }}
+                    className="inline-flex items-center px-3.5 py-1.5 rounded-md font-mono text-[10px] uppercase tracking-wider"
+                    style={{
+                      color: ticket.color,
+                      border: `1px solid ${ticket.color}50`,
+                      background: `${ticket.color}08`,
+                    }}
                   >
                     {ticket.text}
                   </span>
@@ -474,7 +609,7 @@ function CompactItem({ event, index }: { event: SitEvent; index: number }) {
                       ev.stopPropagation();
                       downloadIcs(event);
                     }}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
                     style={{ border: "1px solid var(--color-border)" }}
                   >
                     <Calendar size={9} />
@@ -495,8 +630,11 @@ function CompactItem({ event, index }: { event: SitEvent; index: number }) {
 function NoEventsPlaceholder() {
   return (
     <div
-      className="py-10 px-6 rounded-lg text-center font-mono text-sm text-[var(--color-text-muted)]"
-      style={{ border: "1px dashed var(--color-border)" }}
+      className="py-10 px-6 rounded-xl text-center font-mono text-sm text-[var(--color-text-muted)]"
+      style={{
+        border: "1px dashed var(--color-border)",
+        background: "rgba(255,255,255,0.01)",
+      }}
     >
       <p className="mb-1">Meer events worden binnenkort aangekondigd</p>
       <p className="text-xs opacity-60">Volg @svsit op Instagram voor updates</p>
@@ -607,28 +745,43 @@ export default function Events() {
     <section
       ref={sectionRef}
       id="events"
-      className="relative py-20 md:py-28 px-6 md:px-12 lg:px-24"
+      className="relative pt-28 md:pt-40 pb-20 md:pb-28 px-6 md:px-12 lg:px-24"
     >
       <SectionLabel number="03" label="Events" />
 
-      {/* ── Filter pills ── */}
-      <div className="flex flex-wrap gap-2 mb-8">
+      {/* ── Filter pills with icons ── */}
+      <div className="flex flex-wrap gap-2 mb-10">
         {CATEGORY_FILTERS.map((f) => {
           const active = filter === f.key;
+          const color = f.key === "all" ? BRAND.gold : (CATEGORY_COLORS[f.key] ?? BRAND.gold);
+          const Icon = f.icon;
           return (
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
-              className="font-mono text-[11px] tracking-widest uppercase px-3 py-1.5 rounded transition-all duration-200"
+              className="relative font-mono text-[11px] tracking-widest uppercase px-3.5 py-2 rounded-md transition-all duration-300 flex items-center gap-2 overflow-hidden"
               style={{
-                background: active ? `${BRAND.gold}20` : "transparent",
-                color: active ? BRAND.gold : "var(--color-text-muted)",
+                background: active ? `${color}18` : "transparent",
+                color: active ? color : "var(--color-text-muted)",
                 border: active
-                  ? `1px solid ${BRAND.gold}60`
+                  ? `1px solid ${color}50`
                   : "1px solid var(--color-border)",
+                boxShadow: active ? `0 0 16px ${color}10` : "none",
               }}
             >
+              <Icon size={12} style={{ opacity: active ? 1 : 0.5 }} />
               {f.label}
+              {/* Active indicator underline */}
+              {active && (
+                <span
+                  className="absolute bottom-0 left-2 right-2 h-[1.5px] rounded-full"
+                  style={{
+                    background: color,
+                    animation: "eventFilterSlide 0.3s ease-out forwards",
+                    transformOrigin: "left",
+                  }}
+                />
+              )}
             </button>
           );
         })}
@@ -636,27 +789,38 @@ export default function Events() {
 
       {/* ── Main content with energy line ── */}
       <div className="relative pl-8 md:pl-12">
-        {/* Energy line */}
+        {/* Energy line -- thicker with glow */}
         <div
           ref={lineRef}
           className="absolute left-0 md:left-4 top-0 bottom-0 w-[2px] pointer-events-none"
           style={{
-            background: `linear-gradient(180deg, ${featuredColor}, ${featuredColor}40 30%, rgba(255,255,255,0.06) 80%, transparent)`,
+            background: `linear-gradient(180deg, ${featuredColor}, ${featuredColor}50 25%, ${featuredColor}20 50%, rgba(255,255,255,0.06) 80%, transparent)`,
             clipPath: shouldReduceMotion ? "none" : "inset(100% 0 0 0)",
+          }}
+        />
+        {/* Energy line glow layer */}
+        <div
+          className="absolute left-0 md:left-4 top-0 bottom-0 w-[6px] -ml-[2px] pointer-events-none"
+          style={{
+            background: `linear-gradient(180deg, ${featuredColor}40, ${featuredColor}10 40%, transparent 80%)`,
+            filter: "blur(4px)",
+            clipPath: shouldReduceMotion ? "none" : "inset(100% 0 0 0)",
+            animation: shouldReduceMotion ? "none" : "eventEnergyPulse 3s ease-in-out infinite",
           }}
         />
 
         {/* ── Featured card ── */}
-        <div className="relative mb-8">
+        <div className="relative mb-10">
           {featured && (
             <span
-              className="event-node-dot absolute w-3 h-3 rounded-full"
+              className="event-node-dot absolute w-3.5 h-3.5 rounded-full"
               style={{
                 left: "calc(-2rem + 1px)",
                 top: 8,
                 backgroundColor: featured.color,
-                boxShadow: `0 0 8px ${featured.color}80`,
+                boxShadow: `0 0 12px ${featured.color}80, 0 0 24px ${featured.color}30`,
                 transform: "translateX(-50%)",
+                border: `2px solid ${featured.color}`,
               }}
             />
           )}
@@ -670,14 +834,16 @@ export default function Events() {
 
         {/* ── Upcoming list ── */}
         {upcomingList.length > 0 && (
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-3">
+          <div className="mb-10">
+            <div className="flex items-center gap-3 mb-4">
               <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--color-text-muted)]">
                 BINNENKORT
               </span>
               <span
                 className="flex-1 h-px"
-                style={{ background: "var(--color-border)" }}
+                style={{
+                  background: "linear-gradient(90deg, var(--color-border), transparent)",
+                }}
               />
             </div>
 
@@ -685,13 +851,14 @@ export default function Events() {
               {upcomingList.map((event, i) => (
                 <div key={event.id} className="relative">
                   <span
-                    className="event-node-dot absolute w-2 h-2 rounded-full"
+                    className="event-node-dot absolute w-2.5 h-2.5 rounded-full"
                     style={{
                       left: "calc(-2rem - 3px)",
-                      top: 16,
+                      top: 18,
                       backgroundColor: event.color,
-                      boxShadow: `0 0 6px ${event.color}60`,
+                      boxShadow: `0 0 8px ${event.color}50`,
                       transform: "translateX(-50%)",
+                      border: `1.5px solid ${event.color}80`,
                     }}
                   />
                   <CompactItem event={event} index={i} />
@@ -706,7 +873,7 @@ export default function Events() {
           <div className="mb-6">
             <button
               onClick={() => setShowDone((v) => !v)}
-              className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors mb-3"
+              className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors mb-3 px-2 py-1 -mx-2 rounded-md hover:bg-white/[0.02]"
             >
               <ChevronDown
                 size={12}
@@ -732,7 +899,7 @@ export default function Events() {
                           className="event-node-dot absolute w-2 h-2 rounded-full"
                           style={{
                             left: "calc(-2rem - 3px)",
-                            top: 16,
+                            top: 18,
                             border: `1.5px dashed ${event.color}60`,
                             transform: "translateX(-50%)",
                           }}
@@ -755,7 +922,7 @@ export default function Events() {
               left: "calc(-2rem - 3px)",
               top: "50%",
               marginTop: -4,
-              border: "1.5px dashed rgba(255,255,255,0.2)",
+              border: "1.5px dashed rgba(255,255,255,0.15)",
               transform: "translateX(-50%)",
             }}
           />

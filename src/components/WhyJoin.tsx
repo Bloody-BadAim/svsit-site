@@ -209,7 +209,7 @@ export default function WhyJoin() {
     <section
       ref={sectionRef}
       id="whyjoin"
-      className="relative py-20 md:py-24 lg:py-28 px-6 md:px-12 lg:px-24"
+      className="relative py-16 md:py-20 lg:py-24 px-6 md:px-12 lg:px-24"
     >
       <div className="absolute inset-0 bg-[var(--color-bg)]/70" />
 

@@ -363,7 +363,7 @@ export default function MyCardTab({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[380px_300px] gap-6 p-4 sm:p-6">
+    <div className="grid grid-cols-1 lg:grid-cols-[380px_minmax(0,1fr)] gap-6 p-4 sm:p-6">
       {/* Left column: Card + actions */}
       <div className="flex flex-col gap-4" ref={cardRef}>
         <FlipCard
@@ -375,10 +375,10 @@ export default function MyCardTab({
         />
 
         {/* Action buttons */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <button
             onClick={() => setShowQR(!showQR)}
-            className="flex flex-col items-center gap-1.5 py-3 px-2 text-xs font-mono tracking-wider transition-colors cursor-pointer"
+            className="flex flex-col items-center gap-1.5 py-4 px-3 sm:py-3 sm:px-2 text-xs font-mono tracking-wider transition-colors cursor-pointer"
             style={{
               border: showQR ? '1px solid var(--color-accent-gold)' : '1px solid rgba(255,255,255,0.06)',
               backgroundColor: showQR ? 'rgba(245,158,11,0.06)' : 'rgba(255,255,255,0.02)',
@@ -391,7 +391,7 @@ export default function MyCardTab({
 
           <a
             href="/dashboard/card-editor"
-            className="flex flex-col items-center gap-1.5 py-3 px-2 text-xs font-mono tracking-wider transition-colors"
+            className="flex flex-col items-center gap-1.5 py-4 px-3 sm:py-3 sm:px-2 text-xs font-mono tracking-wider transition-colors"
             style={{
               border: '1px solid rgba(255,255,255,0.06)',
               backgroundColor: 'rgba(255,255,255,0.02)',
@@ -404,7 +404,7 @@ export default function MyCardTab({
 
           <button
             onClick={handleDownload}
-            className="flex flex-col items-center gap-1.5 py-3 px-2 text-xs font-mono tracking-wider transition-colors cursor-pointer"
+            className="flex flex-col items-center gap-1.5 py-4 px-3 sm:py-3 sm:px-2 text-xs font-mono tracking-wider transition-colors cursor-pointer"
             style={{
               border: '1px solid rgba(255,255,255,0.06)',
               backgroundColor: 'rgba(255,255,255,0.02)',
@@ -417,7 +417,7 @@ export default function MyCardTab({
 
           <button
             onClick={handleShare}
-            className="flex flex-col items-center gap-1.5 py-3 px-2 text-xs font-mono tracking-wider transition-colors cursor-pointer"
+            className="flex flex-col items-center gap-1.5 py-4 px-3 sm:py-3 sm:px-2 text-xs font-mono tracking-wider transition-colors cursor-pointer"
             style={{
               border: shareStatus === 'done' ? '1px solid #22C55E' : '1px solid rgba(255,255,255,0.06)',
               backgroundColor: shareStatus === 'done' ? 'rgba(34,197,94,0.06)' : 'rgba(255,255,255,0.02)',
@@ -431,7 +431,7 @@ export default function MyCardTab({
       </div>
 
       {/* Right column: Widgets */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 lg:max-w-[340px]">
         {/* Next unlock teaser */}
         {nextUnlock && <NextUnlockTeaser unlock={nextUnlock} />}
 

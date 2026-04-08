@@ -903,3 +903,53 @@ body::before {
   0%   { filter: hue-rotate(0deg) brightness(1.2); }
   100% { filter: hue-rotate(360deg) brightness(1.2); }
 }
+
+/* ── Events Section V2: Premium Cards ── */
+
+/* Featured card animated border rotation */
+@property --event-border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes eventBorderRotate {
+  from { --event-border-angle: 0deg; }
+  to   { --event-border-angle: 360deg; }
+}
+
+/* Featured card spotlight sweep */
+@keyframes eventSpotlightSweep {
+  0%   { transform: translateX(-100%) rotate(15deg); }
+  100% { transform: translateX(200%) rotate(15deg); }
+}
+
+/* Featured card ambient pulse on the glow */
+@keyframes eventGlowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.7; }
+}
+
+/* Energy line glow pulse */
+@keyframes eventEnergyPulse {
+  0%, 100% { opacity: 0.3; filter: blur(4px); }
+  50%      { opacity: 0.7; filter: blur(6px); }
+}
+
+/* Category filter active indicator slide */
+@keyframes eventFilterSlide {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* Compact card left accent grow on hover */
+@keyframes eventAccentGrow {
+  from { height: 0; }
+  to   { height: 100%; }
+}
+
+/* Scanline on featured card */
+@keyframes eventScanline {
+  0%   { top: -2px; }
+  100% { top: calc(100% + 2px); }
+}
