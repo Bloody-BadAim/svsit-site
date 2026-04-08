@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { render } from '@react-email/components'
 import { createServiceClient } from '@/lib/supabase'
+import { syncNotionEventsToSupabase } from '@/lib/syncNotionEvents'
 import WeeklyDigestEmail from '@/emails/weeklyDigestEmail'
 
 // ─── SMTP transport (same setup as lib/email.ts) ─────────────────────────────
@@ -54,6 +55,15 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    // ── Sync Notion events to Supabase before querying ────────────────
+    try {
+      const syncResult = await syncNotionEventsToSupabase()
+      console.log(`[weekly-digest] Notion sync: ${syncResult.synced} synced, ${syncResult.errors} errors`)
+    } catch (syncErr) {
+      // Log but don't fail the digest if sync fails — stale data is better than no email
+      console.error('[weekly-digest] Notion sync failed, continuing with existing data:', syncErr instanceof Error ? syncErr.message : syncErr)
+    }
+
     const supabase = createServiceClient()
     const now = new Date()
 

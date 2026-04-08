@@ -14,7 +14,7 @@ const MagneticHero = lazy(
 const STATS = [
   { value: 200, suffix: "+", label: "leden" },
   { value: 50, suffix: "+", label: "events" },
-  { value: 5, suffix: "", label: "commissies" },
+  { value: 7, suffix: "", label: "commissies" },
   { value: 11, suffix: "", label: "besturen" },
 ];
 
@@ -205,9 +205,8 @@ export default function Hero() {
         {typedText.slice(4)}
       </span>
       <span
-        className={`inline-block w-[3px] h-[0.85em] bg-[var(--color-accent-gold)] ml-1 align-middle ${
-          showCursor ? "opacity-100" : "opacity-0"
-        }`}
+        className={`inline-block w-[3px] h-[0.85em] bg-[var(--color-accent-gold)] ml-1 align-middle ${showCursor ? "opacity-100" : "opacity-0"
+          }`}
       />
     </h1>
   );
@@ -304,9 +303,8 @@ export default function Hero() {
 
             {/* Subtitle -- styled as terminal output */}
             <div
-              className={`font-mono text-sm md:text-base mb-3 opacity-0 ${
-                phase === "done" ? "animate-[fadeIn_0.6s_ease_0.2s_forwards]" : ""
-              }`}
+              className={`font-mono text-sm md:text-base mb-3 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.2s_forwards]" : ""
+                }`}
             >
               <span className="text-[var(--color-accent-green)]">{">"}</span>
               <span className="text-[var(--color-text-muted)]"> Studievereniging ICT</span>
@@ -316,9 +314,8 @@ export default function Hero() {
 
             {/* Tagline -- bigger, bolder */}
             <p
-              className={`font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight leading-[1.1] max-w-2xl mb-8 opacity-0 ${
-                phase === "done" ? "animate-[fadeIn_0.6s_ease_0.4s_forwards]" : ""
-              }`}
+              className={`font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight leading-[1.1] max-w-2xl mb-8 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.4s_forwards]" : ""
+                }`}
             >
               <span className="text-[var(--color-accent-blue)]">Door</span>{" "}
               <span className="text-[var(--color-text)]">studenten.</span>{" "}
@@ -330,9 +327,8 @@ export default function Hero() {
 
             {/* CTAs -- game-lobby style */}
             <div
-              className={`flex flex-col sm:flex-row gap-4 opacity-0 ${
-                phase === "done" ? "animate-[fadeIn_0.6s_ease_0.6s_forwards]" : ""
-              }`}
+              className={`flex flex-col sm:flex-row gap-4 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.6s_forwards]" : ""
+                }`}
             >
               {/* Primary CTA */}
               <a
@@ -382,9 +378,8 @@ export default function Hero() {
 
             {/* Stat counters -- social proof */}
             <div
-              className={`flex items-center gap-6 sm:gap-8 md:gap-10 mt-10 opacity-0 ${
-                phase === "done" ? "animate-[fadeIn_0.6s_ease_1s_forwards]" : ""
-              }`}
+              className={`flex items-center gap-6 sm:gap-8 md:gap-10 mt-10 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_1s_forwards]" : ""
+                }`}
             >
               {STATS.map((stat, i) => (
                 <StatCounter key={stat.label} {...stat} index={i} />
@@ -393,9 +388,8 @@ export default function Hero() {
 
             {/* Bottom line -- Amsterdam x marks */}
             <div
-              className={`flex items-center gap-3 mt-6 font-mono text-sm opacity-0 ${
-                phase === "done" ? "animate-[fadeIn_0.6s_ease_1.3s_forwards]" : ""
-              }`}
+              className={`flex items-center gap-3 mt-6 font-mono text-sm opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_1.3s_forwards]" : ""
+                }`}
             >
               <span className="w-8 h-px bg-[var(--color-text-muted)] opacity-40" />
               <span className="text-[var(--color-accent-red)] font-bold">x</span>
@@ -410,9 +404,8 @@ export default function Hero() {
 
       {/* Scroll indicator */}
       <div
-        className={`absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-0 ${
-          phase === "done" ? "animate-[fadeIn_0.6s_ease_1.5s_forwards]" : ""
-        }`}
+        className={`absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_1.5s_forwards]" : ""
+          }`}
       >
         <span className="font-mono text-xs text-[var(--color-text-muted)] tracking-wider opacity-70">
           scroll down
