@@ -681,23 +681,25 @@ body::before {
   50%       { opacity: 0.7; }
 }
 
-/* Matrix frame: scrolling green rain pattern on border */
+/* Matrix frame: scrolling green rain pattern on border
+   Note: background-position can't be composited via transform for repeating patterns.
+   will-change: background-position is set on the consuming element for GPU promotion. */
 @keyframes frameMatrixScroll {
   0%   { background-position-y: 0; }
   100% { background-position-y: 18px; }
 }
 
-/* Gold frame: shimmer gradient shift */
+/* Gold frame: shimmer gradient shift (will-change hint for compositing) */
 @keyframes frameGoldShimmer {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Gold frame: inner light sweep */
+/* Gold frame: inner light sweep (composited via transform on overlay element) */
 @keyframes frameGoldSweep {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
 }
 
 /* Ice frame: sparkle twinkle */
@@ -706,7 +708,7 @@ body::before {
   50%       { opacity: 0.8; transform: scale(1.2); }
 }
 
-/* Fire frame: gradient position shift */
+/* Fire frame: gradient position shift (will-change hint on consuming element) */
 @keyframes frameFireShift {
   0%   { background-position: 0% 0%; }
   50%  { background-position: 100% 100%; }
@@ -745,9 +747,8 @@ body::before {
 }
 
 @keyframes nodeGlow {
-  0%   { box-shadow: 0 0 0 0 currentColor; }
-  50%  { box-shadow: 0 0 12px 4px currentColor; }
-  100% { box-shadow: 0 0 0 0 currentColor; }
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
 }
 
 @keyframes energyDraw {
@@ -763,8 +764,8 @@ body::before {
 }
 
 @keyframes scanlinesDrift {
-  0%   { background-position-y: 0; }
-  100% { background-position-y: 8px; }
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(8px); }
 }
 
 @keyframes smokeRise {
@@ -812,22 +813,23 @@ body::before {
   100% { transform: translateX(250%); opacity: 0; }
 }
 @keyframes badge-rareShimmer {
-  0%, 100% { filter: brightness(1); }
-  50%       { filter: brightness(1.25); }
+  0%, 100% { opacity: 0.85; }
+  50%       { opacity: 1; }
 }
 
-/* Epic: pulsating energy core + box-shadow expansion */
+/* Epic: pulsating energy core (composited: transform + opacity) */
 @keyframes badge-energyCore {
   0%, 100% { transform: scale(0.8); opacity: 0.5; }
   50%       { transform: scale(1.2); opacity: 0.9; }
 }
+/* Epic: pulsating glow (composited: replaced box-shadow with opacity on glow pseudo) */
 @keyframes badge-epicPulse {
-  0%, 100% { box-shadow: 0 0 24px rgba(139,92,246,0.4), 0 0 48px rgba(139,92,246,0.15); }
-  50%       { box-shadow: 0 0 36px rgba(139,92,246,0.65), 0 0 72px rgba(139,92,246,0.25); }
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
 }
 @keyframes badge-epicScanLine {
-  0%   { top: -10%; }
-  100% { top: 110%; }
+  0%   { transform: translateY(calc(var(--badge-h, 56px) * -0.1)); }
+  100% { transform: translateY(calc(var(--badge-h, 56px) * 1.1)); }
 }
 @keyframes badge-iconFlicker {
   0%, 100% { opacity: 1; }
@@ -874,8 +876,8 @@ body::before {
   100% { transform: translateX(250%); }
 }
 @keyframes badge-glowShift {
-  0%, 100% { background-position: 30% 50%; }
-  50%       { background-position: 70% 50%; }
+  0%, 100% { transform: translateX(-20%); }
+  50%       { transform: translateX(20%); }
 }
 @keyframes badge-starburst {
   0%, 100% { opacity: 0.15; transform: scale(0.9); }
@@ -902,4 +904,56 @@ body::before {
 @keyframes badge-rainbow-border {
   0%   { filter: hue-rotate(0deg) brightness(1.2); }
   100% { filter: hue-rotate(360deg) brightness(1.2); }
+}
+/* Note: badge-rainbow-border uses filter which cannot be composited via transform.
+   will-change: filter is added on the consuming element. */
+
+/* ── Events Section V2: Premium Cards ── */
+
+/* Featured card animated border rotation */
+@property --event-border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes eventBorderRotate {
+  from { --event-border-angle: 0deg; }
+  to   { --event-border-angle: 360deg; }
+}
+
+/* Featured card spotlight sweep */
+@keyframes eventSpotlightSweep {
+  0%   { transform: translateX(-100%) rotate(15deg); }
+  100% { transform: translateX(200%) rotate(15deg); }
+}
+
+/* Featured card ambient pulse on the glow */
+@keyframes eventGlowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.7; }
+}
+
+/* Energy line glow pulse (composited: opacity only, static blur on element) */
+@keyframes eventEnergyPulse {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.7; }
+}
+
+/* Category filter active indicator slide */
+@keyframes eventFilterSlide {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* Compact card left accent grow on hover (composited via transform) */
+@keyframes eventAccentGrow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* Scanline on featured card (composited via transform, parent must have overflow:hidden) */
+@keyframes eventScanline {
+  0%   { transform: translateY(-2px); }
+  100% { transform: translateY(400px); }
 }

@@ -123,6 +123,10 @@ export default function EventsPage() {
   const [scansLoading, setScansLoading] = useState(false)
   const [selectedEventTitle, setSelectedEventTitle] = useState<string | null>(null)
 
+  // ── Check-in code state
+  const [checkinCodes, setCheckinCodes] = useState<Record<string, string | null>>({})
+  const [checkinLoading, setCheckinLoading] = useState<Record<string, boolean>>({})
+
   // ── Fetch all events
   const fetchEvents = useCallback(async () => {
     setEventsLoading(true)
@@ -170,6 +174,36 @@ export default function EventsPage() {
     }
   }, [])
 
+  // ── Fetch check-in code for event
+  const fetchCheckinCode = useCallback(async (eventId: string) => {
+    if (checkinCodes[eventId] !== undefined) return
+    setCheckinLoading((prev) => ({ ...prev, [eventId]: true }))
+    try {
+      const res = await fetch(`/api/admin/events/${eventId}/checkin-code`)
+      const { data } = await res.json()
+      setCheckinCodes((prev) => ({ ...prev, [eventId]: data?.checkin_code ?? null }))
+    } catch {
+      setCheckinCodes((prev) => ({ ...prev, [eventId]: null }))
+    } finally {
+      setCheckinLoading((prev) => ({ ...prev, [eventId]: false }))
+    }
+  }, [checkinCodes])
+
+  // ── Generate new check-in code
+  async function handleGenerateCode(eventId: string) {
+    setCheckinLoading((prev) => ({ ...prev, [eventId]: true }))
+    try {
+      const res = await fetch(`/api/admin/events/${eventId}/checkin-code`, { method: 'POST' })
+      const { data, error } = await res.json()
+      if (error) throw new Error(error)
+      setCheckinCodes((prev) => ({ ...prev, [eventId]: data?.checkin_code ?? null }))
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Code genereren mislukt')
+    } finally {
+      setCheckinLoading((prev) => ({ ...prev, [eventId]: false }))
+    }
+  }
+
   // ── Expand/collapse event row
   function handleExpand(event: DbEvent) {
     if (expandedId === event.id) {
@@ -177,6 +211,7 @@ export default function EventsPage() {
     } else {
       setExpandedId(event.id)
       fetchTickets(event.id)
+      fetchCheckinCode(event.id)
     }
   }
 
@@ -696,6 +731,58 @@ export default function EventsPage() {
                           >
                             <X size={11} style={{ display: 'inline', marginRight: 3, verticalAlign: 'middle' }} /> Annuleren
                           </button>
+                        )}
+                      </div>
+
+                      {/* Check-in code section */}
+                      <div
+                        style={{
+                          padding: '12px 16px',
+                          marginBottom: 16,
+                          backgroundColor: 'rgba(245, 158, 11, 0.04)',
+                          border: '1px solid rgba(245, 158, 11, 0.12)',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                          <div>
+                            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)', marginBottom: 4 }}>
+                              Check-in code
+                            </p>
+                            {checkinLoading[event.id] ? (
+                              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-text-muted)' }}>Laden...</p>
+                            ) : checkinCodes[event.id] ? (
+                              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 24, fontWeight: 700, letterSpacing: '0.2em', color: 'var(--color-accent-gold)' }}>
+                                {checkinCodes[event.id]}
+                              </p>
+                            ) : (
+                              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-text-muted)' }}>Geen code ingesteld</p>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => handleGenerateCode(event.id)}
+                            disabled={!!checkinLoading[event.id]}
+                            style={{
+                              padding: '6px 14px',
+                              backgroundColor: 'transparent',
+                              color: 'var(--color-accent-gold)',
+                              border: '1px solid var(--color-accent-gold)',
+                              fontFamily: 'var(--font-mono)',
+                              fontSize: 11,
+                              fontWeight: 700,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.06em',
+                              cursor: checkinLoading[event.id] ? 'not-allowed' : 'pointer',
+                              opacity: checkinLoading[event.id] ? 0.5 : 1,
+                              flexShrink: 0,
+                            }}
+                          >
+                            {checkinCodes[event.id] ? 'Nieuwe code' : 'Code genereren'}
+                          </button>
+                        </div>
+                        {checkinCodes[event.id] && (
+                          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-text-muted)', marginTop: 6, opacity: 0.7 }}>
+                            Toon deze code op een scherm of poster bij het event. Leden voeren dit in op de event pagina om in te checken.
+                          </p>
                         )}
                       </div>
 

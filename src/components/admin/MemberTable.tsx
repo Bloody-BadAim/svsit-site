@@ -13,6 +13,7 @@ interface MemberCommissieJoin {
 interface MemberRow {
   id: string
   email: string
+  display_name: string | null
   student_number: string | null
   role: string
   commissie: string | null
@@ -49,8 +50,9 @@ function getCommissieNames(member: MemberRow): string[] {
 }
 
 function exportCSV(members: MemberRow[]) {
-  const headers = ['Email', 'Studentnummer', 'Rol', 'Commissie(s)', 'Punten', 'Status', 'Lid sinds']
+  const headers = ['Naam', 'Email', 'Studentnummer', 'Rol', 'Commissie(s)', 'Punten', 'Status', 'Lid sinds']
   const rows = members.map(m => [
+    m.display_name || m.email.split('@')[0],
     m.email,
     m.student_number || '',
     m.role,
@@ -113,6 +115,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
       result = result.filter(
         (m) =>
           m.email.toLowerCase().includes(term) ||
+          (m.display_name && m.display_name.toLowerCase().includes(term)) ||
           (m.student_number && m.student_number.toLowerCase().includes(term))
       )
     }
@@ -206,7 +209,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
           type="text"
           value={filters.zoekterm}
           onChange={(e) => setFilter('zoekterm', e.target.value)}
-          placeholder="Zoek op email of studentnummer..."
+          placeholder="Zoek op naam, email of studentnummer..."
           className="flex-1 min-w-[200px] py-2 px-3 rounded-lg text-sm outline-none"
           style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
         />
@@ -268,7 +271,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
         <table className="w-full text-sm">
           <thead>
             <tr style={{ backgroundColor: 'var(--color-surface)' }}>
-              {['Email', 'Studentnr.', 'Rol', 'Commissie(s)', 'Punten', 'Status', 'Lid sinds'].map((col) => (
+              {['Naam / Email', 'Studentnr.', 'Rol', 'Commissie(s)', 'Punten', 'Status', 'Lid sinds'].map((col) => (
                 <th
                   key={col}
                   className="text-left px-4 py-3 font-semibold uppercase tracking-wider text-xs"
@@ -292,17 +295,20 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   <td className="px-4 py-3" style={{ color: 'var(--color-text)' }}>
-                    <span className="inline-flex items-center gap-1.5">
-                      {member.email}
-                      {member.is_admin && (
-                        <span
-                          className="text-[9px] font-bold px-1 py-px rounded uppercase tracking-wider"
-                          style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: 'var(--color-accent-red)' }}
-                        >
-                          Admin
-                        </span>
-                      )}
-                    </span>
+                    <div className="flex flex-col">
+                      <span className="inline-flex items-center gap-1.5">
+                        {member.display_name || member.email.split('@')[0]}
+                        {member.is_admin && (
+                          <span
+                            className="text-[9px] font-bold px-1 py-px rounded uppercase tracking-wider"
+                            style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: 'var(--color-accent-red)' }}
+                          >
+                            Admin
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-[11px]" style={{ color: 'var(--color-text-muted)' }}>{member.email}</span>
+                    </div>
                   </td>
                   <td className="px-4 py-3" style={{ color: 'var(--color-text-muted)' }}>{member.student_number || '\u2014'}</td>
                   <td className="px-4 py-3 capitalize" style={{ color: 'var(--color-accent-blue)' }}>{member.role}</td>

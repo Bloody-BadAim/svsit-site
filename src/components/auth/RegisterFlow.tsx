@@ -17,6 +17,7 @@ export default function RegisterFlow() {
 
   const [step, setStep] = useState<Step>(1)
   const [email, setEmail] = useState(session?.user?.email || '')
+  const [displayName, setDisplayName] = useState('')
   const [studentNumber, setStudentNumber] = useState('')
   const [selectedCommissie, setSelectedCommissie] = useState<string | null>(null)
   const [eigenIdee, setEigenIdee] = useState('')
@@ -34,6 +35,7 @@ export default function RegisterFlow() {
         const parsed = JSON.parse(saved)
         if (parsed.step) setStep(parsed.step)
         if (parsed.email && !isMicrosoft) setEmail(parsed.email)
+        if (parsed.displayName) setDisplayName(parsed.displayName)
         if (parsed.studentNumber) setStudentNumber(parsed.studentNumber)
         if (parsed.selectedCommissie !== undefined) setSelectedCommissie(parsed.selectedCommissie)
         if (parsed.eigenIdee) setEigenIdee(parsed.eigenIdee)
@@ -48,12 +50,13 @@ export default function RegisterFlow() {
     localStorage.setItem('sit-register-form', JSON.stringify({
       step,
       email,
+      displayName,
       studentNumber,
       selectedCommissie,
       eigenIdee,
       isDocent,
     }))
-  }, [step, email, studentNumber, selectedCommissie, eigenIdee, isDocent])
+  }, [step, email, displayName, studentNumber, selectedCommissie, eigenIdee, isDocent])
 
   const role: Role = isDocent ? 'mentor' : selectedCommissie ? 'contributor' : 'member'
   const commissieNaam = selectedCommissie === 'eigen-idee'
@@ -72,6 +75,7 @@ export default function RegisterFlow() {
         body: JSON.stringify({
           email,
           password: isMicrosoft ? undefined : password,
+          display_name: displayName.trim() || null,
           student_number: studentNumber || null,
           role,
           commissie: selectedCommissie === 'eigen-idee' ? null : selectedCommissie,
@@ -145,6 +149,24 @@ export default function RegisterFlow() {
           </div>
 
           <div className="space-y-4">
+            <div>
+              <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                naam
+              </label>
+              <input
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Hoe wil je dat we je noemen?"
+                className="w-full py-3 px-4 rounded-lg text-base outline-none"
+                style={{
+                  backgroundColor: 'var(--color-surface)',
+                  color: 'var(--color-text)',
+                  border: '1px solid var(--color-border)',
+                }}
+              />
+            </div>
+
             <div>
               <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
                 email

@@ -1,10 +1,12 @@
 import { createServiceClient } from '@/lib/supabase'
+import { auth } from '@/lib/auth'
 import type { SitEvent } from '@/types/database'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Calendar, MapPin, Clock, Users } from 'lucide-react'
 import TicketForm from './TicketForm'
+import CheckInForm from './CheckInForm'
 
 // ── Category display config ─────────────────────────────────────────────────
 
@@ -97,6 +99,15 @@ export default async function EventDetailPage(
   const soldCount = ticketsSold ?? 0
   const spotsLeft = typedEvent.capacity !== null ? typedEvent.capacity - soldCount : null
   const isSoldOut = spotsLeft !== null && spotsLeft <= 0
+
+  // Check-in: determine if we should show the check-in form
+  const session = await auth()
+  const isLoggedIn = !!session?.user?.id
+  const hasCheckinCode = !!typedEvent.checkin_code
+  const eventDate = new Date(typedEvent.date)
+  const hoursFromEvent = Math.abs(Date.now() - eventDate.getTime()) / (1000 * 60 * 60)
+  const isCheckinWindow = hoursFromEvent <= 12
+  const showCheckin = isLoggedIn && hasCheckinCode && isCheckinWindow
 
   const cat = getCategoryDisplay(typedEvent.category)
   const dateObj = new Date(typedEvent.date)
@@ -366,6 +377,16 @@ export default async function EventDetailPage(
           isSoldOut={isSoldOut}
           categoryColor={cat.color}
         />
+
+        {/* Self-service check-in (only for logged-in members during active events) */}
+        {showCheckin && (
+          <div className="mt-8">
+            <CheckInForm
+              eventId={typedEvent.id}
+              categoryColor={cat.color}
+            />
+          </div>
+        )}
 
         {/* Footer marks */}
         <div className="flex items-center justify-center gap-3 mt-16">

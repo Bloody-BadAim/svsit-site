@@ -1,10 +1,15 @@
-import NextAuth from 'next-auth'
+import NextAuth, { CredentialsSignin } from 'next-auth'
 import MicrosoftEntraID from 'next-auth/providers/microsoft-entra-id'
 import Credentials from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { createServiceClient } from '@/lib/supabase'
 import { ADMIN_EMAILS } from '@/lib/constants'
+import { rateLimit } from '@/lib/rateLimit'
 import type { Role } from '@/types/database'
+
+class RateLimitError extends CredentialsSignin {
+  code = 'rate_limited'
+}
 
 declare module 'next-auth' {
   interface Session {
@@ -43,6 +48,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         const email = (credentials.email as string).toLowerCase().trim()
+
+        // Rate limit by email to prevent brute force attacks
+        const limit = rateLimit(email)
+        if (!limit.success) {
+          console.warn(
+            `[auth] Rate limit hit for: ${email} — reset in ${limit.resetIn}s`
+          )
+          throw new RateLimitError()
+        }
 
         const supabase = createServiceClient()
         const { data: member, error } = await supabase

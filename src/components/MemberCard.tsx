@@ -5,7 +5,9 @@ import { Star, Check, X } from "lucide-react";
 import { ROLLEN } from "@/lib/constants";
 import { getLevelForXp, getLevelProgress, getBadgeSlotCount } from "@/lib/levelEngine";
 import type { Role } from "@/types/database";
-import QRCode from "react-qr-code";
+import dynamic from "next/dynamic";
+
+const QRCode = dynamic(() => import("react-qr-code"), { ssr: false });
 import { getSkin } from "@/lib/cardSkins";
 import BadgeIcon from "@/components/badges/BadgeIcon";
 import { getBadgeDef, getRarityColor } from "@/lib/badgeDefs";
@@ -31,9 +33,10 @@ const BARCODE_OPACITIES = [
 ];
 
 const DEFAULT_STATS = [
-  { label: "code", color: "var(--color-accent-green)", fill: 65 },
-  { label: "social", color: "var(--color-accent-gold)", fill: 45 },
-  { label: "chaos", color: "var(--color-accent-red)", fill: 80 },
+  { label: "CODE", color: "var(--color-accent-green)", fill: 65 },
+  { label: "SOCIAL", color: "var(--color-accent-gold)", fill: 45 },
+  { label: "GAMING", color: "var(--color-accent-red)", fill: 80 },
+  { label: "IMPACT", color: "var(--color-accent-blue)", fill: 80 },
 ];
 
 const DEFAULT_BADGES = [
@@ -126,6 +129,7 @@ function getFrameVisuals(frameStyle: string | undefined, frameColor: string | un
           backgroundSize: '100% 18px',
           animation: 'frameMatrixScroll 1.5s linear infinite',
           boxShadow: `0 0 16px ${c}44`,
+          willChange: 'background-position',
         },
         glowStyle: {
           background: `radial-gradient(ellipse at center, ${c}25 0%, transparent 70%)`,
@@ -159,14 +163,19 @@ function getFrameVisuals(frameStyle: string | undefined, frameColor: string | un
         overlayElements: (
           <div
             aria-hidden="true"
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: 'linear-gradient(105deg, transparent 40%, rgba(255,215,0,0.06) 45%, rgba(255,215,0,0.12) 50%, rgba(255,215,0,0.06) 55%, transparent 60%)',
-              backgroundSize: '200% 100%',
-              animation: 'frameGoldSweep 4s ease-in-out infinite',
-              willChange: 'background-position',
-            }}
-          />
+            className="absolute inset-0 pointer-events-none overflow-hidden"
+          >
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                width: '200%',
+                background: 'linear-gradient(105deg, transparent 20%, rgba(255,215,0,0.06) 22.5%, rgba(255,215,0,0.12) 25%, rgba(255,215,0,0.06) 27.5%, transparent 30%)',
+                animation: 'frameGoldSweep 4s ease-in-out infinite',
+                willChange: 'transform',
+              }}
+            />
+          </div>
         ),
       };
     }
@@ -319,11 +328,11 @@ export default function MemberCard({
   // Stats: dynamicStats > data.stats > DEFAULT_STATS
   const stats = data?.dynamicStats
     ? [
-        { label: "CODE", color: "var(--color-accent-green)", fill: Math.min(data.dynamicStats.code * 10, 100) },
-        { label: "SOCIAL", color: "var(--color-accent-green)", fill: Math.min(data.dynamicStats.social * 10, 100) },
-        { label: "LEARN", color: "var(--color-accent-gold)", fill: Math.min(data.dynamicStats.learn * 10, 100) },
-        { label: "IMPACT", color: "var(--color-accent-red)", fill: Math.min(data.dynamicStats.impact * 10, 100) },
-      ]
+      { label: "CODE", color: "var(--color-accent-green)", fill: Math.min(data.dynamicStats.code * 10, 100) },
+      { label: "SOCIAL", color: "var(--color-accent-gold)", fill: Math.min(data.dynamicStats.social * 10, 100) },
+      { label: "GAMING", color: "var(--color-accent-red)", fill: Math.min(data.dynamicStats.learn * 10, 100) },
+      { label: "IMPACT", color: "var(--color-accent-blue)", fill: Math.min(data.dynamicStats.impact * 10, 100) },
+    ]
     : (data?.stats || DEFAULT_STATS);
 
   // Badges: activeBadges prop > data.badges > DEFAULT_BADGES
@@ -338,8 +347,8 @@ export default function MemberCard({
   const borderWrapperStyle: React.CSSProperties = frameVisuals
     ? frameVisuals.borderStyle
     : {
-        background: skinDef.animated ? "transparent" : skinDef.border,
-      };
+      background: skinDef.animated ? "transparent" : skinDef.border,
+    };
 
   // XP bar color: accentColor override or default gold
   const xpBarColor = equipment?.accentColor
@@ -564,16 +573,14 @@ export default function MemberCard({
               {/* Info */}
               <div className="flex flex-col gap-1 min-w-0 pt-0.5">
                 <span className="font-mono text-base text-[var(--color-text)] font-bold tracking-wide">
-                  {name}
+                  {equipment?.customTitle || name}
                 </span>
-                {equipment?.customTitle && (
-                  <span
-                    className="font-mono text-[10px] uppercase tracking-[0.15em]"
-                    style={{ color: equipment.accentColor ?? "var(--color-accent-gold)", opacity: 0.8 }}
-                  >
-                    {equipment.customTitle}
-                  </span>
-                )}
+                <span
+                  className="font-mono text-[10px] uppercase tracking-[0.15em]"
+                  style={{ color: equipment?.accentColor ?? "var(--color-text-muted)", opacity: 0.7 }}
+                >
+                  {equipment?.customTitle ? name : ''}
+                </span>
                 <span className="font-mono text-[11px] text-[var(--color-text-muted)]">
                   CLASS:{" "}
                   <span className={isPlaceholder ? "opacity-50" : ""}>
@@ -687,59 +694,59 @@ export default function MemberCard({
               <div className="flex items-center gap-1.5 flex-wrap">
                 {activeBadges
                   ? (() => {
-                      const badgeSlots = Math.max(activeBadges.length, getBadgeSlotCount(levelDef.level));
-                      const slots: React.ReactNode[] = activeBadges
-                        .map((badgeId) => {
-                          const badgeDef = getBadgeDef(badgeId);
-                          const rarity = badgeDef?.rarity ?? 'common';
-                          const rarityColor = getRarityColor(rarity);
-                          return (
-                            <div
-                              key={badgeId}
-                              style={{
-                                borderRadius: 2,
-                                boxShadow: `0 0 8px ${rarityColor}66`,
-                                display: 'inline-flex',
-                              }}
-                            >
-                              <BadgeIcon badgeId={badgeId} size={16} locked={false} rarity={rarity} />
-                            </div>
-                          );
-                        });
-                      for (let i = slots.length; i < badgeSlots; i++) {
-                        slots.push(
-                          <BadgeIcon key={`locked-${i}`} badgeId="badge_joined" size={16} locked={true} />
+                    const badgeSlots = Math.max(activeBadges.length, getBadgeSlotCount(levelDef.level));
+                    const slots: React.ReactNode[] = activeBadges
+                      .map((badgeId) => {
+                        const badgeDef = getBadgeDef(badgeId);
+                        const rarity = badgeDef?.rarity ?? 'common';
+                        const rarityColor = getRarityColor(rarity);
+                        return (
+                          <div
+                            key={badgeId}
+                            style={{
+                              borderRadius: 2,
+                              boxShadow: `0 0 8px ${rarityColor}66`,
+                              display: 'inline-flex',
+                            }}
+                          >
+                            <BadgeIcon badgeId={badgeId} size={16} locked={false} rarity={rarity} />
+                          </div>
                         );
-                      }
-                      return slots;
-                    })()
+                      });
+                    for (let i = slots.length; i < badgeSlots; i++) {
+                      slots.push(
+                        <BadgeIcon key={`locked-${i}`} badgeId="badge_joined" size={16} locked={true} />
+                      );
+                    }
+                    return slots;
+                  })()
                   : badges.map((badge, i) => (
-                      <div
-                        key={i}
-                        className="w-7 h-7 flex items-center justify-center"
-                        title={badge.label}
-                        style={{
-                          border: badge.unlocked
-                            ? "1px solid var(--color-accent-gold)"
-                            : "1px dashed rgba(255,255,255,0.08)",
-                          background: badge.unlocked
-                            ? "rgba(245, 158, 11, 0.08)"
-                            : "transparent",
-                        }}
-                      >
-                        {badge.unlocked ? (
-                          <Check
-                            className="w-2.5 h-2.5 text-[var(--color-accent-gold)]"
-                            aria-hidden="true"
-                          />
-                        ) : (
-                          <X
-                            className="w-2.5 h-2.5 text-[var(--color-text-muted)] opacity-20"
-                            aria-hidden="true"
-                          />
-                        )}
-                      </div>
-                    ))}
+                    <div
+                      key={i}
+                      className="w-7 h-7 flex items-center justify-center"
+                      title={badge.label}
+                      style={{
+                        border: badge.unlocked
+                          ? "1px solid var(--color-accent-gold)"
+                          : "1px dashed rgba(255,255,255,0.08)",
+                        background: badge.unlocked
+                          ? "rgba(245, 158, 11, 0.08)"
+                          : "transparent",
+                      }}
+                    >
+                      {badge.unlocked ? (
+                        <Check
+                          className="w-2.5 h-2.5 text-[var(--color-accent-gold)]"
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <X
+                          className="w-2.5 h-2.5 text-[var(--color-text-muted)] opacity-20"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </div>
+                  ))}
               </div>
             </div>
 
@@ -925,12 +932,21 @@ export default function MemberCard({
                   <div
                     className="absolute inset-0 pointer-events-none z-50 overflow-hidden"
                     aria-hidden="true"
-                    style={{
-                      background:
-                        "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.04) 3px, rgba(255,255,255,0.04) 4px)",
-                      animation: "scanlinesDrift 8s linear infinite",
-                    }}
-                  />
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: -8,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background:
+                          "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.04) 3px, rgba(255,255,255,0.04) 4px)",
+                        animation: "scanlinesDrift 8s linear infinite",
+                        willChange: "transform",
+                      }}
+                    />
+                  </div>
                 )}
 
                 {effectKey === "smoke" && (

@@ -154,7 +154,19 @@
       "Bash(for f:*)",
       "Bash(do echo:*)",
       "Read(//mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/**)",
-      "Bash(npx sharp-cli:*)"
+      "Bash(npx sharp-cli:*)",
+      "Bash(kill 319957 319956)",
+      "Bash(while kill:*)",
+      "Bash(do sleep:*)",
+      "Bash(xargs kill:*)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website -name *gamification* -o -name *leaderboard*)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src/app -type f -path */api/* -name *.ts)",
+      "Bash(mkdir -p /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src/app/api/events/[id]/checkin)",
+      "Bash(mkdir -p /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/src/app/api/admin/events/[id]/checkin-code)",
+      "Bash(npx browserslist:*)",
+      "Bash(npm view:*)",
+      "Bash(find /mnt/c/Users/matin/Desktop/HVA/SIT/Projects/svsit-site/sit-website/node_modules/@react-three/fiber -name *.js -exec grep -l \"core-js\\\\|@babel/runtime/helpers/esm/.*Array\\\\|@babel/runtime/helpers/esm/.*Object\" {})",
+      "Bash(2)"
     ]
   },
   "enableAllProjectMcpServers": true,

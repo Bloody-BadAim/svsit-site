@@ -120,6 +120,7 @@ function RankBadge({ points }: { points: number }) {
 // ─── Main page ─────────────────────────────────────────────────────────────────
 export default function ProfielPage() {
   const { data: session } = useSession()
+  const [displayName, setDisplayName] = useState('')
   const [studentNumber, setStudentNumber] = useState('')
   const [commissieNames, setCommissieNames] = useState<string[]>([])
   const [membershipActive, setMembershipActive] = useState(false)
@@ -141,14 +142,14 @@ export default function ProfielPage() {
       .then((res) => res.json())
       .then(({ data: member }) => {
         if (member) {
+          setDisplayName((member.display_name as string) || '')
           setStudentNumber((member.student_number as string) || '')
           if (member.member_commissies && (member.member_commissies as { commissies: { naam: string } }[]).length > 0) {
             setCommissieNames((member.member_commissies as { commissies: { naam: string } }[]).map((mc) => mc.commissies.naam))
           } else if (member.commissie) {
             setCommissieNames([member.commissie as string])
           }
-          const membershipActive = (member.membership_active as boolean | undefined) ?? (member.stripe_subscription_id != null ? !!member.stripe_subscription_id : true)
-          setMembershipActive(membershipActive)
+          setMembershipActive((member.membership_active as boolean | undefined) ?? true)
           setExpiresAt((member.membership_expires_at as string | null | undefined) ?? null)
           setMemberSince((member.membership_started_at as string | undefined) ?? (member.created_at as string | undefined) ?? null)
           setPoints((member.total_xp as number) || 0)
@@ -168,6 +169,7 @@ export default function ProfielPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         student_number: studentNumber || null,
+        display_name: displayName.trim() || null,
       }),
     })
 
@@ -207,8 +209,8 @@ export default function ProfielPage() {
     setTimeout(() => setPwMessage(''), 4000)
   }
 
-  // ── Character name derived from email ───────────────────────────────────────
-  const username = session?.user?.email?.split('@')[0]?.toUpperCase() || 'USER'
+  // ── Character name derived from display_name or email ──────────────────────
+  const username = (displayName || session?.user?.email?.split('@')[0] || 'USER').toUpperCase()
   const email = session?.user?.email || ''
   const levelDef = getLevelForXp(points)
 
@@ -278,6 +280,14 @@ export default function ProfielPage() {
           <PanelHeader label="character.identity" color="var(--color-accent-gold)" />
 
           <div className="p-5 space-y-5">
+            {/* Display name */}
+            <DarkInput
+              label="character.name"
+              value={displayName}
+              onChange={setDisplayName}
+              placeholder="Hoe wil je dat we je noemen?"
+            />
+
             {/* Email display */}
             <DarkInput
               label="identity.email"

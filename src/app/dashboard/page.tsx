@@ -63,9 +63,9 @@ export default async function DashboardPage({
     // 1. Member data with commissies
     supabase
       .from('members')
-      .select(`id, email, role, total_xp, coins_balance, current_level,
+      .select(`id, email, display_name, role, total_xp, coins_balance, current_level,
         custom_title, accent_color, is_admin, active_skin,
-        leaderboard_visible, commissie,
+        commissie,
         member_commissies ( commissie_id, commissies ( slug, naam ) )`)
       .eq('id', memberId)
       .single(),
@@ -324,7 +324,7 @@ export default async function DashboardPage({
   // -------------------------------------------------------------------------
 
   const activeSkin = cardEquipment.skinId ?? ((member.active_skin as string) || 'default')
-  const username = (member.email as string)?.split('@')[0] || 'lid'
+  const username = (member.display_name as string) || (member.email as string)?.split('@')[0] || 'lid'
 
   // -------------------------------------------------------------------------
   // BadgesTab props — derived from single merged member_badges query

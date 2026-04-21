@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 
+// Faster timing to reduce LCP delay -- overlay must clear within ~1.8s
 const LINES = [
-  { text: '$ npm run sit', delay: 0, speed: 40 },
-  { text: '> compiling bestuur-xi...', delay: 600, speed: 30 },
-  { text: '> loading commissies [7/7]', delay: 1200, speed: 25 },
-  { text: '> injecting events...', delay: 1600, speed: 30 },
-  { text: '> {SIT} build successful', delay: 2200, speed: 20 },
+  { text: '$ npm run sit', delay: 0, speed: 25 },
+  { text: '> compiling bestuur-xi...', delay: 300, speed: 18 },
+  { text: '> loading commissies [7/7]', delay: 550, speed: 15 },
+  { text: '> injecting events...', delay: 750, speed: 18 },
+  { text: '> {SIT} build successful', delay: 1000, speed: 12 },
 ]
 
 export default function CodeCompile({ onComplete }: { onComplete: () => void }) {
@@ -31,11 +32,11 @@ export default function CodeCompile({ onComplete }: { onComplete: () => void }) 
     // Mark as seen immediately so navigating away + back skips it
     sessionStorage.setItem('sit-intro-seen', 'true')
 
-    // Safety timeout: if animation gets stuck, force complete after 8s
+    // Safety timeout: if animation gets stuck, force complete after 4s
     const safetyTimer = setTimeout(() => {
       setVisible(false)
       onComplete()
-    }, 8000)
+    }, 4000)
 
     return () => clearTimeout(safetyTimer)
   }, [onComplete])
@@ -44,24 +45,24 @@ export default function CodeCompile({ onComplete }: { onComplete: () => void }) 
   useEffect(() => {
     if (!visible) return
     if (currentLine >= LINES.length) {
-      // All lines typed, start progress bar
+      // All lines typed, start progress bar (faster: 8% per tick, 20ms interval)
       const progressInterval = setInterval(() => {
         setProgress(prev => {
           if (prev >= 100) {
             clearInterval(progressInterval)
-            // Flash and reveal
+            // Flash and reveal (reduced delays)
             setTimeout(() => {
               setShowFlash(true)
               setTimeout(() => {
                 setVisible(false)
                 onComplete()
-              }, 400)
-            }, 300)
+              }, 250)
+            }, 100)
             return 100
           }
-          return prev + 4
+          return prev + 8
         })
-      }, 30)
+      }, 20)
       return () => clearInterval(progressInterval)
     }
 
@@ -90,7 +91,7 @@ export default function CodeCompile({ onComplete }: { onComplete: () => void }) 
       }, line.speed)
 
       return () => clearInterval(typeTimer)
-    }, currentLine === 0 ? 200 : LINES[currentLine].delay - (LINES[currentLine - 1]?.delay || 0))
+    }, currentLine === 0 ? 100 : LINES[currentLine].delay - (LINES[currentLine - 1]?.delay || 0))
 
     return () => clearTimeout(startTimer)
   }, [visible, currentLine, currentChar, onComplete])
@@ -103,7 +104,7 @@ export default function CodeCompile({ onComplete }: { onComplete: () => void }) 
         className="fixed inset-0 z-[100] flex items-center justify-center"
         style={{ backgroundColor: '#09090B' }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.2 }}
       >
         {/* Scanline overlay */}
         <div
@@ -160,7 +161,7 @@ export default function CodeCompile({ onComplete }: { onComplete: () => void }) 
             className="absolute inset-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: [0, 0.8, 0] }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.25 }}
             style={{ background: 'radial-gradient(circle, rgba(242,158,24,0.3) 0%, transparent 70%)' }}
           />
         )}

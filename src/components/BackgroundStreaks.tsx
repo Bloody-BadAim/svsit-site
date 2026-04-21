@@ -70,65 +70,87 @@ export default function BackgroundStreaks() {
     const isMobile = window.innerWidth < 768;
     if (prefersReducedMotion || isMobile) return;
 
-    const ctx = gsap.context(() => {
-      // ── Scroll-based bend: lines slightly shift on scroll ──
-      if (leftRef.current) {
-        gsap.to(leftRef.current, {
-          skewX: -3,
-          y: -120,
-          ease: "none",
-          scrollTrigger: {
-            trigger: document.body,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 1.5,
-          },
-        });
-      }
+    let ctx: gsap.Context | null = null;
+    let cancelled = false;
 
-      if (rightRef.current) {
-        gsap.to(rightRef.current, {
-          skewX: 2,
-          y: -80,
-          ease: "none",
-          scrollTrigger: {
-            trigger: document.body,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 2,
-          },
-        });
-      }
+    // Defer GSAP/ScrollTrigger setup until after first paint to avoid
+    // layout thrashing from getBoundingClientRect calls during initial render
+    const hasIdleCb = "requestIdleCallback" in window;
+    const idleId: number = hasIdleCb
+      ? window.requestIdleCallback(init)
+      : (setTimeout(init, 1) as unknown as number);
 
-      // ── Data packet animations ──
-      packetsRef.current.forEach((el, i) => {
-        if (!el) return;
-        const packet = packets[i];
+    function init() {
+      if (cancelled) return;
 
-        // Infinite loop: travel from top to bottom along the line
-        gsap.fromTo(
-          el,
-          { y: "-10vh", opacity: 0 },
-          {
-            y: "120vh",
-            opacity: 0,
-            duration: packet.speed,
+      ctx = gsap.context(() => {
+        // ── Scroll-based bend: lines slightly shift on scroll ──
+        if (leftRef.current) {
+          gsap.to(leftRef.current, {
+            skewX: -3,
+            y: -120,
             ease: "none",
-            repeat: -1,
-            delay: packet.delay,
-            keyframes: [
-              { y: "-10vh", opacity: 0 },
-              { y: "10vh", opacity: 0.8 },
-              { y: "50vh", opacity: 1 },
-              { y: "90vh", opacity: 0.6 },
-              { y: "120vh", opacity: 0 },
-            ],
-          }
-        );
-      });
-    }, containerRef);
+            scrollTrigger: {
+              trigger: document.body,
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 1.5,
+            },
+          });
+        }
 
-    return () => ctx.revert();
+        if (rightRef.current) {
+          gsap.to(rightRef.current, {
+            skewX: 2,
+            y: -80,
+            ease: "none",
+            scrollTrigger: {
+              trigger: document.body,
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 2,
+            },
+          });
+        }
+
+        // ── Data packet animations ──
+        packetsRef.current.forEach((el, i) => {
+          if (!el) return;
+          const packet = packets[i];
+
+          // Infinite loop: travel from top to bottom along the line
+          gsap.fromTo(
+            el,
+            { y: "-10vh", opacity: 0 },
+            {
+              y: "120vh",
+              opacity: 0,
+              duration: packet.speed,
+              ease: "none",
+              repeat: -1,
+              delay: packet.delay,
+              keyframes: [
+                { y: "-10vh", opacity: 0 },
+                { y: "10vh", opacity: 0.8 },
+                { y: "50vh", opacity: 1 },
+                { y: "90vh", opacity: 0.6 },
+                { y: "120vh", opacity: 0 },
+              ],
+            }
+          );
+        });
+      }, containerRef);
+    }
+
+    return () => {
+      cancelled = true;
+      if (hasIdleCb) {
+        window.cancelIdleCallback(idleId);
+      } else {
+        clearTimeout(idleId);
+      }
+      ctx?.revert();
+    };
   }, []);
 
   return (
@@ -136,7 +158,7 @@ export default function BackgroundStreaks() {
       ref={containerRef}
       className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
       aria-hidden="true"
-      style={{ contain: "layout style paint", willChange: "transform" }}
+      style={{ contain: "layout style paint" }}
     >
       {/* ── Left bundle: 5 brand-color diagonal lines ── */}
       <div

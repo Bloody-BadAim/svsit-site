@@ -23,7 +23,11 @@ export default function LoginForm() {
     })
 
     if (result?.error) {
-      setError('Onjuist email of wachtwoord')
+      if (result.code === 'rate_limited') {
+        setError('Te veel inlogpogingen. Probeer het over een paar minuten opnieuw.')
+      } else {
+        setError('Onjuist email of wachtwoord')
+      }
       setLoading(false)
     } else {
       router.push('/dashboard')

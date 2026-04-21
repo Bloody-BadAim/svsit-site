@@ -1,73 +1,168 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
 import HoldToJoinButton from "@/components/HoldToJoinButton";
 import MemberCard from "@/components/MemberCard";
 
+const CARD_VARIANTS = [
+  {
+    skin: 'skin_neon_city',
+    frameColor: 'var(--color-accent-gold)',
+    petEmoji: 'pet_robot',
+    effectName: 'Sparkle',
+    accentColor: 'var(--color-accent-gold)',
+    customTitle: 'NEON EXPLORER',
+    role: 'member' as const,
+    commissie: 'GameIT',
+    badges: ['badge_first_event', 'badge_streak_3', 'badge_first_bdfl'],
+  },
+  {
+    skin: 'skin_hologram',
+    frameColor: '#8B5CF6',
+    petEmoji: 'pet_ghost',
+    effectName: 'Hologram',
+    accentColor: '#8B5CF6',
+    customTitle: 'CYBER PIONEER',
+    role: 'contributor' as const,
+    commissie: 'AI4HvA',
+    badges: ['badge_hackathon', 'badge_streak_7', 'badge_mentor'],
+  },
+  {
+    skin: 'skin_aurora',
+    frameColor: '#22C55E',
+    petEmoji: 'pet_slime',
+    effectName: 'Aurora',
+    accentColor: '#22C55E',
+    customTitle: 'GREEN MACHINE',
+    role: 'member' as const,
+    commissie: 'Educatie',
+    badges: ['badge_first_event', 'badge_workshop', 'badge_streak_3'],
+  },
+  {
+    skin: 'skin_plasma',
+    frameColor: '#EF4444',
+    petEmoji: 'pet_flame',
+    effectName: 'Plasma',
+    accentColor: '#EF4444',
+    customTitle: 'CODE BREAKER',
+    role: 'mentor' as const,
+    commissie: 'Fun & Events',
+    badges: ['badge_borrel_5', 'badge_streak_14', 'badge_first_bdfl'],
+  },
+  {
+    skin: 'skin_glitch',
+    frameColor: '#3B82F6',
+    petEmoji: 'pet_cat',
+    effectName: 'Glitch',
+    accentColor: '#3B82F6',
+    customTitle: 'FULL STACK',
+    role: 'contributor' as const,
+    commissie: 'PR & Socials',
+    badges: ['badge_first_event', 'badge_hackathon', 'badge_streak_7'],
+  },
+  {
+    skin: 'skin_frost',
+    frameColor: '#06B6D4',
+    petEmoji: 'pet_penguin',
+    effectName: 'Frost',
+    accentColor: '#06B6D4',
+    customTitle: 'ICE COLD DEV',
+    role: 'member' as const,
+    commissie: 'Sponsoring',
+    badges: ['badge_streak_3', 'badge_first_bdfl', 'badge_borrel_5'],
+  },
+];
+
 export default function JoinCta() {
   const sectionRef = useRef<HTMLElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  // Use a fixed default for SSR to avoid hydration mismatch, then randomize client-side
+  const [variant, setVariant] = useState(CARD_VARIANTS[0]);
+
+  useEffect(() => {
+    setVariant(CARD_VARIANTS[Math.floor(Math.random() * CARD_VARIANTS.length)]);
+  }, []);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
 
-    const ctx = gsap.context(() => {
-      if (prefersReducedMotion) return;
+    let ctx: gsap.Context | null = null;
+    let cancelled = false;
 
-      const sectionTrigger = {
-        trigger: sectionRef.current,
-        start: "top 80%",
-        toggleActions: "play none none none" as const,
-        once: true,
-      };
+    // Defer ScrollTrigger setup until after first paint
+    const hasIdleCb = "requestIdleCallback" in window;
+    const idleId: number = hasIdleCb
+      ? window.requestIdleCallback(initGsap)
+      : (setTimeout(initGsap, 1) as unknown as number);
 
-      // Left column stagger entrance
-      if (leftRef.current) {
-        const els = leftRef.current.querySelectorAll("[data-animate]");
-        gsap.fromTo(
-          Array.from(els),
-          { autoAlpha: 0, y: 24 },
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.7,
-            ease: "power3.out",
-            stagger: 0.1,
-            scrollTrigger: sectionTrigger,
-          }
-        );
+    function initGsap() {
+      if (cancelled) return;
+
+      ctx = gsap.context(() => {
+        const sectionTrigger = {
+          trigger: sectionRef.current,
+          start: "top 80%",
+          toggleActions: "play none none none" as const,
+          once: true,
+        };
+
+        // Left column stagger entrance
+        if (leftRef.current) {
+          const els = leftRef.current.querySelectorAll("[data-animate]");
+          gsap.fromTo(
+            Array.from(els),
+            { autoAlpha: 0, y: 24 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.7,
+              ease: "power3.out",
+              stagger: 0.1,
+              scrollTrigger: sectionTrigger,
+            }
+          );
+        }
+
+        // Card entrance
+        if (cardRef.current) {
+          gsap.fromTo(
+            cardRef.current,
+            { autoAlpha: 0, y: 40, scale: 0.96 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              duration: 1,
+              ease: "power3.out",
+              scrollTrigger: sectionTrigger,
+              delay: 0.2,
+            }
+          );
+        }
+      }, sectionRef);
+    }
+
+    return () => {
+      cancelled = true;
+      if (hasIdleCb) {
+        window.cancelIdleCallback(idleId);
+      } else {
+        clearTimeout(idleId);
       }
-
-      // Card entrance
-      if (cardRef.current) {
-        gsap.fromTo(
-          cardRef.current,
-          { autoAlpha: 0, y: 40, scale: 0.96 },
-          {
-            autoAlpha: 1,
-            y: 0,
-            scale: 1,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: sectionTrigger,
-            delay: 0.2,
-          }
-        );
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
+      ctx?.revert();
+    };
   }, []);
 
   return (
     <section
       ref={sectionRef}
       id="join"
-      className="relative flex items-center overflow-hidden py-20 md:py-24 lg:py-28 px-6 md:px-12 lg:px-24"
+      className="relative flex items-center overflow-hidden py-28 md:py-36 lg:py-44 px-6 md:px-12 lg:px-24"
     >
       {/* Background layers */}
       <div
@@ -123,18 +218,17 @@ export default function JoinCta() {
             {/* Heading */}
             <div data-animate>
               <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight uppercase">
-                Start Je
+                Jouw Squad
                 <br />
-                <span className="text-[var(--color-accent-gold)]">Avontuur</span>
+                <span className="text-[var(--color-accent-gold)]">Wacht</span>
               </h2>
             </div>
 
             {/* Description */}
             <p data-animate className="font-mono text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed mt-6 max-w-lg">
-              Word lid en ontvang je eigen digitale
-              <br />
-              <span className="text-[var(--color-text)]">SIT member card</span>.
-              {" "}Toegang tot alle events, workshops en de community.
+              Events, borrels, hackathons, workshops en een netwerk van{" "}
+              <span className="text-[var(--color-text)]">HBO-ICT studenten</span>{" "}
+              die dezelfde opleiding doorlopen. Van Software Engineering tot Game Dev, iedereen zit hier.
             </p>
 
             {/* Price */}
@@ -156,22 +250,20 @@ export default function JoinCta() {
               className="w-full max-w-[400px]"
               data={{
                 name: 'JOUW NAAM',
-                role: 'member',
-                commissie: 'Jouw commissie',
+                role: variant.role,
+                commissie: variant.commissie,
                 total_xp: 0,
-                skin: 'skin_neon_city',
-                activeBadges: ['badge_first_event', 'badge_streak_3', 'badge_first_bdfl'],
+                skin: variant.skin,
+                activeBadges: variant.badges,
                 dynamicStats: { code: 0, social: 0, learn: 0, impact: 0 },
               }}
               equipment={{
-                frameColor: 'var(--color-accent-gold)',
-                petEmoji: 'pet_robot',
-                effectName: 'Sparkle',
-                accentColor: 'var(--color-accent-gold)',
-                customTitle: 'JOUW TITEL HIER',
-                stickers: [
-                  { id: '1', x: 15, y: 75, emoji: 'SIT' },
-                ],
+                frameColor: variant.frameColor,
+                petEmoji: variant.petEmoji,
+                effectName: variant.effectName,
+                accentColor: variant.accentColor,
+                customTitle: variant.customTitle,
+                stickers: [],
               }}
             >
               <HoldToJoinButton href="/login" />

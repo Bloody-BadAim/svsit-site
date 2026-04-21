@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useToast } from '@/components/Toast'
 import { ROLLEN } from '@/lib/constants'
 import { getLevelForXp } from '@/lib/levelEngine'
 import type { Role, DbCommissie } from '@/types/database'
@@ -8,6 +9,7 @@ import type { Role, DbCommissie } from '@/types/database'
 interface MemberDetail {
   id: string
   email: string
+  display_name: string | null
   student_number: string | null
   role: string
   commissie: string | null
@@ -26,6 +28,7 @@ interface MemberDetailModalProps {
 }
 
 export default function MemberDetailModal({ member, onClose, onUpdate }: MemberDetailModalProps) {
+  const { toast } = useToast()
   const [puntenAantal, setPuntenAantal] = useState('1')
   const [puntenReden, setPuntenReden] = useState('')
   const [rol, setRol] = useState(member.role)
@@ -131,7 +134,9 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
       onUpdate()
     } else {
       const data = await res.json()
-      setMessage(data.error || 'Fout bij wijzigen')
+      const errMsg = data.error || 'Fout bij wijzigen admin status'
+      setMessage(errMsg)
+      toast(errMsg, 'error')
     }
     setSaving(false)
     setTimeout(() => setMessage(''), 3000)
@@ -193,7 +198,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold" style={{ color: 'var(--color-text)' }}>
-                {member.email}
+                {member.display_name || member.email.split('@')[0]}
               </h2>
               {isAdmin && (
                 <span
@@ -204,6 +209,9 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
                 </span>
               )}
             </div>
+            <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+              {member.email}
+            </p>
             <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
               Lid sinds {new Date(member.created_at).toLocaleDateString('nl-NL')}
             </p>

@@ -11,6 +11,7 @@ interface MemberCommissieJoin {
 interface MemberRow {
   id: string
   email: string
+  display_name: string | null
   student_number: string | null
   role: string
   commissie: string | null

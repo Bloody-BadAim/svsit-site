@@ -46,6 +46,17 @@ export default function DashboardNav() {
   const { data: session } = useSession()
   const isAdmin = session?.user?.email && ADMIN_EMAILS.includes(session.user.email)
   const [open, setOpen] = useState(false)
+  const [displayName, setDisplayName] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!session?.user?.id) return
+    fetch(`/api/members/${session.user.id}`)
+      .then((r) => r.json())
+      .then(({ data }) => {
+        if (data?.display_name) setDisplayName(data.display_name as string)
+      })
+      .catch(() => {})
+  }, [session?.user?.id])
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -179,7 +190,7 @@ export default function DashboardNav() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-medium truncate" style={{ color: 'var(--color-text)' }}>
-                {session?.user?.email?.split('@')[0]}
+                {displayName || session?.user?.email?.split('@')[0]}
               </p>
               <p className="text-[10px] truncate" style={{ color: 'var(--color-text-muted)' }}>
                 {session?.user?.email}
