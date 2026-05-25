@@ -14,7 +14,7 @@ ALTER TABLE events ADD COLUMN IF NOT EXISTS recap_published BOOLEAN DEFAULT fals
 -- Keep the oldest event for each title+date combo, delete newer duplicates
 DELETE FROM events
 WHERE id NOT IN (
-  SELECT MIN(id)
+  SELECT MIN(id::text)::uuid
   FROM events
   GROUP BY title, date
 );
