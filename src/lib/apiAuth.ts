@@ -14,7 +14,7 @@ export async function requireAdmin() {
   if (!session?.user) {
     return { error: NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 }) }
   }
-  if (!session.user.isAdmin) {
+  if (!session.user.isAdmin && session.user.role !== 'bestuur') {
     return { error: NextResponse.json({ error: 'Niet geautoriseerd' }, { status: 403 }) }
   }
   return { session }

@@ -27,7 +27,6 @@ const ICON_MAP: Record<string, (props: { size?: number; color?: string }) => Rea
   badge_night_owl: Icons.IconNightOwl,
   badge_mentor: Icons.IconMentor,
   badge_double_xp_day: Icons.IconDoubleXpDay,
-  badge_boss_slayer: Icons.IconBossSlayer,
   badge_max_category: Icons.IconMaxCategory,
   badge_hacker: Icons.IconHacker,
   badge_completionist: Icons.IconCompletionist,

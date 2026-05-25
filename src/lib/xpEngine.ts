@@ -72,23 +72,6 @@ export async function grantXp(params: {
     })
     .eq('id', params.memberId)
 
-  // 5. Update boss fight contribution if active boss exists
-  const { data: activeBoss } = await supabase
-    .from('boss_fights')
-    .select('id')
-    .eq('status', 'active')
-    .limit(1)
-    .maybeSingle()
-
-  // Skip boss contribution for XP that comes from boss rewards or badge unlocks
-  if (activeBoss && params.source !== 'boss_fight' && params.source !== 'badge_unlock') {
-    await supabase.rpc('increment_boss_contribution', {
-      p_boss_id: activeBoss.id,
-      p_member_id: params.memberId,
-      p_amount: params.amount,
-    })
-  }
-
   return {
     newTotalXp,
     newLevel: newLevelDef.level,

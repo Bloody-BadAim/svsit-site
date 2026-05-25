@@ -26,7 +26,6 @@ export const BADGE_DEFS: BadgeDef[] = [
   { id: 'badge_fullstack',        name: 'Full Stack Dev',      description: 'Full Stack Development track afgerond',          rarity: 'epic',      xpBonus: 100, icon: 'badge_fullstack',        category: 'track',       autoGrantRule: null },
   { id: 'badge_ai_engineer',      name: 'AI Engineer',         description: 'AI Engineer track afgerond',                    rarity: 'epic',      xpBonus: 100, icon: 'badge_ai_engineer',      category: 'track',       autoGrantRule: null },
   { id: 'badge_security',         name: 'Security Specialist', description: 'Security track afgerond',                       rarity: 'epic',      xpBonus: 100, icon: 'badge_security',         category: 'track',       autoGrantRule: null },
-  { id: 'badge_boss_slayer',      name: 'Boss Slayer',         description: '3 boss fights gewonnen',                        rarity: 'epic',      xpBonus: 100, icon: 'badge_boss_slayer',      category: 'achievement', autoGrantRule: { type: 'boss_kills', count: 3 } },
   { id: 'badge_max_category',     name: 'Specialist',          description: '500+ XP in 1 categorie',                        rarity: 'epic',      xpBonus: 100, icon: 'badge_max_category',     category: 'achievement', autoGrantRule: null },
   { id: 'badge_hacker',           name: 'Hacker',              description: 'sudo rm -rf / in de verborgen terminal',        rarity: 'epic',      xpBonus: 100, icon: 'badge_hacker',           category: 'easter_egg',  autoGrantRule: null },
   // Legendary

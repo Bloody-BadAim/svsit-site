@@ -33,7 +33,6 @@ export interface DashboardClientProps {
   equipment?: MemberCardEquipment
   memberId: string
   activeSkin: string
-  hasBoss: boolean
   activityItems: ActivityItem[]
   nextUnlock: NextUnlock | null
   xpToday: number
@@ -78,7 +77,7 @@ function DashboardContent(props: DashboardClientProps) {
   const {
     level, levelTitle, tierColor, xpCurrent, xpMax, xpPercent,
     streak, coins, isWelcome,
-    cardData, equipment, memberId, activeSkin, hasBoss,
+    cardData, equipment, memberId, activeSkin,
     activityItems, nextUnlock, xpToday,
     questsTabProps, badgesTabProps,
   } = props
@@ -181,7 +180,6 @@ function DashboardContent(props: DashboardClientProps) {
           equipment={equipment}
           memberId={memberId}
           activeSkin={activeSkin}
-          hasBoss={hasBoss}
           activityItems={activityItems}
           nextUnlock={nextUnlock}
           xpToday={xpToday}

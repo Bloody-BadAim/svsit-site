@@ -87,7 +87,6 @@ const XP_SOURCES_TABLE = [
   { actie: 'Weekly quest',            xp: '10-25',  categorie: 'varies'  },
   { actie: 'Skill track milestone',   xp: '15-50',  categorie: 'varies'  },
   { actie: 'Track completion',        xp: '100',    categorie: 'varies'  },
-  { actie: 'Boss fight bonus',        xp: '20-75',  categorie: 'n/a'     },
   { actie: 'Badge unlock bonus',      xp: '10-500', categorie: 'n/a'     },
 ] as const
 
