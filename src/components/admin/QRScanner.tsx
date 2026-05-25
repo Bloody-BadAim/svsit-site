@@ -24,6 +24,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
   const [reden, setReden] = useState('')
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<MessageType>('success')
+  const [flashName, setFlashName] = useState<string | null>(null)
 
   // --- Detection logic ---
 
@@ -33,6 +34,12 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
     | { kind: 'invalid' }
 
   function detectQRType(raw: string): ParsedQR {
+    // New format: sit:ticket:<id>
+    if (raw.startsWith('sit:ticket:')) {
+      return { kind: 'ticket', id: raw.slice('sit:ticket:'.length) }
+    }
+
+    // Legacy JSON format
     try {
       const parsed = JSON.parse(raw)
       if (parsed.type === 'ticket' && typeof parsed.id === 'string') {
@@ -60,6 +67,9 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
       const { name, event_title } = json.data
       setMessage(`TICKET CHECK-IN [OK] — ${name} voor ${event_title}`)
       setMessageType('success')
+      // Flash green with name
+      setFlashName(name || 'Ingecheckt')
+      setTimeout(() => setFlashName(null), 3000)
       // Store last scan — punten 0 since this is just a check-in
       setLaatsteScan({
         memberId: ticketId,
@@ -216,6 +226,26 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
 
   return (
     <div className="space-y-6">
+
+      {/* Green flash overlay on successful ticket check-in */}
+      {flashName && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+          style={{ animation: 'fadeOut 3s ease-out forwards' }}
+        >
+          <div
+            className="text-center px-12 py-8 rounded-xl"
+            style={{
+              backgroundColor: 'rgba(34, 197, 94, 0.95)',
+              color: '#fff',
+              boxShadow: '0 0 60px rgba(34, 197, 94, 0.5)',
+            }}
+          >
+            <p className="font-mono text-3xl font-bold">{flashName}</p>
+            <p className="font-mono text-sm mt-2 opacity-80 uppercase tracking-widest">Ingecheckt</p>
+          </div>
+        </div>
+      )}
 
       {/* Mode indicator */}
       <div

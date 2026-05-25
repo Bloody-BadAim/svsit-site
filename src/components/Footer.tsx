@@ -5,10 +5,10 @@ import gsap from "gsap";
 import SitLogo from "@/components/SitLogo";
 
 const NAV_LINKS = [
-  { href: "/#about", label: "Over SIT", type: "dir" },
-  { href: "/#events", label: "Events", type: "dir" },
-  { href: "/organisatie", label: "Organisatie", type: "dir" },
-  { href: "/over-ons", label: "Het Bestuur", type: "dir" },
+  { href: "/over-ons", label: "Over Ons", type: "dir" },
+  { href: "/events", label: "Events", type: "dir" },
+  { href: "/projecten", label: "Projecten", type: "dir" },
+  { href: "/vacatures", label: "Vacatures", type: "dir" },
   { href: "/login", label: "Word Lid", type: "file" },
 ];
 
@@ -206,7 +206,11 @@ export default function Footer() {
               {NAV_LINKS.map((link, i) => {
                 const isLast = i === NAV_LINKS.length - 1;
                 const branch = isLast ? "\u2514\u2500\u2500" : "\u251C\u2500\u2500";
-                const icon = link.type === "dir" ? "\uD83D\uDCC1" : "\uD83D\uDCC4";
+                const icon = link.type === "dir" ? (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="inline-block opacity-60"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" /></svg>
+                ) : (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="inline-block opacity-60"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                );
                 return (
                   <a
                     key={link.href}
@@ -214,7 +218,7 @@ export default function Footer() {
                     className="group flex items-center font-mono text-sm text-[#A1A1AA] hover:text-[var(--color-text)] transition-colors duration-200 w-fit py-1"
                   >
                     <span className="text-[#71717A] mr-2 select-none text-xs" aria-hidden="true">{branch}</span>
-                    <span className="mr-2 text-xs select-none" aria-hidden="true">{icon}</span>
+                    <span className="mr-2 select-none" aria-hidden="true">{icon}</span>
                     <span className="group-hover:text-[var(--color-accent-gold)] transition-colors duration-200">
                       {link.label}
                     </span>
@@ -286,6 +290,20 @@ export default function Footer() {
               <span className="text-[#52525B]">&middot;</span>
               <span>Technische Informatica</span>
             </div>
+          </div>
+
+          {/* Partner logos */}
+          <div className="flex items-center gap-6 mb-6">
+            <a href="https://www.hva.nl" target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-70 transition-opacity" aria-label="Hogeschool van Amsterdam">
+              <svg width="60" height="24" viewBox="0 0 120 48" fill="currentColor" className="text-[#A1A1AA]">
+                <text x="0" y="36" fontFamily="var(--font-mono)" fontSize="32" fontWeight="700">HvA</text>
+              </svg>
+            </a>
+            <a href="https://www.femit.nl" target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-70 transition-opacity" aria-label="FEMIT">
+              <svg width="60" height="24" viewBox="0 0 120 48" fill="currentColor" className="text-[#A1A1AA]">
+                <text x="0" y="36" fontFamily="var(--font-mono)" fontSize="28" fontWeight="700">FEMIT</text>
+              </svg>
+            </a>
           </div>
 
           {/* Bottom bar */}

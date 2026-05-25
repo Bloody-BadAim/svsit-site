@@ -80,6 +80,18 @@ export async function GET(req: NextRequest) {
       .delete()
       .lt('expires_at', now.toISOString())
 
+    // ── Deactivate expired memberships ──────────────────────────────────
+
+    const { count: deactivatedCount } = await supabase
+      .from('members')
+      .update({ membership_active: false })
+      .eq('membership_active', true)
+      .lt('membership_expires_at', now.toISOString())
+
+    if (deactivatedCount && deactivatedCount > 0) {
+      console.log(`[weekly-digest] Deactivated ${deactivatedCount} expired memberships`)
+    }
+
     // ── Fetch all data in parallel ────────────────────────────────────────
 
     const [eventsResult, leaderboardResult, newMembersResult, membersResult] = await Promise.all([

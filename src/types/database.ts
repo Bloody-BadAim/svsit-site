@@ -30,6 +30,7 @@ export interface Member {
   display_name: string | null
   password_hash: string | null
   student_number: string | null
+  hva_email: string | null
   role: Role
   /** @deprecated Use member_commissies join table instead -- kept as fallback for members not yet migrated */
   commissie: string | null
@@ -80,6 +81,10 @@ export interface SitEvent {
   capacity: number | null
   stripe_price_id: string | null
   checkin_code: string | null
+  notion_id: string | null
+  recap_description: string | null
+  recap_photos: string[] | null
+  recap_published: boolean
   created_by: string | null
   created_at: string
 }

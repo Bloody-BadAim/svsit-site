@@ -5,10 +5,10 @@ import SitLogo from "@/components/SitLogo";
 import MotionToggle from "@/components/MotionToggle";
 
 const navLinks = [
-  { href: "/#about", label: "Over SIT" },
-  { href: "/#events", label: "Events" },
-  { href: "/organisatie", label: "Organisatie" },
-  { href: "/over-ons", label: "Het Bestuur" },
+  { href: "/over-ons", label: "Over Ons" },
+  { href: "/events", label: "Events" },
+  { href: "/projecten", label: "Projecten" },
+  { href: "/vacatures", label: "Vacatures" },
   { href: "/leaderboard", label: "Leaderboard" },
 ];
 

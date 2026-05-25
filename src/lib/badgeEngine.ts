@@ -46,6 +46,16 @@ export async function equipBadge(memberId: string, badgeId: string, slot: number
 
   const supabase = createServiceClient()
 
+  // Verify ownership
+  const { data: owned } = await supabase
+    .from('member_badges')
+    .select('id')
+    .eq('member_id', memberId)
+    .eq('badge_id', badgeId)
+    .maybeSingle()
+
+  if (!owned) return false
+
   // Unequip anything in this slot
   await supabase
     .from('member_badges')

@@ -21,6 +21,7 @@ interface MemberRow {
   current_level: number
   membership_active: boolean
   membership_started_at: string | null
+  membership_expires_at: string | null
   is_admin: boolean
   created_at: string
   member_commissies?: MemberCommissieJoin[]

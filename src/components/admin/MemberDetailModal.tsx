@@ -17,6 +17,7 @@ interface MemberDetail {
   current_level: number
   membership_active: boolean
   membership_started_at: string | null
+  membership_expires_at: string | null
   is_admin: boolean
   created_at: string
 }
@@ -169,16 +170,21 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
     const expiresAt = new Date()
     expiresAt.setFullYear(expiresAt.getFullYear() + 1)
 
+    const updateBody: Record<string, unknown> = {
+      membership_active: true,
+      membership_expires_at: expiresAt.toISOString(),
+    }
+    if (!member.membership_started_at) {
+      updateBody.membership_started_at = new Date().toISOString()
+    }
+
     const res = await fetch(`/api/members/${member.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        membership_active: true,
-        membership_expires_at: expiresAt.toISOString(),
-      }),
+      body: JSON.stringify(updateBody),
     })
     if (res.ok) {
-      setMessage('Lidmaatschap verlengd')
+      setMessage('Lidmaatschap verlengd tot ' + expiresAt.toLocaleDateString('nl-NL'))
       onUpdate()
     }
     setSaving(false)
@@ -240,6 +246,11 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
             <p className="font-semibold" style={{ color: member.membership_active ? 'var(--color-accent-green)' : 'var(--color-accent-red)' }}>
               {member.membership_active ? 'Actief' : 'Inactief'}
             </p>
+            {member.membership_expires_at && (
+              <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+                Verloopt: {new Date(member.membership_expires_at).toLocaleDateString('nl-NL')}
+              </p>
+            )}
           </div>
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg)' }}>
             <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>Commissies</p>
@@ -407,16 +418,14 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
         )}
 
         {/* Handmatig verlengen */}
-        {!member.membership_active && (
-          <button
-            onClick={handleVerleng}
-            disabled={saving}
-            className="w-full py-2 rounded-lg text-sm font-semibold"
-            style={{ backgroundColor: 'rgba(34, 197, 94, 0.15)', color: 'var(--color-accent-green)', border: '1px solid var(--color-accent-green)' }}
-          >
-            Lidmaatschap handmatig verlengen (1 jaar)
-          </button>
-        )}
+        <button
+          onClick={handleVerleng}
+          disabled={saving}
+          className="w-full py-2 rounded-lg text-sm font-semibold"
+          style={{ backgroundColor: 'rgba(34, 197, 94, 0.15)', color: 'var(--color-accent-green)', border: '1px solid var(--color-accent-green)' }}
+        >
+          {member.membership_active ? 'Lidmaatschap verlengen (+1 jaar)' : 'Lidmaatschap activeren (1 jaar)'}
+        </button>
 
         {/* Delete member */}
         <button

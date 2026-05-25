@@ -19,6 +19,7 @@ export default function RegisterFlow() {
   const [email, setEmail] = useState(session?.user?.email || '')
   const [displayName, setDisplayName] = useState('')
   const [studentNumber, setStudentNumber] = useState('')
+  const [hvaEmail, setHvaEmail] = useState('')
   const [selectedCommissie, setSelectedCommissie] = useState<string | null>(null)
   const [eigenIdee, setEigenIdee] = useState('')
   const [isDocent, setIsDocent] = useState(false)
@@ -40,6 +41,7 @@ export default function RegisterFlow() {
         if (parsed.selectedCommissie !== undefined) setSelectedCommissie(parsed.selectedCommissie)
         if (parsed.eigenIdee) setEigenIdee(parsed.eigenIdee)
         if (parsed.isDocent) setIsDocent(parsed.isDocent)
+        if (parsed.hvaEmail) setHvaEmail(parsed.hvaEmail)
       } catch {}
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,7 +78,8 @@ export default function RegisterFlow() {
           email,
           password: isMicrosoft ? undefined : password,
           display_name: displayName.trim() || null,
-          student_number: studentNumber || null,
+          student_number: studentNumber.trim(),
+          hva_email: hvaEmail.trim() || null,
           role,
           commissie: selectedCommissie === 'eigen-idee' ? null : selectedCommissie,
           commissie_voorstel: selectedCommissie === 'eigen-idee' ? eigenIdee : null,
@@ -189,13 +192,14 @@ export default function RegisterFlow() {
 
             <div>
               <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-                studentnummer <span className="opacity-50">(optioneel)</span>
+                studentnummer
               </label>
               <input
                 type="text"
                 value={studentNumber}
                 onChange={(e) => setStudentNumber(e.target.value)}
-                placeholder="Niet verplicht"
+                required
+                placeholder="bijv. 500123456"
                 className="w-full py-3 px-4 rounded-lg text-base outline-none"
                 style={{
                   backgroundColor: 'var(--color-surface)',
@@ -204,11 +208,32 @@ export default function RegisterFlow() {
                 }}
               />
             </div>
+
+            <div>
+              <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                HvA email <span className="opacity-50">(sterk aangeraden)</span>
+              </label>
+              <input
+                type="email"
+                value={hvaEmail}
+                onChange={(e) => setHvaEmail(e.target.value)}
+                placeholder="voornaam.achternaam@hva.nl"
+                className="w-full py-3 px-4 rounded-lg text-base outline-none"
+                style={{
+                  backgroundColor: 'var(--color-surface)',
+                  color: 'var(--color-text)',
+                  border: '1px solid var(--color-border)',
+                }}
+              />
+              <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)', opacity: 0.6 }}>
+                Niet verplicht, maar helpt ons je te koppelen als HvA student
+              </p>
+            </div>
           </div>
 
           <button
             onClick={() => {
-              if (!email) return
+              if (!email || !studentNumber.trim()) return
               setStep(2)
             }}
             className="w-full py-4 rounded-lg font-semibold text-lg transition-all"
