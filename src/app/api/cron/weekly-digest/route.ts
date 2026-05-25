@@ -80,6 +80,18 @@ export async function GET(req: NextRequest) {
       .delete()
       .lt('expires_at', now.toISOString())
 
+    // ── Deactivate expired memberships ──────────────────────────────────
+
+    const { count: deactivatedCount } = await supabase
+      .from('members')
+      .update({ membership_active: false })
+      .eq('membership_active', true)
+      .lt('membership_expires_at', now.toISOString())
+
+    if (deactivatedCount && deactivatedCount > 0) {
+      console.log(`[weekly-digest] Deactivated ${deactivatedCount} expired memberships`)
+    }
+
     // ── Fetch all data in parallel ────────────────────────────────────────
 
     const [eventsResult, leaderboardResult, newMembersResult, membersResult] = await Promise.all([
@@ -93,11 +105,13 @@ export async function GET(req: NextRequest) {
         .order('date', { ascending: true })
         .limit(10),
 
-      // Top 5 leaderboard
+      // Top 5 leaderboard (exclude admins/bestuur)
       supabase
         .from('members')
         .select('email, display_name, total_xp')
         .eq('membership_active', true)
+        .eq('is_admin', false)
+        .neq('role', 'bestuur')
         .order('total_xp', { ascending: false })
         .limit(5),
 
@@ -122,15 +136,23 @@ export async function GET(req: NextRequest) {
 
     // ── Transform data ────────────────────────────────────────────────────
 
-    const events = (eventsResult.data ?? []).map((e) => {
-      const { date, time } = formatEventDate(e.date)
-      return {
-        title: e.title,
-        date,
-        time,
-        location: e.location ?? '',
-      }
-    })
+    // Deduplicate events by title (handles legacy duplicates before notion_id migration)
+    const seenTitles = new Set<string>()
+    const events = (eventsResult.data ?? [])
+      .filter((e) => {
+        if (seenTitles.has(e.title)) return false
+        seenTitles.add(e.title)
+        return true
+      })
+      .map((e) => {
+        const { date, time } = formatEventDate(e.date)
+        return {
+          title: e.title,
+          date,
+          time,
+          location: e.location ?? '',
+        }
+      })
 
     const leaderboard = (leaderboardResult.data ?? []).map((m, i) => ({
       position: i + 1,

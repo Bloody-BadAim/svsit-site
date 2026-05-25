@@ -22,6 +22,9 @@ interface DbEvent {
   price_members: number
   price_nonmembers: number
   capacity: number | null
+  recap_description: string | null
+  recap_photos: string[] | null
+  recap_published: boolean
   created_at: string
 }
 
@@ -127,6 +130,11 @@ export default function EventsPage() {
   const [checkinCodes, setCheckinCodes] = useState<Record<string, string | null>>({})
   const [checkinLoading, setCheckinLoading] = useState<Record<string, boolean>>({})
 
+  // ── Recap editor state
+  const [recapDesc, setRecapDesc] = useState('')
+  const [recapPhotos, setRecapPhotos] = useState('')
+  const [recapSaving, setRecapSaving] = useState(false)
+
   // ── Fetch all events
   const fetchEvents = useCallback(async () => {
     setEventsLoading(true)
@@ -204,12 +212,38 @@ export default function EventsPage() {
     }
   }
 
+  // ── Save recap
+  async function handleRecapSave(eventId: string, published: boolean) {
+    setRecapSaving(true)
+    try {
+      const photos = recapPhotos.split('\n').map((u) => u.trim()).filter(Boolean)
+      const res = await fetch(`/api/events/${eventId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recap_description: recapDesc || null,
+          recap_photos: photos.length > 0 ? photos : null,
+          recap_published: published,
+        }),
+      })
+      const { error } = await res.json()
+      if (error) throw new Error(error)
+      fetchEvents()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Recap opslaan mislukt')
+    } finally {
+      setRecapSaving(false)
+    }
+  }
+
   // ── Expand/collapse event row
   function handleExpand(event: DbEvent) {
     if (expandedId === event.id) {
       setExpandedId(null)
     } else {
       setExpandedId(event.id)
+      setRecapDesc(event.recap_description || '')
+      setRecapPhotos(event.recap_photos?.join('\n') || '')
       fetchTickets(event.id)
       fetchCheckinCode(event.id)
     }
@@ -814,6 +848,70 @@ export default function EventsPage() {
                           </div>
                         ))}
                       </div>
+
+                      {/* Recap editor (only for completed events) */}
+                      {event.status === 'completed' && (
+                        <div style={{ marginBottom: 16, padding: '12px 16px', backgroundColor: 'rgba(59, 130, 246, 0.04)', border: '1px solid rgba(59, 130, 246, 0.12)' }}>
+                          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-accent-blue)', marginBottom: 8 }}>
+                            Recap
+                            {event.recap_published && (
+                              <span style={{ marginLeft: 8, color: 'var(--color-accent-green)', fontWeight: 400 }}>
+                                (gepubliceerd)
+                              </span>
+                            )}
+                          </p>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                            <div>
+                              <label style={labelStyle}>Beschrijving</label>
+                              <textarea
+                                rows={3}
+                                value={recapDesc}
+                                onChange={(e) => setRecapDesc(e.target.value)}
+                                placeholder="Korte terugblik op het event..."
+                                style={{ ...inputStyle, resize: 'vertical' }}
+                              />
+                            </div>
+                            <div>
+                              <label style={labelStyle}>Foto URLs (1 per regel)</label>
+                              <textarea
+                                rows={3}
+                                value={recapPhotos}
+                                onChange={(e) => setRecapPhotos(e.target.value)}
+                                placeholder="https://example.com/foto1.jpg&#10;https://example.com/foto2.jpg"
+                                style={{ ...inputStyle, resize: 'vertical' }}
+                              />
+                            </div>
+                            <div style={{ display: 'flex', gap: 8 }}>
+                              <button
+                                onClick={() => handleRecapSave(event.id, false)}
+                                disabled={recapSaving}
+                                style={{
+                                  padding: '6px 14px', backgroundColor: 'transparent',
+                                  color: 'var(--color-text-muted)', border: '1px solid var(--color-border)',
+                                  fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
+                                  textTransform: 'uppercase', letterSpacing: '0.06em',
+                                  cursor: recapSaving ? 'not-allowed' : 'pointer',
+                                }}
+                              >
+                                Opslaan (concept)
+                              </button>
+                              <button
+                                onClick={() => handleRecapSave(event.id, true)}
+                                disabled={recapSaving}
+                                style={{
+                                  padding: '6px 14px', backgroundColor: 'var(--color-accent-green)',
+                                  color: 'var(--color-bg)', border: '1px solid var(--color-accent-green)',
+                                  fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
+                                  textTransform: 'uppercase', letterSpacing: '0.06em',
+                                  cursor: recapSaving ? 'not-allowed' : 'pointer',
+                                }}
+                              >
+                                Publiceer recap
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Tickets */}
                       <div>

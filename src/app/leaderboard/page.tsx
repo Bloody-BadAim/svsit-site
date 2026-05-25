@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
+
+export const dynamic = 'force-dynamic'
 import { getLevelForXp } from '@/lib/levelEngine'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'

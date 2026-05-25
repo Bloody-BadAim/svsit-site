@@ -15,7 +15,7 @@ export async function GET(
     const supabase = createServiceClient()
 
     const [eventResult, ticketResult] = await Promise.all([
-      supabase.from('events').select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, created_by, created_at').eq('id', id).single(),
+      supabase.from('events').select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, recap_description, recap_photos, recap_published, created_by, created_at').eq('id', id).single(),
       supabase
         .from('tickets')
         .select('*', { count: 'exact', head: true })
@@ -67,6 +67,9 @@ export async function PATCH(
       'price_members',
       'price_nonmembers',
       'capacity',
+      'recap_description',
+      'recap_photos',
+      'recap_published',
     ] as const
 
     type AllowedField = typeof allowedFields[number]
@@ -83,6 +86,9 @@ export async function PATCH(
       price_members: number
       price_nonmembers: number
       capacity: number | null
+      recap_description: string | null
+      recap_photos: string[] | null
+      recap_published: boolean
     }>
 
     const updateData: UpdatePayload = {}

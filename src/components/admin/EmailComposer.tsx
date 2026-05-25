@@ -41,13 +41,6 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     body: `Er staat weer een vet event op de planning!\n\n[EVENT NAAM]\nDatum: [DATUM]\nLocatie: [LOCATIE]\nTijd: [TIJD]\n\nWat kun je verwachten?\n[KORTE BESCHRIJVING]\n\nMeld je aan via svsit.nl en verdien XP door aanwezig te zijn.\n\nHope to see you there!`,
   },
   {
-    id: 'new_boss',
-    label: 'Boss fight',
-    description: 'Kondig een boss fight aan',
-    subject: 'Boss Fight: [BOSS NAAM] verschijnt!',
-    body: `Een nieuwe boss is verschenen!\n\n[BOSS NAAM]\nHP: [AANTAL] — Deadline: [DATUM]\n\n[BESCHRIJVING]\n\nHoe doe je mee? Gewoon actief zijn! Elke XP die je verdient telt mee als damage. Hoe meer events je bezoekt en challenges je doet, hoe harder je slaat.\n\nAls we de boss samen verslaan krijgt iedereen een bonus reward. De top 3 bijdragers krijgen een exclusive item.\n\nOpen je dashboard op svsit.nl om de health bar live te volgen.`,
-  },
-  {
     id: 'new_challenge',
     label: 'Nieuwe challenge',
     description: 'Kondig een challenge of quest aan',

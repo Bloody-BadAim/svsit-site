@@ -3,6 +3,8 @@ import { createServiceClient } from '@/lib/supabase'
 import { getLevelForXp } from '@/lib/levelEngine'
 import type { Metadata } from 'next'
 
+export const dynamic = 'force-dynamic'
+
 interface Props {
   params: Promise<{ id: string }>
 }

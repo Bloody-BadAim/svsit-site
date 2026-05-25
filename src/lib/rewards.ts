@@ -46,12 +46,38 @@ export async function checkAndGrantAutoBadges(memberId: string): Promise<string[
   const supabase = createServiceClient()
   const granted: string[] = []
 
-  // Get member's scan history
-  const { data: scans } = await supabase
-    .from('scans')
-    .select('event_name, category, created_at')
-    .eq('member_id', memberId)
-    .order('created_at', { ascending: true })
+  // Get member's scan history + profile + purchases in parallel
+  const [scansResult, memberResult, purchasesResult, xpResult, badgesResult] = await Promise.all([
+    supabase
+      .from('scans')
+      .select('event_name, category, created_at')
+      .eq('member_id', memberId)
+      .order('created_at', { ascending: true }),
+    supabase
+      .from('members')
+      .select('display_name, student_number, email, hva_email')
+      .eq('id', memberId)
+      .single(),
+    supabase
+      .from('tickets')
+      .select('id')
+      .eq('member_id', memberId)
+      .limit(1),
+    supabase
+      .from('xp_transactions')
+      .select('amount, created_at')
+      .eq('member_id', memberId),
+    supabase
+      .from('member_badges')
+      .select('badge_id')
+      .eq('member_id', memberId),
+  ])
+
+  const scans = scansResult.data
+  const member = memberResult.data
+  const purchases = purchasesResult.data
+  const xpTxs = xpResult.data
+  const ownedBadges = new Set(badgesResult.data?.map((b) => b.badge_id as string) ?? [])
 
   const scanCount = scans?.length ?? 0
   const borrelCount = scans?.filter((s) =>
@@ -79,13 +105,44 @@ export async function checkAndGrantAutoBadges(memberId: string): Promise<string[
     }
   }
 
-  // Auto-grant checks
+  // Profile complete check
+  const profileComplete = !!(
+    member?.display_name &&
+    member?.student_number &&
+    member?.email
+  )
+
+  // XP in day check (100+ in single day)
+  let hasXpDay = false
+  if (xpTxs && xpTxs.length > 0) {
+    const dailyXp: Record<string, number> = {}
+    for (const tx of xpTxs) {
+      const day = (tx.created_at as string).slice(0, 10)
+      dailyXp[day] = (dailyXp[day] || 0) + (tx.amount as number)
+    }
+    hasXpDay = Object.values(dailyXp).some((total) => total >= 100)
+  }
+
+  // Completionist check (all common-epic badges)
+  const { BADGE_DEFS } = await import('@/lib/badgeDefs')
+  const commonToEpicIds = BADGE_DEFS
+    .filter((b) => ['common', 'uncommon', 'rare', 'epic'].includes(b.rarity))
+    .map((b) => b.id)
+  const hasAllUpToEpic = commonToEpicIds.every((id) => ownedBadges.has(id))
+
+  // Auto-grant checks — scan-based
   if (scanCount >= 1 && await grantBadge(memberId, 'badge_first_event')) granted.push('badge_first_event')
   if (borrelCount >= 5 && await grantBadge(memberId, 'badge_borrel_5')) granted.push('badge_borrel_5')
   if (borrelCount >= 10 && await grantBadge(memberId, 'badge_borrel_10')) granted.push('badge_borrel_10')
   if (allCategories && await grantBadge(memberId, 'badge_allrounder')) granted.push('badge_allrounder')
   if (hasStreak3 && await grantBadge(memberId, 'badge_streak_3')) granted.push('badge_streak_3')
   if (hasStreak7 && await grantBadge(memberId, 'badge_streak_7')) granted.push('badge_streak_7')
+
+  // Auto-grant checks — profile/purchase/xp
+  if (profileComplete && await grantBadge(memberId, 'badge_profile_complete')) granted.push('badge_profile_complete')
+  if (purchases && purchases.length > 0 && await grantBadge(memberId, 'badge_first_purchase')) granted.push('badge_first_purchase')
+  if (hasXpDay && await grantBadge(memberId, 'badge_double_xp_day')) granted.push('badge_double_xp_day')
+  if (hasAllUpToEpic && await grantBadge(memberId, 'badge_completionist')) granted.push('badge_completionist')
 
   return granted
 }

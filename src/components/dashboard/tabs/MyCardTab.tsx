@@ -5,7 +5,6 @@ import { QrCode, Palette, Share2, Download, Lock, ChevronRight, Zap, Target, Che
 import { useToast } from '@/components/Toast'
 import MemberCard from '@/components/MemberCard'
 import type { MemberCardData, MemberCardEquipment } from '@/components/MemberCard'
-import { BossFightWidget } from '@/components/dashboard/BossFightWidget'
 import QRCode from 'react-qr-code'
 
 // ---------------------------------------------------------------------------
@@ -34,7 +33,6 @@ export interface MyCardTabProps {
   equipment?: MemberCardEquipment
   memberId: string
   activeSkin: string
-  hasBoss: boolean
   activityItems: ActivityItem[]
   nextUnlock: NextUnlock | null
   xpToday: number
@@ -304,7 +302,6 @@ export default function MyCardTab({
   equipment,
   memberId,
   activeSkin,
-  hasBoss,
   activityItems,
   nextUnlock,
   xpToday,
@@ -435,12 +432,7 @@ export default function MyCardTab({
         {/* Next unlock teaser */}
         {nextUnlock && <NextUnlockTeaser unlock={nextUnlock} />}
 
-        {/* Boss fight */}
-        {hasBoss && (
-          <div>
-            <BossFightWidget />
-          </div>
-        )}
+
 
         {/* Daily stats */}
         <DailyStats xpToday={xpToday} streak={streak} />

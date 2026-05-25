@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const supabase = createServiceClient()
     let query = supabase
       .from('events')
-      .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, created_by, created_at', { count: 'exact' })
+      .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, recap_description, recap_photos, recap_published, created_by, created_at', { count: 'exact' })
       .order('date', { ascending: true })
 
     if (status) {

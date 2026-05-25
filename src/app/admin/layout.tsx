@@ -10,7 +10,7 @@ export default async function AdminLayout({
 }) {
   const session = await auth()
 
-  if (!session?.user?.isAdmin) {
+  if (!session?.user?.isAdmin && session?.user?.role !== 'bestuur') {
     redirect('/dashboard')
   }
 

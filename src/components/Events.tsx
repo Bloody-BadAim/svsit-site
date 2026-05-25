@@ -86,51 +86,6 @@ const CATEGORY_COLORS: Record<string, string> = {
   Career: BRAND.blue,
 };
 
-const FALLBACK_EVENTS: SitEvent[] = [
-  {
-    id: "kroegentocht",
-    title: "Kroegentocht (SVO)",
-    date: new Date("2026-04-16T20:00:00"),
-    location: "Amsterdam Centrum",
-    time: "20:00",
-    status: "NEXT",
-    type: "SVO gezamenlijk",
-    category: "Social",
-    color: BRAND.gold,
-  },
-  {
-    id: "hackathon",
-    title: "Connectie Code Hackathon",
-    date: new Date("2026-05-10T09:00:00"),
-    location: "AI House Amsterdam",
-    time: "09:00",
-    status: "NEXT",
-    type: "SIT eigen",
-    category: "Code",
-    color: BRAND.green,
-  },
-  {
-    id: "dnd",
-    title: "SIT x MODUS D&D Avond",
-    date: new Date("2026-05-15T18:00:00"),
-    location: "WBH 5e verdieping",
-    time: "18:00",
-    status: "TBA",
-    type: "Samenwerking",
-    category: "Game",
-    color: BRAND.red,
-  },
-  {
-    id: "cern",
-    title: "CERN Lezing",
-    date: new Date("2026-06-05T16:00:00"),
-    location: "HvA Amstelcampus",
-    status: "TBA",
-    type: "Samenwerking",
-    category: "Career",
-    color: BRAND.blue,
-  },
-];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -795,7 +750,8 @@ function NoEventsPlaceholder() {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function Events() {
-  const [events, setEvents] = useState<SitEvent[]>(FALLBACK_EVENTS);
+  const [events, setEvents] = useState<SitEvent[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [inView, setInView] = useState(false);
   const [showDone, setShowDone] = useState(false);
@@ -813,9 +769,8 @@ export default function Events() {
           setEvents(data.map(notionToSitEvent));
         }
       })
-      .catch(() => {
-        // silently keep fallback events
-      });
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   // ── IntersectionObserver for inView ──
@@ -996,7 +951,9 @@ export default function Events() {
             />
           )}
 
-          {featured ? (
+          {loading ? (
+            <div className="h-48 rounded-xl animate-pulse" style={{ backgroundColor: 'var(--color-surface)' }} />
+          ) : featured ? (
             <FeaturedCard event={featured} inView={inView} />
           ) : (
             <NoEventsPlaceholder />

@@ -89,7 +89,6 @@ function unlockLabel(rule: UnlockRule | null, shopPrice: number | null): string 
   if (rule) {
     if (rule.type === 'level') return `Level ${rule.level} nodig`
     if (rule.type === 'badge') return 'Badge nodig'
-    if (rule.type === 'boss') return 'Boss fight reward'
     if (rule.type === 'event') return 'Event reward'
     if (rule.type === 'easter_egg') return 'Easter egg'
   }

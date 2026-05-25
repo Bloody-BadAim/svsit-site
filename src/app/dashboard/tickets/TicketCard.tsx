@@ -1,8 +1,9 @@
 'use client'
 
+import { useRef } from 'react'
 import QRCode from 'react-qr-code'
 import { formatDate } from '@/lib/utils'
-import { MapPin, Calendar, Hash } from 'lucide-react'
+import { MapPin, Calendar, Hash, Download } from 'lucide-react'
 
 interface TicketCardProps {
   ticket: {
@@ -31,10 +32,40 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 
 export function TicketCard({ ticket }: TicketCardProps) {
   const status = STATUS_CONFIG[ticket.status] ?? STATUS_CONFIG.pending
-  const qrData = JSON.stringify({ type: 'ticket', id: ticket.id })
+  const qrData = `sit:ticket:${ticket.id}`
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  function handlePrint() {
+    const el = cardRef.current
+    if (!el) return
+    const w = window.open('', '_blank')
+    if (!w) return
+    w.document.write(`
+      <html><head><title>Ticket - ${ticket.events.title}</title>
+      <style>body{margin:0;padding:40px;font-family:monospace;background:#fff;color:#000}
+      .ticket{max-width:400px;margin:0 auto;border:2px solid #000;padding:24px}
+      .title{font-size:18px;font-weight:bold;margin-bottom:12px}
+      .meta{font-size:12px;margin:4px 0;color:#444}
+      .qr{text-align:center;margin-top:16px;padding-top:16px;border-top:2px dashed #ccc}
+      .qr svg{width:150px;height:150px}
+      .hint{font-size:10px;color:#666;text-align:center;margin-top:8px}
+      @media print{body{padding:20px}}</style></head><body>
+      <div class="ticket">
+        <div class="title">${ticket.events.title}</div>
+        <div class="meta">${formatDate(ticket.events.date)}</div>
+        ${ticket.events.location ? `<div class="meta">${ticket.events.location}</div>` : ''}
+        ${ticket.ticket_number ? `<div class="meta">Ticket: ${ticket.ticket_number}</div>` : ''}
+        <div class="qr">${el.querySelector('.qr-container')?.innerHTML || ''}</div>
+        <div class="hint">Toon dit bij de ingang</div>
+      </div>
+      <script>window.print();window.close();</script></body></html>
+    `)
+    w.document.close()
+  }
 
   return (
     <div
+      ref={cardRef}
       style={{
         backgroundColor: 'var(--color-surface)',
         border: '1px solid var(--color-border)',
@@ -103,7 +134,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
         className="flex flex-col items-center py-5 px-4"
       >
         <div
-          className="p-3"
+          className="p-3 qr-container"
           style={{
             backgroundColor: '#FFFFFF',
           }}
@@ -122,6 +153,20 @@ export function TicketCard({ ticket }: TicketCardProps) {
         >
           Toon dit bij de ingang
         </p>
+        {(ticket.status === 'paid' || ticket.status === 'checked_in') && (
+          <button
+            onClick={handlePrint}
+            className="mt-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider px-3 py-1.5 transition-colors"
+            style={{
+              color: 'var(--color-text-muted)',
+              border: '1px solid var(--color-border)',
+              backgroundColor: 'transparent',
+            }}
+          >
+            <Download size={12} />
+            Download PDF
+          </button>
+        )}
       </div>
     </div>
   )

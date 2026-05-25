@@ -51,19 +51,30 @@ export async function POST(req: NextRequest) {
 
     const supabase = createServiceClient()
 
-    // Dedup: prevent duplicate scan for same member+event within 5 minutes
-    if (event_id || event_name) {
-      const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
-      const dedup = supabase
+    // Dedup: prevent duplicate scan for same member+event
+    if (event_id) {
+      // When event_id is available, only allow 1 scan per member per event (no time window)
+      const { data: existing } = await supabase
         .from('scans')
         .select('id')
         .eq('member_id', member_id)
+        .eq('event_id', event_id)
+        .limit(1)
+
+      if (existing && existing.length > 0) {
+        return NextResponse.json({ error: 'Dit lid is al gescand voor dit event' }, { status: 409 })
+      }
+    } else if (event_name) {
+      // Fallback: time-based dedup for scans without event_id
+      const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
+      const { data: existing } = await supabase
+        .from('scans')
+        .select('id')
+        .eq('member_id', member_id)
+        .eq('event_name', event_name)
         .gte('created_at', fiveMinAgo)
+        .limit(1)
 
-      if (event_id) dedup.eq('event_id', event_id)
-      else if (event_name) dedup.eq('event_name', event_name)
-
-      const { data: existing } = await dedup
       if (existing && existing.length > 0) {
         return NextResponse.json({ error: 'Dit lid is al gescand voor dit event' }, { status: 409 })
       }

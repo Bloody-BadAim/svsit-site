@@ -20,7 +20,7 @@ export interface LevelDef {
 // ---------------------------------------------------------------------------
 
 export type BadgeRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythic'
-export type BadgeCategory = 'achievement' | 'track' | 'easter_egg' | 'boss'
+export type BadgeCategory = 'achievement' | 'track' | 'easter_egg'
 
 export interface BadgeDef {
   id: string
@@ -38,7 +38,6 @@ export type AutoGrantRule =
   | { type: 'borrel_count'; count: number }
   | { type: 'streak'; events: number; days: number }
   | { type: 'all_categories' }
-  | { type: 'boss_kills'; count: number }
   | { type: 'category_xp'; category: StatCategory; amount: number }
   | { type: 'all_badges_up_to'; maxRarity: BadgeRarity }
   | { type: 'profile_complete' }
@@ -80,7 +79,6 @@ export interface AccessoryDef {
 export type UnlockRule =
   | { type: 'level'; level: number }
   | { type: 'badge'; badgeId: string }
-  | { type: 'boss'; bossFightId: string }
   | { type: 'event'; eventId: string }
   | { type: 'easter_egg'; triggerId: string }
 
@@ -90,46 +88,15 @@ export interface MemberAccessory {
   accessoryId: string
   equipped: boolean
   position: { x: number; y: number } | null
-  acquiredVia: 'shop' | 'level_up' | 'boss_fight' | 'event' | 'easter_egg' | 'badge' | 'migration'
+  acquiredVia: 'shop' | 'level_up' | 'event' | 'easter_egg' | 'badge' | 'migration'
   acquiredAt: string
-}
-
-// ---------------------------------------------------------------------------
-// Boss fights
-// ---------------------------------------------------------------------------
-
-export type BossStatus = 'announced' | 'active' | 'defeated' | 'failed'
-
-export interface BossFight {
-  id: string
-  name: string
-  description: string
-  hp: number
-  currentHp: number
-  artworkUrl: string | null
-  status: BossStatus
-  announcedAt: string | null
-  startsAt: string
-  deadline: string
-  baseRewardXp: number
-  baseRewardBadgeId: string | null
-  topRewardAccessoryId: string | null
-  createdAt: string
-}
-
-export interface BossFightContribution {
-  id: string
-  bossFightId: string
-  memberId: string
-  xpContributed: number
-  updatedAt: string
 }
 
 // ---------------------------------------------------------------------------
 // XP system
 // ---------------------------------------------------------------------------
 
-export type XpSource = 'scan' | 'challenge' | 'boss_fight' | 'badge_unlock' | 'track_completion'
+export type XpSource = 'scan' | 'challenge' | 'badge_unlock' | 'track_completion'
 
 export interface XpTransaction {
   id: string

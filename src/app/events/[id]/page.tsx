@@ -3,6 +3,8 @@ import { auth } from '@/lib/auth'
 import type { SitEvent } from '@/types/database'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+
+export const dynamic = 'force-dynamic'
 import { notFound } from 'next/navigation'
 import { Calendar, MapPin, Clock, Users } from 'lucide-react'
 import TicketForm from './TicketForm'

@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation'
 import { getLevelForXp, getLevelProgress, getNextLevel, getTierColor, getBadgeSlotCount } from '@/lib/levelEngine'
 import { calculateStats } from '@/lib/rewards'
 import { getEquippedAccessories } from '@/lib/inventoryEngine'
-import { getActiveBoss } from '@/lib/bossEngine'
 import { CARD_SKINS } from '@/lib/cardSkins'
 import { RARITY_CONFIG } from '@/types/gamification'
 import type { BadgeRarity } from '@/types/gamification'
@@ -49,7 +48,6 @@ export default async function DashboardPage({
   const [
     memberResult,
     memberStats,
-    activeBoss,
     scansResult,
     activeChallengesResult,
     memberBadgesResult,
@@ -73,10 +71,7 @@ export default async function DashboardPage({
     // 2. Stats
     calculateStats(memberId, isAdmin),
 
-    // 3. Active boss
-    getActiveBoss(),
-
-    // 4. Recent scans (last 10)
+    // 3. Recent scans (last 10)
     supabase
       .from('scans')
       .select('id, points, reason, event_name, category, created_at')
@@ -422,7 +417,6 @@ export default async function DashboardPage({
       equipment={equipmentProp}
       memberId={memberId}
       activeSkin={activeSkin}
-      hasBoss={!!activeBoss}
       activityItems={activityItems}
       nextUnlock={nextUnlock}
       xpToday={xpToday}
