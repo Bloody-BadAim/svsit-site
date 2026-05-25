@@ -28,12 +28,20 @@ const CATEGORY_FILTERS = [
 export default function ProjectenPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState('all')
 
   useEffect(() => {
     fetch('/api/projecten')
       .then((r) => r.json())
-      .then(({ data }) => setProjects(data || []))
+      .then((res) => {
+        if (res.error) {
+          setError(res.error)
+        } else {
+          setProjects(res.data || [])
+        }
+      })
+      .catch(() => setError('Kon projecten niet laden'))
       .finally(() => setLoading(false))
   }, [])
 
@@ -77,7 +85,23 @@ export default function ProjectenPage() {
 
       {/* Projects grid */}
       <div className="max-w-[1200px] mx-auto">
-        {loading ? (
+        {error ? (
+          <div
+            className="py-16 text-center rounded-lg"
+            style={{ border: '1px solid rgba(239, 68, 68, 0.3)', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}
+          >
+            <p className="font-mono text-sm mb-3" style={{ color: 'var(--color-accent-red)' }}>
+              {error}
+            </p>
+            <button
+              onClick={() => { setError(null); setLoading(true); fetch('/api/projecten').then(r => r.json()).then(res => { if (res.error) setError(res.error); else setProjects(res.data || []); }).catch(() => setError('Kon projecten niet laden')).finally(() => setLoading(false)); }}
+              className="font-mono text-xs px-4 py-2 rounded-md"
+              style={{ color: 'var(--color-text-muted)', border: '1px solid var(--color-border)' }}
+            >
+              Probeer opnieuw
+            </button>
+          </div>
+        ) : loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="h-48 rounded-lg animate-pulse" style={{ backgroundColor: 'var(--color-surface)' }} />

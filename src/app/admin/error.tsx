@@ -18,7 +18,9 @@ export default function AdminError({
         Er ging iets mis
       </h2>
       <p className="mb-6 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-        {error.message || 'Onbekende fout'}
+        {error.message?.toLowerCase().includes('supabase')
+          ? 'Service is tijdelijk niet beschikbaar'
+          : error.message || 'Onbekende fout'}
       </p>
       <button
         onClick={reset}

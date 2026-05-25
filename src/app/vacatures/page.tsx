@@ -37,12 +37,20 @@ const TYPE_COLORS: Record<string, string> = {
 export default function VacaturesPage() {
   const [vacatures, setVacatures] = useState<Vacature[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState('all')
 
   useEffect(() => {
     fetch('/api/vacatures')
       .then((r) => r.json())
-      .then(({ data }) => setVacatures(data || []))
+      .then((res) => {
+        if (res.error) {
+          setError(res.error)
+        } else {
+          setVacatures(res.data || [])
+        }
+      })
+      .catch(() => setError('Kon vacatures niet laden'))
       .finally(() => setLoading(false))
   }, [])
 
@@ -86,7 +94,23 @@ export default function VacaturesPage() {
 
       {/* Vacatures list */}
       <div className="max-w-[1200px] mx-auto">
-        {loading ? (
+        {error ? (
+          <div
+            className="py-16 text-center rounded-lg"
+            style={{ border: '1px solid rgba(239, 68, 68, 0.3)', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}
+          >
+            <p className="font-mono text-sm mb-3" style={{ color: 'var(--color-accent-red)' }}>
+              {error}
+            </p>
+            <button
+              onClick={() => { setError(null); setLoading(true); fetch('/api/vacatures').then(r => r.json()).then(res => { if (res.error) setError(res.error); else setVacatures(res.data || []); }).catch(() => setError('Kon vacatures niet laden')).finally(() => setLoading(false)); }}
+              className="font-mono text-xs px-4 py-2 rounded-md"
+              style={{ color: 'var(--color-text-muted)', border: '1px solid var(--color-border)' }}
+            >
+              Probeer opnieuw
+            </button>
+          </div>
+        ) : loading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="h-28 rounded-lg animate-pulse" style={{ backgroundColor: 'var(--color-surface)' }} />
