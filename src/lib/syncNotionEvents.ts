@@ -40,7 +40,8 @@ export interface SyncResult {
 
 /**
  * Fetches events from Notion and upserts them into the Supabase events table.
- * Uses title + date as the unique key to avoid duplicates.
+ * Uses notion_id (Notion page ID) as the unique key to prevent duplicates.
+ * Falls back to title + date matching for events without notion_id set.
  */
 export async function syncNotionEventsToSupabase(): Promise<SyncResult> {
   const notionEvents = await getNotionEvents()
@@ -67,32 +68,50 @@ export async function syncNotionEventsToSupabase(): Promise<SyncResult> {
       category: CATEGORY_MAP[event.category] || 'social',
       status: mapStatus(event.status),
       tags: [event.type, event.category].filter(Boolean) as string[],
+      notion_id: event.id,
     }
 
-    // Try to find an existing event with the same title and date
-    const { data: existing } = await supabase
+    // Primary: match on notion_id (unique, prevents duplicates on title/date changes)
+    const { data: existingByNotionId } = await supabase
       .from('events')
       .select('id')
-      .eq('title', supabaseEvent.title)
-      .eq('date', supabaseEvent.date)
+      .eq('notion_id', event.id)
       .limit(1)
-      .single()
+      .maybeSingle()
 
     let error: { message: string } | null = null
 
-    if (existing) {
-      // Update existing event
+    if (existingByNotionId) {
+      // Update existing event matched by notion_id
       const result = await supabase
         .from('events')
         .update(supabaseEvent)
-        .eq('id', existing.id)
+        .eq('id', existingByNotionId.id)
       error = result.error
     } else {
-      // Insert new event
-      const result = await supabase
+      // Fallback: check by title + date (for legacy events without notion_id)
+      const { data: existingByTitle } = await supabase
         .from('events')
-        .insert(supabaseEvent)
-      error = result.error
+        .select('id')
+        .eq('title', supabaseEvent.title)
+        .eq('date', supabaseEvent.date)
+        .limit(1)
+        .maybeSingle()
+
+      if (existingByTitle) {
+        // Update legacy event and set notion_id
+        const result = await supabase
+          .from('events')
+          .update(supabaseEvent)
+          .eq('id', existingByTitle.id)
+        error = result.error
+      } else {
+        // Insert new event
+        const result = await supabase
+          .from('events')
+          .insert(supabaseEvent)
+        error = result.error
+      }
     }
 
     if (error) {
