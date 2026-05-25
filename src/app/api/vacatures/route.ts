@@ -3,15 +3,22 @@ import { auth } from '@/lib/auth'
 import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 
-// GET — Alle actieve vacatures (publiek)
-export async function GET() {
+// GET — Vacatures (publiek: alleen actieve, admin: alle met ?all=true)
+export async function GET(req: NextRequest) {
   try {
+    const showAll = req.nextUrl.searchParams.get('all') === 'true'
     const supabase = createServiceClient()
-    const { data, error } = await supabase
+
+    let query = supabase
       .from('vacatures')
       .select('*')
-      .eq('active', true)
       .order('created_at', { ascending: false })
+
+    if (!showAll) {
+      query = query.eq('active', true)
+    }
+
+    const { data, error } = await query
 
     if (error) throw error
     return NextResponse.json({ data, error: null, meta: null })

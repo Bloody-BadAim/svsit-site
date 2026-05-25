@@ -1,7 +1,6 @@
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
-import { ADMIN_EMAILS } from '@/lib/constants'
 import StatsOverview from '@/components/admin/StatsOverview'
 
 export const metadata = {
@@ -10,7 +9,7 @@ export const metadata = {
 
 export default async function AdminPage() {
   const session = await auth()
-  if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
+  if (!session?.user?.isAdmin && session?.user?.role !== 'bestuur') {
     redirect('/dashboard')
   }
 

@@ -4,6 +4,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Calendar, MapPin, Users } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Events — {SIT}',
   description: 'Bekijk alle aankomende events van SIT, de studievereniging voor HBO-ICT aan de HvA.',

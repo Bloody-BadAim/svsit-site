@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
-import { ADMIN_EMAILS } from '@/lib/constants'
 
 export async function GET(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: Promise<{ memberId: string }> }
 ) {
   try {
@@ -15,7 +14,7 @@ export async function GET(
     }
 
     const { memberId } = await params
-    const isAdmin = ADMIN_EMAILS.includes(session.user.email ?? '')
+    const isAdmin = session.user.isAdmin || session.user.role === 'bestuur'
     const isOwn = session.user.id === memberId
 
     if (!isAdmin && !isOwn) {

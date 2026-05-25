@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { useState, useEffect } from 'react'
-import { ADMIN_EMAILS } from '@/lib/constants'
 import { LayoutDashboard, User, Shield, LogOut, Menu, X, ShoppingBag, Coins, Ticket } from 'lucide-react'
 
 function CoinPill({ userId, isAdmin }: { userId: string; isAdmin: boolean }) {
@@ -44,7 +43,7 @@ const NAV_ITEMS = [
 export default function DashboardNav() {
   const pathname = usePathname()
   const { data: session } = useSession()
-  const isAdmin = session?.user?.email && ADMIN_EMAILS.includes(session.user.email)
+  const isAdmin = session?.user?.isAdmin || session?.user?.role === 'bestuur'
   const [open, setOpen] = useState(false)
   const [displayName, setDisplayName] = useState<string | null>(null)
 
