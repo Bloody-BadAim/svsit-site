@@ -1,9 +1,9 @@
 'use client'
 
-import { useRef } from 'react'
+import { useState } from 'react'
 import QRCode from 'react-qr-code'
 import { formatDate } from '@/lib/utils'
-import { MapPin, Calendar, Hash, Download } from 'lucide-react'
+import { MapPin, Calendar, Hash, Download, Loader2 } from 'lucide-react'
 
 interface TicketCardProps {
   ticket: {
@@ -32,40 +32,30 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 
 export function TicketCard({ ticket }: TicketCardProps) {
   const status = STATUS_CONFIG[ticket.status] ?? STATUS_CONFIG.pending
-  const qrData = `sit:ticket:${ticket.id}`
-  const cardRef = useRef<HTMLDivElement>(null)
+  const qrData = JSON.stringify({ type: 'ticket', id: ticket.id })
+  const [downloading, setDownloading] = useState(false)
 
-  function handlePrint() {
-    const el = cardRef.current
-    if (!el) return
-    const w = window.open('', '_blank')
-    if (!w) return
-    w.document.write(`
-      <html><head><title>Ticket - ${ticket.events.title}</title>
-      <style>body{margin:0;padding:40px;font-family:monospace;background:#fff;color:#000}
-      .ticket{max-width:400px;margin:0 auto;border:2px solid #000;padding:24px}
-      .title{font-size:18px;font-weight:bold;margin-bottom:12px}
-      .meta{font-size:12px;margin:4px 0;color:#444}
-      .qr{text-align:center;margin-top:16px;padding-top:16px;border-top:2px dashed #ccc}
-      .qr svg{width:150px;height:150px}
-      .hint{font-size:10px;color:#666;text-align:center;margin-top:8px}
-      @media print{body{padding:20px}}</style></head><body>
-      <div class="ticket">
-        <div class="title">${ticket.events.title}</div>
-        <div class="meta">${formatDate(ticket.events.date)}</div>
-        ${ticket.events.location ? `<div class="meta">${ticket.events.location}</div>` : ''}
-        ${ticket.ticket_number ? `<div class="meta">Ticket: ${ticket.ticket_number}</div>` : ''}
-        <div class="qr">${el.querySelector('.qr-container')?.innerHTML || ''}</div>
-        <div class="hint">Toon dit bij de ingang</div>
-      </div>
-      <script>window.print();window.close();</script></body></html>
-    `)
-    w.document.close()
+  async function handleDownload() {
+    setDownloading(true)
+    try {
+      const res = await fetch(`/api/tickets/${ticket.id}/pdf`)
+      if (!res.ok) throw new Error('Download mislukt')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `SIT-Ticket-${ticket.ticket_number?.replace('#', '') ?? ticket.id.slice(0, 8)}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      alert('PDF downloaden mislukt. Probeer het opnieuw.')
+    } finally {
+      setDownloading(false)
+    }
   }
 
   return (
     <div
-      ref={cardRef}
       style={{
         backgroundColor: 'var(--color-surface)',
         border: '1px solid var(--color-border)',
@@ -155,16 +145,17 @@ export function TicketCard({ ticket }: TicketCardProps) {
         </p>
         {(ticket.status === 'paid' || ticket.status === 'checked_in') && (
           <button
-            onClick={handlePrint}
-            className="mt-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider px-3 py-1.5 transition-colors"
+            onClick={handleDownload}
+            disabled={downloading}
+            className="mt-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider px-3 py-1.5 transition-colors disabled:opacity-50"
             style={{
               color: 'var(--color-text-muted)',
               border: '1px solid var(--color-border)',
               backgroundColor: 'transparent',
             }}
           >
-            <Download size={12} />
-            Download PDF
+            {downloading ? <Loader2 size={12} className="animate-spin" /> : <Download size={12} />}
+            {downloading ? 'Downloaden...' : 'Download PDF'}
           </button>
         )}
       </div>

@@ -1,54 +1,82 @@
-# Handoff — SIT Website — 2026-05-26 (sessie 3)
+# Handoff — SIT Website — 2026-05-26 (sessie 4)
 
-## Status: MIGRATIES COMPLEET
-- Alle 6 migraties succesvol gedraaid op productie Supabase
-- Data integriteit geverifieerd
-- Branch: `feature/website-overhaul` (5 commits, niet gepusht)
+## Status: MERGED + BUGFIXES GEPUSHT
+- Branch `feature/website-overhaul` gemerged naar main via PR #5
+- 3 bugfixes gecommit en gepusht (e59ac18)
+- Alle 14 migraties draaien op productie
+- 10 duplicate events geannuleerd in DB
+- Past events gemarkeerd als completed
 
-## Migratie resultaten
+## Wat deze sessie gedaan
+1. Alle 6 nieuwe migraties op productie gedraaid (via Management API curl)
+2. Post-migratie verificatie: 20 tabellen, 94 members, 38 events, 4 bestuur
+3. Branch gepusht, PR aangemaakt en gemerged
+4. CRLF phantom diffs permanent opgelost (.gitattributes)
+5. **Bug: Navbar ontbrak** op /projecten en /vacatures — opgelost
+6. **Bug: Events ruis** — duplicates geannuleerd, past events -> completed, query filter toegevoegd
+7. **Bug: Events layout** — handmatige back-link/logo vervangen door Navbar
 
-| # | Migratie | Status |
-|---|---|---|
-| 1 | remove-boss-fights | DONE — tabellen, functies, constraints verwijderd |
-| 2 | events-notion-id | DONE — 4 kolommen toegevoegd, geen duplicates gevonden |
-| 3 | membership-hva | DONE — hva_email kolom + ticket uniqueness constraint |
-| 4 | align-admin-bestuur | DONE — 4 bestuurders aligned met is_admin |
-| 5 | projecten | DONE — tabel aangemaakt (0 rijen) |
-| 6 | vacatures | DONE — tabel aangemaakt (0 rijen) |
-
-## Database staat na migraties
-
+## Database staat
 | Metric | Waarde |
 |---|---|
-| Tabellen | 20 (was 20: -2 boss fights, +2 projects/vacatures) |
+| Tabellen | 20 |
 | Members | 94 |
-| Events | 38 |
-| Bestuur | 4 (allen is_admin = true) |
-| Commissies | 6 (Fun&Events: 5, GameIT/Sponsoring/Educatie/AI4HvA: 4, PR&Socials: 3) |
-| Top XP | Matin: 14.135 XP, 30 badges, lvl 12 |
-| Tickets | 0 (lege tabel) |
-| Projects | 0 (nieuwe tabel) |
-| Vacatures | 0 (nieuwe tabel) |
+| Events | 38 (7 upcoming, rest completed/cancelled) |
+| Bestuur | 4 (allen is_admin=true) |
+| Commissies | 6 |
+| Tickets | 0 |
+| Projects | 0 |
+| Vacatures | 0 |
 
-## Opmerkingen
-- UUID MIN() werkt niet in PostgreSQL — migratie 02 gefixed met `MIN(id::text)::uuid` cast
-- Near-duplicate events bestaan (bijv. 3x Bootfeest varianten, 2x AI hackathon) — worden opgelost door toekomstige Notion sync via notion_id
-- Events.tsx is 277 regels (niet 1064 zoals in plan) — al goed gestructureerd, refactor overgeslagen
-- Supabase MCP was niet beschikbaar, Management API via curl gebruikt als fallback
+## Upcoming events (na cleanup)
+- Boardgame middag (29 mei 14:00)
+- AI & Menselijk Contact (3 jun 11:00)
+- CERN Lecture & Lunch (5 jun 12:00)
+- Eindfeest Thuishaven (26 jun 17:00)
+- AI hackathon (7 jul 07:00)
 
-## Volgende stappen
-- [ ] Push branch naar remote
-- [ ] Near-duplicate events opschonen in Notion (bron van waarheid)
-- [ ] Notion sync implementeren (notion_id koppeling)
-- [ ] Event recaps feature bouwen (recap_description, recap_photos, recap_published)
-- [ ] Projects en vacatures vullen met data
-- [ ] Commissie pagina's bouwen
-- [ ] Introweek landing page
-- [ ] Registratie flow versimpelen (4 stappen + 10 euro upfront = drempel)
-- [ ] PDF ticket generatie (T043)
+## Volgende stappen (geprioriteerd)
+
+### 1. PDF ticket met SIT branding (T043)
+- Huidige "Download PDF" is `window.open()` + `window.print()` — kale HTML
+- Moet: echte PDF met SIT dark branding, QR code, Big Shoulders Display, gold accents
+- Bestaande referentie: `src/emails/ticketEmail.tsx` (React Email template, zelfde stijl)
+- QR data format inconsistentie: email stuurt `{"type":"ticket","id":"..."}`, dashboard gebruikt `sit:ticket:{id}` — moet geunificeerd
+- Geen PDF library geinstalleerd. Opties: `@react-pdf/renderer` of `jspdf`
+- API route nodig: `/api/tickets/[id]/pdf`
+
+### 2. Commissie pagina's
+- 7 commissies in DB, geen enkele heeft een publieke pagina
+- Nodig: /commissies overview + /commissie/[slug] detail
+- Data: commissies tabel + member_commissies koppeltabel bestaan al
+
+### 3. Event recaps met foto's
+- DB kolommen bestaan: recap_description, recap_photos, recap_published
+- Admin recap editor al gebouwd in /admin/events
+- Frontend ontbreekt: recap sectie op /events/[id] pagina
+
+### 4. Introweek landing page
+- 728 eerstejaars op 31 aug - 4 sep
+- 3 onderdelen: SIT Hub (hele week stand), Survival Quest (di 1 sep), Aloha Amsterdam (do 3 sep)
+- Doel: conversie naar leden
+
+### 5. Registratie drempel verlagen
+- Nu: 4 stappen + 10 euro upfront
+- Moet: freemium/trial optie of betaal-later
+- KRITIEK voor introweek conversie
+
+### 6. Dashboard rebalancen
+- XP/coins/badges te prominent
+- Events + commissie moeten primair worden
+
+## Bekende inconsistenties
+- **Gold kleur**: CSS `#F59E0B` (Tailwind amber-500) vs Figma brand kit `#F29E18`
+- **QR data format**: email JSON vs dashboard `sit:ticket:` prefix
+- **Zomerfeest SVO** (29 mei): staat als upcoming maar SIT betrokkenheid onduidelijk
 
 ## Key context
 - Supabase project ref: plgcqkbfvzwkqzkggmfh
 - Geen staging, direct op productie
-- Build passing (57 pages)
-- .env.local bevat alleen AUTH_SECRET
+- Build passing
+- Repo: Bloody-BadAim/svsit-site (private)
+- Supabase MCP beschikbaar (maar soms fallback naar Management API curl nodig)

@@ -3,6 +3,7 @@ import QRCode from 'qrcode'
 import { render } from '@react-email/components'
 import TicketEmail from '@/emails/ticketEmail'
 import PasswordResetEmail from '@/emails/passwordResetEmail'
+import { generateTicketPdf } from '@/lib/pdfTicket'
 
 // ── Gmail SMTP transport (all outbound email) ──
 
@@ -101,13 +102,40 @@ export async function sendTicketEmail(params: SendTicketParams) {
     qrCodeDataUrl,
   }))
 
+  // Generate PDF ticket attachment
+  let pdfBuffer: Buffer | null = null
+  try {
+    pdfBuffer = await generateTicketPdf({
+      eventTitle: params.eventTitle,
+      eventDate: dateStr,
+      eventTime: timeStr,
+      eventLocation: params.eventLocation || 'TBA',
+      buyerName: params.buyerName || params.buyerEmail.split('@')[0],
+      ticketNumber: params.ticketNumber,
+      ticketId: params.ticketId,
+      price: priceStr,
+      isMember: params.isMember,
+    })
+  } catch (pdfErr) {
+    console.error('[email] PDF generation failed, sending email without attachment:', pdfErr)
+  }
+
   // Send via Gmail SMTP
   const transporter = getSmtpTransporter()
+  const filename = `SIT-Ticket-${params.ticketNumber.replace('#', '')}.pdf`
+
   await transporter.sendMail({
     from: process.env.SMTP_FROM || 'SIT <matin.khajehfard@svsit.nl>',
     to: params.to,
     subject: `Je ticket voor ${params.eventTitle} — {SIT}`,
     html,
+    ...(pdfBuffer ? {
+      attachments: [{
+        filename,
+        content: pdfBuffer,
+        contentType: 'application/pdf',
+      }],
+    } : {}),
   })
 }
 
