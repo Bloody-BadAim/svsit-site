@@ -89,12 +89,15 @@ export async function syncNotionEventsToSupabase(): Promise<SyncResult> {
         .eq('id', existingByNotionId.id)
       error = result.error
     } else {
-      // Fallback: check by title + date (for legacy events without notion_id)
+      // Fallback: check by title + same day (for legacy events without notion_id)
+      // Legacy events may have a different time-of-day, so match on date only
+      const dateOnly = supabaseEvent.date.slice(0, 10) // "YYYY-MM-DD"
       const { data: existingByTitle } = await supabase
         .from('events')
         .select('id')
         .eq('title', supabaseEvent.title)
-        .eq('date', supabaseEvent.date)
+        .gte('date', `${dateOnly}T00:00:00`)
+        .lt('date', `${dateOnly}T23:59:59.999`)
         .limit(1)
         .maybeSingle()
 
