@@ -6,6 +6,7 @@ import MotionToggle from "@/components/MotionToggle";
 
 const navLinks = [
   { href: "/over-ons", label: "Over Ons" },
+  { href: "/commissies", label: "Commissies" },
   { href: "/events", label: "Events" },
   { href: "/projecten", label: "Projecten" },
   { href: "/vacatures", label: "Vacatures" },

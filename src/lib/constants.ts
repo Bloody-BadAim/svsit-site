@@ -11,12 +11,14 @@ export interface CommissieOption {
 export type Commissie = CommissieOption
 
 export const COMMISSIES: CommissieOption[] = [
-  { id: 'gameit', naam: 'GameIT', beschrijving: 'Game nights, toernooien, en game dev showcases' },
+  { id: 'servo', naam: 'ServCo', beschrijving: 'Server beheer, svsit.nl, technische projecten' },
+  { id: 'community', naam: 'Community', beschrijving: 'Socials, peilingen, onboarding, leden activeren' },
+  { id: 'educo', naam: 'Educatie (EduCo)', beschrijving: 'Workshops, lezingen, en skill development' },
+  { id: 'events', naam: 'Evenementen', beschrijving: 'Borrels, feesten, uitjes, en grote events organiseren' },
   { id: 'ai4hva', naam: 'AI4HvA', beschrijving: 'AI workshops, hackathons, en de AI community' },
-  { id: 'pr-socials', naam: 'PR & Socials', beschrijving: 'Content maken, socials beheren, SIT zichtbaar maken' },
-  { id: 'fun-events', naam: 'Fun & Events', beschrijving: 'Borrels, kroegentochten, en grote events organiseren' },
-  { id: 'educatie', naam: 'Educatie', beschrijving: 'Workshops, lezingen, en skill development' },
+  { id: 'gameit', naam: 'GameIT', beschrijving: 'Game nights, toernooien, en game dev showcases' },
   { id: 'sponsoring', naam: 'Sponsoring', beschrijving: 'Bedrijven benaderen, partnerships opzetten' },
+  { id: 'witboeken', naam: 'Witboeken', beschrijving: 'Beleidsdocumenten en werkwijzen vastleggen' },
 ]
 
 export const ROLLEN: Record<Role, { naam: string; beschrijving: string }> = {
