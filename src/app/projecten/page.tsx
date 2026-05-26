@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { ExternalLink, Github, Star } from 'lucide-react'
+import Navbar from '@/components/Navbar'
 
 interface Project {
   id: string
@@ -48,6 +49,8 @@ export default function ProjectenPage() {
   const filtered = filter === 'all' ? projects : projects.filter((p) => p.category === filter)
 
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen pt-28 pb-20 px-6 md:px-12 lg:px-24" style={{ backgroundColor: 'var(--color-bg)' }}>
       {/* Header */}
       <div className="max-w-[1200px] mx-auto mb-12">
@@ -200,5 +203,6 @@ export default function ProjectenPage() {
         )}
       </div>
     </main>
+    </>
   )
 }

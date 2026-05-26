@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { MapPin, Clock, ExternalLink, Briefcase } from 'lucide-react'
+import Navbar from '@/components/Navbar'
 
 interface Vacature {
   id: string
@@ -57,6 +58,8 @@ export default function VacaturesPage() {
   const filtered = filter === 'all' ? vacatures : vacatures.filter((v) => v.type === filter)
 
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen pt-28 pb-20 px-6 md:px-12 lg:px-24" style={{ backgroundColor: 'var(--color-bg)' }}>
       {/* Header */}
       <div className="max-w-[1200px] mx-auto mb-12">
@@ -211,5 +214,6 @@ export default function VacaturesPage() {
         )}
       </div>
     </main>
+    </>
   )
 }

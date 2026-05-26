@@ -3,6 +3,7 @@ import type { SitEvent } from '@/types/database'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Calendar, MapPin, Users } from 'lucide-react'
+import Navbar from '@/components/Navbar'
 
 export const dynamic = 'force-dynamic'
 
@@ -191,13 +192,16 @@ export default async function EventsPage() {
     .from('events')
     .select('*')
     .in('status', ['upcoming', 'active'])
+    .gte('date', new Date().toISOString())
     .order('date', { ascending: true })
 
   const eventList = (error || !events) ? [] : (events as SitEvent[])
 
   return (
+    <>
+    <Navbar />
     <main
-      className="min-h-screen relative px-6 py-16 md:py-24"
+      className="min-h-screen relative px-6 pt-28 pb-16 md:pt-32 md:pb-24"
       style={{ backgroundColor: 'var(--color-bg)' }}
     >
       {/* Grid background */}
@@ -216,19 +220,6 @@ export default async function EventsPage() {
       <div className="relative z-10 max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-12">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 font-mono text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors mb-6"
-          >
-            &larr; Terug naar home
-          </Link>
-
-          <span className="font-mono text-3xl font-bold tracking-tight block mb-4">
-            <span className="text-[var(--color-accent-gold)]">{'{'}</span>
-            <span className="text-[var(--color-text)]">SIT</span>
-            <span className="text-[var(--color-accent-gold)]">{'}'}</span>
-          </span>
-
           <h1
             className="text-3xl sm:text-4xl font-bold tracking-tight uppercase"
             style={{
@@ -273,5 +264,6 @@ export default async function EventsPage() {
         </div>
       </div>
     </main>
+    </>
   )
 }
