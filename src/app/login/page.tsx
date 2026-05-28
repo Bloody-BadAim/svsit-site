@@ -34,7 +34,7 @@ export default function LoginPage() {
           width: '40%',
           height: '40%',
           background: 'radial-gradient(ellipse at center, rgba(245, 158, 11, 0.06) 0%, transparent 70%)',
-          filter: 'blur(80px)',
+          filter: 'blur(40px)',
         }}
       />
 

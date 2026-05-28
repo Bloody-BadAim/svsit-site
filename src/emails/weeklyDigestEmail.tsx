@@ -23,6 +23,7 @@ export interface WeeklyDigestEmailProps {
   events: EventItem[];
   leaderboard: LeaderboardEntry[];
   newMemberCount: number;
+  funFact?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -34,6 +35,7 @@ export default function WeeklyDigestEmail({
   events,
   leaderboard,
   newMemberCount,
+  funFact,
 }: WeeklyDigestEmailProps) {
   const hasEvents = events.length > 0;
   const hasLeaderboard = leaderboard.length > 0;
@@ -279,6 +281,44 @@ export default function WeeklyDigestEmail({
         </Row>
       </Section>
 
+      {/* ── Fun fact ──────────────────────────────────────────────── */}
+      {funFact ? (
+        <>
+          <Hr
+            style={{
+              border: "none",
+              borderTop: `1px solid ${C.border}`,
+              margin: "20px 0",
+            }}
+          />
+          <Text
+            style={{
+              fontFamily: C.mono,
+              fontSize: "11px",
+              fontWeight: "700",
+              color: C.green,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              margin: "0 0 8px 0",
+            }}
+          >
+            Wist je dat?
+          </Text>
+          <Text
+            style={{
+              fontFamily: C.mono,
+              fontSize: "12px",
+              color: C.muted,
+              margin: "0",
+              lineHeight: "1.6",
+              fontStyle: "italic",
+            }}
+          >
+            {funFact}
+          </Text>
+        </>
+      ) : null}
+
       {/* ── CTA ─────────────────────────────────────────────────── */}
       <Hr
         style={{
@@ -363,7 +403,7 @@ export default function WeeklyDigestEmail({
           fontFamily: C.mono,
           fontSize: "11px",
           color: C.muted,
-          margin: "0",
+          margin: "0 0 12px 0",
           lineHeight: "1.8",
         }}
       >
@@ -380,6 +420,27 @@ export default function WeeklyDigestEmail({
         >
           bestuur@svsit.nl
         </Link>
+      </Text>
+
+      {/* ── Socials ───────────────────────────────────────────── */}
+      <Text
+        style={{
+          fontFamily: C.mono,
+          fontSize: "11px",
+          color: C.muted,
+          margin: "0",
+          lineHeight: "1.8",
+        }}
+      >
+        <Link href="https://www.instagram.com/sv.sit" style={{ color: C.muted, textDecoration: "none" }}>Instagram</Link>
+        {" · "}
+        <Link href="https://discord.gg/68QjRVRRUM" style={{ color: C.muted, textDecoration: "none" }}>Discord</Link>
+        {" · "}
+        <Link href="https://linkedin.com/company/svsit-hbo-ict" style={{ color: C.muted, textDecoration: "none" }}>LinkedIn</Link>
+        {" · "}
+        <Link href="https://chat.whatsapp.com/LCndNz4xGZW0tqXWkNabaL" style={{ color: C.muted, textDecoration: "none" }}>WhatsApp</Link>
+        {" · "}
+        <Link href="https://www.tiktok.com/@sit_hva" style={{ color: C.muted, textDecoration: "none" }}>TikTok</Link>
       </Text>
     </EmailLayout>
   );
@@ -415,6 +476,7 @@ export function WeeklyDigestEmailPreview() {
         { position: 5, name: "emma.smit", xp: 980 },
       ]}
       newMemberCount={7}
+      funFact="JavaScript is in 10 dagen geschreven door Brendan Eich in 1995."
     />
   );
 }

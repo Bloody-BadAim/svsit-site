@@ -14,6 +14,11 @@ export async function GET(
     }
 
     const { memberId } = await params
+
+    // Only allow users to see their own scans, or admins to see anyone's
+    if (session.user.id !== memberId && !session.user.isAdmin && session.user.role !== 'bestuur') {
+      return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
+    }
     const supabase = createServiceClient()
 
     const { data, error } = await supabase

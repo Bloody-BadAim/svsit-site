@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { render } from '@react-email/components'
 import { createServiceClient } from '@/lib/supabase'
-import { syncNotionEventsToSupabase } from '@/lib/syncNotionEvents'
 import WeeklyDigestEmail from '@/emails/weeklyDigestEmail'
 
 // ─── SMTP transport (same setup as lib/email.ts) ─────────────────────────────
@@ -18,6 +17,26 @@ function getSmtpTransporter() {
     },
   })
 }
+
+// ─── Fun facts (rotated weekly) ──────────────────────────────────────────────
+
+const FUN_FACTS = [
+  'De eerste computer bug was een echte mot — gevonden in 1947 in een Harvard Mark II.',
+  'Git is vernoemd naar Linus Torvalds zelf: "git" is Brits slang voor een onaardig persoon.',
+  'Het eerste computerprogramma is geschreven door Ada Lovelace in 1843.',
+  'De naam Wi-Fi betekent eigenlijk niks — het was bedacht als marketingterm.',
+  'De gemiddelde developer schrijft ~100 regels productie-code per dag.',
+  'Het @ symbool werd al in de 6e eeuw gebruikt door monniken als afkorting voor "ad".',
+  'JavaScript is in 10 dagen geschreven door Brendan Eich in 1995.',
+  'De eerste website staat nog online: info.cern.ch — gemaakt door Tim Berners-Lee.',
+  'Stack Overflow krijgt 100+ miljoen unieke bezoekers per maand.',
+  'De eerste 1GB harde schijf woog meer dan 250 kilo en kostte $40.000 in 1980.',
+  'SIT is opgericht door studenten HBO-ICT aan de HvA — voor studenten, door studenten.',
+  'Python is vernoemd naar Monty Python, niet naar de slang.',
+  'De Ctrl+Alt+Delete combinatie was oorspronkelijk bedoeld als debug-tool, niet als reboot.',
+  'Er zijn meer dan 700 programmeertalen in actief gebruik wereldwijd.',
+  'De eerste e-mail ooit verstuurd was in 1971 — de inhoud was "QWERTYUIOP".',
+]
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -55,15 +74,6 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // ── Sync Notion events to Supabase before querying ────────────────
-    try {
-      const syncResult = await syncNotionEventsToSupabase()
-      console.log(`[weekly-digest] Notion sync: ${syncResult.synced} synced, ${syncResult.errors} errors`)
-    } catch (syncErr) {
-      // Log but don't fail the digest if sync fails — stale data is better than no email
-      console.error('[weekly-digest] Notion sync failed, continuing with existing data:', syncErr instanceof Error ? syncErr.message : syncErr)
-    }
-
     const supabase = createServiceClient()
     const now = new Date()
 
@@ -136,7 +146,7 @@ export async function GET(req: NextRequest) {
 
     // ── Transform data ────────────────────────────────────────────────────
 
-    // Deduplicate events by title (handles legacy duplicates before notion_id migration)
+    // Deduplicate events by title
     const seenTitles = new Set<string>()
     const events = (eventsResult.data ?? [])
       .filter((e) => {
@@ -168,6 +178,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ sent: 0, failed: 0, skipped: true })
     }
 
+    // ── Pick a random fun fact ────────────────────────────────────────
+    const funFact = FUN_FACTS[Math.floor(Math.random() * FUN_FACTS.length)]
+
     console.log(`[weekly-digest] Sending to ${members.length} members — ${events.length} events, top ${leaderboard.length} leaderboard, ${newMemberCount} new members`)
 
     // ── Send emails in batches ────────────────────────────────────────────
@@ -191,6 +204,7 @@ export async function GET(req: NextRequest) {
               events,
               leaderboard,
               newMemberCount,
+              funFact,
             })
           )
 

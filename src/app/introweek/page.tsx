@@ -157,7 +157,7 @@ export default function IntroweekPage() {
             width: '60%',
             height: '40%',
             background: 'radial-gradient(ellipse at center, rgba(242, 158, 24, 0.06) 0%, transparent 70%)',
-            filter: 'blur(100px)',
+            filter: 'blur(40px)',
           }}
         />
 

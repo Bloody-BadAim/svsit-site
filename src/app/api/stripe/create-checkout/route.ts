@@ -1,14 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
+import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 
 export async function POST(req: NextRequest) {
   try {
-    const { email: rawEmail } = await req.json()
-    if (!rawEmail) {
-      return NextResponse.json({ error: 'Email is verplicht' }, { status: 400 })
+    const session = await auth()
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
     }
-    const email = rawEmail.toLowerCase().trim()
+
+    // Use the authenticated user's email, ignore any email from request body
+    const email = session.user.email!.toLowerCase().trim()
 
     const supabase = createServiceClient()
     const { data: member, error: dbError } = await supabase
@@ -40,7 +43,7 @@ export async function POST(req: NextRequest) {
         .eq('id', member.id as string)
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const checkoutSession = await stripe.checkout.sessions.create({
       customer: customerId,
       payment_method_types: ['card', 'ideal'],
       mode: 'subscription',
@@ -57,7 +60,7 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    return NextResponse.json({ url: session.url })
+    return NextResponse.json({ url: checkoutSession.url })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Onbekende fout'
     return NextResponse.json({ error: message }, { status: 500 })

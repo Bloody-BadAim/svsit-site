@@ -18,7 +18,7 @@ export async function GET() {
     return NextResponse.json([], { status: 500 })
   }
 
-  // Map to the format Events.tsx expects (NotionEventResponse-compatible)
+  // Map to the format Events.tsx expects (EventResponse)
   const mapped = (data ?? []).map((e) => {
     const now = new Date()
     const eventDate = new Date(e.date)

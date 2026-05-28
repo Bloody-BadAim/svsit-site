@@ -6,9 +6,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronDown } from "lucide-react";
 import SectionLabel from "@/components/SectionLabel";
-import type { NotionEventResponse, SitEvent } from "./events/types";
+import type { EventResponse, SitEvent } from "./events/types";
 import { BRAND, CATEGORY_FILTERS, CATEGORY_COLORS } from "./events/types";
-import { notionToSitEvent } from "./events/calendarHelpers";
+import { toSitEvent } from "./events/calendarHelpers";
 import FeaturedCard from "./events/FeaturedCard";
 import CompactItem from "./events/CompactItem";
 
@@ -48,9 +48,9 @@ export default function Events() {
   useEffect(() => {
     fetch("/api/events/public")
       .then((r) => r.json())
-      .then((data: NotionEventResponse[]) => {
+      .then((data: EventResponse[]) => {
         if (Array.isArray(data) && data.length > 0) {
-          setEvents(data.map(notionToSitEvent));
+          setEvents(data.map(toSitEvent));
         }
       })
       .catch(() => {})

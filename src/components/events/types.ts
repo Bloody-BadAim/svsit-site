@@ -21,7 +21,7 @@ export interface SitEvent {
   color: string;
 }
 
-export interface NotionEventResponse {
+export interface EventResponse {
   id: string;
   name: string;
   date: string;

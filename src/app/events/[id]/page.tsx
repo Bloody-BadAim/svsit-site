@@ -7,6 +7,8 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic'
 import { notFound } from 'next/navigation'
 import { Calendar, MapPin, Clock, Users, Camera, Image as ImageIcon } from 'lucide-react'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import TicketForm from './TicketForm'
 import CheckInForm from './CheckInForm'
 
@@ -166,8 +168,10 @@ export default async function EventDetailPage(
   }
 
   return (
+    <>
+    <Navbar />
     <main
-      className="min-h-screen relative px-6 py-16 md:py-24"
+      className="min-h-screen relative px-6 pt-28 pb-16 md:pt-32 md:pb-24"
       style={{ backgroundColor: 'var(--color-bg)' }}
     >
       <script
@@ -197,7 +201,7 @@ export default async function EventDetailPage(
           width: '50%',
           height: '30%',
           background: `radial-gradient(ellipse at center, ${cat.color}08 0%, transparent 70%)`,
-          filter: 'blur(80px)',
+          filter: 'blur(40px)',
         }}
       />
 
@@ -539,5 +543,7 @@ export default async function EventDetailPage(
         </div>
       </div>
     </main>
+    <Footer />
+    </>
   )
 }

@@ -272,7 +272,7 @@ export default function About() {
           width: "50%",
           height: "60%",
           background: "radial-gradient(ellipse at center, rgba(245, 158, 11, 0.04) 0%, transparent 70%)",
-          filter: "blur(60px)",
+          filter: "blur(40px)",
         }}
       />
 

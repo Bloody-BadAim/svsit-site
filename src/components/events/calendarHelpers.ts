@@ -1,10 +1,10 @@
-import type { SitEvent, EventStatus, NotionEventResponse } from "./types";
+import type { SitEvent, EventStatus, EventResponse } from "./types";
 import { BRAND } from "./types";
 
 // ─── Mappers ──────────────────────────────────────────────────────────────────
 
-export function notionToSitEvent(e: NotionEventResponse): SitEvent {
-  const statusMap: Record<NotionEventResponse["status"], EventStatus> = {
+export function toSitEvent(e: EventResponse): SitEvent {
+  const statusMap: Record<EventResponse["status"], EventStatus> = {
     done: "DONE",
     next: "NEXT",
     tba: "TBA",

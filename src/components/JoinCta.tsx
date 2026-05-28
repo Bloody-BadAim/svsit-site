@@ -108,7 +108,7 @@ export default function JoinCta() {
           width: "60%",
           height: "60%",
           background: "radial-gradient(ellipse at center, rgba(242, 158, 24, 0.08) 0%, transparent 70%)",
-          filter: "blur(80px)",
+          filter: "blur(40px)",
           animation: "joinPulse 6s ease-in-out infinite alternate",
           willChange: "transform",
         }}
