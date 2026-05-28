@@ -1,40 +1,49 @@
-# Handoff — SIT Website — 2026-05-28 (sessie 6)
+# Handoff — SIT Website — 2026-05-28 (sessie 9)
 
 ## Doel
-SIT website post-merge polish: gamification downscale, Events refactor, FAQ page, sponsor showcase
+SIT website post-merge polish: SEO, socials, sponsor showcase, gamification downscale
 
 ## Status
-- Fase: 4 (Implement) — post-merge polish
-- Taak: Sponsor showcase (homepage)
-- Gate: N/A — post-overhaul improvements
+- Fase: Post-overhaul polish — alles afgerond
+- Gate: N/A — iteratieve verbeteringen op main
 
-## Gewijzigde files (sessie 5+6)
-- 33 bestanden — gold kleur #F59E0B → #F29E18 (bulk fix)
-- `src/components/Events.tsx` — 1064→346 LOC, refactored naar sub-components
-- `src/components/events/` — types.ts, calendarHelpers.ts, AddToCalendarDropdown, DateStub, FeaturedCard, CompactItem
-- `src/app/faq/page.tsx` + `FaqContent.tsx` — nieuwe FAQ pagina (9 vragen, accordion)
-- `src/components/WhyJoin.tsx` — community-focused kopjes, €9,99
-- `src/components/JoinCta.tsx` — rewrite, geen random card variants meer
-- `src/components/dashboard/DashboardClient.tsx` — streak/coins verwijderd uit top bar
-- `src/components/dashboard/DashboardNav.tsx` — CoinPill + Shop verwijderd
-- `src/components/Navbar.tsx` — Leaderboard → FAQ
-- `src/components/Footer.tsx` — Commissies + Leaderboard links
+## Gewijzigde files (deze sessie)
+- `src/components/SponsorShowcase.tsx` — nieuw, sponsor showcase homepage sectie
+- `src/app/robots.ts` — nieuw, crawl instructies
+- `src/app/sitemap.ts` — nieuw, 11 static + dynamic event routes
+- `src/app/layout.tsx` — Organization JSON-LD, sameAs met alle socials
+- `src/app/page.tsx` — homepage metadata + SponsorShowcase import
+- `src/app/faq/page.tsx` — FAQPage JSON-LD (9 vragen)
+- `src/app/faq/FaqContent.tsx` — contact vraag uitgebreid met alle kanalen
+- `src/app/events/[id]/page.tsx` — Event JSON-LD + OG + twitter
+- `src/app/events/page.tsx` — OG + twitter
+- `src/app/introweek/page.tsx` — OG + twitter
+- `src/app/over-ons/page.tsx` — twitter card
+- `src/app/lid-worden/page.tsx` — volledige metadata
+- `src/app/commissies/layout.tsx` — nieuw, metadata voor client page
+- `src/app/projecten/layout.tsx` — nieuw, metadata voor client page
+- `src/app/vacatures/layout.tsx` — nieuw, metadata voor client page
+- `src/components/Footer.tsx` — TikTok, WhatsApp, Discord toegevoegd
+- `src/components/Navbar.tsx` — mobile menu alle socials
+- `src/components/auth/RegisterFlow.tsx` — "volg ons" sectie met 4 social buttons
 
 ## Wat werkt
-- Events refactor (7 sub-components, zelfde functionaliteit)
-- FAQ pagina met brand kit styling
-- Gamification downscale (dashboard, homepage, navbar)
-- Gold kleur consistent #F29E18 overal
+- Alle publieke pagina's hebben metadata (title, description, OG, twitter)
+- 3 JSON-LD schemas: Organization, FAQPage, Event
+- robots.txt + sitemap.xml
+- 6 social kanalen overal: Instagram, TikTok, WhatsApp, Discord, LinkedIn, Email
+- Sponsor showcase (ChipSoft + Sogeti + CTA)
+- Build passing, alles gepusht naar main
 
 ## Volgende stappen
-1. Sponsor showcase component voor homepage
-2. Event recaps (frontend, DB kolommen bestaan al)
-3. Introweek landing page (31 aug - 4 sep, 728 eerstejaars)
-4. Registratie flow versimpelen
+1. Vercel deploy controleren (live check)
+2. Google Search Console aanmelden + sitemap indienen
+3. Event recaps vullen met echte content (DB kolommen bestaan)
+4. Introweek content finaliseren (wacht op Tinka/Aloha details, deadline 30 mei)
 
 ## Key context
 - Supabase ref: plgcqkbfvzwkqzkggmfh, geen staging
-- ChipSoft = eerste sponsor (1.500/jaar, Sponsor tier, Charlotte de Vries)
-- Sogeti = Partner start (workshops, stagemarkt)
-- Sponsor tiers: Partner (750), Sponsor (1.500), Hoofdsponsor (2.500), Strategisch (op aanvraag)
-- Gold kleur mismatch OPGELOST: alles nu #F29E18
+- Socials: IG @sv.sit, TikTok @sit_hva, WA chat.whatsapp.com/LCndNz4xGZW0tqXWkNabaL, Discord discord.gg/68QjRVRRUM
+- Alle metadata gaten gedicht: 'use client' pages opgelost via layout.tsx wrapper
+- SitEvent type: price_members (niet price)
+- Sitemap: force-dynamic + try/catch voor Supabase (faalt bij static build)
