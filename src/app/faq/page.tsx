@@ -90,7 +90,7 @@ const FAQ_STRUCTURED_DATA = {
       name: "Hoe bereik ik het bestuur?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Stuur een mail naar bestuur@svsit.nl of DM ons op Instagram @sv.sit. Je kunt ook langskomen op de Wibauthuis (5e verdieping) tijdens een van onze events.",
+        text: "Stuur een mail naar bestuur@svsit.nl, DM ons op Instagram (@sv.sit) of TikTok (@sit_hva), of join onze WhatsApp groep of Discord server.",
       },
     },
   ],

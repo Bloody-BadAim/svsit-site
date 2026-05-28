@@ -94,7 +94,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Hoe bereik ik het bestuur?",
     answer:
-      "Stuur een mail naar bestuur@svsit.nl of DM ons op Instagram @sv.sit. Je kunt ook langskomen op de Wibauthuis (5e verdieping) tijdens een van onze events of de SIT Hub.",
+      "Stuur een mail naar bestuur@svsit.nl, DM ons op Instagram (@sv.sit) of TikTok (@sit_hva), of join onze WhatsApp groep of Discord server. Je kunt ook langskomen op de Wibauthuis (5e verdieping) tijdens een van onze events of de SIT Hub.",
     icon: Mail,
     color: "#3B82F6",
   },

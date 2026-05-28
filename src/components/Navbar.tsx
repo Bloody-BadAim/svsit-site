@@ -180,8 +180,17 @@ export default function Navbar() {
             <a href="mailto:bestuur@svsit.nl" className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300">
               bestuur@svsit.nl
             </a>
-            <a href="https://instagram.com/svsit" target="_blank" rel="noopener noreferrer" className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300">
-              @svsit — Instagram
+            <a href="https://www.instagram.com/sv.sit" target="_blank" rel="noopener noreferrer" className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300">
+              @sv.sit — Instagram
+            </a>
+            <a href="https://www.tiktok.com/@sit_hva" target="_blank" rel="noopener noreferrer" className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300">
+              @sit_hva — TikTok
+            </a>
+            <a href="https://chat.whatsapp.com/LCndNz4xGZW0tqXWkNabaL" target="_blank" rel="noopener noreferrer" className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300">
+              WhatsApp groep
+            </a>
+            <a href="https://discord.gg/68QjRVRRUM" target="_blank" rel="noopener noreferrer" className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300">
+              Discord server
             </a>
             <MotionToggle />
           </div>

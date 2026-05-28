@@ -142,6 +142,13 @@ export default function RegisterFlow() {
     }
   }
 
+  const SOCIALS = [
+    { href: 'https://www.instagram.com/sv.sit', label: '@sv.sit', platform: 'Instagram', color: '#F29E18' },
+    { href: 'https://www.tiktok.com/@sit_hva', label: '@sit_hva', platform: 'TikTok', color: '#EF4444' },
+    { href: 'https://chat.whatsapp.com/LCndNz4xGZW0tqXWkNabaL', label: 'WhatsApp groep', platform: 'WhatsApp', color: '#25D366' },
+    { href: 'https://discord.gg/68QjRVRRUM', label: 'Discord server', platform: 'Discord', color: '#5865F2' },
+  ]
+
   return (
     <div className="w-full max-w-xl mx-auto">
       {/* Stap indicator */}
@@ -468,6 +475,42 @@ export default function RegisterFlow() {
           </button>
         </div>
       )}
+
+      {/* Socials — always visible */}
+      <div
+        className="mt-10 pt-8"
+        style={{ borderTop: '1px solid var(--color-border)' }}
+      >
+        <p className="font-mono text-xs text-center mb-4" style={{ color: 'var(--color-text-muted)' }}>
+          <span style={{ color: 'var(--color-accent-green)' }}>{'// '}</span>
+          volg ons — mis niks
+        </p>
+        <div className="flex flex-wrap justify-center gap-2">
+          {SOCIALS.map((s) => (
+            <a
+              key={s.platform}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-2 rounded-md font-mono text-xs transition-all"
+              style={{
+                border: '1px solid var(--color-border)',
+                color: 'var(--color-text-muted)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = s.color
+                e.currentTarget.style.color = s.color
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--color-border)'
+                e.currentTarget.style.color = 'var(--color-text-muted)'
+              }}
+            >
+              {s.platform}
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

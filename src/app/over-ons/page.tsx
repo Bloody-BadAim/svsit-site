@@ -18,6 +18,11 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://svsit.nl/over-ons",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Over ons — {SIT}",
+    description: "Bestuur XI van SIT — Studievereniging ICT aan de HvA.",
+  },
 };
 
 export default function OverOns() {

@@ -90,8 +90,10 @@ export default function RootLayout({
               foundingDate: "2014",
               email: "bestuur@svsit.nl",
               sameAs: [
-                "https://instagram.com/svsit",
-                "https://linkedin.com/company/svsit",
+                "https://www.instagram.com/sv.sit",
+                "https://www.tiktok.com/@sit_hva",
+                "https://linkedin.com/company/svsit-hbo-ict",
+                "https://discord.gg/68QjRVRRUM",
               ],
               parentOrganization: {
                 "@type": "EducationalOrganization",
