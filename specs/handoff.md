@@ -4,7 +4,7 @@
 SIT website post-merge polish: SEO, socials, sponsor showcase, gamification downscale
 
 ## Status
-- Fase: Post-overhaul polish — alles afgerond
+- Fase: Post-overhaul polish — alles afgerond + getest
 - Gate: N/A — iteratieve verbeteringen op main
 
 ## Gewijzigde files (deze sessie)
@@ -35,6 +35,18 @@ SIT website post-merge polish: SEO, socials, sponsor showcase, gamification down
 - Sponsor showcase (ChipSoft + Sogeti + CTA)
 - Build passing, alles gepusht naar main
 
+## Test resultaten (Playwright + curl)
+- 8/8 publieke pagina's: correcte title, OG, twitter meta tags
+- 2 pagina's verwacht 500 lokaal (/events, /leaderboard — Supabase niet beschikbaar)
+- SponsorShowcase: ChipSoft (Sponsor) + Sogeti (Partner) + "Word partner" CTA aanwezig
+- Footer: 6 social links met correcte URLs en aria-labels
+- Navbar mobile: 5 social links (email, IG, TikTok, WA, Discord)
+- RegisterFlow: 4 social buttons (IG, TikTok, WA, Discord)
+- JSON-LD: Organization (alle pagina's) + FAQPage (9 vragen, /faq)
+- robots.txt: /admin, /dashboard, /api, /login afgeschermd
+- sitemap.xml: 11 static routes + dynamic events
+- Console errors: 0 op alle pagina's behalve /projecten en /vacatures (verwacht API 500)
+
 ## Volgende stappen
 1. Vercel deploy controleren (live check)
 2. Google Search Console aanmelden + sitemap indienen
@@ -47,3 +59,4 @@ SIT website post-merge polish: SEO, socials, sponsor showcase, gamification down
 - Alle metadata gaten gedicht: 'use client' pages opgelost via layout.tsx wrapper
 - SitEvent type: price_members (niet price)
 - Sitemap: force-dynamic + try/catch voor Supabase (faalt bij static build)
+- /projecten en /vacatures API 500 lokaal is verwacht (geen Supabase env vars in dev)

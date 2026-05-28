@@ -331,7 +331,7 @@ export default async function EventsPage() {
               Er zijn momenteel geen aankomende events
             </p>
             <p className="font-mono text-xs text-[var(--color-text-muted)] opacity-60">
-              Volg @svsit op Instagram voor updates
+              Volg @sv.sit op Instagram voor updates
             </p>
           </div>
         ) : (

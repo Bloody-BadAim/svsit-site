@@ -26,7 +26,7 @@ function NoEventsPlaceholder() {
       }}
     >
       <p className="mb-1">Meer events worden binnenkort aangekondigd</p>
-      <p className="text-xs opacity-60">Volg @svsit op Instagram voor updates</p>
+      <p className="text-xs opacity-60">Volg @sv.sit op Instagram voor updates</p>
     </div>
   );
 }

@@ -145,10 +145,10 @@ export default function MemberEmail({
         <br />
         Instagram:{" "}
         <Link
-          href="https://instagram.com/svsit"
+          href="https://www.instagram.com/sv.sit"
           style={{ color: C.muted, textDecoration: "none" }}
         >
-          @svsit
+          @sv.sit
         </Link>
       </Text>
     </EmailLayout>

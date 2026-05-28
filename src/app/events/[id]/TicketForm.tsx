@@ -133,7 +133,7 @@ export default function TicketForm({
           Dit event is uitverkocht
         </p>
         <p className="text-xs text-[var(--color-text-muted)] mt-2">
-          Volg @svsit op Instagram voor toekomstige events
+          Volg @sv.sit op Instagram voor toekomstige events
         </p>
       </div>
     )

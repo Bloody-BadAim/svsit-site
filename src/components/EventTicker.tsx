@@ -13,7 +13,7 @@ const BRAND_COLORS = {
 type BrandColor = keyof typeof BRAND_COLORS;
 
 const TICKER_ITEMS: { label: string; color: BrandColor }[] = [
-  { label: "@svsit", color: "gold" },
+  { label: "@sv.sit", color: "gold" },
   { label: "BORRELS", color: "blue" },
   { label: "HACKATHONS", color: "red" },
   { label: "GAME NIGHTS", color: "green" },
@@ -62,7 +62,7 @@ export default function EventTicker() {
                   &times;
                 </span>
               )}
-              {item.label === "@svsit" ? (
+              {item.label === "@sv.sit" ? (
                 <a
                   href="https://instagram.com/sv.sit"
                   target="_blank"
