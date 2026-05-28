@@ -57,12 +57,14 @@ export default async function DashboardPage({
     allSubmissionsResult,
     milestonesResult,
     xpHistoryResult,
+    upcomingEventsResult,
+    myTicketsResult,
   ] = await Promise.all([
     // 1. Member data with commissies
     supabase
       .from('members')
       .select(`id, email, display_name, role, total_xp, coins_balance, current_level,
-        custom_title, accent_color, is_admin, active_skin,
+        custom_title, accent_color, is_admin, active_skin, membership_active,
         commissie,
         member_commissies ( commissie_id, commissies ( slug, naam ) )`)
       .eq('id', memberId)
@@ -134,6 +136,22 @@ export default async function DashboardPage({
       .eq('member_id', memberId)
       .order('created_at', { ascending: false })
       .limit(50),
+
+    // 13. Upcoming events (next 5)
+    supabase
+      .from('events')
+      .select('id, title, date, end_date, location, category, is_paid, price_members')
+      .in('status', ['upcoming', 'active'])
+      .gte('date', now)
+      .order('date', { ascending: true })
+      .limit(5),
+
+    // 14. My tickets (upcoming events)
+    supabase
+      .from('tickets')
+      .select('id, event_id, status, events(title, date)')
+      .eq('member_id', memberId)
+      .in('status', ['paid', 'checked_in']),
   ])
 
   const member = memberResult.data
@@ -400,6 +418,27 @@ export default async function DashboardPage({
   }))
 
   // -------------------------------------------------------------------------
+  // Overview tab props
+  // -------------------------------------------------------------------------
+
+  const upcomingEvents = (upcomingEventsResult.data ?? []).map(e => ({
+    id: e.id as string,
+    title: e.title as string,
+    date: e.date as string,
+    endDate: (e.end_date as string) ?? null,
+    location: (e.location as string) ?? null,
+    category: e.category as string,
+    isPaid: e.is_paid as boolean,
+    priceMembers: e.price_members as number,
+  }))
+
+  const myTicketEventIds = new Set(
+    (myTicketsResult.data ?? []).map(t => t.event_id as string)
+  )
+
+  const membershipActive = !!(member as Record<string, unknown>).membership_active
+
+  // -------------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------------
 
@@ -421,6 +460,15 @@ export default async function DashboardPage({
       nextUnlock={nextUnlock}
       xpToday={xpToday}
       isWelcome={isWelcome}
+      overviewProps={{
+        upcomingEvents,
+        myTicketEventIds: Array.from(myTicketEventIds),
+        commissieNaam,
+        memberRole: member.role as Role,
+        membershipActive,
+        totalXp: points,
+        currentLevel: levelDef.level,
+      }}
       questsTabProps={{
         quests,
         submissions: allSubmissions,

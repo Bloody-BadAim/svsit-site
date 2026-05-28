@@ -3,6 +3,8 @@
 import { useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Flame, Coins } from 'lucide-react'
+import OverviewTab from '@/components/dashboard/tabs/OverviewTab'
+import type { OverviewTabProps } from '@/components/dashboard/tabs/OverviewTab'
 import MyCardTab from '@/components/dashboard/tabs/MyCardTab'
 import QuestsTab from '@/components/dashboard/tabs/QuestsTab'
 import BadgesTab from '@/components/dashboard/tabs/BadgesTab'
@@ -15,7 +17,7 @@ import type { BadgesTabProps } from '@/components/dashboard/tabs/BadgesTab'
 // Types
 // ---------------------------------------------------------------------------
 
-type Tab = 'card' | 'quests' | 'badges'
+type Tab = 'overview' | 'card' | 'quests' | 'badges'
 
 export interface DashboardClientProps {
   // Top bar
@@ -37,6 +39,9 @@ export interface DashboardClientProps {
   nextUnlock: NextUnlock | null
   xpToday: number
 
+  // Overview tab
+  overviewProps: OverviewTabProps
+
   // Quests tab
   questsTabProps: QuestsTabProps
 
@@ -52,6 +57,7 @@ export interface DashboardClientProps {
 // ---------------------------------------------------------------------------
 
 const TABS: { id: Tab; label: string }[] = [
+  { id: 'overview', label: 'OVERZICHT' },
   { id: 'card', label: 'MY CARD' },
   { id: 'quests', label: 'QUESTS' },
   { id: 'badges', label: 'BADGES' },
@@ -66,7 +72,7 @@ function DashboardContent(props: DashboardClientProps) {
   const router = useRouter()
   const initialTab = searchParams.get('tab') as Tab | null
   const [activeTab, setActiveTab] = useState<Tab>(
-    initialTab && ['card', 'quests', 'badges'].includes(initialTab) ? initialTab : 'card'
+    initialTab && ['overview', 'card', 'quests', 'badges'].includes(initialTab) ? initialTab : 'overview'
   )
 
   const handleTabChange = (tab: Tab) => {
@@ -79,7 +85,7 @@ function DashboardContent(props: DashboardClientProps) {
     streak, coins, isWelcome,
     cardData, equipment, memberId, activeSkin,
     activityItems, nextUnlock, xpToday,
-    questsTabProps, badgesTabProps,
+    overviewProps, questsTabProps, badgesTabProps,
   } = props
 
   return (
@@ -174,6 +180,7 @@ function DashboardContent(props: DashboardClientProps) {
       </div>
 
       {/* Tab content */}
+      {activeTab === 'overview' && <OverviewTab {...overviewProps} />}
       {activeTab === 'card' && (
         <MyCardTab
           cardData={cardData}
