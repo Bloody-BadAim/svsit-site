@@ -5,6 +5,7 @@ import SitLogo from "@/components/SitLogo";
 import MotionToggle from "@/components/MotionToggle";
 
 const navLinks = [
+  { href: "/introweek", label: "Introweek", highlight: true },
   { href: "/over-ons", label: "Over Ons" },
   { href: "/commissies", label: "Commissies" },
   { href: "/events", label: "Events" },
@@ -68,7 +69,7 @@ export default function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                className="relative hover:text-[var(--color-text)] hover:-translate-y-0.5 transition-all duration-300 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-[var(--color-accent-gold)] after:transition-all after:duration-300 hover:after:w-full"
+                className={`relative hover:text-[var(--color-text)] hover:-translate-y-0.5 transition-all duration-300 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-[var(--color-accent-gold)] after:transition-all after:duration-300 hover:after:w-full ${'highlight' in link && link.highlight ? 'text-[var(--color-accent-gold)] font-semibold' : ''}`}
               >
                 {link.label}
               </a>
