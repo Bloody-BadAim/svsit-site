@@ -3,10 +3,10 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Commissies — {SIT}',
   description:
-    'Ontdek de 8 commissies van SIT: ServCo, Community, Educatie, Evenementen, AI4HvA, GameIT, Sponsoring en Witboeken. Sluit je aan en bouw mee.',
+    'Ontdek de 7 commissies van SIT: ServCo, Community, Educatie, Evenementen, AI4HvA, GameIT en Sponsoring. Sluit je aan en bouw mee.',
   openGraph: {
     title: 'Commissies — {SIT}',
-    description: '8 commissies waar je als SIT-lid aan mee kunt bouwen.',
+    description: '7 commissies waar je als SIT-lid aan mee kunt bouwen.',
     siteName: '{SIT}',
     locale: 'nl_NL',
     type: 'website',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Commissies — {SIT}',
-    description: '8 commissies waar je als SIT-lid aan mee kunt bouwen.',
+    description: '7 commissies waar je als SIT-lid aan mee kunt bouwen.',
   },
 }
 

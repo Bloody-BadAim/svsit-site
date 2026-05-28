@@ -1,13 +1,7 @@
 "use client";
 
-import React, { MouseEvent as ReactMouseEvent, useState, useRef, lazy, Suspense } from "react";
+import React, { MouseEvent as ReactMouseEvent, useRef } from "react";
 import { cn } from "@/lib/utils";
-
-const CanvasRevealEffect = lazy(() =>
-  import("@/components/ui/CanvasRevealEffect").then((m) => ({
-    default: m.CanvasRevealEffect,
-  }))
-);
 
 export const CardSpotlight = ({
   children,
@@ -23,7 +17,12 @@ export const CardSpotlight = ({
   children: React.ReactNode;
 } & React.HTMLAttributes<HTMLDivElement>) => {
   const spotlightRef = useRef<HTMLDivElement>(null);
-  const [isHovering, setIsHovering] = useState(false);
+  const dotRef = useRef<HTMLDivElement>(null);
+
+  // Derive a dot color from revealColors or fallback
+  const dotColor = revealColors?.[0]
+    ? `rgb(${revealColors[0][0]}, ${revealColors[0][1]}, ${revealColors[0][2]})`
+    : "rgb(59, 130, 246)";
 
   function handleMouseMove({
     currentTarget,
@@ -38,38 +37,28 @@ export const CardSpotlight = ({
       spotlightRef.current.style.maskImage = mask;
       spotlightRef.current.style.webkitMaskImage = mask;
     }
+    if (dotRef.current) {
+      dotRef.current.style.background = `radial-gradient(circle at ${x}px ${y}px, ${dotColor}20 0%, transparent 60%)`;
+    }
   }
 
   return (
     <div
       className={cn("group/spotlight relative overflow-hidden", className)}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
       {...props}
     >
+      {/* Spotlight overlay — CSS radial gradient, no three.js */}
       <div
         ref={spotlightRef}
         className="pointer-events-none absolute z-0 -inset-px opacity-0 transition duration-300 group-hover/spotlight:opacity-100"
         style={{ backgroundColor: color }}
-      >
-        {isHovering && (
-          <Suspense fallback={null}>
-            <CanvasRevealEffect
-              animationSpeed={5}
-              containerClassName="bg-transparent absolute inset-0 pointer-events-none"
-              colors={
-                revealColors || [
-                  [59, 130, 246],
-                  [139, 92, 246],
-                ]
-              }
-              dotSize={3}
-              showGradient={false}
-            />
-          </Suspense>
-        )}
-      </div>
+      />
+      {/* Dot glow layer — replaces CanvasRevealEffect */}
+      <div
+        ref={dotRef}
+        className="pointer-events-none absolute z-0 -inset-px opacity-0 transition duration-300 group-hover/spotlight:opacity-60"
+      />
       {children}
     </div>
   );

@@ -180,13 +180,14 @@ export default function About() {
           }
         }
 
-        // Body text clip-path reveal
+        // Body text reveal (opacity + translateY instead of clipPath)
         if (textRef.current && !prefersReducedMotion) {
           gsap.fromTo(
             textRef.current,
-            { clipPath: "inset(0 100% 0 0)" },
+            { opacity: 0, y: 20 },
             {
-              clipPath: "inset(0 0% 0 0)",
+              opacity: 1,
+              y: 0,
               duration: 0.8,
               ease: "power3.out",
               scrollTrigger: {

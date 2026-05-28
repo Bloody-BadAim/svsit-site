@@ -292,7 +292,7 @@ export default function BackgroundStreaks() {
           left: "5%",
           background: "radial-gradient(circle, #F29E18, transparent 70%)",
           opacity: 0.015,
-          filter: "blur(80px)",
+          filter: "blur(40px)",
         }}
       />
       <div
@@ -304,7 +304,7 @@ export default function BackgroundStreaks() {
           right: "0%",
           background: "radial-gradient(circle, #3B82F6, transparent 70%)",
           opacity: 0.012,
-          filter: "blur(60px)",
+          filter: "blur(40px)",
         }}
       />
       <div
@@ -316,7 +316,7 @@ export default function BackgroundStreaks() {
           left: "25%",
           background: "radial-gradient(circle, #EF4444, transparent 70%)",
           opacity: 0.01,
-          filter: "blur(70px)",
+          filter: "blur(40px)",
         }}
       />
     </div>

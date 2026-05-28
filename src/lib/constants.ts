@@ -18,7 +18,6 @@ export const COMMISSIES: CommissieOption[] = [
   { id: 'ai4hva', naam: 'AI4HvA', beschrijving: 'AI workshops, hackathons, en de AI community' },
   { id: 'gameit', naam: 'GameIT', beschrijving: 'Game nights, toernooien, en game dev showcases' },
   { id: 'sponsoring', naam: 'Sponsoring', beschrijving: 'Bedrijven benaderen, partnerships opzetten' },
-  { id: 'witboeken', naam: 'Witboeken', beschrijving: 'Beleidsdocumenten en werkwijzen vastleggen' },
 ]
 
 export const ROLLEN: Record<Role, { naam: string; beschrijving: string }> = {

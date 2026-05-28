@@ -70,7 +70,7 @@ function StatCounter({ value, suffix, label, index }: { value: number; suffix: s
 export default function Hero() {
   const fullText = "{SIT}";
   const [typedText, setTypedText] = useState(fullText);
-  const [showCursor, setShowCursor] = useState(true);
+  const showCursor = true; // cursor blink handled by CSS animation
   const [phase, setPhase] = useState<"typing" | "done">("done");
   const [reducedMotion, setReducedMotion] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -118,13 +118,7 @@ export default function Hero() {
     return () => clearInterval(typeInterval);
   }, [reducedMotion]);
 
-  // Cursor blink
-  useEffect(() => {
-    const blinkInterval = setInterval(() => {
-      setShowCursor((prev) => !prev);
-    }, 530);
-    return () => clearInterval(blinkInterval);
-  }, []);
+  // Cursor blink — pure CSS, no JS interval needed
 
   // GSAP: scroll indicator bounce + glow dots (lazy-loaded, non-blocking)
   const scrollTweenRef = useRef<{ kill: () => void } | null>(null);
@@ -205,8 +199,7 @@ export default function Hero() {
         {typedText.slice(4)}
       </span>
       <span
-        className={`inline-block w-[3px] h-[0.85em] bg-[var(--color-accent-gold)] ml-1 align-middle ${showCursor ? "opacity-100" : "opacity-0"
-          }`}
+        className="inline-block w-[3px] h-[0.85em] bg-[var(--color-accent-gold)] ml-1 align-middle animate-[blink_1.06s_step-end_infinite]"
       />
     </h1>
   );

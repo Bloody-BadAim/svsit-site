@@ -194,6 +194,7 @@ export default function WhyJoin() {
               const proxy = { val: 0 };
               gsap.to(proxy, {
                 val: target,
+                snap: { val: 1 },
                 duration: target > 10 ? 1.5 : 1.2,
                 ease: "power2.out",
                 scrollTrigger: {
@@ -204,7 +205,7 @@ export default function WhyJoin() {
                 },
                 delay: 0.4 + i * 0.08,
                 onUpdate() {
-                  statEl.textContent = prefix + Math.round(proxy.val) + suffix;
+                  statEl.textContent = prefix + proxy.val + suffix;
                 },
               });
             }
@@ -239,7 +240,7 @@ export default function WhyJoin() {
         style={{
           background:
             "radial-gradient(ellipse 600px 600px at 20% 50%, rgba(245, 158, 11, 0.04), transparent 70%)",
-          filter: "blur(60px)",
+          filter: "blur(40px)",
         }}
       />
       <div
@@ -248,7 +249,7 @@ export default function WhyJoin() {
         style={{
           background:
             "radial-gradient(ellipse 600px 600px at 80% 85%, rgba(59, 130, 246, 0.03), transparent 70%)",
-          filter: "blur(60px)",
+          filter: "blur(40px)",
         }}
       />
 

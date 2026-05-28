@@ -11,7 +11,6 @@ import {
   Brain,
   Gamepad2,
   Handshake,
-  FileText,
   ChevronDown,
   ChevronUp,
   Star,
@@ -102,7 +101,7 @@ const COMMISSIES: CommissieData[] = [
       'Zorgen dat SIT-leden elkaar ontmoeten buiten de collegebanken, met events die passen bij wat studenten willen.',
     activiteiten: [
       'Borrels en kroegentochten',
-      'Feesten (Thuishaven, zomerfeest)',
+      'Feesten en borrels',
       'Sportactiviteiten (voetbal, padel)',
       'Bedrijfsbezoeken en netwerkborrels',
       'Game-avonden en uitjes',
@@ -169,25 +168,6 @@ const COMMISSIES: CommissieData[] = [
     leden: ['Liam', 'Matin', 'Riley'],
     status: 'actief',
   },
-  {
-    slug: 'witboeken',
-    naam: 'Witboeken',
-    color: '#71717A',
-    icon: FileText,
-    voorzitter: null,
-    beschrijving:
-      'Verantwoordelijk voor het opstellen en onderhouden van witboeken — de beleidsdocumenten die de werkwijze van elke commissie vastleggen. Flexibel aanpasbaar, in tegenstelling tot statuten.',
-    missie:
-      'Zorgen dat kennis en werkwijzen vastgelegd worden zodat toekomstige besturen en commissies niet vanaf nul hoeven te beginnen.',
-    activiteiten: [
-      'Witboeken schrijven en bijhouden',
-      'Beleidsdocumenten per commissie',
-      'Kennis overdracht waarborgen',
-      'Werkprocessen documenteren',
-    ],
-    leden: [],
-    status: 'nieuw',
-  },
 ]
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -237,7 +217,7 @@ export default function CommissiesPage() {
             lineHeight: 1,
           }}
         >
-          08
+          07
         </div>
 
         <div className="relative z-10">
