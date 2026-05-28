@@ -12,7 +12,7 @@ const achievements = [
     desc: "Van borrels en kroegentochten tot hackathons, game nights, CTF challenges en tech talks. Of je nu wil netwerken of gewoon een biertje drinken.",
     stat: "20+",
     statLabel: "per jaar",
-    color: "#F59E0B",
+    color: "#F29E18",
     rgb: [245, 158, 11] as number[],
   },
   {

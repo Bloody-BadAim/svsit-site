@@ -306,8 +306,8 @@ function LegendaryBadge({ size, children }: { size: number; children: ReactEleme
             width: 4,
             height: 4,
             borderRadius: '50%',
-            background: '#F59E0B',
-            boxShadow: '0 0 6px #F59E0B, 0 0 12px rgba(245,158,11,0.6)',
+            background: '#F29E18',
+            boxShadow: '0 0 6px #F29E18, 0 0 12px rgba(242,158,24,0.6)',
           }}
         />
         {/* Dot at bottom-left */}
@@ -332,8 +332,8 @@ function LegendaryBadge({ size, children }: { size: number; children: ReactEleme
             width: 3,
             height: 3,
             borderRadius: '50%',
-            background: '#F59E0B',
-            boxShadow: '0 0 5px #F59E0B, 0 0 10px rgba(245,158,11,0.5)',
+            background: '#F29E18',
+            boxShadow: '0 0 5px #F29E18, 0 0 10px rgba(242,158,24,0.5)',
           }}
         />
       </div>
@@ -344,7 +344,7 @@ function LegendaryBadge({ size, children }: { size: number; children: ReactEleme
           position: 'absolute',
           inset: 5,
           borderRadius: 2,
-          background: 'conic-gradient(from 180deg, transparent 60%, rgba(245,158,11,0.35) 80%, transparent)',
+          background: 'conic-gradient(from 180deg, transparent 60%, rgba(242,158,24,0.35) 80%, transparent)',
           animation: 'badge-fireRotate 3s linear infinite',
           pointerEvents: 'none',
         }}
@@ -360,8 +360,8 @@ function LegendaryBadge({ size, children }: { size: number; children: ReactEleme
           alignItems: 'center',
           justifyContent: 'center',
           background: 'linear-gradient(145deg, #1f1205, #0a0805)',
-          border: '2px solid #F59E0B',
-          boxShadow: '0 0 30px rgba(245,158,11,0.55), 0 0 60px rgba(245,158,11,0.2), inset 0 0 20px rgba(245,158,11,0.08)',
+          border: '2px solid #F29E18',
+          boxShadow: '0 0 30px rgba(242,158,24,0.55), 0 0 60px rgba(242,158,24,0.2), inset 0 0 20px rgba(242,158,24,0.08)',
           overflow: 'hidden',
           zIndex: 1,
         }}
@@ -378,8 +378,8 @@ function LegendaryBadge({ size, children }: { size: number; children: ReactEleme
           width: 3,
           height: 3,
           borderRadius: '50%',
-          background: '#F59E0B',
-          boxShadow: '0 0 4px #F59E0B',
+          background: '#F29E18',
+          boxShadow: '0 0 4px #F29E18',
           animation: 'badge-ember1 2s ease-out infinite',
           pointerEvents: 'none',
         }}

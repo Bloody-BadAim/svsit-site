@@ -12,7 +12,7 @@ export const LEVELS: LevelDef[] = [
   { level: 9,  title: 'Sage',          xpRequired: 700,  cumulativeXp: 2275, tier: 'prestige',   color: '#8B5CF6' },
   { level: 10, title: 'Sensei',        xpRequired: 1000, cumulativeXp: 3275, tier: 'legendary',  color: '#EF4444' },
   { level: 11, title: 'Legend',        xpRequired: 1500, cumulativeXp: 4775, tier: 'legendary',  color: '#EF4444' },
-  { level: 12, title: 'BDFL',          xpRequired: 2500, cumulativeXp: 7275, tier: 'bdfl',       color: '#F59E0B' },
+  { level: 12, title: 'BDFL',          xpRequired: 2500, cumulativeXp: 7275, tier: 'bdfl',       color: '#F29E18' },
 ]
 
 export function getLevelForXp(totalXp: number): LevelDef {
@@ -60,7 +60,7 @@ export function getTierColor(tier: LevelTier): string {
     core: '#3B82F6',
     prestige: '#8B5CF6',
     legendary: '#EF4444',
-    bdfl: '#F59E0B',
+    bdfl: '#F29E18',
   }
   return colors[tier]
 }

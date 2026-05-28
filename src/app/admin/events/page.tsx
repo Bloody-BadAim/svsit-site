@@ -945,8 +945,8 @@ export default function EventsPage() {
                                 gap: 16,
                                 padding: '8px 12px',
                                 marginBottom: 10,
-                                backgroundColor: 'rgba(245,158,11,0.04)',
-                                border: '1px solid rgba(245,158,11,0.12)',
+                                backgroundColor: 'rgba(242,158,24,0.04)',
+                                border: '1px solid rgba(242,158,24,0.12)',
                               }}
                             >
                               <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>

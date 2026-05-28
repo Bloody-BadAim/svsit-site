@@ -49,7 +49,7 @@ interface NotionEventResponse {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const BRAND = {
-  gold: "#F59E0B",
+  gold: "#F29E18",
   blue: "#3B82F6",
   red: "#EF4444",
   green: "#22C55E",

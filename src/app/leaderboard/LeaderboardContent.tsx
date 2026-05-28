@@ -8,10 +8,10 @@ import type { LeaderEntry, BubbleEntry, BubbleData } from './page'
 
 const MEDAL: Record<number, { border: string; glow: string; glowStrong: string; label: string }> = {
   1: {
-    border: '#F59E0B',
-    glow: 'rgba(245,158,11,0.25)',
-    glowStrong: 'rgba(245,158,11,0.55)',
-    label: '#F59E0B',
+    border: '#F29E18',
+    glow: 'rgba(242,158,24,0.25)',
+    glowStrong: 'rgba(242,158,24,0.55)',
+    label: '#F29E18',
   },
   2: {
     border: '#9CA3AF',
@@ -169,9 +169,9 @@ function RankRow({
       }
       className="flex items-center gap-4 px-4 py-3 rounded-lg"
       style={{
-        backgroundColor: isYou ? 'rgba(245,158,11,0.08)' : 'var(--color-surface)',
+        backgroundColor: isYou ? 'rgba(242,158,24,0.08)' : 'var(--color-surface)',
         border: isYou
-          ? '1px solid rgba(245,158,11,0.5)'
+          ? '1px solid rgba(242,158,24,0.5)'
           : medal
           ? `1px solid ${medal.border}40`
           : '1px solid var(--color-border)',
@@ -184,9 +184,9 @@ function RankRow({
           className="absolute inset-0 rounded-lg pointer-events-none"
           animate={{
             boxShadow: [
-              '0 0 0px rgba(245,158,11,0)',
-              '0 0 16px rgba(245,158,11,0.3)',
-              '0 0 0px rgba(245,158,11,0)',
+              '0 0 0px rgba(242,158,24,0)',
+              '0 0 16px rgba(242,158,24,0.3)',
+              '0 0 0px rgba(242,158,24,0)',
             ],
           }}
           transition={{ duration: 2, ease: 'easeInOut', repeat: Infinity }}
@@ -198,7 +198,7 @@ function RankRow({
       <span
         className="font-mono text-sm w-8 shrink-0 text-right"
         style={{
-          color: medal ? medal.label : isYou ? '#F59E0B' : 'var(--color-text-muted)',
+          color: medal ? medal.label : isYou ? '#F29E18' : 'var(--color-text-muted)',
           fontWeight: medal || isYou ? 700 : 400,
         }}
       >
@@ -209,13 +209,13 @@ function RankRow({
       <div className="flex-1 min-w-0">
         <p
           className="font-mono text-sm font-semibold truncate"
-          style={{ color: isYou ? '#F59E0B' : 'var(--color-text)' }}
+          style={{ color: isYou ? '#F29E18' : 'var(--color-text)' }}
         >
           {entry.name}
           {isYou && (
             <span
               className="ml-2 text-xs font-mono px-1.5 py-0.5 rounded"
-              style={{ backgroundColor: 'rgba(245,158,11,0.2)', color: '#F59E0B' }}
+              style={{ backgroundColor: 'rgba(242,158,24,0.2)', color: '#F29E18' }}
             >
               jij
             </span>
@@ -229,7 +229,7 @@ function RankRow({
       {/* xp */}
       <span
         className="font-mono text-sm shrink-0"
-        style={{ color: isYou ? '#F59E0B' : 'var(--color-text-muted)' }}
+        style={{ color: isYou ? '#F29E18' : 'var(--color-text-muted)' }}
       >
         {entry.totalXp.toLocaleString('nl-NL')} XP
       </span>

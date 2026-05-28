@@ -11,7 +11,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
  * straight, then develop subtle bends as you scroll. Small "data packets"
  * pulse along the lines like network traffic flowing through digital veins.
  *
- * Brand colors: Gold #F59E0B, Blue #3B82F6, Red #EF4444, Green #22C55E
+ * Brand colors: Gold #F29E18, Blue #3B82F6, Red #EF4444, Green #22C55E
  * Angle: -22° (from brand kit Design Elements)
  */
 
@@ -30,7 +30,7 @@ const leftBundle: Streak[] = [
   { color: "#3B82F6", width: 8, opacity: 0.5, x: 0, glowSize: 16 },
   { color: "#22C55E", width: 6, opacity: 0.6, x: 40, glowSize: 12 },
   { color: "#EF4444", width: 10, opacity: 0.7, x: 75, glowSize: 20 },
-  { color: "#F59E0B", width: 5, opacity: 0.8, x: 100, glowSize: 14 },
+  { color: "#F29E18", width: 5, opacity: 0.8, x: 100, glowSize: 14 },
   { color: "#EF4444", width: 3, opacity: 0.4, x: 115, glowSize: 8 },
 ];
 
@@ -38,7 +38,7 @@ const rightEcho: Streak[] = [
   { color: "#3B82F6", width: 5, opacity: 0.08, x: 0, glowSize: 10 },
   { color: "#22C55E", width: 4, opacity: 0.09, x: 32, glowSize: 8 },
   { color: "#EF4444", width: 6, opacity: 0.1, x: 55, glowSize: 12 },
-  { color: "#F59E0B", width: 3, opacity: 0.12, x: 75, glowSize: 6 },
+  { color: "#F29E18", width: 3, opacity: 0.12, x: 75, glowSize: 6 },
 ];
 
 // ── Data packets that flow along the lines ──
@@ -290,7 +290,7 @@ export default function BackgroundStreaks() {
           height: 600,
           top: "10%",
           left: "5%",
-          background: "radial-gradient(circle, #F59E0B, transparent 70%)",
+          background: "radial-gradient(circle, #F29E18, transparent 70%)",
           opacity: 0.015,
           filter: "blur(80px)",
         }}

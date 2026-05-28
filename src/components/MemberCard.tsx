@@ -287,7 +287,7 @@ function getFrameVisuals(frameStyle: string | undefined, frameColor: string | un
         },
         glowStyle: {
           background: isGradient
-            ? 'radial-gradient(ellipse at center, rgba(245,158,11,0.15) 0%, transparent 70%)'
+            ? 'radial-gradient(ellipse at center, rgba(242,158,24,0.15) 0%, transparent 70%)'
             : `radial-gradient(ellipse at center, ${frameColor}30 0%, transparent 70%)`,
         },
         cornerColor: isGradient ? '#f59e0b' : frameColor,

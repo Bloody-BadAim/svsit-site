@@ -24,7 +24,7 @@ const members: Member[] = [
     image: "/bestuur/matin.jpeg",
     initials: "MK",
     accent: "var(--color-accent-gold)",
-    accentHex: "#F59E0B",
+    accentHex: "#F29E18",
     stats: { code: 9, chaos: 7, coffee: 10, social: 8 },
     special: "git push --force",
   },

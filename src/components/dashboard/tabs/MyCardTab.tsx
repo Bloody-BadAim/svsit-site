@@ -378,7 +378,7 @@ export default function MyCardTab({
             className="flex flex-col items-center gap-1.5 py-4 px-3 sm:py-3 sm:px-2 text-xs font-mono tracking-wider transition-colors cursor-pointer"
             style={{
               border: showQR ? '1px solid var(--color-accent-gold)' : '1px solid rgba(255,255,255,0.06)',
-              backgroundColor: showQR ? 'rgba(245,158,11,0.06)' : 'rgba(255,255,255,0.02)',
+              backgroundColor: showQR ? 'rgba(242,158,24,0.06)' : 'rgba(255,255,255,0.02)',
               color: showQR ? 'var(--color-accent-gold)' : 'var(--color-text-muted)',
             }}
           >

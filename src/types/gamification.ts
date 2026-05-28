@@ -130,7 +130,7 @@ export const RARITY_CONFIG: Record<BadgeRarity, { color: string; xpBonus: number
   uncommon:  { color: '#22C55E', xpBonus: 25,  label: 'Uncommon' },
   rare:      { color: '#3B82F6', xpBonus: 50,  label: 'Rare' },
   epic:      { color: '#8B5CF6', xpBonus: 100, label: 'Epic' },
-  legendary: { color: '#F59E0B', xpBonus: 250, label: 'Legendary' },
+  legendary: { color: '#F29E18', xpBonus: 250, label: 'Legendary' },
   mythic:    { color: 'rainbow', xpBonus: 500, label: 'Mythic' },
 }
 

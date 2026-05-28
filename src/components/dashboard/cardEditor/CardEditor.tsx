@@ -76,7 +76,7 @@ const TABS: TabDef[] = [
 // ---------------------------------------------------------------------------
 
 const PRESET_COLORS = [
-  '#F59E0B', '#3B82F6', '#EF4444', '#22C55E',
+  '#F29E18', '#3B82F6', '#EF4444', '#22C55E',
   '#8B5CF6', '#EC4899', '#F97316', '#14B8A6',
 ]
 
@@ -437,7 +437,7 @@ interface FlairPanelProps {
 }
 
 function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, onAccentColorChange }: FlairPanelProps) {
-  const [accentColor, setAccentColor] = useState(initialAccentColor ?? '#F59E0B')
+  const [accentColor, setAccentColor] = useState(initialAccentColor ?? '#F29E18')
   const [customTitle, setCustomTitle] = useState(initialCustomTitle ?? '')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -581,9 +581,9 @@ function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, onAcc
         disabled={saving}
         className="w-full font-mono text-xs px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
         style={{
-          backgroundColor: saved ? 'rgba(34,197,94,0.1)' : 'rgba(245,158,11,0.08)',
-          border: `1px solid ${saved ? '#22C55E44' : '#F59E0B33'}`,
-          color: saved ? '#22C55E' : '#F59E0B',
+          backgroundColor: saved ? 'rgba(34,197,94,0.1)' : 'rgba(242,158,24,0.08)',
+          border: `1px solid ${saved ? '#22C55E44' : '#F29E1833'}`,
+          color: saved ? '#22C55E' : '#F29E18',
         }}
       >
         <Save size={12} />
@@ -641,7 +641,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
     equipped.filter((r) => r.accessory_definitions?.category === 'sticker')
   )
 
-  const [accentColor, setAccentColor] = useState(member.accent_color ?? '#F59E0B')
+  const [accentColor, setAccentColor] = useState(member.accent_color ?? '#F29E18')
 
   // Tab indicator position
   useEffect(() => {
@@ -870,8 +870,8 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
                 key={cat}
                 className="flex items-center gap-1.5 px-2 py-1 rounded font-mono text-[9px] transition-all duration-200"
                 style={{
-                  backgroundColor: isHovered ? 'rgba(245,158,11,0.08)' : 'rgba(255,255,255,0.02)',
-                  border: `1px solid ${isHovered ? 'rgba(245,158,11,0.2)' : 'rgba(255,255,255,0.04)'}`,
+                  backgroundColor: isHovered ? 'rgba(242,158,24,0.08)' : 'rgba(255,255,255,0.02)',
+                  border: `1px solid ${isHovered ? 'rgba(242,158,24,0.2)' : 'rgba(255,255,255,0.04)'}`,
                 }}
               >
                 <span style={{ color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
@@ -892,8 +892,8 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
           <div
             className="flex items-center justify-between font-mono text-xs px-3 py-2 rounded-lg"
             style={{
-              backgroundColor: 'rgba(245,158,11,0.04)',
-              border: '1px solid rgba(245,158,11,0.1)',
+              backgroundColor: 'rgba(242,158,24,0.04)',
+              border: '1px solid rgba(242,158,24,0.1)',
             }}
           >
             <span className="flex items-center gap-1.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
@@ -936,14 +936,14 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
                   onClick={() => setActiveTab(tab.id)}
                   className="relative flex-1 py-3 font-mono text-[10px] uppercase tracking-[0.12em] transition-colors duration-150 cursor-pointer"
                   style={{
-                    color: isActive ? '#F59E0B' : 'rgba(255,255,255,0.3)',
+                    color: isActive ? '#F29E18' : 'rgba(255,255,255,0.3)',
                   }}
                 >
                   {tab.label}
                   {equippedInTab && (
                     <span
                       className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full"
-                      style={{ backgroundColor: '#F59E0B' }}
+                      style={{ backgroundColor: '#F29E18' }}
                     />
                   )}
                 </button>
@@ -955,7 +955,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
             className="absolute bottom-0 h-[2px]"
             animate={{ left: indicatorStyle.left, width: indicatorStyle.width }}
             transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-            style={{ backgroundColor: '#F59E0B' }}
+            style={{ backgroundColor: '#F29E18' }}
           />
         </div>
 
@@ -969,7 +969,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
           </span>
           <div className="flex items-center gap-2 font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.15)' }}>
             <span>
-              <span style={{ color: '#F59E0B' }}>
+              <span style={{ color: '#F29E18' }}>
                 {tabDefs.filter(d => ownedMap.has(d.id)).length}
               </span>
               /{tabDefs.length}

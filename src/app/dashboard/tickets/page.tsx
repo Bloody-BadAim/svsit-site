@@ -49,7 +49,7 @@ export default async function TicketsPage() {
             className="w-2 h-2 rounded-full"
             style={{
               backgroundColor: 'var(--color-accent-gold)',
-              boxShadow: '0 0 8px rgba(245,158,11,0.5)',
+              boxShadow: '0 0 8px rgba(242,158,24,0.5)',
             }}
           />
           <span

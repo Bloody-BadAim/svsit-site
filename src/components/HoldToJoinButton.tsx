@@ -50,7 +50,7 @@ function spawnParticle(w: number, h: number): Particle {
   // Color distribution: 55% gold, 15% red, 15% blue, 15% green
   const rng = Math.random();
   let color: string;
-  if (rng < 0.55) color = "#F59E0B";
+  if (rng < 0.55) color = "#F29E18";
   else if (rng < 0.70) color = "#EF4444";
   else if (rng < 0.85) color = "#3B82F6";
   else color = "#22C55E";
@@ -413,7 +413,7 @@ export default function HoldToJoinButton({ href }: { href: string }) {
           ctx.font = `${fontSize}px JetBrains Mono, monospace`;
           ctx.textBaseline = "top";
           ctx.textAlign = "center";
-          ctx.fillStyle = "#F59E0B";
+          ctx.fillStyle = "#F29E18";
 
           for (let i = 0; i < lineIdx; i++) {
             ctx.fillText(TERMINAL_LINES[i], centerX, startY + i * lineHeight);
@@ -440,7 +440,7 @@ export default function HoldToJoinButton({ href }: { href: string }) {
               const lastLine = TERMINAL_LINES[TERMINAL_LINES.length - 1];
               const halfWidth = ctx.measureText(lastLine).width / 2;
               const cursorX = centerX + halfWidth;
-              ctx.fillStyle = "#F59E0B";
+              ctx.fillStyle = "#F29E18";
               ctx.fillRect(cursorX + 2, startY + (TERMINAL_LINES.length - 1) * lineHeight, 10, 20);
             }
           }
@@ -546,10 +546,10 @@ export default function HoldToJoinButton({ href }: { href: string }) {
         ref={buttonRef}
         onClick={handleClick}
         aria-label="Word lid van SIT"
-        className="group relative inline-block px-12 py-5 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-xl tracking-wide overflow-hidden transition-[transform,box-shadow] duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] active:scale-[0.97] select-none cursor-pointer border-0"
+        className="group relative inline-block px-12 py-5 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-xl tracking-wide overflow-hidden transition-[transform,box-shadow] duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(242,158,24,0.4)] active:scale-[0.97] select-none cursor-pointer border-0"
       >
         <GlowEffect
-          colors={["#F59E0B", "#D97706", "#FBBF24", "#F59E0B"]}
+          colors={["#F29E18", "#D97706", "#FBBF24", "#F29E18"]}
           mode="breathe"
           blur="medium"
           duration={3}

@@ -11,7 +11,7 @@ const RARITY_COLORS: Record<string, string> = {
   uncommon: '#22C55E',
   rare: '#3B82F6',
   epic: '#8B5CF6',
-  legendary: '#F59E0B',
+  legendary: '#F29E18',
 }
 
 const RARITY_LABEL: Record<string, string> = {
@@ -316,7 +316,7 @@ export function ShopItemCard({ item, owned, coinsBalance, index }: ShopItemCardP
             className="font-mono text-[10px] px-1.5 py-0.5 flex items-center gap-1"
             style={{
               color: 'var(--color-accent-gold)',
-              border: '1px solid rgba(245,158,11,0.3)',
+              border: '1px solid rgba(242,158,24,0.3)',
               animation: 'featuredPulse 2.5s ease-in-out infinite',
             }}
           >
@@ -435,8 +435,8 @@ export function ShopItemCard({ item, owned, coinsBalance, index }: ShopItemCardP
       {/* Keyframes */}
       <style>{`
         @keyframes featuredPulse {
-          0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(245,158,11,0); }
-          50% { opacity: 0.75; box-shadow: 0 0 6px 2px rgba(245,158,11,0.2); }
+          0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(242,158,24,0); }
+          50% { opacity: 0.75; box-shadow: 0 0 6px 2px rgba(242,158,24,0.2); }
         }
         @keyframes newGlow {
           0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }

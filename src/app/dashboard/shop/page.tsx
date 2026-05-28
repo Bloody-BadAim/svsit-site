@@ -100,7 +100,7 @@ export default async function ShopPage({
             className="w-2 h-2 rounded-full"
             style={{
               backgroundColor: 'var(--color-accent-gold)',
-              boxShadow: '0 0 8px rgba(245,158,11,0.5)',
+              boxShadow: '0 0 8px rgba(242,158,24,0.5)',
             }}
           />
           <span
@@ -125,8 +125,8 @@ export default async function ShopPage({
       <div
         className="flex flex-wrap items-center justify-between gap-3 px-4 md:px-5 py-4 mb-6"
         style={{
-          backgroundColor: 'rgba(245,158,11,0.06)',
-          border: '1px solid rgba(245,158,11,0.2)',
+          backgroundColor: 'rgba(242,158,24,0.06)',
+          border: '1px solid rgba(242,158,24,0.2)',
         }}
       >
         <div>

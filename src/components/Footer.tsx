@@ -115,7 +115,7 @@ export default function Footer() {
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: "radial-gradient(circle 1px, rgba(245,158,11,0.04) 0%, transparent 100%)",
+          backgroundImage: "radial-gradient(circle 1px, rgba(242,158,24,0.04) 0%, transparent 100%)",
           backgroundSize: "32px 32px",
           zIndex: 0,
         }}

@@ -76,7 +76,7 @@ export default async function OgImage({ params }: { params: Promise<{ id: string
             width: '500px',
             height: '500px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(245,158,11,0.10) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(242,158,24,0.10) 0%, transparent 70%)',
           }}
         />
 
@@ -103,9 +103,9 @@ export default async function OgImage({ params }: { params: Promise<{ id: string
           }}
         >
           <div style={{ display: 'flex', fontSize: 36, fontWeight: 800 }}>
-            <span style={{ color: '#F59E0B' }}>{'{'}</span>
+            <span style={{ color: '#F29E18' }}>{'{'}</span>
             <span style={{ color: '#FAFAFA' }}>SIT</span>
-            <span style={{ color: '#F59E0B' }}>{'}'}</span>
+            <span style={{ color: '#F29E18' }}>{'}'}</span>
           </div>
           <div
             style={{
@@ -125,7 +125,7 @@ export default async function OgImage({ params }: { params: Promise<{ id: string
           style={{
             width: '100%',
             height: 1,
-            background: 'linear-gradient(to right, #F59E0B44, #27272A, transparent)',
+            background: 'linear-gradient(to right, #F29E1844, #27272A, transparent)',
             marginTop: 28,
             marginBottom: 40,
           }}
@@ -173,11 +173,11 @@ export default async function OgImage({ params }: { params: Promise<{ id: string
             style={{
               display: 'flex',
               padding: '6px 16px',
-              background: '#F59E0B15',
-              border: '1px solid #F59E0B33',
+              background: '#F29E1815',
+              border: '1px solid #F29E1833',
               borderRadius: 6,
               fontSize: 18,
-              color: '#F59E0B',
+              color: '#F29E18',
               fontWeight: 700,
             }}
           >
@@ -215,7 +215,7 @@ export default async function OgImage({ params }: { params: Promise<{ id: string
               Total XP
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-              <span style={{ fontSize: 48, fontWeight: 800, color: '#F59E0B' }}>
+              <span style={{ fontSize: 48, fontWeight: 800, color: '#F29E18' }}>
                 {member.total_xp.toLocaleString('nl-NL')}
               </span>
               <span style={{ fontSize: 22, color: '#71717A' }}>xp</span>
@@ -257,7 +257,7 @@ export default async function OgImage({ params }: { params: Promise<{ id: string
             left: 0,
             right: 0,
             height: 4,
-            background: 'linear-gradient(to right, #F59E0B, #3B82F6, #EF4444, #22C55E)',
+            background: 'linear-gradient(to right, #F29E18, #3B82F6, #EF4444, #22C55E)',
           }}
         />
       </div>

@@ -20,7 +20,7 @@ import {
 // ═══════════════════════════════════════════════════════════
 
 // Color map for bestuur → commissie connections
-const BESTUUR_COLORS = ["#F59E0B", "#3B82F6", "#EF4444", "#22C55E"];
+const BESTUUR_COLORS = ["#F29E18", "#3B82F6", "#EF4444", "#22C55E"];
 
 export default function OrgTree() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -629,7 +629,7 @@ function CommissieCluster({
               {isVoorzitter && (
                 <span
                   className="w-1.5 h-1.5 rounded-full shrink-0"
-                  style={{ background: "#F59E0B" }}
+                  style={{ background: "#F29E18" }}
                   title="Voorzitter"
                 />
               )}

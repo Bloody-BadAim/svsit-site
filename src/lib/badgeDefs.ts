@@ -47,10 +47,10 @@ export function getBadgeDef(badgeId: string): BadgeDef | undefined {
 
 /** Rarity → display color. Client-safe (no server imports). */
 export function getRarityColor(rarity: string): string {
-  if (rarity === 'mythic') return '#F59E0B'
+  if (rarity === 'mythic') return '#F29E18'
   const config: Record<string, string> = {
     common: '#888888', uncommon: '#22C55E', rare: '#3B82F6',
-    epic: '#8B5CF6', legendary: '#F59E0B',
+    epic: '#8B5CF6', legendary: '#F29E18',
   }
   return config[rarity] ?? '#888888'
 }

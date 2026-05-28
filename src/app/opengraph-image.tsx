@@ -32,7 +32,7 @@ export default function OgImage() {
             height: "600px",
             borderRadius: "50%",
             background:
-              "radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)",
+              "radial-gradient(circle, rgba(242,158,24,0.12) 0%, transparent 70%)",
           }}
         />
 
@@ -59,9 +59,9 @@ export default function OgImage() {
             lineHeight: 1,
           }}
         >
-          <span style={{ color: "#F59E0B" }}>{"{"}</span>
+          <span style={{ color: "#F29E18" }}>{"{"}</span>
           <span style={{ color: "#FAFAFA" }}>SIT</span>
-          <span style={{ color: "#F59E0B" }}>{"}"}</span>
+          <span style={{ color: "#F29E18" }}>{"}"}</span>
         </div>
 
         {/* Tagline */}
@@ -74,7 +74,7 @@ export default function OgImage() {
           }}
         >
           Door studenten. Voor studenten.
-          <span style={{ color: "#F59E0B", marginLeft: 8 }}>In tech.</span>
+          <span style={{ color: "#F29E18", marginLeft: 8 }}>In tech.</span>
         </div>
 
         {/* Bottom bar */}
@@ -86,7 +86,7 @@ export default function OgImage() {
             right: 0,
             height: 4,
             background:
-              "linear-gradient(to right, #F59E0B, #3B82F6, #EF4444, #22C55E)",
+              "linear-gradient(to right, #F29E18, #3B82F6, #EF4444, #22C55E)",
           }}
         />
       </div>

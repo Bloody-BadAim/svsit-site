@@ -32,7 +32,7 @@ const VARIANTS: Record<string, React.CSSProperties> = {
 
 type PixelRow = (string | 0)[];
 
-const G = "#F59E0B"; // gold
+const G = "#F29E18"; // gold
 const Gd = "#92400E"; // dark gold
 const Gl = "#FBBF24"; // light gold
 const B = "#3B82F6"; // blue

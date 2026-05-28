@@ -26,7 +26,7 @@ interface TicketCardProps {
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   paid:       { label: 'BETAALD',    color: 'var(--color-accent-green)', bg: 'rgba(34,197,94,0.08)' },
   checked_in: { label: 'INGECHECKT', color: 'var(--color-accent-blue)',  bg: 'rgba(59,130,246,0.08)' },
-  pending:    { label: 'IN AFWACHTING', color: 'var(--color-accent-gold)', bg: 'rgba(245,158,11,0.08)' },
+  pending:    { label: 'IN AFWACHTING', color: 'var(--color-accent-gold)', bg: 'rgba(242,158,24,0.08)' },
   cancelled:  { label: 'GEANNULEERD', color: 'var(--color-accent-red)',   bg: 'rgba(239,68,68,0.08)' },
 }
 

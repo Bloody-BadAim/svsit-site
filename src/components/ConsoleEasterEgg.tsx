@@ -13,7 +13,7 @@ export default function ConsoleEasterEgg() {
   ██████╔╝ ██║   ██║
   ╚═════╝  ╚═╝   ╚═╝
 `,
-      "color: #F59E0B; font-family: monospace; font-size: 12px; line-height: 1.2;"
+      "color: #F29E18; font-family: monospace; font-size: 12px; line-height: 1.2;"
     );
     console.log(
       "%cStudievereniging ICT — Hogeschool van Amsterdam",
@@ -29,7 +29,7 @@ export default function ConsoleEasterEgg() {
     );
     console.log(
       "%c> %cInteresse in meehelpen? %cbestuur@svsit.nl",
-      "color: #F59E0B; font-family: monospace; font-size: 12px;",
+      "color: #F29E18; font-family: monospace; font-size: 12px;",
       "color: #A1A1AA; font-family: monospace; font-size: 12px;",
       "color: #3B82F6; font-family: monospace; font-size: 12px; text-decoration: underline;"
     );

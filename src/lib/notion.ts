@@ -25,7 +25,7 @@ export interface NotionEvent {
 }
 
 const CATEGORY_COLORS: Record<EventCategory, string> = {
-  Social: '#F59E0B',
+  Social: '#F29E18',
   Code: '#22C55E',
   Game: '#EF4444',
   Career: '#3B82F6',

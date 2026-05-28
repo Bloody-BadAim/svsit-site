@@ -34,7 +34,7 @@ export const bestuur: Person[] = [
     id: "matin",
     name: "Matin",
     role: "Voorzitter",
-    accentColor: "#F59E0B",
+    accentColor: "#F29E18",
     commissies: ["ai4hva", "sponsoring", "educatie", "peiling"],
     voorzitterVan: ["ai4hva", "sponsoring", "peiling"],
     contactVoor: ["Externe partijen", "Sponsoring", "Opleiding"],
@@ -75,14 +75,14 @@ export const bestuur: Person[] = [
 // ── Commissieleden (niet-bestuur) ──
 
 export const leden: Person[] = [
-  { id: "shreyah", name: "Shreyah Ramtahal", accentColor: "#F59E0B", commissies: ["pr-socials", "ai4hva"], type: "lid" },
+  { id: "shreyah", name: "Shreyah Ramtahal", accentColor: "#F29E18", commissies: ["pr-socials", "ai4hva"], type: "lid" },
   { id: "shakira", name: "Shakira", accentColor: "#3B82F6", commissies: ["pr-socials"], type: "lid" },
   { id: "thijmen", name: "Thijmen", accentColor: "#22C55E", commissies: ["fun-events"], type: "lid" },
   { id: "wesley", name: "Wesley", accentColor: "#EF4444", commissies: ["fun-events", "ai4hva", "gameit"], type: "lid" },
-  { id: "mats", name: "Mats", accentColor: "#F59E0B", commissies: ["fun-events", "ai4hva", "educatie", "peiling"], voorzitterVan: ["peiling"], type: "lid" },
+  { id: "mats", name: "Mats", accentColor: "#F29E18", commissies: ["fun-events", "ai4hva", "educatie", "peiling"], voorzitterVan: ["peiling"], type: "lid" },
   { id: "kaylin", name: "Kaylin", accentColor: "#3B82F6", commissies: ["fun-events"], type: "lid" },
   { id: "nick", name: "Nick Hoebe", accentColor: "#22C55E", commissies: ["educatie"], type: "lid" },
-  { id: "luuk", name: "Luuk", accentColor: "#F59E0B", commissies: ["gameit"], type: "lid" },
+  { id: "luuk", name: "Luuk", accentColor: "#F29E18", commissies: ["gameit"], type: "lid" },
   { id: "rosa", name: "Rosa Safai", accentColor: "#EF4444", commissies: ["gameit"], type: "lid" },
 ];
 
@@ -100,7 +100,7 @@ export const commissies: OrgCommissie[] = [
   {
     id: "fun-events",
     name: "Fun & Extern Events",
-    color: "#F59E0B",
+    color: "#F29E18",
     voorzitters: ["idil"],
     leden: ["thijmen", "wesley", "mats", "kaylin"],
     status: "Zoekt leden",
@@ -132,7 +132,7 @@ export const commissies: OrgCommissie[] = [
   {
     id: "sponsoring",
     name: "Sponsoring",
-    color: "#F59E0B",
+    color: "#F29E18",
     voorzitters: ["matin"],
     leden: ["hugo"],
     status: "Zoekt leden",

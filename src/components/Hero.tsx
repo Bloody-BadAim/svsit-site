@@ -153,8 +153,8 @@ export default function Hero() {
           dot.style.cssText = `
             position:absolute;left:${col * 60}px;top:${row * 60}px;
             width:4px;height:4px;border-radius:50%;
-            background:rgba(245,158,11,0.4);
-            box-shadow:0 0 12px rgba(245,158,11,0.3),0 0 24px rgba(245,158,11,0.15);
+            background:rgba(242,158,24,0.4);
+            box-shadow:0 0 12px rgba(242,158,24,0.3),0 0 24px rgba(242,158,24,0.15);
             opacity:0;will-change:opacity;
           `;
           container.appendChild(dot);
@@ -337,7 +337,7 @@ export default function Hero() {
               >
                 <Suspense fallback={null}>
                   <GlowEffect
-                    colors={["#F59E0B", "#D97706", "#FBBF24", "#F59E0B"]}
+                    colors={["#F29E18", "#D97706", "#FBBF24", "#F29E18"]}
                     mode="breathe"
                     blur="soft"
                     duration={3}

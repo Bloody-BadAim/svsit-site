@@ -119,7 +119,7 @@ export default function CodeCompile({ onComplete }: { onComplete: () => void }) 
           {/* Terminal header */}
           <div className="flex items-center gap-2 mb-4 font-mono text-xs" style={{ color: '#3F3F46' }}>
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#EF4444' }} />
-            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#F59E0B' }} />
+            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#F29E18' }} />
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#22C55E' }} />
             <span className="ml-2">sit-terminal</span>
           </div>
@@ -127,10 +127,10 @@ export default function CodeCompile({ onComplete }: { onComplete: () => void }) 
           {/* Typed lines */}
           <div className="font-mono text-sm space-y-1.5">
             {typedLines.map((line, i) => (
-              <div key={i} style={{ color: line.includes('{SIT}') ? '#F59E0B' : line.startsWith('$') ? '#22C55E' : '#71717A' }}>
+              <div key={i} style={{ color: line.includes('{SIT}') ? '#F29E18' : line.startsWith('$') ? '#22C55E' : '#71717A' }}>
                 {line}
                 {i === typedLines.length - 1 && currentLine < LINES.length && (
-                  <span className="inline-block w-2 h-4 ml-0.5 animate-pulse" style={{ backgroundColor: '#F59E0B' }} />
+                  <span className="inline-block w-2 h-4 ml-0.5 animate-pulse" style={{ backgroundColor: '#F29E18' }} />
                 )}
               </div>
             ))}
@@ -142,7 +142,7 @@ export default function CodeCompile({ onComplete }: { onComplete: () => void }) 
               <div className="h-1 w-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
                 <motion.div
                   className="h-full"
-                  style={{ backgroundColor: '#F59E0B' }}
+                  style={{ backgroundColor: '#F29E18' }}
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                 />

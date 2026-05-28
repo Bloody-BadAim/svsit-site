@@ -35,14 +35,14 @@ export function PetBabyDragon({ size = 48 }: PetProps) {
       {/* Right horn */}
       <line x1="19" y1="7" x2="21" y2="3" stroke="#6B1D00" strokeWidth="1.5" strokeLinecap="round" />
       {/* Eyes */}
-      <ellipse cx="13.5" cy="12" rx="2" ry="2" fill="#F59E0B" />
-      <ellipse cx="18.5" cy="12" rx="2" ry="2" fill="#F59E0B" />
+      <ellipse cx="13.5" cy="12" rx="2" ry="2" fill="#F29E18" />
+      <ellipse cx="18.5" cy="12" rx="2" ry="2" fill="#F29E18" />
       <circle cx="14" cy="12.5" r="1" fill="#1a0800" />
       <circle cx="19" cy="12.5" r="1" fill="#1a0800" />
       {/* Tail */}
       <path d="M23,22 C26,24 27,28 25,30" stroke="#8B2500" strokeWidth="2" strokeLinecap="round" fill="none" />
       {/* Fire breath - intermittent */}
-      <path d="M16,17 L13,22 L16,20 L19,22 Z" fill="#F59E0B">
+      <path d="M16,17 L13,22 L16,20 L19,22 Z" fill="#F29E18">
         <animate
           attributeName="opacity"
           values="0;0;0.7;0.9;0;0;0"

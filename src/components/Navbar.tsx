@@ -55,7 +55,7 @@ export default function Navbar() {
           {/* Logo with blinking cursor */}
           <a
             href="/"
-            className="font-mono font-bold text-lg hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.4)] transition-all duration-300"
+            className="font-mono font-bold text-lg hover:drop-shadow-[0_0_8px_rgba(242,158,24,0.4)] transition-all duration-300"
           >
             <span className="text-[var(--color-accent-gold)]">{"{"}</span>
             <span className="text-[var(--color-text)]">SIT</span>
@@ -83,7 +83,7 @@ export default function Navbar() {
             </a>
             <a
               href="/#join"
-              className="group/lid relative px-4 py-2 border border-[var(--color-accent-gold)] text-[var(--color-accent-gold)] overflow-hidden hover:text-[var(--color-bg)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(245,158,11,0.25)]"
+              className="group/lid relative px-4 py-2 border border-[var(--color-accent-gold)] text-[var(--color-accent-gold)] overflow-hidden hover:text-[var(--color-bg)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(242,158,24,0.25)]"
             >
               <div className="absolute inset-0 bg-[var(--color-accent-gold)] translate-y-full group-hover/lid:translate-y-0 transition-transform duration-300" />
               <span className="relative z-10">$ join --now</span>
