@@ -4,39 +4,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { useState, useEffect } from 'react'
-import { LayoutDashboard, User, Shield, LogOut, Menu, X, ShoppingBag, Coins, Ticket } from 'lucide-react'
-
-function CoinPill({ userId, isAdmin }: { userId: string; isAdmin: boolean }) {
-  const [coins, setCoins] = useState<number | null>(null)
-
-  useEffect(() => {
-    if (isAdmin) {
-      setCoins(99999)
-      return
-    }
-    if (!userId) return
-    fetch(`/api/members/${userId}`)
-      .then((r) => r.json())
-      .then(({ data }) => {
-        if (data?.coins_balance != null) setCoins(data.coins_balance as number)
-      })
-      .catch(() => {})
-  }, [userId, isAdmin])
-
-  if (coins === null) return null
-
-  return (
-    <div className="flex items-center gap-1.5 text-sm font-mono">
-      <Coins className="w-4 h-4" style={{ color: 'var(--color-accent-gold)' }} />
-      <span style={{ color: 'var(--color-text)' }}>{coins.toLocaleString('nl-NL')}</span>
-    </div>
-  )
-}
+import { LayoutDashboard, User, Shield, LogOut, Menu, X, Ticket } from 'lucide-react'
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
   { href: '/dashboard/tickets', label: 'Tickets', Icon: Ticket },
-  { href: '/dashboard/shop', label: 'Shop', Icon: ShoppingBag },
   { href: '/dashboard/profiel', label: 'Profiel', Icon: User },
 ]
 
@@ -195,7 +167,6 @@ export default function DashboardNav() {
                 {session?.user?.email}
               </p>
             </div>
-            {session?.user?.id && <CoinPill userId={session.user.id} isAdmin={!!isAdmin} />}
           </div>
           <button
             onClick={() => signOut({ callbackUrl: '/' })}

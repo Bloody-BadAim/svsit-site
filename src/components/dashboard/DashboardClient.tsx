@@ -2,7 +2,6 @@
 
 import { useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { Flame, Coins } from 'lucide-react'
 import OverviewTab from '@/components/dashboard/tabs/OverviewTab'
 import type { OverviewTabProps } from '@/components/dashboard/tabs/OverviewTab'
 import MyCardTab from '@/components/dashboard/tabs/MyCardTab'
@@ -105,57 +104,39 @@ function DashboardContent(props: DashboardClientProps) {
         </div>
       )}
 
-      {/* Persistent top bar */}
+      {/* Persistent top bar — minimal */}
       <div
-        className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-3 gap-2 sm:gap-0"
+        className="flex items-center justify-between px-4 py-2.5"
         style={{
           borderBottom: '1px solid rgba(255,255,255,0.06)',
           backgroundColor: 'rgba(255,255,255,0.02)',
         }}
       >
-        <div className="flex items-center gap-4 flex-wrap">
-          {/* Level badge */}
+        <div className="flex items-center gap-3">
           <span
             className="text-xs font-bold font-mono"
             style={{ color: tierColor }}
           >
             LVL {level}
           </span>
-
-          {/* Level title */}
           <span className="text-white text-sm font-mono">
             {levelTitle}
           </span>
-
-          {/* XP bar */}
-          <div className="flex items-center gap-2">
-            <div
-              className="w-32 h-1 rounded overflow-hidden"
-              style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
-            >
-              <div
-                className="h-full rounded transition-all duration-700"
-                style={{ width: `${xpPercent}%`, background: tierColor }}
-              />
-            </div>
-            <span className="text-gray-600 text-xs font-mono">
-              {xpCurrent}/{xpMax}
-            </span>
-          </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Streak */}
-          <div className="flex items-center gap-1 text-xs font-mono">
-            <Flame className="w-3 h-3 text-red-500" />
-            <span className="text-red-500">{streak}</span>
+        <div className="flex items-center gap-2">
+          <div
+            className="w-24 h-1 rounded overflow-hidden"
+            style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
+          >
+            <div
+              className="h-full rounded transition-all duration-700"
+              style={{ width: `${xpPercent}%`, background: tierColor }}
+            />
           </div>
-
-          {/* Coins */}
-          <div className="flex items-center gap-1 text-xs font-mono">
-            <Coins className="w-3 h-3" style={{ color: 'var(--color-accent-gold)' }} />
-            <span style={{ color: 'var(--color-accent-gold)' }}>{coins.toLocaleString('nl-NL')}</span>
-          </div>
+          <span className="text-gray-600 text-[10px] font-mono">
+            {xpCurrent}/{xpMax} XP
+          </span>
         </div>
       </div>
 

@@ -13,7 +13,7 @@ const achievements = [
     stat: "20+",
     statLabel: "per jaar",
     color: "#F29E18",
-    rgb: [245, 158, 11] as number[],
+    rgb: [242, 158, 24] as number[],
   },
   {
     title: "Netwerk Opbouwen",
@@ -32,10 +32,10 @@ const achievements = [
     rgb: [239, 68, 68] as number[],
   },
   {
-    title: "Maar 10 Euro",
-    desc: "Eenmalig. Geen maandelijkse kosten. Lid voor het hele jaar. Inclusief toegang tot alle events en de volledige SIT community.",
-    stat: "€10",
-    statLabel: "that's it",
+    title: "Nog geen tientje",
+    desc: "Eenmalig €9,99 per jaar. Geen verborgen kosten. Inclusief toegang tot alle events, dev tools en de volledige SIT community.",
+    stat: "€9,99",
+    statLabel: "per jaar",
     color: "#22C55E",
     rgb: [34, 197, 94] as number[],
   },
@@ -188,9 +188,6 @@ export default function WhyJoin() {
               suffix = "+";
             } else if (rawStat === "5") {
               target = 5;
-            } else if (rawStat === "€10") {
-              target = 10;
-              prefix = "€";
             }
 
             if (target > 0) {
@@ -260,12 +257,12 @@ export default function WhyJoin() {
 
         <div className="mb-8 md:mb-12">
           <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tight leading-[1.1]">
-            Achievements
+            Wat je
             <br />
-            <span className="text-[var(--color-accent-gold)]">Unlocked</span>
+            <span className="text-[var(--color-accent-gold)]">krijgt</span>
           </h2>
           <p className="font-mono text-sm text-[var(--color-text-muted)] mt-4">
-            Wat je krijgt als SIT lid. Allemaal inbegrepen.
+            Alles inbegrepen bij je lidmaatschap.
           </p>
         </div>
 

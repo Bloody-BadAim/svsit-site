@@ -11,7 +11,7 @@ const navLinks = [
   { href: "/events", label: "Events" },
   { href: "/projecten", label: "Projecten" },
   { href: "/vacatures", label: "Vacatures" },
-  { href: "/leaderboard", label: "Leaderboard" },
+  { href: "/faq", label: "FAQ" },
 ];
 
 export default function Navbar() {
