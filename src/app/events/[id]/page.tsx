@@ -6,21 +6,21 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 import { notFound } from 'next/navigation'
-import { Calendar, MapPin, Clock, Users } from 'lucide-react'
+import { Calendar, MapPin, Clock, Users, Camera, Image as ImageIcon } from 'lucide-react'
 import TicketForm from './TicketForm'
 import CheckInForm from './CheckInForm'
 
 // ── Category display config ─────────────────────────────────────────────────
 
 const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
-  social: { label: 'SOCIAL', color: '#F59E0B' },
+  social: { label: 'SOCIAL', color: '#F29E18' },
   code: { label: 'CODE', color: '#22C55E' },
   learn: { label: 'TALKS', color: '#3B82F6' },
   impact: { label: 'CAREER', color: '#EF4444' },
 }
 
 function getCategoryDisplay(category: string) {
-  return CATEGORY_CONFIG[category] ?? { label: category.toUpperCase(), color: '#F59E0B' }
+  return CATEGORY_CONFIG[category] ?? { label: category.toUpperCase(), color: '#F29E18' }
 }
 
 // ── Dynamic metadata ────────────────────────────────────────────────────────
@@ -379,6 +379,95 @@ export default async function EventDetailPage(
           isSoldOut={isSoldOut}
           categoryColor={cat.color}
         />
+
+        {/* Event recap (only shown when published) */}
+        {typedEvent.recap_published && typedEvent.recap_description && (
+          <div
+            className="rounded-lg overflow-hidden mb-8"
+            style={{
+              background: '#18181B',
+              border: '1px solid #27272A',
+            }}
+          >
+            {/* Recap header */}
+            <div
+              className="flex items-center gap-3 px-5 py-3"
+              style={{ borderBottom: '1px solid #27272A' }}
+            >
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#EF4444' }} />
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cat.color }} />
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#22C55E' }} />
+              </div>
+              <span className="font-mono text-[10px] tracking-[0.15em]" style={{ color: '#71717A' }}>
+                // recap
+              </span>
+            </div>
+
+            <div className="p-5 sm:p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Camera size={16} style={{ color: cat.color }} />
+                <h2
+                  className="text-lg font-bold uppercase tracking-wide"
+                  style={{
+                    fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
+                    color: '#FAFAFA',
+                  }}
+                >
+                  Terugblik
+                </h2>
+              </div>
+
+              <div
+                className="text-sm leading-relaxed whitespace-pre-line mb-6"
+                style={{ color: '#D4D4D8' }}
+              >
+                {typedEvent.recap_description}
+              </div>
+
+              {/* Photo gallery */}
+              {typedEvent.recap_photos && typedEvent.recap_photos.length > 0 && (
+                <div>
+                  <p
+                    className="font-mono text-[10px] tracking-[0.2em] uppercase mb-3"
+                    style={{ color: cat.color }}
+                  >
+                    {'>'} foto&apos;s
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {typedEvent.recap_photos.map((url, i) => (
+                      <a
+                        key={i}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative aspect-[4/3] overflow-hidden group"
+                        style={{
+                          borderRadius: '6px',
+                          border: '1px solid #27272A',
+                          backgroundColor: '#09090B',
+                        }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={url}
+                          alt={`${typedEvent.title} foto ${i + 1}`}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                        <div
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                          style={{ background: 'rgba(9, 9, 11, 0.5)' }}
+                        >
+                          <ImageIcon size={20} style={{ color: '#FAFAFA' }} />
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Self-service check-in (only for logged-in members during active events) */}
         {showCheckin && (

@@ -2,7 +2,7 @@ import { createServiceClient } from '@/lib/supabase'
 import type { SitEvent } from '@/types/database'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Calendar, MapPin, Users } from 'lucide-react'
+import { Calendar, MapPin, Users, Camera } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 
 export const dynamic = 'force-dynamic'
@@ -15,14 +15,14 @@ export const metadata: Metadata = {
 // ── Category display config ─────────────────────────────────────────────────
 
 const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
-  social: { label: 'SOCIAL', color: '#F59E0B' },
+  social: { label: 'SOCIAL', color: '#F29E18' },
   code: { label: 'CODE', color: '#22C55E' },
   learn: { label: 'TALKS', color: '#3B82F6' },
   impact: { label: 'CAREER', color: '#EF4444' },
 }
 
 function getCategoryDisplay(category: string) {
-  return CATEGORY_CONFIG[category] ?? { label: category.toUpperCase(), color: '#F59E0B' }
+  return CATEGORY_CONFIG[category] ?? { label: category.toUpperCase(), color: '#F29E18' }
 }
 
 // ── Date formatting ─────────────────────────────────────────────────────────
@@ -183,19 +183,92 @@ function EventCard({ event }: { event: SitEvent }) {
   )
 }
 
+// ── Recap Card ──────────────────────────────────────────────────────────────
+
+function RecapCard({ event }: { event: SitEvent }) {
+  const cat = getCategoryDisplay(event.category)
+  const dateObj = new Date(event.date)
+  const day = dateObj.getDate()
+  const months = ['JAN', 'FEB', 'MRT', 'APR', 'MEI', 'JUN', 'JUL', 'AUG', 'SEP', 'OKT', 'NOV', 'DEC']
+  const month = months[dateObj.getMonth()]
+  const photoCount = event.recap_photos?.length ?? 0
+
+  return (
+    <Link
+      href={`/events/${event.id}`}
+      className="group relative block rounded-lg overflow-hidden transition-all duration-200 hover:translate-y-[-2px]"
+      style={{
+        background: '#18181B',
+        border: '1px solid #27272A',
+      }}
+    >
+      <div className="p-5">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex items-center gap-3">
+            <div className="font-mono text-center leading-none flex-shrink-0" style={{ color: '#71717A' }}>
+              <div className="text-lg font-bold">{day}</div>
+              <div className="text-[10px] tracking-widest mt-0.5 opacity-70">{month}</div>
+            </div>
+            <span className="w-1 h-1 rounded-full flex-shrink-0 opacity-40" style={{ background: '#71717A' }} />
+            <h2 className="font-mono text-sm sm:text-base font-semibold text-[#A1A1AA] group-hover:text-white transition-colors leading-tight">
+              {event.title}
+            </h2>
+          </div>
+          <span
+            className="flex items-center gap-1 font-mono text-[10px] tracking-widest px-2 py-0.5 rounded-sm uppercase flex-shrink-0"
+            style={{
+              color: cat.color,
+              border: `1px solid ${cat.color}30`,
+              background: `${cat.color}08`,
+            }}
+          >
+            <Camera size={10} />
+            RECAP
+          </span>
+        </div>
+
+        {event.recap_description && (
+          <p className="text-xs text-[#71717A] leading-relaxed line-clamp-2 mb-3">
+            {event.recap_description}
+          </p>
+        )}
+
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-[10px] text-[#71717A]">
+            {photoCount > 0 ? `${photoCount} foto${photoCount === 1 ? '' : "'s"}` : 'Lees meer'}
+          </span>
+          <span className="font-mono text-xs tracking-wider uppercase text-[#71717A] group-hover:text-[#D4D4D8] transition-colors">
+            Bekijk &rarr;
+          </span>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function EventsPage() {
   const supabase = createServiceClient()
 
-  const { data: events, error } = await supabase
-    .from('events')
-    .select('*')
-    .in('status', ['upcoming', 'active'])
-    .gte('date', new Date().toISOString())
-    .order('date', { ascending: true })
+  const [upcomingResult, recapResult] = await Promise.all([
+    supabase
+      .from('events')
+      .select('*')
+      .in('status', ['upcoming', 'active'])
+      .gte('date', new Date().toISOString())
+      .order('date', { ascending: true }),
+    supabase
+      .from('events')
+      .select('*')
+      .eq('status', 'completed')
+      .eq('recap_published', true)
+      .order('date', { ascending: false })
+      .limit(6),
+  ])
 
-  const eventList = (error || !events) ? [] : (events as SitEvent[])
+  const eventList = (upcomingResult.error || !upcomingResult.data) ? [] : (upcomingResult.data as SitEvent[])
+  const recapList = (recapResult.error || !recapResult.data) ? [] : (recapResult.data as SitEvent[])
 
   return (
     <>
@@ -253,6 +326,23 @@ export default async function EventsPage() {
             {eventList.map((event) => (
               <EventCard key={event.id} event={event} />
             ))}
+          </div>
+        )}
+
+        {/* Past events with recaps */}
+        {recapList.length > 0 && (
+          <div className="mt-16">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="font-mono text-xs tracking-[0.15em]" style={{ color: '#71717A' }}>
+                // terugblik
+              </span>
+              <span className="flex-1 h-px" style={{ backgroundColor: '#27272A' }} />
+            </div>
+            <div className="space-y-3">
+              {recapList.map((event) => (
+                <RecapCard key={event.id} event={event} />
+              ))}
+            </div>
           </div>
         )}
 
