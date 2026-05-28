@@ -1,14 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import ClassSelector from './ClassSelector'
 import { COMMISSIES, ROLLEN } from '@/lib/constants'
 import type { Role } from '@/types/database'
-import { Check } from 'lucide-react'
+import { Check, ArrowRight, User, GraduationCap } from 'lucide-react'
 
-type Step = 1 | 2 | 3 | 4
+type Step = 1 | 2
 
 export default function RegisterFlow() {
   const { data: session } = useSession()
@@ -18,12 +18,13 @@ export default function RegisterFlow() {
   const [step, setStep] = useState<Step>(1)
   const [email, setEmail] = useState(session?.user?.email || '')
   const [displayName, setDisplayName] = useState('')
+  const [isStudent, setIsStudent] = useState(true)
   const [studentNumber, setStudentNumber] = useState('')
   const [hvaEmail, setHvaEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [selectedCommissie, setSelectedCommissie] = useState<string | null>(null)
   const [eigenIdee, setEigenIdee] = useState('')
   const [isDocent, setIsDocent] = useState(false)
-  const [password, setPassword] = useState('')
   const [akkoord, setAkkoord] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -37,11 +38,12 @@ export default function RegisterFlow() {
         if (parsed.step) setStep(parsed.step)
         if (parsed.email && !isMicrosoft) setEmail(parsed.email)
         if (parsed.displayName) setDisplayName(parsed.displayName)
+        if (parsed.isStudent !== undefined) setIsStudent(parsed.isStudent)
         if (parsed.studentNumber) setStudentNumber(parsed.studentNumber)
+        if (parsed.hvaEmail) setHvaEmail(parsed.hvaEmail)
         if (parsed.selectedCommissie !== undefined) setSelectedCommissie(parsed.selectedCommissie)
         if (parsed.eigenIdee) setEigenIdee(parsed.eigenIdee)
         if (parsed.isDocent) setIsDocent(parsed.isDocent)
-        if (parsed.hvaEmail) setHvaEmail(parsed.hvaEmail)
       } catch {}
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -50,48 +52,53 @@ export default function RegisterFlow() {
   // Sla formulierdata op in localStorage bij elke wijziging
   useEffect(() => {
     localStorage.setItem('sit-register-form', JSON.stringify({
-      step,
-      email,
-      displayName,
-      studentNumber,
-      selectedCommissie,
-      eigenIdee,
-      isDocent,
+      step, email, displayName, isStudent, studentNumber, hvaEmail,
+      selectedCommissie, eigenIdee, isDocent,
     }))
-  }, [step, email, displayName, studentNumber, selectedCommissie, eigenIdee, isDocent])
+  }, [step, email, displayName, isStudent, studentNumber, hvaEmail, selectedCommissie, eigenIdee, isDocent])
 
   const role: Role = isDocent ? 'mentor' : selectedCommissie ? 'contributor' : 'member'
   const commissieNaam = selectedCommissie === 'eigen-idee'
     ? eigenIdee
     : COMMISSIES.find((c) => c.id === selectedCommissie)?.naam || null
 
-  async function handleRegister() {
+  // Stap 1 validatie
+  const step1Valid = email.trim().length > 0
+    && (isMicrosoft || password.length >= 8)
+    && (!isStudent || studentNumber.trim().length > 0)
+
+  async function createAccount() {
+    const res = await fetch('/api/members', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        password: isMicrosoft ? undefined : password,
+        display_name: displayName.trim() || null,
+        student_number: isStudent ? studentNumber.trim() : null,
+        hva_email: hvaEmail.trim() || null,
+        role,
+        commissie: selectedCommissie === 'eigen-idee' ? null : selectedCommissie,
+        commissie_voorstel: selectedCommissie === 'eigen-idee' ? eigenIdee : null,
+      }),
+    })
+
+    if (!res.ok) {
+      const data = await res.json()
+      throw new Error(data.error || 'Registratie mislukt')
+    }
+
+    return res.json()
+  }
+
+  async function handlePayAndJoin() {
     setLoading(true)
     setError('')
 
     try {
-      // Stap 1: Maak lid aan
-      const res = await fetch('/api/members', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          password: isMicrosoft ? undefined : password,
-          display_name: displayName.trim() || null,
-          student_number: studentNumber.trim(),
-          hva_email: hvaEmail.trim() || null,
-          role,
-          commissie: selectedCommissie === 'eigen-idee' ? null : selectedCommissie,
-          commissie_voorstel: selectedCommissie === 'eigen-idee' ? eigenIdee : null,
-        }),
-      })
+      await createAccount()
 
-      if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Registratie mislukt')
-      }
-
-      // Stap 2: Start Stripe checkout
+      // Start Stripe checkout
       const checkoutRes = await fetch('/api/stripe/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -111,14 +118,38 @@ export default function RegisterFlow() {
     }
   }
 
+  async function handleSkipPayment() {
+    setLoading(true)
+    setError('')
+
+    try {
+      await createAccount()
+      localStorage.removeItem('sit-register-form')
+
+      // Auto login voor credentials users
+      if (!isMicrosoft && password) {
+        await signIn('credentials', {
+          email,
+          password,
+          redirect: false,
+        })
+      }
+
+      router.push('/dashboard?welcome=true')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Er ging iets mis')
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="w-full max-w-xl mx-auto">
       {/* Stap indicator */}
-      <div className="flex items-center gap-2 mb-12 justify-center">
-        {[1, 2, 3, 4].map((s) => (
+      <div className="flex items-center gap-2 mb-10 justify-center">
+        {[1, 2].map((s) => (
           <div key={s} className="flex items-center gap-2">
             <div
-              className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold font-mono"
               style={{
                 backgroundColor: step >= s ? 'var(--color-accent-gold)' : 'var(--color-surface)',
                 color: step >= s ? 'var(--color-bg)' : 'var(--color-text-muted)',
@@ -127,9 +158,9 @@ export default function RegisterFlow() {
             >
               {step > s ? <Check className="w-4 h-4" /> : s}
             </div>
-            {s < 4 && (
+            {s < 2 && (
               <div
-                className="w-8 h-px"
+                className="w-12 h-px"
                 style={{
                   backgroundColor: step > s ? 'var(--color-accent-gold)' : 'var(--color-border)',
                 }}
@@ -139,29 +170,36 @@ export default function RegisterFlow() {
         ))}
       </div>
 
-      {/* Stap 1: Welkom */}
+      {/* Stap 1: Account aanmaken */}
       {step === 1 && (
-        <div className="space-y-8">
+        <div className="space-y-6">
           <div className="text-center">
-            <h2 className="text-3xl font-bold" style={{ color: 'var(--color-text)' }}>
-              Welkom bij{' '}
+            <h2
+              className="text-2xl sm:text-3xl font-bold"
+              style={{ color: 'var(--color-text)' }}
+            >
+              Word lid van{' '}
               <span style={{ color: 'var(--color-accent-gold)', fontFamily: 'var(--font-mono)' }}>
                 {'{'}<span style={{ color: 'var(--color-text)' }}>SIT</span>{'}'}
               </span>
             </h2>
+            <p className="mt-2 font-mono text-sm" style={{ color: 'var(--color-text-muted)' }}>
+              Maak je account aan in 2 stappen
+            </p>
           </div>
 
           <div className="space-y-4">
+            {/* Naam */}
             <div>
-              <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-                naam
+              <label className="block text-sm mb-1.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                naam <span className="opacity-40">(optioneel)</span>
               </label>
               <input
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Hoe wil je dat we je noemen?"
-                className="w-full py-3 px-4 rounded-lg text-base outline-none"
+                className="w-full py-3 px-4 rounded-md text-sm outline-none font-mono transition-colors focus:border-[var(--color-accent-gold)]"
                 style={{
                   backgroundColor: 'var(--color-surface)',
                   color: 'var(--color-text)',
@@ -170,8 +208,9 @@ export default function RegisterFlow() {
               />
             </div>
 
+            {/* Email */}
             <div>
-              <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+              <label className="block text-sm mb-1.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
                 email
               </label>
               <input
@@ -181,7 +220,7 @@ export default function RegisterFlow() {
                 disabled={isMicrosoft}
                 required
                 placeholder="je@email.nl"
-                className="w-full py-3 px-4 rounded-lg text-base outline-none disabled:opacity-60"
+                className="w-full py-3 px-4 rounded-md text-sm outline-none font-mono disabled:opacity-60 transition-colors focus:border-[var(--color-accent-gold)]"
                 style={{
                   backgroundColor: 'var(--color-surface)',
                   color: 'var(--color-text)',
@@ -190,72 +229,144 @@ export default function RegisterFlow() {
               />
             </div>
 
-            <div>
-              <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-                studentnummer
-              </label>
-              <input
-                type="text"
-                value={studentNumber}
-                onChange={(e) => setStudentNumber(e.target.value)}
-                required
-                placeholder="bijv. 500123456"
-                className="w-full py-3 px-4 rounded-lg text-base outline-none"
-                style={{
-                  backgroundColor: 'var(--color-surface)',
-                  color: 'var(--color-text)',
-                  border: '1px solid var(--color-border)',
-                }}
-              />
-            </div>
+            {/* Wachtwoord (alleen credentials) */}
+            {!isMicrosoft && (
+              <div>
+                <label className="block text-sm mb-1.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                  wachtwoord <span className="opacity-40">(min. 8 tekens)</span>
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  placeholder="Kies een wachtwoord"
+                  className="w-full py-3 px-4 rounded-md text-sm outline-none font-mono transition-colors focus:border-[var(--color-accent-gold)]"
+                  style={{
+                    backgroundColor: 'var(--color-surface)',
+                    color: 'var(--color-text)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                />
+              </div>
+            )}
 
-            <div>
-              <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-                HvA email <span className="opacity-50">(sterk aangeraden)</span>
-              </label>
-              <input
-                type="email"
-                value={hvaEmail}
-                onChange={(e) => setHvaEmail(e.target.value)}
-                placeholder="voornaam.achternaam@hva.nl"
-                className="w-full py-3 px-4 rounded-lg text-base outline-none"
-                style={{
-                  backgroundColor: 'var(--color-surface)',
-                  color: 'var(--color-text)',
-                  border: '1px solid var(--color-border)',
-                }}
-              />
-              <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)', opacity: 0.6 }}>
-                Niet verplicht, maar helpt ons je te koppelen als HvA student
-              </p>
+            {/* Student toggle */}
+            <div
+              className="p-4 rounded-md space-y-3"
+              style={{
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => { setIsStudent(true); setIsDocent(false) }}
+                  className="flex items-center gap-2 px-3 py-2 rounded-md font-mono text-xs font-semibold transition-all"
+                  style={{
+                    backgroundColor: isStudent ? 'rgba(242, 158, 24, 0.1)' : 'transparent',
+                    color: isStudent ? 'var(--color-accent-gold)' : 'var(--color-text-muted)',
+                    border: isStudent ? '1px solid rgba(242, 158, 24, 0.3)' : '1px solid var(--color-border)',
+                  }}
+                >
+                  <GraduationCap size={14} />
+                  Student
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setIsStudent(false); setStudentNumber(''); setHvaEmail('') }}
+                  className="flex items-center gap-2 px-3 py-2 rounded-md font-mono text-xs font-semibold transition-all"
+                  style={{
+                    backgroundColor: !isStudent ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+                    color: !isStudent ? 'var(--color-accent-blue)' : 'var(--color-text-muted)',
+                    border: !isStudent ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid var(--color-border)',
+                  }}
+                >
+                  <User size={14} />
+                  Geen student
+                </button>
+              </div>
+
+              {isStudent && (
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs mb-1.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                      studentnummer
+                    </label>
+                    <input
+                      type="text"
+                      value={studentNumber}
+                      onChange={(e) => setStudentNumber(e.target.value)}
+                      required
+                      placeholder="bijv. 500123456"
+                      className="w-full py-2.5 px-3 rounded-md text-sm outline-none font-mono transition-colors focus:border-[var(--color-accent-gold)]"
+                      style={{
+                        backgroundColor: 'var(--color-bg)',
+                        color: 'var(--color-text)',
+                        border: '1px solid var(--color-border)',
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs mb-1.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                      HvA email <span className="opacity-40">(optioneel)</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={hvaEmail}
+                      onChange={(e) => setHvaEmail(e.target.value)}
+                      placeholder="voornaam.achternaam@hva.nl"
+                      className="w-full py-2.5 px-3 rounded-md text-sm outline-none font-mono transition-colors focus:border-[var(--color-accent-gold)]"
+                      style={{
+                        backgroundColor: 'var(--color-bg)',
+                        color: 'var(--color-text)',
+                        border: '1px solid var(--color-border)',
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {!isStudent && (
+                <p className="font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                  Docent, alumnus of extern? Iedereen is welkom bij SIT.
+                </p>
+              )}
             </div>
           </div>
 
           <button
             onClick={() => {
-              if (!email || !studentNumber.trim()) return
+              if (!step1Valid) return
               setStep(2)
             }}
-            className="w-full py-4 rounded-lg font-semibold text-lg transition-all"
+            disabled={!step1Valid}
+            className="w-full py-3.5 rounded-md font-mono font-semibold text-sm transition-all disabled:opacity-40 flex items-center justify-center gap-2"
             style={{
               backgroundColor: 'var(--color-accent-gold)',
               color: 'var(--color-bg)',
             }}
           >
             Volgende
+            <ArrowRight size={14} />
           </button>
         </div>
       )}
 
-      {/* Stap 2: Kies je class */}
+      {/* Stap 2: Commissie + betaling */}
       {step === 2 && (
-        <div className="space-y-8">
+        <div className="space-y-6">
           <div className="text-center">
-            <h2 className="text-3xl font-bold" style={{ color: 'var(--color-text)' }}>
-              Kies je class
+            <h2
+              className="text-2xl sm:text-3xl font-bold"
+              style={{ color: 'var(--color-text)' }}
+            >
+              Kies je rol
             </h2>
-            <p className="mt-2" style={{ color: 'var(--color-text-muted)' }}>
-              Wil je actief meebouwen aan SIT? Kies een commissie om als Contributor te joinen.
+            <p className="mt-2 font-mono text-sm" style={{ color: 'var(--color-text-muted)' }}>
+              Wil je actief meebouwen? Kies een commissie. Of skip en ontdek later.
             </p>
           </div>
 
@@ -265,155 +376,41 @@ export default function RegisterFlow() {
             isDocent={isDocent}
             onSelect={setSelectedCommissie}
             onEigenIdee={setEigenIdee}
-            onDocent={setIsDocent}
+            onDocent={(v) => {
+              setIsDocent(v)
+              if (v) setIsStudent(false)
+            }}
           />
 
-          <div className="flex gap-3">
-            <button
-              onClick={() => setStep(1)}
-              className="py-3 px-6 rounded-lg font-semibold transition-all"
-              style={{
-                backgroundColor: 'var(--color-surface)',
-                color: 'var(--color-text)',
-                border: '1px solid var(--color-border)',
-              }}
-            >
-              Terug
-            </button>
-            <button
-              onClick={() => setStep(isMicrosoft ? 4 : 3)}
-              className="flex-1 py-3 rounded-lg font-semibold transition-all"
-              style={{
-                backgroundColor: 'var(--color-accent-gold)',
-                color: 'var(--color-bg)',
-              }}
-            >
-              {selectedCommissie || isDocent ? 'Volgende' : 'Volgende als Member'}
-            </button>
-          </div>
-
-          <button
-            onClick={() => {
-              setSelectedCommissie(null)
-              setIsDocent(false)
-              setStep(isMicrosoft ? 4 : 3)
+          {/* Summary */}
+          <div
+            className="p-4 rounded-md font-mono text-sm"
+            style={{
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
             }}
-            className="w-full text-center text-sm underline"
-            style={{ color: 'var(--color-text-muted)' }}
           >
-            Ik wil gewoon lid zijn, skip
-          </button>
-        </div>
-      )}
-
-      {/* Stap 3: Wachtwoord (alleen bij credentials) */}
-      {step === 3 && !isMicrosoft && (
-        <div className="space-y-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold" style={{ color: 'var(--color-text)' }}>
-              Bijna klaar
-            </h2>
-            <p className="mt-2" style={{ color: 'var(--color-text-muted)' }}>
-              Kies een wachtwoord voor je account
-            </p>
-          </div>
-
-          <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-            <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-              Je wordt{' '}
-              <span className="font-bold" style={{ color: 'var(--color-accent-gold)' }}>
+            <div className="flex justify-between items-center">
+              <span style={{ color: 'var(--color-text-muted)' }}>Rol</span>
+              <span className="font-semibold" style={{ color: 'var(--color-accent-gold)' }}>
                 {ROLLEN[role].naam}
               </span>
-            </p>
-            {commissieNaam && (
-              <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                Commissie: <span style={{ color: 'var(--color-text)' }}>{commissieNaam}</span>
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-              wachtwoord <span className="opacity-50">(min. 8 tekens)</span>
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              placeholder="••••••••"
-              className="w-full py-3 px-4 rounded-lg text-base outline-none"
-              style={{
-                backgroundColor: 'var(--color-surface)',
-                color: 'var(--color-text)',
-                border: '1px solid var(--color-border)',
-              }}
-            />
-          </div>
-
-          <div className="flex gap-3">
-            <button
-              onClick={() => setStep(2)}
-              className="py-3 px-6 rounded-lg font-semibold transition-all"
-              style={{
-                backgroundColor: 'var(--color-surface)',
-                color: 'var(--color-text)',
-                border: '1px solid var(--color-border)',
-              }}
-            >
-              Terug
-            </button>
-            <button
-              onClick={() => {
-                if (password.length < 8) return
-                setStep(4)
-              }}
-              className="flex-1 py-3 rounded-lg font-semibold transition-all"
-              style={{
-                backgroundColor: 'var(--color-accent-gold)',
-                color: 'var(--color-bg)',
-              }}
-            >
-              Volgende
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Stap 4: Betalen */}
-      {step === 4 && (
-        <div className="space-y-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold" style={{ color: 'var(--color-text)' }}>
-              Activeer je lidmaatschap
-            </h2>
-          </div>
-
-          <div className="p-6 rounded-lg space-y-3" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-            <div className="flex justify-between items-center">
-              <span style={{ color: 'var(--color-text)' }}>SIT Lidmaatschap</span>
-              <span className="text-2xl font-bold" style={{ color: 'var(--color-accent-gold)' }}>
-                €10<span className="text-sm font-normal" style={{ color: 'var(--color-text-muted)' }}>/jaar</span>
-              </span>
             </div>
-            <div className="h-px" style={{ backgroundColor: 'var(--color-border)' }} />
-            <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-              Rol: <span className="font-semibold" style={{ color: 'var(--color-text)' }}>{ROLLEN[role].naam}</span>
-            </p>
             {commissieNaam && (
-              <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                Commissie: <span style={{ color: 'var(--color-text)' }}>{commissieNaam}</span>
-              </p>
+              <div className="flex justify-between items-center mt-1">
+                <span style={{ color: 'var(--color-text-muted)' }}>Commissie</span>
+                <span style={{ color: 'var(--color-text)' }}>{commissieNaam}</span>
+              </div>
             )}
           </div>
 
+          {/* Betaal akkoord */}
           <label className="flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
               checked={akkoord}
               onChange={(e) => setAkkoord(e.target.checked)}
-              className="mt-1 sr-only"
+              className="sr-only"
             />
             <div
               className="w-5 h-5 rounded flex-shrink-0 flex items-center justify-center mt-0.5"
@@ -424,39 +421,51 @@ export default function RegisterFlow() {
             >
               {akkoord && <Check className="w-3 h-3" style={{ color: 'var(--color-bg)' }} />}
             </div>
-            <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-              Ik ga akkoord met de voorwaarden en machtig SIT om jaarlijks €10 af te schrijven via automatische incasso.
+            <span className="text-xs font-mono" style={{ color: 'var(--color-text-muted)' }}>
+              Ik ga akkoord met de voorwaarden en machtig SIT om jaarlijks af te schrijven via automatische incasso.
             </span>
           </label>
 
           {error && (
-            <p className="text-sm" style={{ color: 'var(--color-accent-red)' }}>{error}</p>
+            <p className="text-sm font-mono" style={{ color: 'var(--color-accent-red)' }}>{error}</p>
           )}
 
-          <div className="flex gap-3">
+          {/* CTA buttons */}
+          <div className="space-y-3">
             <button
-              onClick={() => setStep(isMicrosoft ? 2 : 3)}
-              className="py-3 px-6 rounded-lg font-semibold transition-all"
-              style={{
-                backgroundColor: 'var(--color-surface)',
-                color: 'var(--color-text)',
-                border: '1px solid var(--color-border)',
-              }}
-            >
-              Terug
-            </button>
-            <button
-              onClick={handleRegister}
+              onClick={handlePayAndJoin}
               disabled={!akkoord || loading}
-              className="flex-1 py-4 rounded-lg font-semibold text-lg transition-all disabled:opacity-50"
+              className="w-full py-3.5 rounded-md font-mono font-semibold text-sm transition-all disabled:opacity-40 flex items-center justify-center gap-2"
               style={{
                 backgroundColor: 'var(--color-accent-gold)',
                 color: 'var(--color-bg)',
               }}
             >
-              {loading ? 'Bezig...' : 'Betaal en word lid'}
+              {loading ? 'Bezig...' : 'Word lid — €9,99/jaar'}
+              {!loading && <ArrowRight size={14} />}
+            </button>
+
+            <button
+              onClick={handleSkipPayment}
+              disabled={loading}
+              className="w-full py-3 rounded-md font-mono text-sm transition-all disabled:opacity-40"
+              style={{
+                backgroundColor: 'transparent',
+                color: 'var(--color-text-muted)',
+                border: '1px solid var(--color-border)',
+              }}
+            >
+              Eerst rondkijken (betaal later)
             </button>
           </div>
+
+          <button
+            onClick={() => setStep(1)}
+            className="w-full text-center font-mono text-xs"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            &larr; Terug
+          </button>
         </div>
       )}
     </div>
