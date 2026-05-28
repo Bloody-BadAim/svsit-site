@@ -10,6 +10,19 @@ export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: 'Events — {SIT}',
   description: 'Bekijk alle aankomende events van SIT, de studievereniging voor HBO-ICT aan de HvA.',
+  openGraph: {
+    title: 'Events — {SIT}',
+    description: 'Borrels, hackathons, tech talks, game nights en meer. Bekijk het SIT event programma.',
+    siteName: '{SIT}',
+    locale: 'nl_NL',
+    type: 'website',
+    url: 'https://svsit.nl/events',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Events — {SIT}',
+    description: 'Borrels, hackathons, tech talks, game nights en meer bij SIT.',
+  },
 }
 
 // ── Category display config ─────────────────────────────────────────────────

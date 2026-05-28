@@ -75,6 +75,32 @@ export default function RootLayout({
         >
           Ga naar hoofdinhoud
         </a>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "SIT — Studievereniging ICT",
+              alternateName: "SIT",
+              url: "https://svsit.nl",
+              logo: "https://svsit.nl/icon.svg",
+              description:
+                "De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam.",
+              foundingDate: "2014",
+              email: "bestuur@svsit.nl",
+              sameAs: [
+                "https://instagram.com/svsit",
+                "https://linkedin.com/company/svsit",
+              ],
+              parentOrganization: {
+                "@type": "EducationalOrganization",
+                name: "Hogeschool van Amsterdam",
+                url: "https://www.hva.nl",
+              },
+            }),
+          }}
+        />
         <ToastProvider>
           {children}
         </ToastProvider>

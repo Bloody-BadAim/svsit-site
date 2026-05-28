@@ -47,9 +47,24 @@ export async function generateMetadata(
     year: 'numeric',
   })
 
+  const desc = event.description ?? `${event.title} op ${dateStr} bij ${event.location ?? 'SIT'}`
+
   return {
     title: `${event.title} — {SIT}`,
-    description: event.description ?? `${event.title} op ${dateStr} bij ${event.location ?? 'SIT'}`,
+    description: desc,
+    openGraph: {
+      title: `${event.title} — {SIT}`,
+      description: desc,
+      siteName: '{SIT}',
+      locale: 'nl_NL',
+      type: 'article',
+      url: `https://svsit.nl/events/${id}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${event.title} — {SIT}`,
+      description: desc,
+    },
   }
 }
 
@@ -117,11 +132,48 @@ export default async function EventDetailPage(
   const months = ['JAN', 'FEB', 'MRT', 'APR', 'MEI', 'JUN', 'JUL', 'AUG', 'SEP', 'OKT', 'NOV', 'DEC']
   const month = months[dateObj.getMonth()]
 
+  const eventJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: typedEvent.title,
+    description: typedEvent.description ?? undefined,
+    startDate: typedEvent.date,
+    ...(typedEvent.location && {
+      location: {
+        '@type': 'Place',
+        name: typedEvent.location,
+      },
+    }),
+    organizer: {
+      '@type': 'Organization',
+      name: 'SIT — Studievereniging ICT',
+      url: 'https://svsit.nl',
+    },
+    ...(typedEvent.price_members > 0 && {
+      offers: {
+        '@type': 'Offer',
+        price: typedEvent.price_members,
+        priceCurrency: 'EUR',
+        availability: isSoldOut
+          ? 'https://schema.org/SoldOut'
+          : 'https://schema.org/InStock',
+        url: `https://svsit.nl/events/${id}`,
+      },
+    }),
+    eventStatus: typedEvent.status === 'cancelled'
+      ? 'https://schema.org/EventCancelled'
+      : 'https://schema.org/EventScheduled',
+  }
+
   return (
     <main
       className="min-h-screen relative px-6 py-16 md:py-24"
       style={{ backgroundColor: 'var(--color-bg)' }}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
+      />
       {/* Grid background */}
       <div
         aria-hidden="true"

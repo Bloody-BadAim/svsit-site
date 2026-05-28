@@ -23,6 +23,19 @@ export const metadata: Metadata = {
   title: 'Introweek 2026 — {SIT}',
   description:
     'Welkom bij HBO-ICT! SIT is de community voor ICT-studenten aan de HvA. Introweek 31 aug – 4 sep: events, workshops, en meer.',
+  openGraph: {
+    title: 'Introweek 2026 — {SIT}',
+    description: 'Introweek 31 aug – 4 sep: SIT Hub, Survival Quest, en Aloha Amsterdam. Word lid voor €9,99.',
+    siteName: '{SIT}',
+    locale: 'nl_NL',
+    type: 'website',
+    url: 'https://svsit.nl/introweek',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Introweek 2026 — {SIT}',
+    description: 'Introweek 31 aug – 4 sep: SIT Hub, Survival Quest, en Aloha Amsterdam.',
+  },
 }
 
 // ── Schedule data ───────────────────────────────────────────────────────────
