@@ -13,6 +13,7 @@ const About = dynamic(() => import("@/components/About"));
 const WhyJoin = dynamic(() => import("@/components/WhyJoin"));
 const Events = dynamic(() => import("@/components/Events"));
 const EventTicker = dynamic(() => import("@/components/EventTicker"));
+const SponsorShowcase = dynamic(() => import("@/components/SponsorShowcase"));
 const JoinCta = dynamic(() => import("@/components/JoinCta"));
 const Footer = dynamic(() => import("@/components/Footer"));
 const SectionDivider = dynamic(() => import("@/components/SectionDivider"));
@@ -45,6 +46,7 @@ export default function Home() {
           <SectionDivider variant="battle" />
           <Events />
           <EventTicker />
+          <SponsorShowcase />
           {/* <SectionDivider variant="fade" /> */}
           <JoinCta />
         </main>
