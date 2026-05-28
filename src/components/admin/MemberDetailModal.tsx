@@ -30,6 +30,9 @@ interface MemberDetailModalProps {
 
 export default function MemberDetailModal({ member, onClose, onUpdate }: MemberDetailModalProps) {
   const { toast } = useToast()
+  const [studentNumber, setStudentNumber] = useState(member.student_number || '')
+  const [displayName, setDisplayName] = useState(member.display_name || '')
+  const [profileSaving, setProfileSaving] = useState(false)
   const [puntenAantal, setPuntenAantal] = useState('1')
   const [puntenReden, setPuntenReden] = useState('')
   const [rol, setRol] = useState(member.role)
@@ -191,6 +194,34 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
     setTimeout(() => setMessage(''), 3000)
   }
 
+  async function handleProfileSave() {
+    setProfileSaving(true)
+    const body: Record<string, unknown> = {}
+    if (studentNumber !== (member.student_number || '')) {
+      body.student_number = studentNumber || null
+    }
+    if (displayName !== (member.display_name || '')) {
+      body.display_name = displayName || null
+    }
+    if (Object.keys(body).length === 0) {
+      setProfileSaving(false)
+      return
+    }
+    const res = await fetch(`/api/members/${member.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    if (res.ok) {
+      setMessage('Profiel bijgewerkt')
+      onUpdate()
+    } else {
+      setMessage('Fout bij opslaan profiel')
+    }
+    setProfileSaving(false)
+    setTimeout(() => setMessage(''), 3000)
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/60" />
@@ -263,6 +294,49 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
                 : '\u2014'}
             </p>
           </div>
+        </div>
+
+        {/* Studentnummer + naam */}
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+            Profiel bewerken
+          </h3>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                Naam
+              </label>
+              <input
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Weergavenaam"
+                className="w-full py-2 px-3 rounded-lg text-sm outline-none"
+                style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                Studentnummer
+              </label>
+              <input
+                type="text"
+                value={studentNumber}
+                onChange={(e) => setStudentNumber(e.target.value)}
+                placeholder="500123456"
+                className="w-full py-2 px-3 rounded-lg text-sm outline-none"
+                style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
+              />
+            </div>
+          </div>
+          <button
+            onClick={handleProfileSave}
+            disabled={profileSaving || (studentNumber === (member.student_number || '') && displayName === (member.display_name || ''))}
+            className="py-1.5 px-4 rounded-lg text-xs font-semibold disabled:opacity-50"
+            style={{ backgroundColor: 'var(--color-surface-hover, #1A1A1D)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
+          >
+            {profileSaving ? 'Opslaan...' : 'Profiel opslaan'}
+          </button>
         </div>
 
         {/* Admin toggle */}

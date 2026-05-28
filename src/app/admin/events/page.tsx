@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { Plus, X } from 'lucide-react'
 import { useScannerStore } from '@/stores/useScannerStore'
-import { Check, X } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
-import { inputStyle, labelStyle } from '@/components/admin/adminStyles'
-import { CornerDecorations } from '@/components/ui/CornerDecorations'
+import EventFormModal from '@/components/admin/EventFormModal'
+import EventDetailPanel from '@/components/admin/EventDetailPanel'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -28,241 +28,95 @@ interface DbEvent {
   created_at: string
 }
 
-interface Ticket {
-  id: string
-  email: string
-  name: string | null
-  status: 'pending' | 'paid' | 'cancelled' | 'checked_in'
-  paid_amount: number
-  created_at: string
-}
-
-interface ScanRecord {
-  id: string
-  member_id: string
-  points: number
-  reason: string
-  event_name: string | null
-  scanned_by: string | null
-  created_at: string
-}
-
-interface CreateForm {
-  title: string
-  description: string
-  date: string
-  end_date: string
-  location: string
-  category: 'code' | 'social' | 'learn' | 'impact'
-  status: 'upcoming' | 'active' | 'completed'
-  is_paid: boolean
-  price_members: string
-  price_nonmembers: string
-  capacity: string
-}
+type StatusFilter = 'all' | 'upcoming' | 'active' | 'completed' | 'cancelled'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const STATUS_COLORS: Record<string, string> = {
-  upcoming:  'var(--color-accent-gold)',
-  active:    'var(--color-accent-green)',
+  upcoming: 'var(--color-accent-gold)',
+  active: 'var(--color-accent-green)',
   completed: 'var(--color-text-muted)',
   cancelled: 'var(--color-accent-red)',
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  code:   'Code',
+  code: 'Code',
   social: 'Social',
-  learn:  'Learn',
+  learn: 'Learn',
   impact: 'Impact',
-}
-
-function euroCents(euros: string): number {
-  const n = parseFloat(euros)
-  return isNaN(n) ? 0 : Math.round(n * 100)
 }
 
 function centsEuro(cents: number): string {
   return (cents / 100).toFixed(2)
 }
 
-const EMPTY_FORM: CreateForm = {
-  title: '',
-  description: '',
-  date: '',
-  end_date: '',
-  location: '',
-  category: 'social',
-  status: 'upcoming',
-  is_paid: false,
-  price_members: '',
-  price_nonmembers: '',
-  capacity: '',
-}
+const FILTERS: { key: StatusFilter; label: string }[] = [
+  { key: 'all', label: 'Alle' },
+  { key: 'upcoming', label: 'Upcoming' },
+  { key: 'active', label: 'Actief' },
+  { key: 'completed', label: 'Afgelopen' },
+  { key: 'cancelled', label: 'Geannuleerd' },
+]
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function EventsPage() {
   const { actiefEvent, setActiefEvent } = useScannerStore()
 
-  // ── Events list state
-  const [events, setEvents]         = useState<DbEvent[]>([])
-  const [eventsLoading, setEventsLoading] = useState(true)
-  const [eventsError, setEventsError]     = useState<string | null>(null)
+  const [events, setEvents] = useState<DbEvent[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // ── Create form state
-  const [form, setForm]           = useState<CreateForm>(EMPTY_FORM)
-  const [creating, setCreating]   = useState(false)
-  const [createError, setCreateError] = useState<string | null>(null)
-  const [createSuccess, setCreateSuccess] = useState(false)
-
-  // ── Expanded event state
+  const [filter, setFilter] = useState<StatusFilter>('all')
   const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [tickets, setTickets]       = useState<Record<string, Ticket[]>>({})
-  const [ticketsLoading, setTicketsLoading] = useState<Record<string, boolean>>({})
 
-  // ── Scan history state
-  const [scans, setScans]           = useState<ScanRecord[]>([])
-  const [scansLoading, setScansLoading] = useState(false)
-  const [selectedEventTitle, setSelectedEventTitle] = useState<string | null>(null)
+  // Modal state
+  const [showModal, setShowModal] = useState(false)
+  const [editingEvent, setEditingEvent] = useState<DbEvent | null>(null)
 
-  // ── Check-in code state
-  const [checkinCodes, setCheckinCodes] = useState<Record<string, string | null>>({})
-  const [checkinLoading, setCheckinLoading] = useState<Record<string, boolean>>({})
-
-  // ── Recap editor state
-  const [recapDesc, setRecapDesc] = useState('')
-  const [recapPhotos, setRecapPhotos] = useState('')
-  const [recapSaving, setRecapSaving] = useState(false)
-
-  // ── Fetch all events
+  // ── Fetch
   const fetchEvents = useCallback(async () => {
-    setEventsLoading(true)
-    setEventsError(null)
+    setLoading(true)
+    setError(null)
     try {
       const res = await fetch('/api/events')
-      const { data, error } = await res.json()
-      if (error) throw new Error(error)
+      const { data, error: apiError } = await res.json()
+      if (apiError) throw new Error(apiError)
       setEvents(data || [])
     } catch (err) {
-      setEventsError(err instanceof Error ? err.message : 'Fout bij laden events')
+      setError(err instanceof Error ? err.message : 'Fout bij laden events')
     } finally {
-      setEventsLoading(false)
+      setLoading(false)
     }
   }, [])
 
   useEffect(() => { fetchEvents() }, [fetchEvents])
 
-  // ── Fetch tickets for one event
-  const fetchTickets = useCallback(async (eventId: string) => {
-    if (tickets[eventId]) return
-    setTicketsLoading((prev) => ({ ...prev, [eventId]: true }))
-    try {
-      const res = await fetch(`/api/events/${eventId}/tickets`)
-      const { data } = await res.json()
-      setTickets((prev) => ({ ...prev, [eventId]: data || [] }))
-    } catch {
-      setTickets((prev) => ({ ...prev, [eventId]: [] }))
-    } finally {
-      setTicketsLoading((prev) => ({ ...prev, [eventId]: false }))
-    }
-  }, [tickets])
-
-  // ── Fetch scans for selected event
-  const fetchScans = useCallback(async (title: string) => {
-    setScansLoading(true)
-    try {
-      const res = await fetch(`/api/scans?event_name=${encodeURIComponent(title)}`)
-      const { data } = await res.json()
-      setScans(data || [])
-    } catch {
-      setScans([])
-    } finally {
-      setScansLoading(false)
-    }
-  }, [])
-
-  // ── Fetch check-in code for event
-  const fetchCheckinCode = useCallback(async (eventId: string) => {
-    if (checkinCodes[eventId] !== undefined) return
-    setCheckinLoading((prev) => ({ ...prev, [eventId]: true }))
-    try {
-      const res = await fetch(`/api/admin/events/${eventId}/checkin-code`)
-      const { data } = await res.json()
-      setCheckinCodes((prev) => ({ ...prev, [eventId]: data?.checkin_code ?? null }))
-    } catch {
-      setCheckinCodes((prev) => ({ ...prev, [eventId]: null }))
-    } finally {
-      setCheckinLoading((prev) => ({ ...prev, [eventId]: false }))
-    }
-  }, [checkinCodes])
-
-  // ── Generate new check-in code
-  async function handleGenerateCode(eventId: string) {
-    setCheckinLoading((prev) => ({ ...prev, [eventId]: true }))
-    try {
-      const res = await fetch(`/api/admin/events/${eventId}/checkin-code`, { method: 'POST' })
-      const { data, error } = await res.json()
-      if (error) throw new Error(error)
-      setCheckinCodes((prev) => ({ ...prev, [eventId]: data?.checkin_code ?? null }))
-    } catch (err) {
-      alert(err instanceof Error ? err.message : 'Code genereren mislukt')
-    } finally {
-      setCheckinLoading((prev) => ({ ...prev, [eventId]: false }))
-    }
+  // ── Filter
+  const filtered = filter === 'all' ? events : events.filter((e) => e.status === filter)
+  const counts: Record<StatusFilter, number> = {
+    all: events.length,
+    upcoming: events.filter((e) => e.status === 'upcoming').length,
+    active: events.filter((e) => e.status === 'active').length,
+    completed: events.filter((e) => e.status === 'completed').length,
+    cancelled: events.filter((e) => e.status === 'cancelled').length,
   }
 
-  // ── Save recap
-  async function handleRecapSave(eventId: string, published: boolean) {
-    setRecapSaving(true)
-    try {
-      const photos = recapPhotos.split('\n').map((u) => u.trim()).filter(Boolean)
-      const res = await fetch(`/api/events/${eventId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          recap_description: recapDesc || null,
-          recap_photos: photos.length > 0 ? photos : null,
-          recap_published: published,
-        }),
-      })
-      const { error } = await res.json()
-      if (error) throw new Error(error)
-      fetchEvents()
-    } catch (err) {
-      alert(err instanceof Error ? err.message : 'Recap opslaan mislukt')
-    } finally {
-      setRecapSaving(false)
-    }
+  // ── Actions
+  function handleExpand(eventId: string) {
+    setExpandedId(expandedId === eventId ? null : eventId)
   }
 
-  // ── Expand/collapse event row
-  function handleExpand(event: DbEvent) {
-    if (expandedId === event.id) {
-      setExpandedId(null)
-    } else {
-      setExpandedId(event.id)
-      setRecapDesc(event.recap_description || '')
-      setRecapPhotos(event.recap_photos?.join('\n') || '')
-      fetchTickets(event.id)
-      fetchCheckinCode(event.id)
-    }
+  function handleOpenCreate() {
+    setEditingEvent(null)
+    setShowModal(true)
   }
 
-  // ── Activate for scanner
-  function handleActivate(event: DbEvent) {
-    if (actiefEvent === event.id) {
-      setActiefEvent(null, null)
-      setSelectedEventTitle(null)
-      setScans([])
-    } else {
-      setActiefEvent(event.id, event.title)
-      setSelectedEventTitle(event.title)
-      fetchScans(event.title)
-    }
+  function handleOpenEdit(event: DbEvent) {
+    setEditingEvent(event)
+    setShowModal(true)
   }
 
-  // ── Cancel event (set status to cancelled)
   async function handleCancel(eventId: string) {
     if (!confirm('Event annuleren? Dit kan niet ongedaan worden.')) return
     try {
@@ -271,51 +125,12 @@ export default function EventsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'cancelled' }),
       })
-      const { error } = await res.json()
-      if (error) throw new Error(error)
+      const { error: apiError } = await res.json()
+      if (apiError) throw new Error(apiError)
       fetchEvents()
       if (actiefEvent === eventId) setActiefEvent(null, null)
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Fout bij annuleren')
-    }
-  }
-
-  // ── Create event
-  async function handleCreate(e: React.FormEvent) {
-    e.preventDefault()
-    if (!form.title || !form.date) return
-    setCreating(true)
-    setCreateError(null)
-    setCreateSuccess(false)
-    try {
-      const body = {
-        title:             form.title,
-        description:       form.description || null,
-        date:              form.date,
-        end_date:          form.end_date || null,
-        location:          form.location || null,
-        category:          form.category,
-        status:            form.status,
-        is_paid:           form.is_paid,
-        price_members:     form.is_paid ? euroCents(form.price_members) : 0,
-        price_nonmembers:  form.is_paid ? euroCents(form.price_nonmembers) : 0,
-        capacity:          form.capacity ? parseInt(form.capacity, 10) : null,
-      }
-      const res = await fetch('/api/events', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      })
-      const { error } = await res.json()
-      if (error) throw new Error(error)
-      setForm(EMPTY_FORM)
-      setCreateSuccess(true)
-      fetchEvents()
-      setTimeout(() => setCreateSuccess(false), 3000)
-    } catch (err) {
-      setCreateError(err instanceof Error ? err.message : 'Aanmaken mislukt')
-    } finally {
-      setCreating(false)
     }
   }
 
@@ -324,808 +139,229 @@ export default function EventsPage() {
   // ─────────────────────────────────────────────────────────────────────────
 
   return (
-    <div style={{ maxWidth: 900 }} className="space-y-8">
+    <div style={{ maxWidth: 900 }} className="space-y-6">
 
-      {/* ── Page header ── */}
-      <div>
-        <h1
-          style={{
-            color: 'var(--color-text)',
-            fontFamily: 'var(--font-mono)',
-            fontSize: 22,
-            fontWeight: 700,
-            letterSpacing: '0.04em',
-          }}
-        >
-          {'>'} events.manage
-        </h1>
-        <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 4 }}>
-          {events.length} events in database
-          {actiefEvent && (
-            <span style={{ color: 'var(--color-accent-green)', marginLeft: 12 }}>
-              ● actief: {events.find((e) => e.id === actiefEvent)?.title ?? '…'}
-            </span>
-          )}
-        </p>
-      </div>
-
-      {/* ══════════════════════════════════════════
-          SECTION 1 — Event aanmaken
-      ══════════════════════════════════════════ */}
-      <section>
-        <div
-          style={{
-            position: 'relative',
-            backgroundColor: 'var(--color-surface)',
-            border: '1px solid var(--color-border)',
-            padding: '20px 24px',
-          }}
-        >
-          <CornerDecorations />
-
-          <h2
+      {/* Header + create button */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h1
             style={{
+              color: 'var(--color-text)',
               fontFamily: 'var(--font-mono)',
-              fontSize: 12,
+              fontSize: 22,
               fontWeight: 700,
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              color: 'var(--color-accent-gold)',
-              marginBottom: 16,
+              letterSpacing: '0.04em',
             }}
           >
-            // Event aanmaken
-          </h2>
-
-          <form onSubmit={handleCreate}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-
-              {/* Title */}
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={labelStyle}>Titel *</label>
-                <input
-                  required
-                  type="text"
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="Bijv. Intro Borrel XI"
-                  style={inputStyle}
-                />
-              </div>
-
-              {/* Description */}
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={labelStyle}>Beschrijving</label>
-                <textarea
-                  rows={3}
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Optionele beschrijving..."
-                  style={{ ...inputStyle, resize: 'vertical' }}
-                />
-              </div>
-
-              {/* Date */}
-              <div>
-                <label style={labelStyle}>Datum + tijd *</label>
-                <input
-                  required
-                  type="datetime-local"
-                  value={form.date}
-                  onChange={(e) => setForm({ ...form, date: e.target.value })}
-                  style={inputStyle}
-                />
-              </div>
-
-              {/* End date */}
-              <div>
-                <label style={labelStyle}>Einddatum (optioneel)</label>
-                <input
-                  type="datetime-local"
-                  value={form.end_date}
-                  onChange={(e) => setForm({ ...form, end_date: e.target.value })}
-                  style={inputStyle}
-                />
-              </div>
-
-              {/* Location */}
-              <div>
-                <label style={labelStyle}>Locatie</label>
-                <input
-                  type="text"
-                  value={form.location}
-                  onChange={(e) => setForm({ ...form, location: e.target.value })}
-                  placeholder="Bijv. HvA Wibauthuis Loka B1.16"
-                  style={inputStyle}
-                />
-              </div>
-
-              {/* Capacity */}
-              <div>
-                <label style={labelStyle}>Capaciteit (optioneel)</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={form.capacity}
-                  onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                  placeholder="Onbeperkt"
-                  style={inputStyle}
-                />
-              </div>
-
-              {/* Category */}
-              <div>
-                <label style={labelStyle}>Categorie</label>
-                <select
-                  value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value as CreateForm['category'] })}
-                  style={inputStyle}
-                >
-                  <option value="code">Code</option>
-                  <option value="social">Social</option>
-                  <option value="learn">Learn</option>
-                  <option value="impact">Impact</option>
-                </select>
-              </div>
-
-              {/* Status */}
-              <div>
-                <label style={labelStyle}>Status</label>
-                <select
-                  value={form.status}
-                  onChange={(e) => setForm({ ...form, status: e.target.value as CreateForm['status'] })}
-                  style={inputStyle}
-                >
-                  <option value="upcoming">Upcoming</option>
-                  <option value="active">Active</option>
-                  <option value="completed">Completed</option>
-                </select>
-              </div>
-
-              {/* Paid toggle */}
-              <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: 10 }}>
-                <input
-                  type="checkbox"
-                  id="is_paid"
-                  checked={form.is_paid}
-                  onChange={(e) => setForm({ ...form, is_paid: e.target.checked })}
-                  style={{ accentColor: 'var(--color-accent-gold)', width: 16, height: 16 }}
-                />
-                <label
-                  htmlFor="is_paid"
-                  style={{ ...labelStyle, marginBottom: 0, cursor: 'pointer' }}
-                >
-                  Betaald event
-                </label>
-              </div>
-
-              {/* Price fields (conditional) */}
-              {form.is_paid && (
-                <>
-                  <div>
-                    <label style={labelStyle}>Prijs leden (€)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={form.price_members}
-                      onChange={(e) => setForm({ ...form, price_members: e.target.value })}
-                      placeholder="0.00"
-                      style={inputStyle}
-                    />
-                  </div>
-                  <div>
-                    <label style={labelStyle}>Prijs niet-leden (€)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={form.price_nonmembers}
-                      onChange={(e) => setForm({ ...form, price_nonmembers: e.target.value })}
-                      placeholder="0.00"
-                      style={inputStyle}
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Feedback */}
-            {createError && (
-              <p style={{ color: 'var(--color-accent-red)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
-                <X size={13} style={{ flexShrink: 0 }} /> {createError}
-              </p>
+            {'>'} events.manage
+          </h1>
+          <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 4 }}>
+            {events.length} events in database
+            {actiefEvent && (
+              <span style={{ color: 'var(--color-accent-green)', marginLeft: 12 }}>
+                actief: {events.find((e) => e.id === actiefEvent)?.title ?? '...'}
+              </span>
             )}
-            {createSuccess && (
-              <p style={{ color: 'var(--color-accent-green)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
-                <Check size={13} style={{ flexShrink: 0 }} /> Event aangemaakt
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={creating || !form.title || !form.date}
-              style={{
-                marginTop: 16,
-                padding: '8px 20px',
-                backgroundColor: creating ? 'transparent' : 'var(--color-accent-gold)',
-                color: creating ? 'var(--color-accent-gold)' : 'var(--color-bg)',
-                border: '1px solid var(--color-accent-gold)',
-                fontFamily: 'var(--font-mono)',
-                fontSize: 12,
-                fontWeight: 700,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                cursor: creating ? 'not-allowed' : 'pointer',
-                opacity: (!form.title || !form.date) ? 0.4 : 1,
-              }}
-            >
-              {creating ? '> aanmaken...' : '> Event aanmaken'}
-            </button>
-          </form>
+          </p>
         </div>
-      </section>
 
-      {/* ══════════════════════════════════════════
-          SECTION 2 — Events lijst
-      ══════════════════════════════════════════ */}
-      <section>
-        <h2
+        <button
+          onClick={handleOpenCreate}
           style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '8px 16px',
+            backgroundColor: 'var(--color-accent-gold)',
+            color: 'var(--color-bg)',
+            border: '1px solid var(--color-accent-gold)',
             fontFamily: 'var(--font-mono)',
             fontSize: 12,
             fontWeight: 700,
+            letterSpacing: '0.08em',
             textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--color-text-muted)',
-            marginBottom: 12,
+            cursor: 'pointer',
           }}
         >
-          // Events ({events.length})
-        </h2>
+          <Plus size={14} /> Nieuw event
+        </button>
+      </div>
 
-        {eventsLoading ? (
-          <div className="space-y-2">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="animate-pulse"
-                style={{ height: 56, backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
-              />
-            ))}
-          </div>
-        ) : eventsError ? (
-          <p style={{ color: 'var(--color-accent-red)', fontFamily: 'var(--font-mono)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
-            <X size={13} style={{ flexShrink: 0 }} /> {eventsError}
-          </p>
-        ) : events.length === 0 ? (
-          <div
-            style={{
-              padding: '24px',
-              backgroundColor: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              textAlign: 'center',
-            }}
-          >
-            <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-              Geen events gevonden. Maak een event aan om te starten.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {events.map((event) => {
-              const isExpanded = expandedId === event.id
-              const isActive   = actiefEvent === event.id
-              const eventTickets = tickets[event.id]
-              const loadingTickets = ticketsLoading[event.id]
-
-              return (
-                <div
-                  key={event.id}
-                  style={{
-                    backgroundColor: isActive ? 'rgba(34, 197, 94, 0.05)' : 'var(--color-surface)',
-                    border: isActive
-                      ? '1px solid var(--color-accent-green)'
-                      : '1px solid var(--color-border)',
-                  }}
-                >
-                  {/* ── Event row ── */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 12,
-                      padding: '12px 16px',
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => handleExpand(event)}
-                  >
-                    {/* Expand indicator */}
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: 11,
-                        color: 'var(--color-text-muted)',
-                        minWidth: 12,
-                        userSelect: 'none',
-                      }}
-                    >
-                      {isExpanded ? '▼' : '▶'}
-                    </span>
-
-                    {/* Title + meta */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p
-                        style={{
-                          color: 'var(--color-text)',
-                          fontFamily: 'var(--font-mono)',
-                          fontSize: 13,
-                          fontWeight: 600,
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
-                        {event.title}
-                      </p>
-                      <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11, marginTop: 2 }}>
-                        {formatDate(event.date)}
-                        {event.location && ` · ${event.location}`}
-                        {' · '}
-                        {CATEGORY_LABELS[event.category]}
-                      </p>
-                    </div>
-
-                    {/* Badges */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                      {/* Status badge */}
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-mono)',
-                          fontSize: 10,
-                          fontWeight: 700,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.06em',
-                          padding: '2px 8px',
-                          border: `1px solid ${STATUS_COLORS[event.status]}`,
-                          color: STATUS_COLORS[event.status],
-                        }}
-                      >
-                        {event.status}
-                      </span>
-
-                      {/* Paid/free badge */}
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-mono)',
-                          fontSize: 10,
-                          color: event.is_paid ? 'var(--color-accent-gold)' : 'var(--color-text-muted)',
-                        }}
-                      >
-                        {event.is_paid
-                          ? `€${centsEuro(event.price_members)} leden`
-                          : 'gratis'}
-                      </span>
-
-                      {/* Ticket count placeholder (from tickets cache) */}
-                      {eventTickets && (
-                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-text-muted)' }}>
-                          {eventTickets.length} tickets
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* ── Expanded panel ── */}
-                  {isExpanded && (
-                    <div
-                      style={{
-                        borderTop: '1px solid var(--color-border)',
-                        padding: '16px',
-                        backgroundColor: 'var(--color-bg)',
-                      }}
-                    >
-                      {/* Action buttons */}
-                      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-                        {/* Activate for scanner */}
-                        <button
-                          onClick={() => handleActivate(event)}
-                          style={{
-                            padding: '6px 14px',
-                            backgroundColor: isActive ? 'var(--color-accent-green)' : 'transparent',
-                            color: isActive ? 'var(--color-bg)' : 'var(--color-accent-green)',
-                            border: '1px solid var(--color-accent-green)',
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: 11,
-                            fontWeight: 700,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.06em',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          {isActive ? '● Scanner actief' : '○ Activeren voor scanner'}
-                        </button>
-
-                        {/* Cancel button (only for non-cancelled events) */}
-                        {event.status !== 'cancelled' && (
-                          <button
-                            onClick={() => handleCancel(event.id)}
-                            style={{
-                              padding: '6px 14px',
-                              backgroundColor: 'transparent',
-                              color: 'var(--color-accent-red)',
-                              border: '1px solid var(--color-accent-red)',
-                              fontFamily: 'var(--font-mono)',
-                              fontSize: 11,
-                              fontWeight: 700,
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.06em',
-                              cursor: 'pointer',
-                            }}
-                          >
-                            <X size={11} style={{ display: 'inline', marginRight: 3, verticalAlign: 'middle' }} /> Annuleren
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Check-in code section */}
-                      <div
-                        style={{
-                          padding: '12px 16px',
-                          marginBottom: 16,
-                          backgroundColor: 'rgba(245, 158, 11, 0.04)',
-                          border: '1px solid rgba(245, 158, 11, 0.12)',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                          <div>
-                            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)', marginBottom: 4 }}>
-                              Check-in code
-                            </p>
-                            {checkinLoading[event.id] ? (
-                              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-text-muted)' }}>Laden...</p>
-                            ) : checkinCodes[event.id] ? (
-                              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 24, fontWeight: 700, letterSpacing: '0.2em', color: 'var(--color-accent-gold)' }}>
-                                {checkinCodes[event.id]}
-                              </p>
-                            ) : (
-                              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-text-muted)' }}>Geen code ingesteld</p>
-                            )}
-                          </div>
-                          <button
-                            onClick={() => handleGenerateCode(event.id)}
-                            disabled={!!checkinLoading[event.id]}
-                            style={{
-                              padding: '6px 14px',
-                              backgroundColor: 'transparent',
-                              color: 'var(--color-accent-gold)',
-                              border: '1px solid var(--color-accent-gold)',
-                              fontFamily: 'var(--font-mono)',
-                              fontSize: 11,
-                              fontWeight: 700,
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.06em',
-                              cursor: checkinLoading[event.id] ? 'not-allowed' : 'pointer',
-                              opacity: checkinLoading[event.id] ? 0.5 : 1,
-                              flexShrink: 0,
-                            }}
-                          >
-                            {checkinCodes[event.id] ? 'Nieuwe code' : 'Code genereren'}
-                          </button>
-                        </div>
-                        {checkinCodes[event.id] && (
-                          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-text-muted)', marginTop: 6, opacity: 0.7 }}>
-                            Toon deze code op een scherm of poster bij het event. Leden voeren dit in op de event pagina om in te checken.
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Event detail info */}
-                      {event.description && (
-                        <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12, marginBottom: 12 }}>
-                          {event.description}
-                        </p>
-                      )}
-
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 16px', marginBottom: 16 }}>
-                        {[
-                          ['ID',        event.id.slice(0, 8) + '…'],
-                          ['Categorie', CATEGORY_LABELS[event.category]],
-                          ['Capaciteit', event.capacity ? `${event.capacity} plekken` : 'Onbeperkt'],
-                          ['Aangemaakt', formatDate(event.created_at)],
-                          ...(event.is_paid ? [
-                            ['Prijs leden',     `€${centsEuro(event.price_members)}`],
-                            ['Prijs niet-leden', `€${centsEuro(event.price_nonmembers)}`],
-                          ] : []),
-                        ].map(([k, v]) => (
-                          <div key={k} style={{ display: 'flex', gap: 6 }}>
-                            <span style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11, minWidth: 110 }}>
-                              {k}:
-                            </span>
-                            <span style={{ color: 'var(--color-text)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>
-                              {v}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Recap editor (only for completed events) */}
-                      {event.status === 'completed' && (
-                        <div style={{ marginBottom: 16, padding: '12px 16px', backgroundColor: 'rgba(59, 130, 246, 0.04)', border: '1px solid rgba(59, 130, 246, 0.12)' }}>
-                          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-accent-blue)', marginBottom: 8 }}>
-                            Recap
-                            {event.recap_published && (
-                              <span style={{ marginLeft: 8, color: 'var(--color-accent-green)', fontWeight: 400 }}>
-                                (gepubliceerd)
-                              </span>
-                            )}
-                          </p>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                            <div>
-                              <label style={labelStyle}>Beschrijving</label>
-                              <textarea
-                                rows={3}
-                                value={recapDesc}
-                                onChange={(e) => setRecapDesc(e.target.value)}
-                                placeholder="Korte terugblik op het event..."
-                                style={{ ...inputStyle, resize: 'vertical' }}
-                              />
-                            </div>
-                            <div>
-                              <label style={labelStyle}>Foto URLs (1 per regel)</label>
-                              <textarea
-                                rows={3}
-                                value={recapPhotos}
-                                onChange={(e) => setRecapPhotos(e.target.value)}
-                                placeholder="https://example.com/foto1.jpg&#10;https://example.com/foto2.jpg"
-                                style={{ ...inputStyle, resize: 'vertical' }}
-                              />
-                            </div>
-                            <div style={{ display: 'flex', gap: 8 }}>
-                              <button
-                                onClick={() => handleRecapSave(event.id, false)}
-                                disabled={recapSaving}
-                                style={{
-                                  padding: '6px 14px', backgroundColor: 'transparent',
-                                  color: 'var(--color-text-muted)', border: '1px solid var(--color-border)',
-                                  fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
-                                  textTransform: 'uppercase', letterSpacing: '0.06em',
-                                  cursor: recapSaving ? 'not-allowed' : 'pointer',
-                                }}
-                              >
-                                Opslaan (concept)
-                              </button>
-                              <button
-                                onClick={() => handleRecapSave(event.id, true)}
-                                disabled={recapSaving}
-                                style={{
-                                  padding: '6px 14px', backgroundColor: 'var(--color-accent-green)',
-                                  color: 'var(--color-bg)', border: '1px solid var(--color-accent-green)',
-                                  fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
-                                  textTransform: 'uppercase', letterSpacing: '0.06em',
-                                  cursor: recapSaving ? 'not-allowed' : 'pointer',
-                                }}
-                              >
-                                Publiceer recap
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Tickets */}
-                      <div>
-                        <p
-                          style={{
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: 11,
-                            fontWeight: 700,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.08em',
-                            color: 'var(--color-text-muted)',
-                            marginBottom: 8,
-                          }}
-                        >
-                          Tickets
-                        </p>
-
-                        {/* Attendance summary */}
-                        {eventTickets && eventTickets.length > 0 && (() => {
-                          const paidCount = eventTickets.filter(
-                            (t) => t.status === 'paid' || t.status === 'checked_in'
-                          ).length
-                          const checkedInCount = eventTickets.filter(
-                            (t) => t.status === 'checked_in'
-                          ).length
-                          const pct = paidCount > 0 ? Math.round((checkedInCount / paidCount) * 100) : 0
-                          return (
-                            <div
-                              style={{
-                                display: 'flex',
-                                gap: 16,
-                                padding: '8px 12px',
-                                marginBottom: 10,
-                                backgroundColor: 'rgba(242,158,24,0.04)',
-                                border: '1px solid rgba(242,158,24,0.12)',
-                              }}
-                            >
-                              <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-text-muted)' }}>
-                                  Attendance:
-                                </span>
-                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--color-accent-green)' }}>
-                                  {checkedInCount} / {paidCount} aanwezig ({pct}%)
-                                </span>
-                              </div>
-                              <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-text-muted)' }}>
-                                  No-shows:
-                                </span>
-                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: paidCount - checkedInCount > 0 ? 'var(--color-accent-red)' : 'var(--color-text-muted)' }}>
-                                  {paidCount - checkedInCount}
-                                </span>
-                              </div>
-                            </div>
-                          )
-                        })()}
-
-                        {loadingTickets ? (
-                          <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>
-                            Laden…
-                          </p>
-                        ) : !eventTickets || eventTickets.length === 0 ? (
-                          <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>
-                            Geen tickets.
-                          </p>
-                        ) : (
-                          <div className="space-y-1">
-                            {eventTickets.map((ticket) => (
-                              <div
-                                key={ticket.id}
-                                style={{
-                                  display: 'flex',
-                                  justifyContent: 'space-between',
-                                  padding: '6px 10px',
-                                  border: '1px solid var(--color-border)',
-                                  backgroundColor: 'var(--color-surface)',
-                                }}
-                              >
-                                <div>
-                                  <span style={{ color: 'var(--color-text)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-                                    {ticket.name || ticket.email}
-                                  </span>
-                                  {ticket.name && (
-                                    <span style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11, marginLeft: 8 }}>
-                                      {ticket.email}
-                                    </span>
-                                  )}
-                                </div>
-                                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                                  {ticket.paid_amount > 0 && (
-                                    <span style={{ color: 'var(--color-accent-gold)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>
-                                      €{centsEuro(ticket.paid_amount)}
-                                    </span>
-                                  )}
-                                  <span
-                                    style={{
-                                      fontFamily: 'var(--font-mono)',
-                                      fontSize: 10,
-                                      fontWeight: 700,
-                                      textTransform: 'uppercase',
-                                      color:
-                                        ticket.status === 'paid'       ? 'var(--color-accent-green)' :
-                                        ticket.status === 'checked_in' ? 'var(--color-accent-blue)'  :
-                                        ticket.status === 'cancelled'  ? 'var(--color-accent-red)'   :
-                                        'var(--color-text-muted)',
-                                    }}
-                                  >
-                                    {ticket.status}
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        )}
-      </section>
-
-      {/* ══════════════════════════════════════════
-          SECTION 3 — Scan geschiedenis
-      ══════════════════════════════════════════ */}
-      {selectedEventTitle && (
-        <section>
-          <div
-            style={{
-              position: 'relative',
-              backgroundColor: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              padding: '20px 24px',
-            }}
-          >
-            <CornerDecorations />
-
-            <h2
+      {/* Filter tabs */}
+      <div style={{ display: 'flex', gap: 2, borderBottom: '1px solid var(--color-border)' }}>
+        {FILTERS.map(({ key, label }) => {
+          const active = filter === key
+          return (
+            <button
+              key={key}
+              onClick={() => setFilter(key)}
               style={{
+                padding: '8px 14px',
                 fontFamily: 'var(--font-mono)',
-                fontSize: 12,
-                fontWeight: 700,
+                fontSize: 11,
+                fontWeight: active ? 700 : 400,
+                letterSpacing: '0.06em',
                 textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                color: 'var(--color-text-muted)',
-                marginBottom: 16,
+                color: active ? 'var(--color-accent-gold)' : 'var(--color-text-muted)',
+                backgroundColor: 'transparent',
+                border: 'none',
+                borderBottom: active ? '2px solid var(--color-accent-gold)' : '2px solid transparent',
+                cursor: 'pointer',
+                marginBottom: -1,
               }}
             >
-              // Scans — <span style={{ color: 'var(--color-accent-gold)' }}>{selectedEventTitle}</span>
-            </h2>
+              {label}
+              {counts[key] > 0 && (
+                <span style={{ marginLeft: 6, opacity: 0.6 }}>{counts[key]}</span>
+              )}
+            </button>
+          )
+        })}
+      </div>
 
-            {scansLoading ? (
-              <div className="space-y-2">
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="animate-pulse"
-                    style={{ height: 40, backgroundColor: 'var(--color-bg)' }}
-                  />
-                ))}
-              </div>
-            ) : scans.length === 0 ? (
-              <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-                Nog geen scans voor dit event.
-              </p>
-            ) : (
-              <div className="space-y-1">
-                {scans.map((scan) => (
-                  <div
-                    key={scan.id}
+      {/* Events list */}
+      {loading ? (
+        <div className="space-y-2">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="animate-pulse"
+              style={{ height: 56, backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+            />
+          ))}
+        </div>
+      ) : error ? (
+        <p style={{ color: 'var(--color-accent-red)', fontFamily: 'var(--font-mono)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+          <X size={13} style={{ flexShrink: 0 }} /> {error}
+        </p>
+      ) : filtered.length === 0 ? (
+        <div
+          style={{
+            padding: 24,
+            backgroundColor: 'var(--color-surface)',
+            border: '1px solid var(--color-border)',
+            textAlign: 'center',
+          }}
+        >
+          <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+            {filter === 'all' ? 'Geen events gevonden. Maak een event aan om te starten.' : `Geen ${filter} events.`}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {filtered.map((event) => {
+            const isExpanded = expandedId === event.id
+            const isActive = actiefEvent === event.id
+
+            return (
+              <div
+                key={event.id}
+                style={{
+                  backgroundColor: isActive ? 'rgba(34, 197, 94, 0.05)' : 'var(--color-surface)',
+                  border: isActive
+                    ? '1px solid var(--color-accent-green)'
+                    : '1px solid var(--color-border)',
+                }}
+              >
+                {/* Event row */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '12px 16px',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => handleExpand(event.id)}
+                >
+                  {/* Expand indicator */}
+                  <span
                     style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '8px 12px',
-                      backgroundColor: 'var(--color-bg)',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 11,
+                      color: 'var(--color-text-muted)',
+                      minWidth: 12,
+                      userSelect: 'none',
                     }}
                   >
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{ color: 'var(--color-text)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-                        {scan.member_id.slice(0, 8)}… — {scan.reason}
-                      </p>
-                      <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>
-                        {new Date(scan.created_at).toLocaleString('nl-NL', {
-                          day: 'numeric',
-                          month: 'short',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                        {scan.scanned_by && ` · door ${scan.scanned_by.split('@')[0]}`}
-                      </p>
-                    </div>
-                    <span
+                    {isExpanded ? '\u25BC' : '\u25B6'}
+                  </span>
+
+                  {/* Title + meta */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p
                       style={{
-                        color: 'var(--color-accent-gold)',
+                        color: 'var(--color-text)',
                         fontFamily: 'var(--font-mono)',
                         fontSize: 13,
-                        fontWeight: 700,
-                        flexShrink: 0,
-                        marginLeft: 12,
+                        fontWeight: 600,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
                       }}
                     >
-                      +{scan.points} pts
+                      {event.title}
+                    </p>
+                    <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11, marginTop: 2 }}>
+                      {formatDate(event.date)}
+                      {event.location && ` \u00B7 ${event.location}`}
+                      {' \u00B7 '}
+                      {CATEGORY_LABELS[event.category]}
+                    </p>
+                  </div>
+
+                  {/* Badges */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 10,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        padding: '2px 8px',
+                        border: `1px solid ${STATUS_COLORS[event.status]}`,
+                        color: STATUS_COLORS[event.status],
+                      }}
+                    >
+                      {event.status}
+                    </span>
+
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 10,
+                        color: event.is_paid ? 'var(--color-accent-gold)' : 'var(--color-text-muted)',
+                      }}
+                    >
+                      {event.is_paid ? `EUR ${centsEuro(event.price_members)}` : 'gratis'}
                     </span>
                   </div>
-                ))}
+                </div>
+
+                {/* Expanded detail panel */}
+                {isExpanded && (
+                  <EventDetailPanel
+                    event={event}
+                    onEdit={() => handleOpenEdit(event)}
+                    onCancel={() => handleCancel(event.id)}
+                    onRefresh={fetchEvents}
+                  />
+                )}
               </div>
-            )}
-          </div>
-        </section>
+            )
+          })}
+        </div>
       )}
 
+      {/* Create/Edit Modal */}
+      {showModal && (
+        <EventFormModal
+          event={editingEvent}
+          onClose={() => { setShowModal(false); setEditingEvent(null) }}
+          onSaved={fetchEvents}
+        />
+      )}
     </div>
   )
 }
