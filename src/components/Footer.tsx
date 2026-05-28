@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { href: "/events", label: "Events", type: "dir" },
   { href: "/projecten", label: "Projecten", type: "dir" },
   { href: "/vacatures", label: "Vacatures", type: "dir" },
+  { href: "/faq", label: "FAQ", type: "file" },
   { href: "/login", label: "Word Lid", type: "file" },
 ];
 
