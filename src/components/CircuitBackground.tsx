@@ -432,8 +432,17 @@ export default function CircuitBackground() {
       raf = 0;
     }
 
-    resize();
-    startLoop();
+    // Defer the heavy canvas build() until after the first paint so the
+    // chip (LCP element) and page content commit immediately. The chip is
+    // already sized via CSS, so nothing visible waits on this work.
+    let kickRaf1 = 0;
+    let kickRaf2 = 0;
+    kickRaf1 = requestAnimationFrame(() => {
+      kickRaf2 = requestAnimationFrame(() => {
+        resize();
+        startLoop();
+      });
+    });
 
     // pause animation while the tab is hidden (battery / CPU)
     const onVisibility = () => {
@@ -453,6 +462,8 @@ export default function CircuitBackground() {
     window.addEventListener("resize", onResize);
 
     return () => {
+      cancelAnimationFrame(kickRaf1);
+      cancelAnimationFrame(kickRaf2);
       stopLoop();
       clearTimeout(rt);
       document.removeEventListener("visibilitychange", onVisibility);
