@@ -106,6 +106,28 @@ export default function CircuitBackground() {
     let statics: HTMLCanvasElement | null = null;
     let raf = 0;
 
+    // Pre-rendered radial-glow sprite per color — drawImage is GPU-cheap and
+    // replaces per-frame ctx.shadowBlur (the dominant cost in the old engine).
+    const glowCache = new Map<string, HTMLCanvasElement>();
+    function glowSprite(col: string): HTMLCanvasElement {
+      const cached = glowCache.get(col);
+      if (cached) return cached;
+      const R = 16;
+      const s = document.createElement("canvas");
+      s.width = s.height = R * 2;
+      const sg = s.getContext("2d")!;
+      const grad = sg.createRadialGradient(R, R, 0, R, R, R);
+      grad.addColorStop(0, col);
+      grad.addColorStop(0.35, col);
+      grad.addColorStop(1, "rgba(0,0,0,0)");
+      sg.fillStyle = grad;
+      sg.beginPath();
+      sg.arc(R, R, R, 0, 7);
+      sg.fill();
+      glowCache.set(col, s);
+      return s;
+    }
+
     const snap = (v: number) => Math.round(v / GRID) * GRID;
     const rnd = (a: number, b: number) => a + Math.random() * (b - a);
     const pick = <T,>(arr: T[]) => arr[(Math.random() * arr.length) | 0];
@@ -322,38 +344,39 @@ export default function CircuitBackground() {
 
     function drawPulse(p: Pulse) {
       const head = at(p.wire.poly, p.pos);
+      const sprite = glowSprite(p.color);
       ctx!.save();
       ctx!.globalCompositeOperation = "lighter";
-      const steps = 7;
+      const steps = 6;
       for (let i = steps; i >= 1; i--) {
         const tp = at(p.wire.poly, p.pos - p.dir * ((p.tail * i) / steps));
         if (inExcl(tp.x, tp.y)) continue;
-        const a = (1 - i / steps) * 0.5;
-        ctx!.fillStyle = p.color;
-        ctx!.globalAlpha = a;
-        ctx!.beginPath();
-        ctx!.arc(tp.x, tp.y, 1.5 + (1 - i / steps) * 1.6, 0, 7);
-        ctx!.fill();
+        const k = 1 - i / steps;
+        ctx!.globalAlpha = k * 0.42;
+        const sz = 3 + k * 4;
+        ctx!.drawImage(sprite, tp.x - sz, tp.y - sz, sz * 2, sz * 2);
       }
       if (!inExcl(head.x, head.y)) {
-        ctx!.shadowColor = p.color;
-        ctx!.shadowBlur = 12;
-        ctx!.fillStyle = "#fff";
         ctx!.globalAlpha = 0.95;
+        ctx!.drawImage(sprite, head.x - 9, head.y - 9, 18, 18);
+        ctx!.globalAlpha = 1;
+        ctx!.fillStyle = "#fff";
         ctx!.beginPath();
-        ctx!.arc(head.x, head.y, 2.4, 0, 7);
-        ctx!.fill();
-        ctx!.fillStyle = p.color;
-        ctx!.globalAlpha = 0.8;
-        ctx!.beginPath();
-        ctx!.arc(head.x, head.y, 4.2, 0, 7);
+        ctx!.arc(head.x, head.y, 1.8, 0, 7);
         ctx!.fill();
       }
       ctx!.restore();
     }
 
+    // Cap the pulse loop at ~30fps: ambient background needs no more, and it
+    // halves canvas work on a full-viewport fixed layer.
+    const FRAME_MS = 1000 / 30;
     let last = 0;
     function frame(time: number) {
+      if (last && time - last < FRAME_MS) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
       const dt = Math.min((time - (last || time)) / 1000, 0.05);
       last = time;
       ctx!.clearRect(0, 0, W, H);
