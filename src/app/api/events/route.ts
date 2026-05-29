@@ -23,7 +23,9 @@ export async function GET(req: NextRequest) {
     const { data, error, count } = await query
 
     if (error) throw error
-    return NextResponse.json({ data, error: null, meta: { count } })
+    const res = NextResponse.json({ data, error: null, meta: { count } })
+    res.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=120')
+    return res
   } catch (err) {
     return handleError(err)
   }

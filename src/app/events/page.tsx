@@ -1,4 +1,5 @@
 import { createServiceClient } from '@/lib/supabase'
+import { unstable_cache } from 'next/cache'
 import type { SitEvent } from '@/types/database'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -6,6 +7,33 @@ import { Calendar, MapPin, Users, Camera } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 
 export const dynamic = 'force-dynamic'
+
+const getEvents = unstable_cache(
+  async () => {
+    const supabase = createServiceClient()
+    const [upcomingResult, recapResult] = await Promise.all([
+      supabase
+        .from('events')
+        .select('*')
+        .in('status', ['upcoming', 'active'])
+        .gte('date', new Date().toISOString())
+        .order('date', { ascending: true }),
+      supabase
+        .from('events')
+        .select('*')
+        .eq('status', 'completed')
+        .eq('recap_published', true)
+        .order('date', { ascending: false })
+        .limit(6),
+    ])
+    return {
+      eventList: (upcomingResult.error || !upcomingResult.data) ? [] : upcomingResult.data as SitEvent[],
+      recapList: (recapResult.error || !recapResult.data) ? [] : recapResult.data as SitEvent[],
+    }
+  },
+  ['events-page'],
+  { revalidate: 60 }
+)
 
 export const metadata: Metadata = {
   title: 'Events — {SIT}',
@@ -262,26 +290,7 @@ function RecapCard({ event }: { event: SitEvent }) {
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function EventsPage() {
-  const supabase = createServiceClient()
-
-  const [upcomingResult, recapResult] = await Promise.all([
-    supabase
-      .from('events')
-      .select('*')
-      .in('status', ['upcoming', 'active'])
-      .gte('date', new Date().toISOString())
-      .order('date', { ascending: true }),
-    supabase
-      .from('events')
-      .select('*')
-      .eq('status', 'completed')
-      .eq('recap_published', true)
-      .order('date', { ascending: false })
-      .limit(6),
-  ])
-
-  const eventList = (upcomingResult.error || !upcomingResult.data) ? [] : (upcomingResult.data as SitEvent[])
-  const recapList = (recapResult.error || !recapResult.data) ? [] : (recapResult.data as SitEvent[])
+  const { eventList, recapList } = await getEvents()
 
   return (
     <>
