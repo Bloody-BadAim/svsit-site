@@ -76,7 +76,6 @@ export default function Hero() {
   const [phase, setPhase] = useState<"typing" | "done">("done");
   const [reducedMotion, setReducedMotion] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
-  const glowDotsRef = useRef<HTMLDivElement>(null);
   const scrollArrowRef = useRef<HTMLSpanElement>(null);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -122,68 +121,35 @@ export default function Hero() {
 
   // Cursor blink — pure CSS, no JS interval needed
 
-  // GSAP: scroll indicator bounce + glow dots (lazy-loaded, non-blocking)
+  // GSAP: scroll indicator bounce (lazy-loaded, non-blocking)
   const scrollTweenRef = useRef<{ kill: () => void } | null>(null);
-  const dotsTlRef = useRef<{ kill: () => void; resume: () => void; pause: () => void } | null>(null);
   useEffect(() => {
     if (reducedMotion) return;
 
     let cancelled = false;
     import("gsap").then(({ default: gsap }) => {
       if (cancelled) return;
-
       if (scrollArrowRef.current) {
-        const tween = gsap.to(scrollArrowRef.current, {
+        scrollTweenRef.current = gsap.to(scrollArrowRef.current, {
           y: 4, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1,
         });
-        scrollTweenRef.current = tween;
-      }
-
-      if (glowDotsRef.current) {
-        const container = glowDotsRef.current;
-        const dots: HTMLDivElement[] = [];
-        for (let i = 0; i < 5; i++) {
-          const dot = document.createElement("div");
-          const col = Math.floor(Math.random() * 12) + 2;
-          const row = Math.floor(Math.random() * 8) + 2;
-          dot.style.cssText = `
-            position:absolute;left:${col * 60}px;top:${row * 60}px;
-            width:4px;height:4px;border-radius:50%;
-            background:rgba(242,158,24,0.4);
-            box-shadow:0 0 12px rgba(242,158,24,0.3),0 0 24px rgba(242,158,24,0.15);
-            opacity:0;will-change:opacity;
-          `;
-          container.appendChild(dot);
-          dots.push(dot);
-        }
-        const tl = gsap.timeline({ repeat: -1 });
-        dots.forEach((dot, i) => {
-          tl.to(dot, { opacity: 1, duration: 2, ease: "sine.inOut", yoyo: true, repeat: 1 }, i * 1.5);
-        });
-        dotsTlRef.current = tl;
       }
     });
 
     return () => {
       cancelled = true;
       scrollTweenRef.current?.kill();
-      dotsTlRef.current?.kill();
     };
   }, [reducedMotion]);
 
-  // Pause/resume GSAP tweens based on visibility
+  // Pause/resume the scroll indicator based on visibility
   useEffect(() => {
     if (isVisible) {
       (scrollTweenRef.current as { resume?: () => void })?.resume?.();
-      dotsTlRef.current?.resume?.();
     } else {
       (scrollTweenRef.current as { pause?: () => void })?.pause?.();
-      dotsTlRef.current?.pause?.();
     }
   }, [isVisible]);
-
-  const shouldAnimate = !reducedMotion && isVisible;
-  const blobPlayState = shouldAnimate ? "running" : "paused";
 
   // The h1 content -- always present for LCP
   const h1Content = (
@@ -212,67 +178,9 @@ export default function Hero() {
       data-hero
       className="relative flex items-center justify-center min-h-screen overflow-hidden"
     >
-      {/* -- Layer 0: Aurora brand color blobs -- */}
-      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-        <div style={{ opacity: 0, animation: "auroraFadeIn 2s ease-in-out forwards" }}>
-          <div
-            className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[80px] md:blur-[120px]"
-            style={{ background: "rgba(245, 158, 11, 0.20)", animation: "auroraGold 30s ease-in-out infinite alternate", animationPlayState: blobPlayState, willChange: "transform" }}
-          />
-          <div
-            className="absolute -bottom-[15%] -right-[10%] w-[45%] h-[45%] rounded-full blur-[80px] md:blur-[120px]"
-            style={{ background: "rgba(59, 130, 246, 0.16)", animation: "auroraBlue 35s ease-in-out infinite alternate", animationPlayState: blobPlayState, willChange: "transform" }}
-          />
-          <div
-            className="absolute top-[30%] left-[15%] w-[30%] h-[30%] rounded-full blur-[60px] md:blur-[100px]"
-            style={{ background: "rgba(239, 68, 68, 0.13)", animation: "auroraRed 40s ease-in-out infinite alternate", animationPlayState: blobPlayState, willChange: "transform" }}
-          />
-          <div
-            className="absolute bottom-[10%] right-[25%] w-[25%] h-[25%] rounded-full blur-[60px] md:blur-[100px]"
-            style={{ background: "rgba(34, 197, 94, 0.11)", animation: "auroraGreen 32s ease-in-out infinite alternate", animationPlayState: blobPlayState, willChange: "transform" }}
-          />
-        </div>
-      </div>
+      {/* Background = fixed CircuitBackground layer (rendered page-wide in page.tsx) */}
 
-      {/* -- Layer 0.5: Code rain (desktop only) -- */}
-      <div
-        className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block"
-        aria-hidden="true"
-        style={{ contentVisibility: "auto" }}
-      >
-        {[
-          { left: "12%", dur: "25s", delay: "0s", op: 0.08, chars: "{ } < > ; 0 1 = ( )\nconst let var =>\nif else while for\nimport export from\nasync await return" },
-          { left: "38%", dur: "22s", delay: "-10s", op: 0.09, chars: "function class new\n[] {} () => void\npush pop shift map\nfilter reduce find\nslice splice sort" },
-          { left: "62%", dur: "28s", delay: "-5s", op: 0.07, chars: "git add commit push\nnpm run dev build\ncurl POST GET PUT\ndocker compose up\nssh deploy@prod" },
-          { left: "85%", dur: "32s", delay: "-18s", op: 0.08, chars: "HTTP 200 301 404\nTCP UDP DNS SSL\nAPI REST GraphQL\nconsole.log debug\npromise resolve ok" },
-        ].map((col, i) => (
-          <div
-            key={i}
-            className="code-rain-column absolute font-mono text-[14px] text-[var(--color-accent-gold)] whitespace-pre leading-[1.8]"
-            style={{ left: col.left, opacity: col.op, animationDuration: col.dur, animationDelay: col.delay, animationPlayState: blobPlayState }}
-          >
-            {col.chars}
-          </div>
-        ))}
-      </div>
-
-      {/* -- Layer 1: CSS Grid background -- */}
-      <div className="hero-grid" aria-hidden="true" />
-      <div className="hero-glow-dots" aria-hidden="true" />
-      <div ref={glowDotsRef} className="absolute inset-0 pointer-events-none" aria-hidden="true" />
-
-      {/* -- Layer 2: Noise overlay -- */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        aria-hidden="true"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
-          backgroundRepeat: "repeat",
-          backgroundSize: "256px 256px",
-        }}
-      />
-
-      {/* -- Layer 3: Content -- */}
+      {/* -- Content -- */}
       <div className="relative z-10 flex flex-col items-start px-6 md:px-12 lg:px-24 w-full max-w-[1400px] mb-[8vh]">
         <div className="flex items-start gap-4 md:gap-8 lg:gap-12 w-full">
           {/* Line numbers */}

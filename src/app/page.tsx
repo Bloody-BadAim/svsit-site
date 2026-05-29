@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 // Defer heavy client components that are not needed for initial paint (LCP)
 const SmoothScroll = dynamic(() => import("@/components/SmoothScroll"));
-const BackgroundStreaks = dynamic(() => import("@/components/BackgroundStreaks"));
+const CircuitBackground = dynamic(() => import("@/components/CircuitBackground"));
 
 // Below-the-fold sections: code-split to reduce initial JS bundle
 // Each pulls in GSAP ScrollTrigger, motion, lucide-react, etc. only when needed
@@ -51,7 +51,7 @@ export default function Home() {
   return (
     <SmoothScroll>
       <div className="page-public page-home">
-        <BackgroundStreaks />
+        <CircuitBackground />
         <CustomCursor />
         <ConsoleEasterEgg />
         <KonamiGame />
