@@ -1,0 +1,9 @@
+.claude/
+coverage/
+.nyc_output/
+node_modules/
+.next/
+graphify-out/
+.git/
+public/
+*.lock
