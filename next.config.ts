@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
@@ -20,4 +21,11 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: "svsit",
+  project: "svsit-site",
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  disableLogger: true,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+});

@@ -135,6 +135,9 @@ export default function ProfielPage() {
   const [newPassword, setNewPassword] = useState('')
   const [pwSaving, setPwSaving] = useState(false)
   const [pwMessage, setPwMessage] = useState('')
+  const [cancelConfirm, setCancelConfirm] = useState(false)
+  const [cancelling, setCancelling] = useState(false)
+  const [cancelMessage, setCancelMessage] = useState('')
   useEffect(() => {
     if (!session?.user?.id) return
 
@@ -207,6 +210,27 @@ export default function ProfielPage() {
     }
     setPwSaving(false)
     setTimeout(() => setPwMessage(''), 4000)
+  }
+
+  async function handleCancelMembership() {
+    if (!session?.user?.id) return
+    setCancelling(true)
+    setCancelMessage('')
+
+    const res = await fetch(`/api/members/${session.user.id}/cancel-membership`, {
+      method: 'POST',
+    })
+
+    if (res.ok) {
+      setCancelMessage('Lidmaatschap opgezegd')
+      setMembershipActive(false)
+      setCancelConfirm(false)
+    } else {
+      const { error } = await res.json()
+      setCancelMessage(error || 'Opzeggen mislukt')
+    }
+    setCancelling(false)
+    setTimeout(() => setCancelMessage(''), 5000)
   }
 
   // ── Character name derived from display_name or email ──────────────────────
@@ -528,6 +552,85 @@ export default function ProfielPage() {
           </div>
         </div>
       </motion.div>
+
+      {/* ── MEMBERSHIP.CANCEL — full width ───────────────────────────────── */}
+      {membershipActive && (
+        <motion.div
+          className="relative overflow-hidden mt-5"
+          style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+        >
+          <PanelHeader label="membership.cancel" color="var(--color-text-muted)" />
+
+          <div className="p-5">
+            <p className="font-mono text-[11px] mb-4" style={{ color: 'var(--color-text-muted)' }}>
+              // je lidmaatschap opzeggen betekent dat je geen toegang meer hebt tot ledenvoordelen en events
+            </p>
+
+            {!cancelConfirm ? (
+              <motion.button
+                onClick={() => setCancelConfirm(true)}
+                className="font-mono text-[11px] uppercase tracking-[0.15em] py-2.5 px-5 transition-all duration-200"
+                style={{
+                  backgroundColor: 'transparent',
+                  color: 'var(--color-text-muted)',
+                  border: '1px solid var(--color-border)',
+                }}
+                whileHover={{ borderColor: 'var(--color-accent-red)', color: 'var(--color-accent-red)' }}
+              >
+                {'>'} lidmaatschap opzeggen
+              </motion.button>
+            ) : (
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-[11px]" style={{ color: 'var(--color-accent-red)' }}>
+                  Weet je het zeker?
+                </span>
+                <motion.button
+                  onClick={handleCancelMembership}
+                  disabled={cancelling}
+                  className="font-mono text-[11px] uppercase tracking-[0.15em] py-2.5 px-5 transition-all duration-200 disabled:opacity-50"
+                  style={{
+                    backgroundColor: 'rgba(239,68,68,0.1)',
+                    color: 'var(--color-accent-red)',
+                    border: '1px solid var(--color-accent-red)',
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {cancelling ? '// bezig...' : '> bevestig opzeggen'}
+                </motion.button>
+                <motion.button
+                  onClick={() => setCancelConfirm(false)}
+                  className="font-mono text-[11px] uppercase tracking-[0.15em] py-2.5 px-5 transition-all duration-200"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: 'var(--color-text-muted)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                >
+                  annuleren
+                </motion.button>
+              </div>
+            )}
+
+            {cancelMessage && (
+              <motion.span
+                className="block font-mono text-[10px] mt-3"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                style={{
+                  color: cancelMessage === 'Lidmaatschap opgezegd'
+                    ? 'var(--color-accent-green)'
+                    : 'var(--color-accent-red)',
+                }}
+              >
+                {cancelMessage}
+              </motion.span>
+            )}
+          </div>
+        </motion.div>
+      )}
 
     </div>
   )
