@@ -121,7 +121,7 @@ export default function JoinCta() {
 
       {/* Content */}
       <div className="relative z-10 max-w-[1400px] mx-auto w-full">
-        <SectionLabel number="04" label="word lid" />
+        <SectionLabel number="06" label="word lid" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center mt-8">
           {/* Left: pitch */}
@@ -160,6 +160,20 @@ export default function JoinCta() {
                 </span>
               </div>
             </div>
+
+            <ul data-animate className="mt-8 flex flex-col gap-2.5">
+              {[
+                "Toegang tot alle events & borrels",
+                "Meedraaien in elke commissie",
+                "Netwerk van 200+ studenten, alumni & bedrijven",
+                "Dev-tools, AI Labs & de SIT-server",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2.5 font-mono text-sm text-[var(--color-text-muted)]">
+                  <span className="text-[var(--color-accent-green)] mt-0.5 shrink-0">&#10003;</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Right: clean member card */}

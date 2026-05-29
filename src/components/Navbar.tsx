@@ -135,8 +135,8 @@ export default function Navbar() {
           }`}
         style={{ background: "rgba(9, 9, 11, 0.97)", backdropFilter: "blur(20px)" }}
       >
-        <div className="flex flex-col justify-center items-start h-full px-8">
-          <nav className="flex flex-col gap-8 mb-16">
+        <div className="flex flex-col justify-start items-start h-full px-8 pt-24 pb-8 overflow-y-auto">
+          <nav className="flex flex-col gap-5 mb-10">
             {navLinks.map((link, i) => (
               <a
                 key={link.href}
@@ -152,7 +152,7 @@ export default function Navbar() {
                 <span className="text-[var(--color-accent-gold)] opacity-40 text-xs tracking-[0.3em]">
                   0{i + 1}
                 </span>
-                <span className="text-2xl font-bold mt-1 group-hover/mlink:translate-x-2 transition-transform duration-300">
+                <span className="text-xl font-bold mt-1 group-hover/mlink:translate-x-2 transition-transform duration-300">
                   {link.label}
                 </span>
               </a>
@@ -169,14 +169,14 @@ export default function Navbar() {
               <a
                 href="/login"
                 onClick={closeMenu}
-                className="inline-block px-8 py-4 border border-[var(--color-border)] text-[var(--color-text-muted)] font-mono font-bold text-lg tracking-wide hover:text-[var(--color-text)] hover:border-[var(--color-text-muted)] transition-colors duration-200"
+                className="inline-block px-6 py-3 border border-[var(--color-border)] text-[var(--color-text-muted)] font-mono font-bold text-base tracking-wide hover:text-[var(--color-text)] hover:border-[var(--color-text-muted)] transition-colors duration-200"
               >
                 $ login
               </a>
               <a
                 href="/#join"
                 onClick={closeMenu}
-                className="inline-block px-8 py-4 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-lg tracking-wide"
+                className="inline-block px-6 py-3 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-base tracking-wide"
               >
                 $ join --now
               </a>

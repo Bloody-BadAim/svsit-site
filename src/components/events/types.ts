@@ -15,6 +15,7 @@ export interface SitEvent {
   time?: string;
   description?: string;
   link?: string;
+  isPaid?: boolean;
   status: EventStatus;
   type: string;
   category: EventCategory;
@@ -30,6 +31,7 @@ export interface EventResponse {
   location?: string;
   description?: string;
   link?: string;
+  isPaid?: boolean;
   status: "done" | "next" | "tba";
   type: string;
   category: EventCategory;

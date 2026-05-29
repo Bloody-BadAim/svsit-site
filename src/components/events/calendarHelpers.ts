@@ -18,6 +18,7 @@ export function toSitEvent(e: EventResponse): SitEvent {
     time: e.time,
     description: e.description,
     link: e.link,
+    isPaid: e.isPaid,
     status: statusMap[e.status] ?? "TBA",
     type: e.type || "SIT eigen",
     category: e.category || "Social",
@@ -30,7 +31,8 @@ export function ticketLabel(event: SitEvent): { text: string; color: string; cli
     return { text: "AFGEROND", color: "rgba(255,255,255,0.2)", clickable: false };
   }
   if (event.link) {
-    return { text: "TICKETS OPEN", color: BRAND.green, clickable: true };
+    const label = event.isPaid ? "TICKETS OPEN" : "AANMELDEN";
+    return { text: label, color: BRAND.green, clickable: true };
   }
   return { text: "BINNENKORT", color: BRAND.gold, clickable: false };
 }

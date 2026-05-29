@@ -10,7 +10,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from('events')
-    .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers')
+    .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, external_ticket_url')
     .in('status', ['upcoming', 'completed'])
     .order('date', { ascending: true })
 
@@ -54,6 +54,8 @@ export async function GET() {
       dateEnd: e.end_date ?? undefined,
       location: e.location ?? 'TBA',
       description: e.description ?? undefined,
+      link: e.external_ticket_url ?? undefined,
+      isPaid: e.is_paid ?? false,
       status: displayStatus,
       type: 'SIT eigen',
       category,

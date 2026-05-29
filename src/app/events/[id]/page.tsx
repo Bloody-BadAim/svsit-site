@@ -449,7 +449,7 @@ export default async function EventDetailPage(
                 textDecoration: 'none',
               }}
             >
-              {'>'} Tickets kopen (extern)
+              {'>'} {typedEvent.is_paid ? 'Tickets kopen (extern)' : 'Aanmelden (extern)'}
             </a>
           </div>
         ) : (

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, lazy, Suspense } from "react";
 
+import CommunityLog from "@/components/CommunityLog";
+
 // Lazy-load non-LCP-critical components to avoid blocking initial paint
 const GlowEffect = lazy(() =>
   import("@/components/ui/GlowEffect").then((m) => ({ default: m.GlowEffect }))
@@ -272,14 +274,14 @@ export default function Hero() {
 
       {/* -- Layer 3: Content -- */}
       <div className="relative z-10 flex flex-col items-start px-6 md:px-12 lg:px-24 w-full max-w-[1400px] mb-[8vh]">
-        <div className="flex items-start gap-4 md:gap-8">
+        <div className="flex items-start gap-4 md:gap-8 lg:gap-12 w-full">
           {/* Line numbers */}
           <div className="hidden md:flex flex-col font-mono text-[var(--color-text-muted)] text-sm leading-[1.8] select-none opacity-30">
             <span>01</span><span>02</span><span>03</span><span>04</span>
             <span>05</span><span>06</span><span>07</span><span>08</span>
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col flex-1 min-w-0">
             {/* Terminal prompt line */}
             <p className="font-mono text-[11px] sm:text-sm md:text-base text-[var(--color-text-muted)] mb-2 opacity-0 animate-[fadeIn_0.5s_ease_0.8s_forwards]">
               <span className="text-[var(--color-accent-green)]">$</span>
@@ -391,6 +393,11 @@ export default function Hero() {
               <span className="w-8 h-px bg-[var(--color-text-muted)] opacity-40" />
               <span className="text-[10px] text-[var(--color-text-muted)] opacity-40 tracking-widest uppercase ml-1">Amsterdam</span>
             </div>
+          </div>
+
+          {/* Right column: community.log terminal */}
+          <div className="hidden lg:flex items-start pt-8">
+            <CommunityLog />
           </div>
         </div>
       </div>
