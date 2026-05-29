@@ -50,6 +50,8 @@ const IntroOverlay = dynamic(() => import("@/components/heroAnimations/IntroOver
 export default function Home() {
   return (
     <SmoothScroll>
+      {/* Preload LCP image (chip logo) so it is fetched before the dynamic CircuitBackground chunk renders */}
+      <link rel="preload" as="image" href="/circuit-chip-logo.png" fetchPriority="high" />
       <div className="page-public page-home">
         <CircuitBackground />
         <CustomCursor />

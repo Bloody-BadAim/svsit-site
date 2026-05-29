@@ -468,7 +468,7 @@ export default function CircuitBackground() {
         <span className="notch" />
         <div ref={pinsRef} className="pins" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="chip-logo" src="/circuit-chip-logo.png" alt="" />
+        <img className="chip-logo" src="/circuit-chip-logo.png" alt="" width={256} height={256} fetchPriority="high" decoding="async" />
         <div className="chip-label">SIT CORE</div>
       </div>
     </div>
