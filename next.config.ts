@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
 };
 
 export default withSentryConfig(nextConfig, {
-  org: "svsit",
+  org: "matin-m0",
   project: "svsit-site",
   silent: !process.env.CI,
   widenClientFileUpload: true,
