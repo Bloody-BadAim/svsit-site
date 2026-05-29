@@ -13,12 +13,13 @@ interface DbEvent {
   date: string
   end_date: string | null
   location: string | null
-  category: 'code' | 'social' | 'learn' | 'impact'
+  category: 'code' | 'social' | 'career' | 'game'
   status: 'upcoming' | 'active' | 'completed' | 'cancelled'
   is_paid: boolean
   price_members: number
   price_nonmembers: number
   capacity: number | null
+  external_ticket_url: string | null
   recap_description: string | null
   recap_photos: string[] | null
   recap_published: boolean
@@ -31,13 +32,16 @@ interface EventFormData {
   date: string
   end_date: string
   location: string
-  category: 'code' | 'social' | 'learn' | 'impact'
+  category: 'code' | 'social' | 'career' | 'game'
   status: 'upcoming' | 'active' | 'completed'
   is_paid: boolean
   price_members: string
   price_nonmembers: string
   capacity: string
+  external_ticket_url: string
 }
+
+type TicketMode = 'own' | 'external' | 'none'
 
 interface EventFormModalProps {
   event?: DbEvent | null
@@ -76,6 +80,7 @@ const EMPTY_FORM: EventFormData = {
   price_members: '',
   price_nonmembers: '',
   capacity: '',
+  external_ticket_url: '',
 }
 
 function eventToForm(event: DbEvent): EventFormData {
@@ -91,6 +96,7 @@ function eventToForm(event: DbEvent): EventFormData {
     price_members: event.price_members ? centsEuro(event.price_members) : '',
     price_nonmembers: event.price_nonmembers ? centsEuro(event.price_nonmembers) : '',
     capacity: event.capacity ? String(event.capacity) : '',
+    external_ticket_url: event.external_ticket_url || '',
   }
 }
 
@@ -103,12 +109,17 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
+  // Ticket mode: own = SIT ticket sales, external = link to external, none = free/no tickets
+  const initialTicketMode: TicketMode = event?.external_ticket_url ? 'external' : event?.is_paid ? 'own' : 'none'
+  const [ticketMode, setTicketMode] = useState<TicketMode>(initialTicketMode)
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.title || !form.date) return
     setSaving(true)
     setError(null)
 
+    const isPaid = ticketMode === 'own'
     const body = {
       title: form.title,
       description: form.description || null,
@@ -117,10 +128,11 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
       location: form.location || null,
       category: form.category,
       status: form.status,
-      is_paid: form.is_paid,
-      price_members: form.is_paid ? euroCents(form.price_members) : 0,
-      price_nonmembers: form.is_paid ? euroCents(form.price_nonmembers) : 0,
+      is_paid: isPaid,
+      price_members: isPaid ? euroCents(form.price_members) : 0,
+      price_nonmembers: isPaid ? euroCents(form.price_nonmembers) : 0,
       capacity: form.capacity ? parseInt(form.capacity, 10) : null,
+      external_ticket_url: ticketMode === 'external' ? (form.external_ticket_url || null) : null,
     }
 
     try {
@@ -267,8 +279,8 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
               >
                 <option value="code">Code</option>
                 <option value="social">Social</option>
-                <option value="learn">Learn</option>
-                <option value="impact">Impact</option>
+                <option value="career">Career</option>
+                <option value="game">Game</option>
               </select>
             </div>
 
@@ -286,25 +298,34 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
               </select>
             </div>
 
-            {/* Paid toggle */}
-            <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <input
-                type="checkbox"
-                id="modal_is_paid"
-                checked={form.is_paid}
-                onChange={(e) => setForm({ ...form, is_paid: e.target.checked })}
-                style={{ accentColor: 'var(--color-accent-gold)', width: 16, height: 16 }}
-              />
-              <label
-                htmlFor="modal_is_paid"
-                style={{ ...labelStyle, marginBottom: 0, cursor: 'pointer' }}
-              >
-                Betaald event
-              </label>
+            {/* Ticket mode */}
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={labelStyle}>Ticketverkoop</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {([['none', 'Gratis / geen tickets'], ['own', 'Eigen verkoop (Stripe)'], ['external', 'Externe link']] as const).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setTicketMode(value)}
+                    style={{
+                      ...inputStyle,
+                      flex: 1,
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      backgroundColor: ticketMode === value ? 'var(--color-accent-gold)' : 'transparent',
+                      color: ticketMode === value ? 'var(--color-bg)' : 'var(--color-text-muted)',
+                      borderColor: ticketMode === value ? 'var(--color-accent-gold)' : 'var(--color-border)',
+                      fontWeight: ticketMode === value ? 700 : 400,
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Price fields (conditional) */}
-            {form.is_paid && (
+            {/* Price fields (own ticket sales) */}
+            {ticketMode === 'own' && (
               <>
                 <div>
                   <label style={labelStyle}>Prijs leden (EUR)</label>
@@ -331,6 +352,20 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
                   />
                 </div>
               </>
+            )}
+
+            {/* External ticket URL */}
+            {ticketMode === 'external' && (
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={labelStyle}>Ticket URL</label>
+                <input
+                  type="url"
+                  value={form.external_ticket_url}
+                  onChange={(e) => setForm({ ...form, external_ticket_url: e.target.value })}
+                  placeholder="https://..."
+                  style={inputStyle}
+                />
+              </div>
             )}
           </div>
 

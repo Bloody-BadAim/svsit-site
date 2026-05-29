@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const supabase = createServiceClient()
     let query = supabase
       .from('events')
-      .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, recap_description, recap_photos, recap_published, created_by, created_at', { count: 'exact' })
+      .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, external_ticket_url, recap_description, recap_photos, recap_published, created_by, created_at', { count: 'exact' })
       .order('date', { ascending: true })
 
     if (status) {
@@ -53,6 +53,7 @@ export async function POST(req: NextRequest) {
       price_members,
       price_nonmembers,
       capacity,
+      external_ticket_url,
     } = body as {
       title: string
       description?: string
@@ -66,6 +67,7 @@ export async function POST(req: NextRequest) {
       price_members?: number
       price_nonmembers?: number
       capacity?: number
+      external_ticket_url?: string
     }
 
     if (!title || !date) {
@@ -88,9 +90,10 @@ export async function POST(req: NextRequest) {
         price_members: price_members ?? 0,
         price_nonmembers: price_nonmembers ?? 0,
         capacity: capacity ?? null,
+        external_ticket_url: external_ticket_url ?? null,
         created_by: session.user.email,
       })
-      .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, created_by, created_at')
+      .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, external_ticket_url, created_by, created_at')
       .single()
 
     if (error) throw error

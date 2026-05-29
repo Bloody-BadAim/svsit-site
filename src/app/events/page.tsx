@@ -58,8 +58,8 @@ export const metadata: Metadata = {
 const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
   social: { label: 'SOCIAL', color: '#F29E18' },
   code: { label: 'CODE', color: '#22C55E' },
-  learn: { label: 'TALKS', color: '#3B82F6' },
-  impact: { label: 'CAREER', color: '#EF4444' },
+  career: { label: 'CAREER', color: '#3B82F6' },
+  game: { label: 'GAME', color: '#EF4444' },
 }
 
 function getCategoryDisplay(category: string) {

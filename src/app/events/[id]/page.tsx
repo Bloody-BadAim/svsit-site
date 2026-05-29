@@ -33,8 +33,8 @@ import CheckInForm from './CheckInForm'
 const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
   social: { label: 'SOCIAL', color: '#F29E18' },
   code: { label: 'CODE', color: '#22C55E' },
-  learn: { label: 'TALKS', color: '#3B82F6' },
-  impact: { label: 'CAREER', color: '#EF4444' },
+  career: { label: 'CAREER', color: '#3B82F6' },
+  game: { label: 'GAME', color: '#EF4444' },
 }
 
 function getCategoryDisplay(category: string) {
@@ -428,15 +428,40 @@ export default async function EventDetailPage(
           </div>
         )}
 
-        {/* Ticket form */}
-        <TicketForm
-          eventId={typedEvent.id}
-          isPaid={typedEvent.is_paid}
-          priceMembersCents={typedEvent.price_members}
-          priceNonmembersCents={typedEvent.price_nonmembers}
-          isSoldOut={isSoldOut}
-          categoryColor={cat.color}
-        />
+        {/* Ticket form or external link */}
+        {typedEvent.external_ticket_url ? (
+          <div className="mb-8">
+            <a
+              href={typedEvent.external_ticket_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'block',
+                padding: '14px 24px',
+                backgroundColor: cat.color,
+                color: '#0A0A0B',
+                fontFamily: 'var(--font-mono)',
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                textAlign: 'center',
+                textDecoration: 'none',
+              }}
+            >
+              {'>'} Tickets kopen (extern)
+            </a>
+          </div>
+        ) : (
+          <TicketForm
+            eventId={typedEvent.id}
+            isPaid={typedEvent.is_paid}
+            priceMembersCents={typedEvent.price_members}
+            priceNonmembersCents={typedEvent.price_nonmembers}
+            isSoldOut={isSoldOut}
+            categoryColor={cat.color}
+          />
+        )}
 
         {/* Event recap (only shown when published) */}
         {typedEvent.recap_published && typedEvent.recap_description && (

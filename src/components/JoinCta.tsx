@@ -173,7 +173,7 @@ export default function JoinCta() {
                 total_xp: 0,
                 skin: 'skin_default',
                 activeBadges: [],
-                dynamicStats: { code: 0, social: 0, learn: 0, impact: 0 },
+                dynamicStats: { code: 0, social: 0, career: 0, game: 0 },
               }}
               equipment={{
                 frameColor: 'var(--color-accent-gold)',

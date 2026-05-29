@@ -31,8 +31,8 @@ export interface OverviewTabProps {
 const CATEGORY_COLORS: Record<string, string> = {
   social: '#F29E18',
   code: '#22C55E',
-  learn: '#3B82F6',
-  impact: '#EF4444',
+  career: '#3B82F6',
+  game: '#EF4444',
 }
 
 // ── Date helpers ────────────────────────────────────────────────────────────

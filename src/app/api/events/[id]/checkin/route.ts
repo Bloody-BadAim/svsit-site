@@ -94,7 +94,7 @@ export async function POST(
         amount: xpAmount,
         source: 'scan',
         sourceId: scan.id as string,
-        category: (event.category as string as 'code' | 'social' | 'learn' | 'impact') || 'social',
+        category: (event.category as string as 'code' | 'social' | 'career' | 'game') || 'social',
       }),
       checkAndGrantAutoBadges(session.user.id),
     ])

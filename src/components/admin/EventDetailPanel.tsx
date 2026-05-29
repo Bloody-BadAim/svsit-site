@@ -16,12 +16,13 @@ interface DbEvent {
   date: string
   end_date: string | null
   location: string | null
-  category: 'code' | 'social' | 'learn' | 'impact'
+  category: 'code' | 'social' | 'career' | 'game'
   status: 'upcoming' | 'active' | 'completed' | 'cancelled'
   is_paid: boolean
   price_members: number
   price_nonmembers: number
   capacity: number | null
+  external_ticket_url: string | null
   recap_description: string | null
   recap_photos: string[] | null
   recap_published: boolean
@@ -59,8 +60,8 @@ interface EventDetailPanelProps {
 const CATEGORY_LABELS: Record<string, string> = {
   code: 'Code',
   social: 'Social',
-  learn: 'Learn',
-  impact: 'Impact',
+  career: 'Career',
+  game: 'Game',
 }
 
 function centsEuro(cents: number): string {

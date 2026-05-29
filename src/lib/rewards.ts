@@ -6,8 +6,8 @@ import type { StatCategory } from '@/types/database'
 export interface MemberStats {
   code: number
   social: number
-  learn: number
-  impact: number
+  career: number
+  game: number
   total: number
 }
 
@@ -17,11 +17,11 @@ export async function calculateStats(
 ): Promise<MemberStats> {
   // Admins and bestuur get max stats
   if (isAdmin) {
-    return { code: 999, social: 999, learn: 999, impact: 999, total: 3996 }
+    return { code: 999, social: 999, career: 999, game: 999, total: 3996 }
   }
 
   const supabase = createServiceClient()
-  const stats: MemberStats = { code: 0, social: 0, learn: 0, impact: 0, total: 0 }
+  const stats: MemberStats = { code: 0, social: 0, career: 0, game: 0, total: 0 }
 
   // xp_transactions is the single source of truth (V1 data was migrated)
   const { data: transactions } = await supabase
@@ -85,7 +85,7 @@ export async function checkAndGrantAutoBadges(memberId: string): Promise<string[
   ).length ?? 0
 
   const categories = new Set(scans?.map((s) => s.category as string) ?? [])
-  const allCategories = ['code', 'social', 'learn', 'impact'].every((c) => categories.has(c))
+  const allCategories = ['code', 'social', 'career', 'game'].every((c) => categories.has(c))
 
   // Streak checks
   let hasStreak3 = false

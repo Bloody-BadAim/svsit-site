@@ -57,7 +57,7 @@ export interface MemberCardData {
   badges?: { unlocked: boolean; label: string }[];
   skin?: string;
   activeBadges?: string[];
-  dynamicStats?: { code: number; social: number; learn: number; impact: number };
+  dynamicStats?: { code: number; social: number; career: number; game: number };
 }
 
 export interface MemberCardEquipment {
@@ -330,8 +330,8 @@ export default function MemberCard({
     ? [
       { label: "CODE", color: "var(--color-accent-green)", fill: Math.min(data.dynamicStats.code * 10, 100) },
       { label: "SOCIAL", color: "var(--color-accent-gold)", fill: Math.min(data.dynamicStats.social * 10, 100) },
-      { label: "GAMING", color: "var(--color-accent-red)", fill: Math.min(data.dynamicStats.learn * 10, 100) },
-      { label: "IMPACT", color: "var(--color-accent-blue)", fill: Math.min(data.dynamicStats.impact * 10, 100) },
+      { label: "CAREER", color: "var(--color-accent-blue)", fill: Math.min(data.dynamicStats.career * 10, 100) },
+      { label: "GAME", color: "var(--color-accent-red)", fill: Math.min(data.dynamicStats.game * 10, 100) },
     ]
     : (data?.stats || DEFAULT_STATS);
 

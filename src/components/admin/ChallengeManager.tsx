@@ -7,8 +7,8 @@ import { Check, X } from 'lucide-react'
 const CATEGORIES: { value: StatCategory; label: string }[] = [
   { value: 'code', label: 'Code' },
   { value: 'social', label: 'Social' },
-  { value: 'learn', label: 'Learn' },
-  { value: 'impact', label: 'Impact' },
+  { value: 'career', label: 'Career' },
+  { value: 'game', label: 'Game' },
 ]
 
 export default function ChallengeManager() {

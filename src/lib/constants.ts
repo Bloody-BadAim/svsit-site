@@ -44,9 +44,9 @@ export interface StatCategoryDef {
 
 export const STAT_CATEGORIES: StatCategoryDef[] = [
   { id: 'code',   naam: 'Code',    kleur: '#22C55E' },
-  { id: 'social', naam: 'Sociaal', kleur: '#F29E18' },
-  { id: 'learn',  naam: 'Leren',   kleur: '#3B82F6' },
-  { id: 'impact', naam: 'Impact',  kleur: '#EF4444' },
+  { id: 'social', naam: 'Social',  kleur: '#F29E18' },
+  { id: 'career', naam: 'Career',  kleur: '#3B82F6' },
+  { id: 'game',   naam: 'Game',    kleur: '#EF4444' },
 ]
 
 // ---------------------------------------------------------------------------

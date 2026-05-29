@@ -2,7 +2,7 @@ export type Role = 'member' | 'contributor' | 'mentor' | 'bestuur'
 
 export type MembershipStatus = 'active' | 'expired' | 'pending'
 
-export type StatCategory = 'code' | 'social' | 'learn' | 'impact'
+export type StatCategory = 'code' | 'social' | 'career' | 'game'
 export type ChallengeType = 'quest' | 'track_milestone' | 'achievement'
 export type SubmissionStatus = 'pending' | 'approved' | 'rejected'
 
@@ -80,6 +80,7 @@ export interface SitEvent {
   price_nonmembers: number
   capacity: number | null
   stripe_price_id: string | null
+  external_ticket_url: string | null
   checkin_code: string | null
   notion_id: string | null
   recap_description: string | null

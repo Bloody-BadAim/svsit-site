@@ -67,8 +67,8 @@ export interface QuestsTabProps {
 const CATEGORY_STYLES: Record<string, { color: string; label: string }> = {
   code:   { color: '#22C55E', label: 'CODE' },
   social: { color: '#F29E18', label: 'SOCIAL' },
-  learn:  { color: '#3B82F6', label: 'LEARN' },
-  impact: { color: '#EF4444', label: 'IMPACT' },
+  career: { color: '#3B82F6', label: 'CAREER' },
+  game:   { color: '#EF4444', label: 'GAME' },
 }
 
 const TRACK_META: Record<string, { naam: string; beschrijving: string; kleur: string }> = {
@@ -81,9 +81,9 @@ const TRACK_META: Record<string, { naam: string; beschrijving: string; kleur: st
 
 const XP_SOURCES_TABLE = [
   { actie: 'Borrel check-in',         xp: '5',      categorie: 'social'  },
-  { actie: 'Workshop / event',        xp: '10',     categorie: 'learn'   },
+  { actie: 'Workshop / event',        xp: '10',     categorie: 'career'  },
   { actie: 'Hackathon',               xp: '25',     categorie: 'code'    },
-  { actie: 'Event organiseren',       xp: '40',     categorie: 'impact'  },
+  { actie: 'Event organiseren',       xp: '40',     categorie: 'game'    },
   { actie: 'Weekly quest',            xp: '10-25',  categorie: 'varies'  },
   { actie: 'Skill track milestone',   xp: '15-50',  categorie: 'varies'  },
   { actie: 'Track completion',        xp: '100',    categorie: 'varies'  },
