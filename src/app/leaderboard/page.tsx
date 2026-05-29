@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
+import { unstable_cache } from 'next/cache'
 
 export const dynamic = 'force-dynamic'
 import { getLevelForXp } from '@/lib/levelEngine'
@@ -50,33 +51,43 @@ export interface BubbleData {
   below: BubbleEntry[]
 }
 
+// ─── Cached queries ─────────────────────────────────────────────────────────
+
+const getTop10 = unstable_cache(
+  async () => {
+    const supabase = createServiceClient()
+    const { data: rawTop10 } = await supabase
+      .from('members')
+      .select('id, email, display_name, total_xp, current_level, is_admin')
+      .eq('membership_active', true)
+      .eq('is_admin', false)
+      .order('total_xp', { ascending: false })
+      .limit(10)
+
+    return (rawTop10 ?? []).map((m, i) => {
+      const levelDef = getLevelForXp((m.total_xp as number) ?? 0)
+      return {
+        position: i + 1,
+        id: m.id as string,
+        name: (m.display_name as string) || (m.email as string).split('@')[0],
+        totalXp: (m.total_xp as number) ?? 0,
+        currentLevel: (m.current_level as number) ?? 1,
+        levelTitle: levelDef.title,
+        levelColor: levelDef.color,
+      }
+    }) as LeaderEntry[]
+  },
+  ['leaderboard-top10'],
+  { revalidate: 60 }
+)
+
 // ─── Page (server component — data only) ──────────────────────────────────────
 
 export default async function LeaderboardPage() {
   const session = await auth()
   const supabase = createServiceClient()
 
-  // Fetch top 10 directly on server
-  const { data: rawTop10 } = await supabase
-    .from('members')
-    .select('id, email, display_name, total_xp, current_level, is_admin')
-    .eq('membership_active', true)
-    .eq('is_admin', false)
-    .order('total_xp', { ascending: false })
-    .limit(10)
-
-  const top10: LeaderEntry[] = (rawTop10 ?? []).map((m, i) => {
-    const levelDef = getLevelForXp((m.total_xp as number) ?? 0)
-    return {
-      position: i + 1,
-      id: m.id as string,
-      name: (m.display_name as string) || (m.email as string).split('@')[0],
-      totalXp: (m.total_xp as number) ?? 0,
-      currentLevel: (m.current_level as number) ?? 1,
-      levelTitle: levelDef.title,
-      levelColor: levelDef.color,
-    }
-  })
+  const top10 = await getTop10()
 
   // Bubble ranking — only if logged in
   let bubble: BubbleData | null = null

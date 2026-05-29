@@ -1,10 +1,26 @@
 import { createServiceClient } from '@/lib/supabase'
+import { unstable_cache } from 'next/cache'
 import { auth } from '@/lib/auth'
 import type { SitEvent } from '@/types/database'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
+
+const getEvent = unstable_cache(
+  async (id: string) => {
+    const supabase = createServiceClient()
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('id', id)
+      .single()
+    if (error || !data) return null
+    return data as SitEvent
+  },
+  ['event-detail'],
+  { revalidate: 60 }
+)
 import { notFound } from 'next/navigation'
 import { Calendar, MapPin, Clock, Users, Camera, Image as ImageIcon } from 'lucide-react'
 import Navbar from '@/components/Navbar'
@@ -31,13 +47,7 @@ export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
   const { id } = await params
-  const supabase = createServiceClient()
-
-  const { data: event } = await supabase
-    .from('events')
-    .select('title, description, date, location')
-    .eq('id', id)
-    .single()
+  const event = await getEvent(id)
 
   if (!event) {
     return { title: 'Event niet gevonden — {SIT}' }
@@ -95,18 +105,10 @@ export default async function EventDetailPage(
   const { id } = await params
   const supabase = createServiceClient()
 
-  // Fetch event
-  const { data: event, error } = await supabase
-    .from('events')
-    .select('*')
-    .eq('id', id)
-    .single()
-
-  if (error || !event) {
+  const typedEvent = await getEvent(id)
+  if (!typedEvent) {
     notFound()
   }
-
-  const typedEvent = event as SitEvent
 
   // Count sold tickets (paid + checked_in)
   const { count: ticketsSold } = await supabase

@@ -12,11 +12,19 @@ const BRAND_COLORS = {
 
 type BrandColor = keyof typeof BRAND_COLORS;
 
-const TICKER_ITEMS: { label: string; color: BrandColor }[] = [
-  { label: "@sv.sit", color: "gold" },
+interface TickerItem {
+  label: string;
+  color: BrandColor;
+  href?: string;
+}
+
+const TICKER_ITEMS: TickerItem[] = [
+  { label: "@sv.sit", color: "gold", href: "https://instagram.com/sv.sit" },
   { label: "BORRELS", color: "blue" },
+  { label: "CHIPSOFT", color: "blue", href: "https://www.chipsoft.nl" },
   { label: "HACKATHONS", color: "red" },
   { label: "GAME NIGHTS", color: "green" },
+  { label: "SOGETI", color: "green", href: "https://www.sogeti.nl" },
   { label: "TECH TALKS", color: "blue" },
   { label: "KROEGENTOCHTEN", color: "red" },
   { label: "CTF CHALLENGES", color: "green" },
@@ -62,12 +70,14 @@ export default function EventTicker() {
                   &times;
                 </span>
               )}
-              {item.label === "@sv.sit" ? (
+              {item.href ? (
                 <a
-                  href="https://instagram.com/sv.sit"
+                  href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-mono font-bold text-2xl md:text-4xl whitespace-nowrap hover:opacity-80 transition-opacity"
+                  className={`font-mono font-bold whitespace-nowrap hover:opacity-80 transition-opacity ${
+                    item.label === "@sv.sit" ? "text-2xl md:text-4xl" : "text-base md:text-xl tracking-wider"
+                  }`}
                   style={{ color: BRAND_COLORS[item.color] }}
                 >
                   {item.label}
