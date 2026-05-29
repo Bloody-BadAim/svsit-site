@@ -1,58 +1,44 @@
-# Handoff — SIT Website — 2026-05-29
+# Handoff — SIT Website — 2026-05-30
 
 ## Doel
-SIT website performance, category alignment, external ticket support, homepage cleanup
+svsit.nl — community website voor studievereniging ICT (HvA), introweek 31 aug als deadline
 
 ## Status
-- Fase: 4 (Implement) — categories aligned, external tickets done, build passing
-- Gate: Build passing, NOT YET committed/pushed
-- Last commit: `0badeb9` (sessie 14)
+- Fase: 4 Implement (doorlopend, geen strikte taak IDs meer)
+- Laatste taak: Circuit-board achtergrond page-wide + perf fix lag/low-FPS — DONE + live
+- Gate: Implement APPROVED (merged to main 26 mei)
 
-## Gewijzigde files (sessie 15)
-- `src/components/admin/EventFormModal.tsx` — 3-keuze ticket mode (gratis/eigen/extern), category dropdown career/game
-- `src/components/admin/EventDetailPanel.tsx` — category type + labels updated, external_ticket_url in DbEvent
-- `src/app/admin/events/page.tsx` — category type + labels updated, external_ticket_url in DbEvent
-- `src/components/admin/ChallengeManager.tsx` — CATEGORIES array career/game
-- `src/app/events/page.tsx` — CATEGORY_CONFIG career/game
-- `src/app/events/[id]/page.tsx` — CATEGORY_CONFIG career/game + conditional external ticket link
-- `src/components/dashboard/tabs/QuestsTab.tsx` — CATEGORY_STYLES + XP_SOURCES_TABLE career/game
-- `src/components/dashboard/tabs/OverviewTab.tsx` — CATEGORY_COLORS career/game
-- `src/components/MemberCard.tsx` — dynamicStats interface + stats mapping career/game
-- `src/components/JoinCta.tsx` — default dynamicStats career/game
-- `src/lib/rewards.ts` — MemberStats interface + calculateStats + allCategories badge check
-- `src/app/api/events/route.ts` — external_ticket_url in POST insert/select + GET select
-- `src/app/api/events/[id]/route.ts` — external_ticket_url in PATCH allowedFields + all selects
-- `src/app/api/events/[id]/checkin/route.ts` — category cast updated
-- `src/types/database.ts` — StatCategory was already career/game (prev session)
+## Gewijzigde files (sessie 17 + 17b)
+- `src/components/CircuitBackground.tsx` — NEW: React port van canvas PCB-engine (Manhattan traces, vias, SMD parts, glowing pulses, fixed CPU-die). Perf: glowSprite()+glowCache (drawImage ipv shadowBlur), 30fps cap, DPR cap 2, rAF pause op document.hidden, debounced resize 180ms
+- `src/components/circuitBackground.css` — NEW: `.circuit-bg-layer` fixed inset:0 z-0 pointer-events:none, @property --chip-accent, .sit-chip cycling/glow, .circuit-bg-veil dark vignette voor leesbaarheid, prefers-reduced-motion fallback
+- `public/circuit-chip-logo.png` — NEW: kopie handoff sit-logo.png
+- `src/app/page.tsx` — BackgroundStreaks dynamic import VERVANGEN door CircuitBackground (homepage)
+- `src/components/Hero.tsx` — getrimd: aurora blobs, code rain, CSS grid, glow-dots, noise + bijbehorende refs weg. Content/typing/counters/CTAs/CommunityLog/scroll-arrow behouden
 
 ## Wat werkt
-- Categories aligned across entire codebase (learn/impact → career/game), 0 remaining references
-- External ticket URL: admin form, API CRUD, event detail page conditional render
-- DB migration complete (constraints + column) from previous session
-- Build passing, TypeScript clean
+- Page-wide fixed circuit-board achtergrond op homepage, tekst leesbaar (bgOpacity 0.42 + veil)
+- Perf: shadowBlur weg → cached glow sprite + drawImage, 30fps cap. Lag/low-FPS opgelost
+- Build green (Next 16.2.1 Turbopack, exit 0)
+- Commits: `f69eada` (circuit bg integratie), `0ac95d4` (perf fix). Beide gepusht naar main
+- Vercel prod deploy live, aliased svsit.nl
 
 ## Wat niet werkte / geleerde lessen
-- Local DbEvent types in admin pages didn't have external_ticket_url — build failed until added
-- Multiple files had duplicate type definitions for event categories (not using shared SitEvent type)
+- shadowBlur = #1 canvas perf killer. Altijd pre-rendered sprite + drawImage voor glow op animerende full-viewport canvas
+- Frame cap 30fps voor ambient bg = visueel onmerkbaar, halveert CPU
+- TS strict-null in nested fn: closure narrowing verloren → `canvas!.style.opacity`
+- Visual check: geen Playwright MCP/install. Windows Chrome headless werkt op WSL localhost: `--headless=new --no-sandbox --disable-gpu --window-size=1440,900 --virtual-time-budget=6000 --screenshot="C:/.../x.png"`. Tall viewport (>1000px) + #anchor shots falen blank (lazy dynamic sections)
 
 ## Blokkades
-- Sentry: user moet `npx @sentry/wizard@latest -i nextjs` zelf runnen
-- Lighthouse: handmatig via pagespeed.web.dev (WSL2 blokkade)
+- Geen
 
 ## Volgende stappen
-1. Commit + push huidige wijzigingen
-2. Sentry setup (auth token: sntryu_2b9e5e61fe...)
-3. Lidmaatschap opzeggen: cancel knop op dashboard profiel pagina
-4. Lighthouse draaien via pagespeed.web.dev — target Performance >85
-5. Homepage visuele redesign via Claude Design
-6. Recap foto's publiceren via admin panel
-7. Board foto's: idil.jpeg (184KB) → WebP
-8. NOTION_API_KEY verwijderen uit Vercel env vars
+- Lighthouse hertest (target TBT<500ms, Perf>85) — verifieer FPS-winst
+- NOTION_API_KEY weg uit Vercel env
+- Introweek pagina: Tinka feedback verwerken (Survival Quest samenvoegen, Aloha naar week 2, hackathon week 2)
 
 ## Key context
-- Supabase ref: plgcqkbfvzwkqzkggmfh
-- DB categories: code, social, career, game (CHECK constraints on events, xp_transactions, challenges)
-- Ticket mode in EventFormModal: 'own' | 'external' | 'none' — maps to is_paid + external_ticket_url
-- Vercel project: bloody-badaims-projects/svsit-site
-- Sentry token provided by user but wizard not yet run
-- Homepage flow: Hero → About → WhyJoin → Events → EventTicker (sponsors) → JoinCta → Footer
+- Path: /mnt/c/Users/matin/Desktop/PROJECTS/svsit-site, branch main
+- Stack: Next.js 16.2.1 Turbopack, Supabase (ref plgcqkbfvzwkqzkggmfh), NextAuth v5, Stripe, Resend
+- Vercel: project prj_8owLzC9RBFyV9oV8IwqXe1Fmmz5Z, org team_v1AyK1w3BIIgwMG0swf3pIBp, domein svsit.nl
+- CircuitBackground CONFIG: bgOpacity 0.42, cycleSpeed 22, speed 0.95, density 0.9, glow 0.85
+- Stacking: body solid bg = backdrop; .circuit-bg-layer fixed z-0; main relative z-[1] transparent; Footer relative z-[1] solid bg
