@@ -42,7 +42,6 @@ const JoinCta = dynamic(() => import("@/components/JoinCta"));
 const Footer = dynamic(() => import("@/components/Footer"));
 
 // Non-critical UI enhancements: deferred
-const CustomCursor = dynamic(() => import("@/components/CustomCursor"));
 const ConsoleEasterEgg = dynamic(() => import("@/components/ConsoleEasterEgg"));
 const KonamiGame = dynamic(() => import("@/components/KonamiGame"));
 const ScrollMorphNumbers = dynamic(() => import("@/components/heroAnimations/ScrollMorphNumbers"));
@@ -55,7 +54,6 @@ export default function Home() {
       <link rel="preload" as="image" href="/circuit-chip-logo.png" fetchPriority="high" />
       <div className="page-public page-home">
         <CircuitBackground />
-        <CustomCursor />
         <ConsoleEasterEgg />
         <KonamiGame />
         <IntroOverlay />

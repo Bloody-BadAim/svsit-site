@@ -9,7 +9,7 @@ const codeLines = [
   "// sit.config.ts",
   "const sit = new Vereniging({",
   "  naam: 'SIT',",
-  "  bestuur: 'XI',",
+  "  bestuur: 'XII',",
   "  missie: 'tech + fun',",
   "});",
   "",
@@ -32,12 +32,6 @@ function colorize(line: string) {
 const HEADING_WORDS_1 = ["DE studievereniging voor"];
 const HEADING_GOLD = "ICT studenten";
 const HEADING_WORDS_2_POST = "aan de HvA";
-
-// const STATS = [
-//   { value: 50, suffix: "+", label: "leden", color: "var(--color-accent-gold)" },
-//   { value: 20, suffix: "+", label: "events per jaar", color: "var(--color-accent-blue)" },
-//   { value: 2014, suffix: "", label: "opgericht", color: "var(--color-accent-green)" },
-// ];
 
 interface FloatingFragment {
   text: string;
@@ -62,7 +56,6 @@ export default function About() {
   const textRef = useRef<HTMLDivElement>(null);
   const codeRef = useRef<HTMLDivElement>(null);
   const accentRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
   const fragmentsRef = useRef<HTMLDivElement>(null);
   const [visibleLines, setVisibleLines] = useState(0);
   const [codeInView, setCodeInView] = useState(false);
@@ -255,7 +248,7 @@ export default function About() {
     <section
       ref={sectionRef}
       id="about"
-      className="relative py-28 md:py-36 lg:py-44 px-6 md:px-12 lg:px-24 overflow-hidden"
+      className="relative py-24 md:py-32 px-6 md:px-12 lg:px-24 overflow-hidden"
     >
       {/* ── Background depth layers ── */}
 
@@ -418,26 +411,6 @@ export default function About() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Stats row */}
-        <div
-          ref={statsRef}
-          className="grid grid-cols-3 gap-8 mt-10 md:mt-12 pt-8 border-t border-[var(--color-border)]"
-        >
-          {/* {STATS.map((stat, i) => (
-            <div key={i} className="text-center md:text-left">
-              <span
-                className="stat-value font-display text-4xl md:text-5xl lg:text-6xl font-bold block leading-none"
-                style={{ color: stat.color }}
-              >
-                0{stat.suffix}
-              </span>
-              <span className="font-mono text-[10px] md:text-xs text-[var(--color-text-muted)] uppercase tracking-[0.15em] mt-2 block">
-                {stat.label}
-              </span>
-            </div>
-          ))} */}
         </div>
       </div>
     </section>

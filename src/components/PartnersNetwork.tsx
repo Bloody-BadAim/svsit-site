@@ -158,7 +158,7 @@ export default function PartnersNetwork() {
               <h3 className="node-logo"><span className="b">{"{"}</span>SIT<span className="b">{"}"}</span> CORE</h3>
               <p className="node-tag">
                 De hub - elke partner sluit hier aan op{" "}
-                <b style={{ color: "var(--color-text)", fontWeight: 500 }}>200+</b> ICT-studenten.
+                <b style={{ color: "var(--color-text)", fontWeight: 500 }}>100+</b> ICT-studenten.
               </p>
               <div className="node-foot"><span className="addr">status · <b>online</b></span></div>
             </article>

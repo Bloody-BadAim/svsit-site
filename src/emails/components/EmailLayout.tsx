@@ -191,7 +191,7 @@ export default function EmailLayout({ children, previewText }: EmailLayoutProps)
                     lineHeight: "1.6",
                   }}
                 >
-                  Bestuur XI
+                  Bestuur XII
                 </Text>
               </Column>
             </Row>

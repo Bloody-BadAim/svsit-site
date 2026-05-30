@@ -95,7 +95,7 @@ const PERKS = [
   {
     icon: Users,
     title: 'Community',
-    description: '200+ studenten die dezelfde opleiding doen. Geen ontgroening, gewoon chill.',
+    description: '100+ studenten die dezelfde opleiding doen. Geen ontgroening, gewoon chill.',
   },
   {
     icon: GraduationCap,
@@ -250,8 +250,8 @@ export default function IntroweekPage() {
               <div className="flex flex-wrap gap-8 mt-12">
                 {[
                   { value: '728', label: 'eerstejaars' },
-                  { value: '200+', label: 'leden' },
-                  { value: '8', label: 'commissies' },
+                  { value: '100+', label: 'leden' },
+                  { value: '7', label: 'commissies' },
                   { value: '€9,99', label: 'per jaar' },
                 ].map((stat) => (
                   <div key={stat.label} className="text-center">

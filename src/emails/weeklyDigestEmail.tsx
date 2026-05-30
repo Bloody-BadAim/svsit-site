@@ -392,7 +392,7 @@ export default function WeeklyDigestEmail({
           lineHeight: "1.4",
         }}
       >
-        Bestuur XI -{" "}
+        Bestuur XII -{" "}
         <span style={{ color: C.gold }}>{`{`}</span>
         SIT
         <span style={{ color: C.gold }}>{`}`}</span>

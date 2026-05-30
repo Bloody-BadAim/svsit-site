@@ -45,16 +45,6 @@ const TESTIMONIALS = [
     color: "var(--color-accent-red)",
     span: "col-span-1 md:col-span-4",
   },
-  {
-    quote:
-      "Als docent merk ik het verschil: studenten die bij SIT zitten zijn zichtbaar meer betrokken bij de opleiding. Ze bouwen een netwerk, nemen initiatief en helpen elkaar.",
-    highlight: "zichtbaar meer betrokken",
-    name: "Docent HBO-ICT",
-    role: "Faculteit DMCI",
-    color: "var(--color-accent-blue)",
-    span: "col-span-1 md:col-span-8",
-    isDocent: true,
-  },
 ];
 
 function highlightText(text: string, highlight: string) {
@@ -176,7 +166,7 @@ export default function Testimonials() {
     <section
       ref={sectionRef}
       id="testimonials"
-      className="relative py-20 md:py-28 lg:py-36 px-6 md:px-12 lg:px-24 overflow-hidden"
+      className="relative py-24 md:py-32 px-6 md:px-12 lg:px-24 overflow-hidden"
     >
       <div className="absolute inset-0 bg-[var(--color-bg)]/70" />
 

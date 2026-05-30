@@ -530,7 +530,7 @@ export default function MemberCard({
               <span className="text-[var(--color-text-muted)] ml-1.5">MEMBER CARD</span>
             </span>
             <span className="font-mono text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider opacity-60">
-              Bestuur XI
+              Bestuur XII
             </span>
           </div>
 

@@ -6,11 +6,11 @@ import PartnersNetwork from "@/components/PartnersNetwork";
 export const metadata: Metadata = {
   title: "Partners - {SIT}",
   description:
-    "Het partnernetwerk van SIT. Bedrijven en kennisinstellingen die zich verbinden aan 200+ HBO-ICT studenten aan de HvA.",
+    "Het partnernetwerk van SIT. Bedrijven en kennisinstellingen die zich verbinden aan 100+ HBO-ICT studenten aan de HvA.",
   openGraph: {
     title: "Partners - {SIT}",
     description:
-      "Het partnernetwerk van SIT - verbonden aan 200+ ICT-studenten aan de HvA.",
+      "Het partnernetwerk van SIT - verbonden aan 100+ ICT-studenten aan de HvA.",
     siteName: "{SIT}",
     locale: "nl_NL",
     type: "website",

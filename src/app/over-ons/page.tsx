@@ -3,7 +3,6 @@ import Navbar from "@/components/Navbar";
 import Moederbord from "@/components/Moederbord";
 import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
-import CustomCursor from "@/components/CustomCursor";
 
 export const metadata: Metadata = {
   title: "Het Moederbord - Bestuur & Commissies - {SIT}",
@@ -31,7 +30,6 @@ export default function OverOns() {
   return (
     <SmoothScroll>
       <div className="page-public">
-        <CustomCursor />
         <Navbar />
         <main id="main-content">
           <Moederbord />

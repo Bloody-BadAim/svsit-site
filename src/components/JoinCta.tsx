@@ -84,7 +84,7 @@ export default function JoinCta() {
     <section
       ref={sectionRef}
       id="join"
-      className="relative flex items-center overflow-hidden py-28 md:py-36 lg:py-44 px-6 md:px-12 lg:px-24"
+      className="relative flex items-center overflow-hidden py-24 md:py-32 px-6 md:px-12 lg:px-24"
     >
       {/* Background layers */}
       <div
@@ -132,7 +132,7 @@ export default function JoinCta() {
                 style={{ animation: "statusPulse 1.5s ease-in-out infinite" }}
               />
               <span className="font-mono text-xs text-[var(--color-text-muted)]">
-                SIT is actief - Bestuur XI
+                SIT is actief - Bestuur XII
               </span>
             </div>
 
@@ -165,7 +165,7 @@ export default function JoinCta() {
               {[
                 "Toegang tot alle events & borrels",
                 "Meedraaien in elke commissie",
-                "Netwerk van 200+ studenten, alumni & bedrijven",
+                "Netwerk van 100+ studenten, alumni & bedrijven",
                 "Dev-tools, AI Labs & de SIT-server",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 font-mono text-sm text-[var(--color-text-muted)]">

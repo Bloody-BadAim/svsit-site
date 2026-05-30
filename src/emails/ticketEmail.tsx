@@ -477,7 +477,7 @@ export default function TicketEmail({
                   >
                     svsit.nl
                     <br />
-                    Bestuur XI
+                    Bestuur XII
                   </Text>
                 </Column>
               </Row>

@@ -14,10 +14,10 @@ const MagneticHero = lazy(
 
 /* ── Stat counter data ── */
 const STATS = [
-  { value: 200, suffix: "+", label: "leden" },
-  { value: 50, suffix: "+", label: "events" },
+  { value: 100, suffix: "+", label: "leden" },
+  { value: 20, suffix: "+", label: "events" },
   { value: 7, suffix: "", label: "commissies" },
-  { value: 11, suffix: "", label: "besturen" },
+  { value: 12, suffix: "", label: "besturen" },
 ];
 
 /* ── Animated counter hook (counts up on mount, CSS fallback shows final value) ── */

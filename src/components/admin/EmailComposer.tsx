@@ -156,7 +156,7 @@ function EmailPreview({ subject, body }: { subject: string; body: string }) {
           Met vriendelijke groet,
         </div>
         <div style={{ fontSize: 12, fontWeight: 600, color: '#FAFAFA', marginBottom: 4, lineHeight: 1.4 }}>
-          Bestuur XI - <span style={{ color: '#F29E18' }}>{`{`}SIT{`}`}</span>
+          Bestuur XII - <span style={{ color: '#F29E18' }}>{`{`}SIT{`}`}</span>
         </div>
         <div style={{ fontSize: 10, color: '#6B7280', lineHeight: 1.7 }}>
           Studievereniging ICT<br />

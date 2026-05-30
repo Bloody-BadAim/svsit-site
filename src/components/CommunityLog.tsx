@@ -147,7 +147,7 @@ export default function CommunityLog() {
         <span className="flex items-center gap-1.5">
           <span className="text-[var(--color-accent-green)]">●</span>
           <span>
-            <strong className="text-[var(--color-text)]">200+</strong> leden &amp; groeit
+            <strong className="text-[var(--color-text)]">100+</strong> leden &amp; groeit
           </span>
         </span>
         <span>

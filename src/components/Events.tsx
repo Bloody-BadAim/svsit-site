@@ -154,7 +154,7 @@ export default function Events() {
     <section
       ref={sectionRef}
       id="events"
-      className="relative pt-28 md:pt-40 pb-20 md:pb-28 px-6 md:px-12 lg:px-24"
+      className="relative py-24 md:py-32 px-6 md:px-12 lg:px-24"
     >
       {/* Background shield - keeps section darkness consistent over the circuit bg */}
       <div className="absolute inset-0 bg-[var(--color-bg)]/70 pointer-events-none" />

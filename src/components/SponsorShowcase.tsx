@@ -29,7 +29,7 @@ export default function SponsorShowcase() {
   }, []);
 
   return (
-    <section ref={ref} className="relative py-16 md:py-20 px-6 md:px-12 lg:px-24">
+    <section ref={ref} className="relative py-24 md:py-32 px-6 md:px-12 lg:px-24">
       {/* Background shield - keeps section darkness consistent over the circuit bg */}
       <div className="absolute inset-0 bg-[var(--color-bg)]/70 pointer-events-none" />
 
@@ -66,7 +66,7 @@ export default function SponsorShowcase() {
         {/* Code-style subheader */}
         <div className="font-mono text-xs mb-8" style={{ color: "var(--color-text-muted)" }}>
           <span style={{ color: "var(--color-accent-green)" }}>{"// "}</span>
-          verbonden aan 200+ ICT-studenten
+          verbonden aan 100+ ICT-studenten
         </div>
 
         {/* Logo wall - wordmarks */}
