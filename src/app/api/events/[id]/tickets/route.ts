@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { handleError } from '@/lib/apiAuth'
+import { handleError, requireAdmin } from '@/lib/apiAuth'
 import { stripe } from '@/lib/stripe'
 import { createServiceClient } from '@/lib/supabase'
 import { sendTicketEmail, generateTicketNumber } from '@/lib/email'
 
-// GET - Lijst van tickets voor een event (admin only)
+// GET - Lijst van tickets voor een event (admin/bestuur only)
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth()
-    if (!session?.user?.isAdmin) {
-      return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
-    }
+    const result = await requireAdmin()
+    if ('error' in result) return result.error
 
     const { id: eventId } = await params
     const supabase = createServiceClient()
@@ -70,45 +67,48 @@ export async function POST(
       throw eventError
     }
 
-    // 2. Capaciteitscheck (als ingesteld)
-    if (event.capacity !== null) {
-      const { count, error: countError } = await supabase
-        .from('tickets')
-        .select('*', { count: 'exact', head: true })
-        .eq('event_id', eventId)
-        .in('status', ['paid', 'checked_in'])
-
-      if (countError) throw countError
-
-      if ((count ?? 0) >= event.capacity) {
-        return NextResponse.json({ data: null, error: 'Event is vol', meta: null }, { status: 409 })
-      }
-    }
-
     // Determine member status: explicit isMember flag takes priority, fallback to member_id presence
     const memberFlag = isMember ?? !!member_id
 
-    // 3. Gratis event: ticket direct aanmaken met status 'paid'
+    // Prijs bepalen (cents). Gratis events: 0. Betaald: lid- vs niet-lid-prijs.
+    const priceInCents = !event.is_paid
+      ? 0
+      : (memberFlag && event.price_members !== null ? event.price_members : event.price_nonmembers)
+
+    const ticketStatus = event.is_paid ? 'pending' : 'paid'
+    const ticketNumber = generateTicketNumber()
+
+    // 2. Atomic booking: capaciteitscheck + insert in 1 transactie (row-lock op
+    //    de event-rij). Voorkomt overboeking bij gelijktijdige requests.
+    const { data: bookedTicket, error: bookError } = await supabase
+      .rpc('book_event_ticket', {
+        p_event_id: eventId,
+        p_member_id: member_id ?? null,
+        p_email: email,
+        p_name: name ?? null,
+        p_status: ticketStatus,
+        p_paid_amount: priceInCents,
+        p_ticket_number: ticketNumber,
+      })
+      .single()
+    const ticket = bookedTicket as { id: string; [key: string]: unknown } | null
+
+    if (bookError) {
+      if (bookError.message?.includes('EVENT_FULL')) {
+        return NextResponse.json({ data: null, error: 'Event is vol', meta: null }, { status: 409 })
+      }
+      if (bookError.message?.includes('EVENT_NOT_FOUND')) {
+        return NextResponse.json({ data: null, error: 'Event niet gevonden', meta: null }, { status: 404 })
+      }
+      throw bookError
+    }
+    if (!ticket) {
+      return NextResponse.json({ data: null, error: 'Ticket aanmaken mislukt', meta: null }, { status: 500 })
+    }
+
+    // 3. Gratis event: ticket is al 'paid', stuur bevestigingsmail
     if (!event.is_paid) {
-      const ticketNumber = generateTicketNumber()
-
-      const { data: ticket, error: insertError } = await supabase
-        .from('tickets')
-        .insert({
-          event_id: eventId,
-          member_id: member_id ?? null,
-          email,
-          name: name ?? null,
-          status: 'paid',
-          paid_amount: 0,
-          ticket_number: ticketNumber,
-        })
-        .select('id, event_id, member_id, email, name, status, stripe_session_id, paid_amount, created_at, checked_in_at, ticket_number')
-        .single()
-
-      if (insertError) throw insertError
-
-      // Stuur bevestigingsmail (niet-blokkerend: fout stopt de response niet)
+      // Niet-blokkerend: een mislukte mail stopt de response niet
       try {
         await sendTicketEmail({
           to: email,
@@ -119,7 +119,7 @@ export async function POST(
           eventDate: new Date(event.date as string),
           eventEndDate: event.end_date ? new Date(event.end_date as string) : null,
           eventLocation: (event.location as string) ?? '',
-          ticketId: ticket.id as string,
+          ticketId: ticket.id,
           ticketNumber,
           paidAmount: 0,
         })
@@ -130,31 +130,7 @@ export async function POST(
       return NextResponse.json({ data: ticket, error: null, meta: null }, { status: 201 })
     }
 
-    // 4. Betaald event: Stripe checkout session aanmaken
-    // Prices in db are stored in cents
-    const priceInCents = (memberFlag && event.price_members !== null)
-      ? event.price_members
-      : event.price_nonmembers
-
-    const ticketNumber = generateTicketNumber()
-
-    // Maak eerst een pending ticket aan zodat we het ID in de Stripe metadata kunnen zetten
-    const { data: ticket, error: insertError } = await supabase
-      .from('tickets')
-      .insert({
-        event_id: eventId,
-        member_id: member_id ?? null,
-        email,
-        name: name ?? null,
-        status: 'pending',
-        paid_amount: priceInCents,
-        ticket_number: ticketNumber,
-      })
-      .select('id, event_id, member_id, email, name, status, stripe_session_id, paid_amount, created_at, checked_in_at, ticket_number')
-      .single()
-
-    if (insertError) throw insertError
-
+    // 4. Betaald event: Stripe checkout session op het pending ticket
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card', 'ideal'],
@@ -172,7 +148,7 @@ export async function POST(
       metadata: {
         type: 'event_ticket',
         event_id: eventId,
-        ticket_id: ticket.id as string,
+        ticket_id: ticket.id,
         is_member: memberFlag ? 'true' : 'false',
       },
       success_url: `${process.env.NEXTAUTH_URL}/events/${eventId}?ticket=success`,
@@ -183,7 +159,7 @@ export async function POST(
     await supabase
       .from('tickets')
       .update({ stripe_session_id: checkoutSession.id })
-      .eq('id', ticket.id as string)
+      .eq('id', ticket.id)
 
     return NextResponse.json(
       {

@@ -1,28 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { handleError } from '@/lib/apiAuth'
+import { handleError, requireAdmin } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 
 export async function PATCH(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth()
-    if (!session?.user?.isAdmin && session?.user?.role !== 'bestuur') {
-      return NextResponse.json(
-        { data: null, error: 'Niet geautoriseerd', meta: null },
-        { status: 403 }
-      )
-    }
+    const result = await requireAdmin()
+    if ('error' in result) return result.error
 
     const { id } = await params
+
+    // Optional: scanner stuurt het actieve event mee zodat we kunnen
+    // controleren dat het ticket bij DAT event hoort.
+    let expectedEventId: string | null = null
+    try {
+      const body = await req.json()
+      if (body && typeof body.event_id === 'string') {
+        expectedEventId = body.event_id
+      }
+    } catch {
+      // Geen/lege body (handmatige check-in zonder actief event) - ok
+    }
+
     const supabase = createServiceClient()
 
     // Get ticket with event info
     const { data: ticket, error: fetchError } = await supabase
       .from('tickets')
-      .select('id, status, email, name, event_id')
+      .select('id, status, email, name, event_id, events(title)')
       .eq('id', id)
       .single()
 
@@ -30,6 +37,19 @@ export async function PATCH(
       return NextResponse.json(
         { data: null, error: 'Ticket niet gevonden', meta: null },
         { status: 404 }
+      )
+    }
+
+    // Event-mismatch: ticket hoort bij ander event dan het actieve scanner-event
+    if (expectedEventId && ticket.event_id !== expectedEventId) {
+      const ticketEvent = ticket.events as { title?: string } | null
+      return NextResponse.json(
+        {
+          data: { event_title: ticketEvent?.title ?? 'ander event' },
+          error: `Ticket hoort bij '${ticketEvent?.title ?? 'ander event'}', niet bij actief event`,
+          meta: null,
+        },
+        { status: 409 }
       )
     }
 

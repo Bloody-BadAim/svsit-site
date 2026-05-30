@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { handleError } from '@/lib/apiAuth'
+import { handleError, requireAdmin } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 import { checkAndGrantAutoBadges } from '@/lib/rewards'
 import { grantXp, calculateXpReward } from '@/lib/xpEngine'
@@ -8,10 +7,8 @@ import { grantXp, calculateXpReward } from '@/lib/xpEngine'
 // GET - Scan geschiedenis per event (admin only)
 export async function GET(req: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user?.isAdmin) {
-      return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
-    }
+    const result = await requireAdmin()
+    if ('error' in result) return result.error
 
     const eventName = req.nextUrl.searchParams.get('event_name')
     const supabase = createServiceClient()
@@ -38,10 +35,9 @@ export async function GET(req: NextRequest) {
 // POST - Punten toekennen (admin only)
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user?.isAdmin) {
-      return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
-    }
+    const result = await requireAdmin()
+    if ('error' in result) return result.error
+    const { session } = result
 
     const { member_id, points, reason, event_name, event_id, category } = await req.json()
 

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { handleError } from '@/lib/apiAuth'
+import { handleError, requireAdmin } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 import type { StatCategory } from '@/types/database'
 
@@ -34,10 +33,9 @@ export async function GET(req: NextRequest) {
 // POST - Nieuw event aanmaken (admin only)
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user?.isAdmin) {
-      return NextResponse.json({ data: null, error: 'Niet geautoriseerd', meta: null }, { status: 403 })
-    }
+    const result = await requireAdmin()
+    if ('error' in result) return result.error
+    const { session } = result
 
     const body = await req.json()
     const {

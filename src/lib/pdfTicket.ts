@@ -58,16 +58,24 @@ export async function generateTicketPdf(params: TicketPdfParams): Promise<Buffer
   doc.setFillColor(...hexToRgb(COLORS.bg))
   doc.rect(0, barH, W, headerH, 'F')
 
-  // {SIT} logo
-  let y = barH + 12
+  // {SIT} logo - centered using measured glyph widths (no overlap)
+  let y = barH + 14
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(22)
+  doc.setFontSize(24)
+  const gap = 1 // mm spacing between brace and text
+  const wOpen = doc.getTextWidth('{')
+  const wSit = doc.getTextWidth('SIT')
+  const wClose = doc.getTextWidth('}')
+  const logoW = wOpen + gap + wSit + gap + wClose
+  let lx = (W - logoW) / 2
   doc.setTextColor(...hexToRgb(COLORS.gold))
-  doc.text('{', W / 2 - 15, y)
+  doc.text('{', lx, y)
+  lx += wOpen + gap
   doc.setTextColor(...hexToRgb(COLORS.text))
-  doc.text('SIT', W / 2 - 10, y)
+  doc.text('SIT', lx, y)
+  lx += wSit + gap
   doc.setTextColor(...hexToRgb(COLORS.gold))
-  doc.text('}', W / 2 + 10, y)
+  doc.text('}', lx, y)
 
   // Color marks: x x x
   y += 5
@@ -196,7 +204,7 @@ export async function generateTicketPdf(params: TicketPdfParams): Promise<Buffer
   doc.setTextColor(...hexToRgb(COLORS.muted))
   doc.text('SIT - Studievereniging ICT HvA', W / 2, bodyY, { align: 'center' })
   bodyY += 3.5
-  doc.text('svsit.nl  |  Bestuur XI', W / 2, bodyY, { align: 'center' })
+  doc.text('svsit.nl  |  Bestuur XII', W / 2, bodyY, { align: 'center' })
 
   // ── Bottom accent bar ──
   const bottomBarH = 1.5
