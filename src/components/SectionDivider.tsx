@@ -221,17 +221,14 @@ export default function SectionDivider({
     return <PixelBattle />;
   }
 
-  // Gold line + chevron, matching the hero "scroll down" indicator.
+  // Gold vertical line, matching the hero "scroll down" indicator (no chevron).
   if (variant === "scroll") {
     return (
       <div
         aria-hidden="true"
-        className={`w-full pointer-events-none flex flex-col items-center gap-1.5 py-12 md:py-16 ${className}`}
+        className={`w-full pointer-events-none flex justify-center py-12 md:py-16 ${className}`}
       >
-        <div className="w-px h-8 bg-gradient-to-b from-transparent via-[var(--color-accent-gold)]/40 to-[var(--color-accent-gold)]/70" />
-        <span className="font-mono text-xs text-[var(--color-accent-gold)] opacity-70">
-          ▼
-        </span>
+        <div className="w-px h-12 bg-gradient-to-b from-transparent via-[var(--color-accent-gold)]/50 to-transparent" />
       </div>
     );
   }
