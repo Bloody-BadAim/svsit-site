@@ -3,11 +3,11 @@ import RegisterFlow from '@/components/auth/RegisterFlow'
 import { SessionProvider } from 'next-auth/react'
 
 export const metadata: Metadata = {
-  title: 'Word lid — {SIT}',
+  title: 'Word lid - {SIT}',
   description:
     'Word lid van SIT voor €9,99/jaar. Events, workshops, dev tools, en een community van HBO-ICT studenten aan de HvA.',
   openGraph: {
-    title: 'Word lid — {SIT}',
+    title: 'Word lid - {SIT}',
     description: 'Word lid van SIT voor €9,99/jaar. Events, workshops, dev tools en meer.',
     siteName: '{SIT}',
     locale: 'nl_NL',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Word lid — {SIT}',
+    title: 'Word lid - {SIT}',
     description: 'Word lid van SIT voor €9,99/jaar. Events, workshops, dev tools en meer.',
   },
 }

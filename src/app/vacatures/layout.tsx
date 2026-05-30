@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Vacatures — {SIT}',
+  title: 'Vacatures - {SIT}',
   description:
     'Stages, werkplekken en bijbanen bij onze partners. Vind je volgende ICT-kans via SIT.',
   openGraph: {
-    title: 'Vacatures — {SIT}',
+    title: 'Vacatures - {SIT}',
     description: 'ICT stages en bijbanen via SIT partners.',
     siteName: '{SIT}',
     locale: 'nl_NL',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Vacatures — {SIT}',
+    title: 'Vacatures - {SIT}',
     description: 'ICT stages en bijbanen via SIT partners.',
   },
 }

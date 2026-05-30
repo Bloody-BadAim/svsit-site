@@ -12,7 +12,7 @@ import {
 } from "@react-email/components";
 
 // ---------------------------------------------------------------------------
-// Design tokens (inline — required by email clients)
+// Design tokens (inline - required by email clients)
 // ---------------------------------------------------------------------------
 
 export const C = {
@@ -228,7 +228,7 @@ export default function EmailLayout({ children, previewText }: EmailLayoutProps)
                 letterSpacing: "0.03em",
               }}
             >
-              Dit is een automatisch bericht van SIT — Studievereniging ICT HvA.
+              Dit is een automatisch bericht van SIT - Studievereniging ICT HvA.
             </Text>
           </Section>
         </Container>

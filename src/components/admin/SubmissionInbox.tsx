@@ -33,7 +33,7 @@ export default function SubmissionInbox() {
       }
       setSubmissions(json.data ?? [])
     } catch {
-      setError('Netwerkfout — probeer opnieuw')
+      setError('Netwerkfout - probeer opnieuw')
     } finally {
       setLoading(false)
     }
@@ -59,7 +59,7 @@ export default function SubmissionInbox() {
       // Remove from list after action
       setSubmissions((prev) => prev.filter((s) => s.id !== id))
     } catch {
-      alert('Netwerkfout — probeer opnieuw')
+      alert('Netwerkfout - probeer opnieuw')
     } finally {
       setActionLoading(null)
     }

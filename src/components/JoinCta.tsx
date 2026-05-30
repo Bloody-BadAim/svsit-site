@@ -132,7 +132,7 @@ export default function JoinCta() {
                 style={{ animation: "statusPulse 1.5s ease-in-out infinite" }}
               />
               <span className="font-mono text-xs text-[var(--color-text-muted)]">
-                SIT is actief — Bestuur XI
+                SIT is actief - Bestuur XI
               </span>
             </div>
 
@@ -156,7 +156,7 @@ export default function JoinCta() {
                   &euro;9,99
                 </span>
                 <span className="font-mono text-sm text-[var(--color-text-muted)]">
-                  per jaar — geen verborgen kosten
+                  per jaar - geen verborgen kosten
                 </span>
               </div>
             </div>
@@ -203,7 +203,7 @@ export default function JoinCta() {
                 Al lid?{" "}
                 <a href="/login" className="text-[var(--color-accent-blue)] hover:underline">Log in</a>
                 {" · "}
-                <a href="/commissies" className="text-[var(--color-accent-gold)] hover:underline">Bekijk commissies</a>
+                <a href="/over-ons" className="text-[var(--color-accent-gold)] hover:underline">Bekijk commissies</a>
               </p>
             </MemberCard>
           </div>

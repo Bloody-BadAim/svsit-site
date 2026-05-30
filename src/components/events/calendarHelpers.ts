@@ -86,7 +86,7 @@ export function googleCalendarUrl(e: SitEvent): string {
     text: e.title,
     dates: `${start}/${end}`,
     location: e.location,
-    details: e.description ?? `Event van SIT — ${e.title}`,
+    details: e.description ?? `Event van SIT - ${e.title}`,
   });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
@@ -99,7 +99,7 @@ export function outlookCalendarUrl(e: SitEvent): string {
     startdt: startIso,
     enddt: endIso,
     location: e.location,
-    body: e.description ?? `Event van SIT — ${e.title}`,
+    body: e.description ?? `Event van SIT - ${e.title}`,
     path: "/calendar/action/compose",
     rru: "addevent",
   });

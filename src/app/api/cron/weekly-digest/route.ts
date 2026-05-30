@@ -21,21 +21,21 @@ function getSmtpTransporter() {
 // ─── Fun facts (rotated weekly) ──────────────────────────────────────────────
 
 const FUN_FACTS = [
-  'De eerste computer bug was een echte mot — gevonden in 1947 in een Harvard Mark II.',
+  'De eerste computer bug was een echte mot - gevonden in 1947 in een Harvard Mark II.',
   'Git is vernoemd naar Linus Torvalds zelf: "git" is Brits slang voor een onaardig persoon.',
   'Het eerste computerprogramma is geschreven door Ada Lovelace in 1843.',
-  'De naam Wi-Fi betekent eigenlijk niks — het was bedacht als marketingterm.',
+  'De naam Wi-Fi betekent eigenlijk niks - het was bedacht als marketingterm.',
   'De gemiddelde developer schrijft ~100 regels productie-code per dag.',
   'Het @ symbool werd al in de 6e eeuw gebruikt door monniken als afkorting voor "ad".',
   'JavaScript is in 10 dagen geschreven door Brendan Eich in 1995.',
-  'De eerste website staat nog online: info.cern.ch — gemaakt door Tim Berners-Lee.',
+  'De eerste website staat nog online: info.cern.ch - gemaakt door Tim Berners-Lee.',
   'Stack Overflow krijgt 100+ miljoen unieke bezoekers per maand.',
   'De eerste 1GB harde schijf woog meer dan 250 kilo en kostte $40.000 in 1980.',
-  'SIT is opgericht door studenten HBO-ICT aan de HvA — voor studenten, door studenten.',
+  'SIT is opgericht door studenten HBO-ICT aan de HvA - voor studenten, door studenten.',
   'Python is vernoemd naar Monty Python, niet naar de slang.',
   'De Ctrl+Alt+Delete combinatie was oorspronkelijk bedoeld als debug-tool, niet als reboot.',
   'Er zijn meer dan 700 programmeertalen in actief gebruik wereldwijd.',
-  'De eerste e-mail ooit verstuurd was in 1971 — de inhoud was "QWERTYUIOP".',
+  'De eerste e-mail ooit verstuurd was in 1971 - de inhoud was "QWERTYUIOP".',
 ]
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -66,7 +66,7 @@ function formatEventDate(dateStr: string): { date: string; time: string } {
 // ─── GET handler (Vercel Cron) ───────────────────────────────────────────────
 
 export async function GET(req: NextRequest) {
-  // Verify cron secret — Vercel sends it as Authorization: Bearer <secret>
+  // Verify cron secret - Vercel sends it as Authorization: Bearer <secret>
   const authHeader = req.headers.get('authorization')
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     console.error('[weekly-digest] Unauthorized cron request')
@@ -181,7 +181,7 @@ export async function GET(req: NextRequest) {
     // ── Pick a random fun fact ────────────────────────────────────────
     const funFact = FUN_FACTS[Math.floor(Math.random() * FUN_FACTS.length)]
 
-    console.log(`[weekly-digest] Sending to ${members.length} members — ${events.length} events, top ${leaderboard.length} leaderboard, ${newMemberCount} new members`)
+    console.log(`[weekly-digest] Sending to ${members.length} members - ${events.length} events, top ${leaderboard.length} leaderboard, ${newMemberCount} new members`)
 
     // ── Send emails in batches ────────────────────────────────────────────
 
@@ -211,7 +211,7 @@ export async function GET(req: NextRequest) {
           return transporter.sendMail({
             from,
             to: member.email,
-            subject: `Weekoverzicht SIT — ${events.length} event${events.length === 1 ? '' : 's'} deze week`,
+            subject: `Weekoverzicht SIT - ${events.length} event${events.length === 1 ? '' : 's'} deze week`,
             html,
           })
         })
@@ -232,7 +232,7 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    console.log(`[weekly-digest] Done — sent: ${sent}, failed: ${failed}`)
+    console.log(`[weekly-digest] Done - sent: ${sent}, failed: ${failed}`)
     return NextResponse.json({ sent, failed })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'

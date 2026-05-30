@@ -4,7 +4,7 @@ import QRCode from 'qrcode'
 interface TicketPdfParams {
   eventTitle: string
   eventDate: string       // e.g. "27 MAART 2026"
-  eventTime: string       // e.g. "17:00 — 21:00"
+  eventTime: string       // e.g. "17:00 - 21:00"
   eventLocation: string
   buyerName: string
   ticketNumber: string    // e.g. "#SIT-2026-0042"
@@ -194,7 +194,7 @@ export async function generateTicketPdf(params: TicketPdfParams): Promise<Buffer
   bodyY += 6
   doc.setFontSize(6)
   doc.setTextColor(...hexToRgb(COLORS.muted))
-  doc.text('SIT — Studievereniging ICT HvA', W / 2, bodyY, { align: 'center' })
+  doc.text('SIT - Studievereniging ICT HvA', W / 2, bodyY, { align: 'center' })
   bodyY += 3.5
   doc.text('svsit.nl  |  Bestuur XI', W / 2, bodyY, { align: 'center' })
 

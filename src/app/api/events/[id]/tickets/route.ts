@@ -5,7 +5,7 @@ import { stripe } from '@/lib/stripe'
 import { createServiceClient } from '@/lib/supabase'
 import { sendTicketEmail, generateTicketNumber } from '@/lib/email'
 
-// GET — Lijst van tickets voor een event (admin only)
+// GET - Lijst van tickets voor een event (admin only)
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -35,7 +35,7 @@ export async function GET(
   }
 }
 
-// POST — Ticket kopen / RSVP
+// POST - Ticket kopen / RSVP
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

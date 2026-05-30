@@ -10,7 +10,7 @@ export interface AccessoryDefRow {
   preview_data: Record<string, unknown> | null
 }
 
-/** Extended result from getEquippedAccessories — includes the raw defs so callers skip a follow-up query */
+/** Extended result from getEquippedAccessories - includes the raw defs so callers skip a follow-up query */
 export interface EquippedAccessoriesResult {
   equipment: CardEquipment
   /** Map of accessory ID → definition (only for equipped items) */
@@ -31,7 +31,7 @@ export async function getInventory(memberId: string): Promise<MemberAccessory[]>
 /**
  * Fetch equipped accessories with their definitions in a single join query.
  *
- * @param memberData — If provided, skips the extra members query for accent_color/custom_title.
+ * @param memberData - If provided, skips the extra members query for accent_color/custom_title.
  *   Pass these from the member row you already fetched.
  */
 export async function getEquippedAccessories(

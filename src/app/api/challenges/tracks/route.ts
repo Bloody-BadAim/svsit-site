@@ -10,7 +10,7 @@ interface TrackGroup {
   totalCount: number
 }
 
-// GET — List all skill tracks with milestones and user progress
+// GET - List all skill tracks with milestones and user progress
 export async function GET(_req: NextRequest) {
   try {
     const session = await auth()

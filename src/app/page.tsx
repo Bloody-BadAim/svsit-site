@@ -6,11 +6,11 @@ import PageScrollProgress from "@/components/PageScrollProgress";
 import SectionDivider from "@/components/SectionDivider";
 
 export const metadata: Metadata = {
-  title: "{SIT} — Studievereniging ICT | HvA Amsterdam",
+  title: "{SIT} - Studievereniging ICT | HvA Amsterdam",
   description:
     "De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Events, workshops, hackathons, community en gratis dev tools. Word lid voor €9,99/jaar.",
   openGraph: {
-    title: "{SIT} — Studievereniging ICT",
+    title: "{SIT} - Studievereniging ICT",
     description:
       "Events, workshops, hackathons, community en gratis dev tools voor HBO-ICT studenten aan de HvA. Word lid voor €9,99/jaar.",
     siteName: "{SIT}",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "{SIT} — Studievereniging ICT",
+    title: "{SIT} - Studievereniging ICT",
     description:
       "Events, workshops, hackathons en community voor HBO-ICT studenten aan de HvA.",
   },

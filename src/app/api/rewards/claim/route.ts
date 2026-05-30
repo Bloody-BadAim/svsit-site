@@ -17,7 +17,7 @@ const VALID_MERCH_IDS = new Set<MerchRewardId>(
   Object.keys(MERCH_LEVEL_REQUIREMENTS) as MerchRewardId[]
 )
 
-// POST — Authenticated member claims their own merch reward
+// POST - Authenticated member claims their own merch reward
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()

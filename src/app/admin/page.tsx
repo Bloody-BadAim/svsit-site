@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import StatsOverview from '@/components/admin/StatsOverview'
 
 export const metadata = {
-  title: 'Admin — SIT',
+  title: 'Admin - SIT',
 }
 
 export default async function AdminPage() {

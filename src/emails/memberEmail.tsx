@@ -90,7 +90,7 @@ export default function MemberEmail({
           lineHeight: "1.4",
         }}
       >
-        Bestuur XI —{" "}
+        Bestuur XI -{" "}
         <span style={{ color: C.gold }}>{`{`}</span>
         SIT
         <span style={{ color: C.gold }}>{`}`}</span>
@@ -163,7 +163,7 @@ export function MemberEmailPreview() {
   return (
     <MemberEmail
       voornaam="Matin"
-      subject="Welkom bij SIT — het nieuwe jaar is begonnen!"
+      subject="Welkom bij SIT - het nieuwe jaar is begonnen!"
       body={`Dit jaar gaan we er vol tegenaan. Nieuwe events, nieuwe commissies, en een compleet vernieuwd ledenportaal wachten op je.\n\nCheck svsit.nl voor alle aankomende activiteiten en meld je aan via je dashboard.\n\nWe zien je snel!`}
     />
   );

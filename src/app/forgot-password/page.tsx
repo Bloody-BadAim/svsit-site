@@ -1,7 +1,7 @@
 import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm'
 
 export const metadata = {
-  title: 'Wachtwoord vergeten — {SIT}',
+  title: 'Wachtwoord vergeten - {SIT}',
   description: 'Vraag een wachtwoord reset link aan voor je SIT account.',
 }
 

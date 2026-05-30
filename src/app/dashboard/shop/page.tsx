@@ -7,7 +7,7 @@ import { Coins } from 'lucide-react'
 import { ShopGrid } from './ShopGrid'
 
 export const metadata = {
-  title: 'Shop — SIT',
+  title: 'Shop - SIT',
 }
 
 const CATEGORIES = ['alles', 'pets', 'frames', 'effects', 'stickers'] as const
@@ -191,7 +191,7 @@ export default async function ShopPage({
         })}
       </div>
 
-      {/* Items grid — client component for animations */}
+      {/* Items grid - client component for animations */}
       <ShopGrid
         items={sortedItems}
         ownedIds={ownedIds}

@@ -104,7 +104,7 @@ function DashboardContent(props: DashboardClientProps) {
         </div>
       )}
 
-      {/* Persistent top bar — minimal */}
+      {/* Persistent top bar - minimal */}
       <div
         className="flex items-center justify-between px-4 py-2.5"
         style={{
@@ -181,7 +181,7 @@ function DashboardContent(props: DashboardClientProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Main export — wraps in Suspense (required for useSearchParams)
+// Main export - wraps in Suspense (required for useSearchParams)
 // ---------------------------------------------------------------------------
 
 export default function DashboardClient(props: DashboardClientProps) {

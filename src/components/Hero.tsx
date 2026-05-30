@@ -119,7 +119,7 @@ export default function Hero() {
     return () => clearInterval(typeInterval);
   }, [reducedMotion]);
 
-  // Cursor blink — pure CSS, no JS interval needed
+  // Cursor blink - pure CSS, no JS interval needed
 
   // GSAP: scroll indicator bounce (lazy-loaded, non-blocking)
   const scrollTweenRef = useRef<{ kill: () => void } | null>(null);

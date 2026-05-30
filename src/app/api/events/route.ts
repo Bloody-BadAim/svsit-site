@@ -4,7 +4,7 @@ import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 import type { StatCategory } from '@/types/database'
 
-// GET — Alle events ophalen (publiek)
+// GET - Alle events ophalen (publiek)
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST — Nieuw event aanmaken (admin only)
+// POST - Nieuw event aanmaken (admin only)
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()

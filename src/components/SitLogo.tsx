@@ -1,15 +1,15 @@
 'use client'
 
 /**
- * SitLogo — Official SIT (Studievereniging ICT) logo as inline SVG.
+ * SitLogo - Official SIT (Studievereniging ICT) logo as inline SVG.
  *
  * Source: {SIT}SVGNEWBLACK.svg from the official Brand Kit.
  * Colors: Gold braces (#F29E18), White text (#FFF),
  *         Amsterdam × marks: Red (#EF4444), Green (#22C55E), Blue (#3B82F6)
  *
  * Usage:
- *   <SitLogo size={28} />                     — compact, no crosses (navbar)
- *   <SitLogo size={48} showCrosses />         — full logo with × marks (footer)
+ *   <SitLogo size={28} />                     - compact, no crosses (navbar)
+ *   <SitLogo size={48} showCrosses />         - full logo with × marks (footer)
  *
  * Easter egg: 10 rapid clicks within 5 seconds grants the logo_click badge.
  */
@@ -62,7 +62,7 @@ export default function SitLogo({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ triggerId: 'logo_click' }),
-      }).catch(() => {/* silently ignore — user may not be logged in */})
+      }).catch(() => {/* silently ignore - user may not be logged in */})
     }
   }
 

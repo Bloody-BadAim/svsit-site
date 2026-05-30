@@ -26,7 +26,7 @@ export async function createServerComponentClient() {
               cookieStore.set(name, value, options)
             )
           } catch {
-            // Server Component — can't set cookies, ignore
+            // Server Component - can't set cookies, ignore
           }
         },
       },

@@ -73,7 +73,7 @@ export default function DashboardNav() {
         />
       )}
 
-      {/* Sidebar — mobile: slide-in overlay, desktop: fixed */}
+      {/* Sidebar - mobile: slide-in overlay, desktop: fixed */}
       <nav
         className={`fixed top-0 left-0 h-screen w-64 z-50 flex flex-col py-6 px-3 transition-transform duration-300 ease-out lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}
         style={{

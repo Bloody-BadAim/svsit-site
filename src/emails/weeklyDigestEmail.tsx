@@ -41,7 +41,7 @@ export default function WeeklyDigestEmail({
   const hasLeaderboard = leaderboard.length > 0;
 
   return (
-    <EmailLayout previewText={`Weekoverzicht SIT${hasEvents ? ` — ${events.length} event${events.length === 1 ? "" : "s"} deze week` : ""}`}>
+    <EmailLayout previewText={`Weekoverzicht SIT${hasEvents ? ` - ${events.length} event${events.length === 1 ? "" : "s"} deze week` : ""}`}>
       {/* Greeting */}
       <Text
         style={{
@@ -123,7 +123,7 @@ export default function WeeklyDigestEmail({
               {event.location ? (
                 <>
                   {" "}
-                  <span style={{ color: C.muted }}>— {event.location}</span>
+                  <span style={{ color: C.muted }}>- {event.location}</span>
                 </>
               ) : null}
             </Text>
@@ -392,7 +392,7 @@ export default function WeeklyDigestEmail({
           lineHeight: "1.4",
         }}
       >
-        Bestuur XI —{" "}
+        Bestuur XI -{" "}
         <span style={{ color: C.gold }}>{`{`}</span>
         SIT
         <span style={{ color: C.gold }}>{`}`}</span>

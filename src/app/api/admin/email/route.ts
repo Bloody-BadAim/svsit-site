@@ -176,7 +176,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// ─── GET — member count preview ───────────────────────────────────────────────
+// ─── GET - member count preview ───────────────────────────────────────────────
 
 export async function GET(req: NextRequest) {
   try {

@@ -444,7 +444,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
           <div style={{ position: 'relative', padding: '16px', backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
             <CornerDecorations />
             <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)', marginBottom: 8 }}>
-              Scans — <span style={{ color: 'var(--color-accent-gold)' }}>{event.title}</span>
+              Scans - <span style={{ color: 'var(--color-accent-gold)' }}>{event.title}</span>
             </p>
 
             {scansLoading ? (
@@ -472,7 +472,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
                   >
                     <div style={{ minWidth: 0 }}>
                       <p style={{ color: 'var(--color-text)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-                        {scan.member_id.slice(0, 8)}... — {scan.reason}
+                        {scan.member_id.slice(0, 8)}... - {scan.reason}
                       </p>
                       <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>
                         {new Date(scan.created_at).toLocaleString('nl-NL', {

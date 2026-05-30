@@ -12,7 +12,7 @@ export function getStripe(): Stripe {
   return _stripe
 }
 
-// Backwards compatibility — lazy getter
+// Backwards compatibility - lazy getter
 export const stripe = new Proxy({} as Stripe, {
   get(_target, prop) {
     return (getStripe() as unknown as Record<string | symbol, unknown>)[prop]

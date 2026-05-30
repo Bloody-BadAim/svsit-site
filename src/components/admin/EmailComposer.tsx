@@ -51,15 +51,15 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     id: 'newsletter',
     label: 'Nieuwsbrief',
     description: 'Maandelijkse update',
-    subject: 'SIT Update — [MAAND] [JAAR]',
-    body: `Hier is je maandelijkse SIT update!\n\nWat is er gebeurd\n- [HIGHLIGHT 1]\n- [HIGHLIGHT 2]\n- [HIGHLIGHT 3]\n\nKomende events\n- [EVENT 1] — [DATUM]\n- [EVENT 2] — [DATUM]\n\nLeaderboard update\nDe huidige top 3: [NAAM 1], [NAAM 2], [NAAM 3]. Check svsit.nl/leaderboard voor de volledige ranking.\n\nNieuwe shop items\n[ITEMS BESCHRIJVING]\n\nTot de volgende!`,
+    subject: 'SIT Update - [MAAND] [JAAR]',
+    body: `Hier is je maandelijkse SIT update!\n\nWat is er gebeurd\n- [HIGHLIGHT 1]\n- [HIGHLIGHT 2]\n- [HIGHLIGHT 3]\n\nKomende events\n- [EVENT 1] - [DATUM]\n- [EVENT 2] - [DATUM]\n\nLeaderboard update\nDe huidige top 3: [NAAM 1], [NAAM 2], [NAAM 3]. Check svsit.nl/leaderboard voor de volledige ranking.\n\nNieuwe shop items\n[ITEMS BESCHRIJVING]\n\nTot de volgende!`,
   },
   {
     id: 'reminder',
     label: 'Event reminder',
     description: 'Herinnering voor een event',
     subject: 'Reminder: [EVENT NAAM] is morgen!',
-    body: `Niet vergeten: morgen is [EVENT NAAM]!\n\nDatum: [DATUM]\nTijd: [TIJD]\nLocatie: [LOCATIE]\n\nVergeet je telefoon niet — je hebt je QR code nodig om in te checken en XP te verdienen.\n\nTot morgen!`,
+    body: `Niet vergeten: morgen is [EVENT NAAM]!\n\nDatum: [DATUM]\nTijd: [TIJD]\nLocatie: [LOCATIE]\n\nVergeet je telefoon niet - je hebt je QR code nodig om in te checken en XP te verdienen.\n\nTot morgen!`,
   },
 ]
 
@@ -156,7 +156,7 @@ function EmailPreview({ subject, body }: { subject: string; body: string }) {
           Met vriendelijke groet,
         </div>
         <div style={{ fontSize: 12, fontWeight: 600, color: '#FAFAFA', marginBottom: 4, lineHeight: 1.4 }}>
-          Bestuur XI — <span style={{ color: '#F29E18' }}>{`{`}SIT{`}`}</span>
+          Bestuur XI - <span style={{ color: '#F29E18' }}>{`{`}SIT{`}`}</span>
         </div>
         <div style={{ fontSize: 10, color: '#6B7280', lineHeight: 1.7 }}>
           Studievereniging ICT<br />
@@ -277,7 +277,7 @@ export default function EmailComposer() {
       >
 
         {/* ════════════════════
-            LEFT — Compose form
+            LEFT - Compose form
             ════════════════════ */}
         <div
           style={{
@@ -332,7 +332,7 @@ export default function EmailComposer() {
               </select>
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-text-muted)', marginTop: 6, marginBottom: 0 }}>
                 {selectedFilter.description}
-                {' — '}
+                {' - '}
                 {countLoading ? (
                   <span style={{ color: 'var(--color-text-muted)' }}>laden...</span>
                 ) : count !== null ? (
@@ -368,7 +368,7 @@ export default function EmailComposer() {
                 <option value="" disabled>Kies een template...</option>
                 {EMAIL_TEMPLATES.map((tpl) => (
                   <option key={tpl.id} value={tpl.id}>
-                    {tpl.label} — {tpl.description}
+                    {tpl.label} - {tpl.description}
                   </option>
                 ))}
               </select>
@@ -381,7 +381,7 @@ export default function EmailComposer() {
                 type="text"
                 value={subject}
                 onChange={(e) => { setSubject(e.target.value); setResult(null); setError(null) }}
-                placeholder="Bijv. Aankomende events — april 2026"
+                placeholder="Bijv. Aankomende events - april 2026"
                 style={inputStyle}
                 disabled={sending}
               />
@@ -538,7 +538,7 @@ export default function EmailComposer() {
         </div>
 
         {/* ════════════════════
-            RIGHT — Live preview
+            RIGHT - Live preview
             ════════════════════ */}
         <div>
           <p

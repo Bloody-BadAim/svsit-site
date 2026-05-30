@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "{SIT} — Studievereniging ICT | Hogeschool van Amsterdam";
+export const alt = "{SIT} - Studievereniging ICT | Hogeschool van Amsterdam";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -46,7 +46,7 @@ export default function OgImage() {
             display: "flex",
           }}
         >
-          // studievereniging HBO-ICT — Hogeschool van Amsterdam
+          // studievereniging HBO-ICT - Hogeschool van Amsterdam
         </div>
 
         {/* Logo */}

@@ -292,7 +292,7 @@ export default function ProfielPage() {
       {/* ── Top two-column: Identity + Account Status ────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 mb-5">
 
-        {/* LEFT — CHARACTER IDENTITY */}
+        {/* LEFT - CHARACTER IDENTITY */}
         <motion.div
           className="relative overflow-hidden"
           style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
@@ -386,7 +386,7 @@ export default function ProfielPage() {
           </div>
         </motion.div>
 
-        {/* RIGHT — ACCOUNT STATUS */}
+        {/* RIGHT - ACCOUNT STATUS */}
         <motion.div
           className="relative overflow-hidden"
           style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
@@ -466,7 +466,7 @@ export default function ProfielPage() {
         </motion.div>
       </div>
 
-      {/* ── SECURITY.CONFIG — full width ─────────────────────────────────────── */}
+      {/* ── SECURITY.CONFIG - full width ─────────────────────────────────────── */}
       <motion.div
         className="relative overflow-hidden"
         style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-border)' }}
@@ -482,7 +482,7 @@ export default function ProfielPage() {
 
         <div className="p-5">
           <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-4 items-end">
-            {/* Current password — only if password already set */}
+            {/* Current password - only if password already set */}
             {hasPassword ? (
               <DarkInput
                 label="current.password"
@@ -494,7 +494,7 @@ export default function ProfielPage() {
             ) : (
               <div className="flex items-end pb-0.5">
                 <span className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
-                  // no password set yet — set one below
+                  // no password set yet - set one below
                 </span>
               </div>
             )}
@@ -553,7 +553,7 @@ export default function ProfielPage() {
         </div>
       </motion.div>
 
-      {/* ── MEMBERSHIP.CANCEL — full width ───────────────────────────────── */}
+      {/* ── MEMBERSHIP.CANCEL - full width ───────────────────────────────── */}
       {membershipActive && (
         <motion.div
           className="relative overflow-hidden mt-5"

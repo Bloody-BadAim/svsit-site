@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 
-// POST — Submit proof for a challenge (authenticated member)
+// POST - Submit proof for a challenge (authenticated member)
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

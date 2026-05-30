@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { TicketCard } from './TicketCard'
 
 export const metadata = {
-  title: 'Tickets — SIT',
+  title: 'Tickets - SIT',
 }
 
 interface TicketRow {

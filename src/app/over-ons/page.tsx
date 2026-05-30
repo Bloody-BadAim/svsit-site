@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
-import Board from "@/components/Board";
+import Moederbord from "@/components/Moederbord";
 import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
 
 export const metadata: Metadata = {
-  title: "Over ons — {SIT}",
+  title: "Het Moederbord - Bestuur & Commissies - {SIT}",
   description:
-    "Leer het bestuur van SIT kennen. Bestuur XI van de Studievereniging ICT aan de Hogeschool van Amsterdam.",
+    "Het Moederbord: bestuur en commissies van SIT in één organigram. Bestuur XII is de kern, elke commissie een module die je kunt aansluiten. Sluit jezelf aan.",
   openGraph: {
-    title: "Over ons — {SIT}",
+    title: "Het Moederbord - Bestuur & Commissies - {SIT}",
     description:
-      "Leer het bestuur van SIT kennen. Bestuur XI — 2026.",
+      "Bestuur XII vormt de kern, elke commissie is een module. Ontdek de organisatie van SIT en sluit je aan.",
     siteName: "{SIT}",
     locale: "nl_NL",
     type: "website",
@@ -20,9 +20,11 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Over ons — {SIT}",
-    description: "Bestuur XI van SIT — Studievereniging ICT aan de HvA.",
+    title: "Het Moederbord - Bestuur & Commissies - {SIT}",
+    description:
+      "Bestuur XII en de commissies van SIT als één moederbord. Sluit je aan.",
   },
+  alternates: { canonical: "https://svsit.nl/over-ons" },
 };
 
 export default function OverOns() {
@@ -31,8 +33,8 @@ export default function OverOns() {
       <div className="page-public">
         <CustomCursor />
         <Navbar />
-        <main id="main-content" style={{ paddingTop: "5rem" }}>
-          <Board />
+        <main id="main-content">
+          <Moederbord />
         </main>
         <Footer />
       </div>

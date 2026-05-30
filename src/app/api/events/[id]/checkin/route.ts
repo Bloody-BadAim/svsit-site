@@ -5,7 +5,7 @@ import { createServiceClient } from '@/lib/supabase'
 import { checkAndGrantAutoBadges } from '@/lib/rewards'
 import { grantXp, calculateXpReward } from '@/lib/xpEngine'
 
-// POST — Self-service event check-in
+// POST - Self-service event check-in
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

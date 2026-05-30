@@ -6,7 +6,7 @@ export default auth((req) => {
   const session = req.auth
   const isLoggedIn = !!session?.user
 
-  // Public routes — geen auth nodig
+  // Public routes - geen auth nodig
   if (
     pathname === '/' ||
     pathname === '/over-ons' ||
@@ -18,7 +18,7 @@ export default auth((req) => {
     return NextResponse.next()
   }
 
-  // Login pagina — redirect naar dashboard als al ingelogd
+  // Login pagina - redirect naar dashboard als al ingelogd
   if (pathname === '/login') {
     if (isLoggedIn) {
       return NextResponse.redirect(new URL('/dashboard', req.url))
@@ -26,7 +26,7 @@ export default auth((req) => {
     return NextResponse.next()
   }
 
-  // Lid worden — redirect naar dashboard als al actief lid
+  // Lid worden - redirect naar dashboard als al actief lid
   if (pathname === '/lid-worden') {
     if (isLoggedIn && session.user.membershipActive) {
       return NextResponse.redirect(new URL('/dashboard', req.url))
@@ -34,7 +34,7 @@ export default auth((req) => {
     return NextResponse.next()
   }
 
-  // Dashboard routes — vereist login
+  // Dashboard routes - vereist login
   if (pathname.startsWith('/dashboard')) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL('/login', req.url))
@@ -42,7 +42,7 @@ export default auth((req) => {
     return NextResponse.next()
   }
 
-  // Admin routes — vereist login + admin rol
+  // Admin routes - vereist login + admin rol
   if (pathname.startsWith('/admin')) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL('/login', req.url))

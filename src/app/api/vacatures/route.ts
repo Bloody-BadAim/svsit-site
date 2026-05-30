@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 
-// GET — Vacatures (publiek: alleen actieve, admin: alle met ?all=true)
+// GET - Vacatures (publiek: alleen actieve, admin: alle met ?all=true)
 export async function GET(req: NextRequest) {
   try {
     const showAll = req.nextUrl.searchParams.get('all') === 'true'
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST — Vacature aanmaken (admin only)
+// POST - Vacature aanmaken (admin only)
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()

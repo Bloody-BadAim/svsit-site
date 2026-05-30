@@ -5,7 +5,7 @@ import { checkAndGrantAutoBadges } from '@/lib/rewards'
 import { grantXp } from '@/lib/xpEngine'
 import type { SubmissionStatus } from '@/types/database'
 
-// PATCH — Approve or reject a challenge submission (admin only)
+// PATCH - Approve or reject a challenge submission (admin only)
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

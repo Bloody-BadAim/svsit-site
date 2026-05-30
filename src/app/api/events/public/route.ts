@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase'
 
-// Force dynamic — needs Supabase service client at runtime
+// Force dynamic - needs Supabase service client at runtime
 export const dynamic = 'force-dynamic'
 export const revalidate = 60
 

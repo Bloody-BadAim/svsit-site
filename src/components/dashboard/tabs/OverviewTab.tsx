@@ -222,7 +222,7 @@ export default function OverviewTab({
                 Nog niet gekozen
               </p>
               <Link
-                href="/commissies"
+                href="/over-ons"
                 className="font-mono text-[10px] mt-1 inline-block transition-colors hover:underline"
                 style={{ color: '#3B82F6' }}
               >

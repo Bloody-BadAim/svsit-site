@@ -301,7 +301,7 @@ function BadgeDetail({
                 <Lock className="w-3 h-3" />
                 Vergrendeld
                 {badge.autoGrantRule === null && (
-                  <span style={{ color: 'rgba(255,255,255,0.2)' }}> — automatisch toegekend door bestuur</span>
+                  <span style={{ color: 'rgba(255,255,255,0.2)' }}> - automatisch toegekend door bestuur</span>
                 )}
               </div>
             )}

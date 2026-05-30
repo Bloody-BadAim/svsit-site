@@ -96,7 +96,7 @@ function TopCard({ entry }: { entry: LeaderEntry }) {
         ...(isFirst ? { paddingTop: '1.5rem', paddingBottom: '1.5rem' } : {}),
       }}
     >
-      {/* Glow pulse ring — animated via CSS keyframes on the border */}
+      {/* Glow pulse ring - animated via CSS keyframes on the border */}
       <motion.div
         className="absolute inset-0 rounded-lg pointer-events-none"
         animate={{
@@ -125,7 +125,7 @@ function TopCard({ entry }: { entry: LeaderEntry }) {
 
       {/* level title */}
       <p className="font-mono text-xs" style={{ color: entry.levelColor }}>
-        LVL {entry.currentLevel} — {entry.levelTitle}
+        LVL {entry.currentLevel} - {entry.levelTitle}
       </p>
 
       {/* xp */}
@@ -222,7 +222,7 @@ function RankRow({
           )}
         </p>
         <p className="font-mono text-xs" style={{ color: entry.levelColor }}>
-          LVL {entry.currentLevel} — {entry.levelTitle}
+          LVL {entry.currentLevel} - {entry.levelTitle}
         </p>
       </div>
 
@@ -336,7 +336,7 @@ export default function LeaderboardContent({ top10, bubble, isLoggedIn }: Props)
             </div>
           )}
 
-          {/* Rows 4–10 */}
+          {/* Rows 4-10 */}
           {rest.length > 0 && (
             <div className="flex flex-col gap-2 mb-12">
               {rest.map((entry, i) => (

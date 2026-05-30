@@ -50,7 +50,7 @@ export async function generateMetadata(
   const event = await getEvent(id)
 
   if (!event) {
-    return { title: 'Event niet gevonden — {SIT}' }
+    return { title: 'Event niet gevonden - {SIT}' }
   }
 
   const dateStr = new Date(event.date as string).toLocaleDateString('nl-NL', {
@@ -62,10 +62,10 @@ export async function generateMetadata(
   const desc = event.description ?? `${event.title} op ${dateStr} bij ${event.location ?? 'SIT'}`
 
   return {
-    title: `${event.title} — {SIT}`,
+    title: `${event.title} - {SIT}`,
     description: desc,
     openGraph: {
-      title: `${event.title} — {SIT}`,
+      title: `${event.title} - {SIT}`,
       description: desc,
       siteName: '{SIT}',
       locale: 'nl_NL',
@@ -74,7 +74,7 @@ export async function generateMetadata(
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${event.title} — {SIT}`,
+      title: `${event.title} - {SIT}`,
       description: desc,
     },
   }
@@ -150,7 +150,7 @@ export default async function EventDetailPage(
     }),
     organizer: {
       '@type': 'Organization',
-      name: 'SIT — Studievereniging ICT',
+      name: 'SIT - Studievereniging ICT',
       url: 'https://svsit.nl',
     },
     ...(typedEvent.price_members > 0 && {
@@ -318,7 +318,7 @@ export default async function EventDetailPage(
                   </p>
                   <p className="text-sm text-[var(--color-text)]">
                     {formatTime(typedEvent.date)}
-                    {typedEvent.end_date && ` — ${formatTime(typedEvent.end_date)}`}
+                    {typedEvent.end_date && ` - ${formatTime(typedEvent.end_date)}`}
                   </p>
                 </div>
               </div>

@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 
-// PATCH — Project bijwerken (admin only)
+// PATCH - Project bijwerken (admin only)
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -42,7 +42,7 @@ export async function PATCH(
   }
 }
 
-// DELETE — Project verwijderen (admin only)
+// DELETE - Project verwijderen (admin only)
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

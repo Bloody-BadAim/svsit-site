@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 
-// GET — Scan geschiedenis per lid
+// GET - Scan geschiedenis per lid
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ memberId: string }> }

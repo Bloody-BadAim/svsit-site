@@ -4,7 +4,7 @@ import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 import type { StatCategory } from '@/types/database'
 
-// GET — Enkel event met ticket count (publiek)
+// GET - Enkel event met ticket count (publiek)
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -40,7 +40,7 @@ export async function GET(
   }
 }
 
-// PATCH — Event bijwerken (admin only)
+// PATCH - Event bijwerken (admin only)
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -125,7 +125,7 @@ export async function PATCH(
   }
 }
 
-// DELETE — Soft delete event: status naar 'cancelled' (admin only)
+// DELETE - Soft delete event: status naar 'cancelled' (admin only)
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

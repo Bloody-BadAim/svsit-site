@@ -16,7 +16,7 @@ export default function ConsoleEasterEgg() {
       "color: #F29E18; font-family: monospace; font-size: 12px; line-height: 1.2;"
     );
     console.log(
-      "%cStudievereniging ICT — Hogeschool van Amsterdam",
+      "%cStudievereniging ICT - Hogeschool van Amsterdam",
       "color: #FAFAFA; font-size: 14px; font-weight: bold; font-family: monospace;"
     );
     console.log(

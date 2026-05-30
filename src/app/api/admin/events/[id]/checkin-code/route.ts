@@ -11,7 +11,7 @@ function generateCode(): string {
   return code
 }
 
-// GET — Get current check-in code for event
+// GET - Get current check-in code for event
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -39,7 +39,7 @@ export async function GET(
   }
 }
 
-// POST — Generate a new check-in code for event
+// POST - Generate a new check-in code for event
 export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

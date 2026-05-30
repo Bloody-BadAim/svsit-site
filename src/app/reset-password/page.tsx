@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import ResetPasswordForm from '@/components/auth/ResetPasswordForm'
 
 export const metadata = {
-  title: 'Wachtwoord instellen — {SIT}',
+  title: 'Wachtwoord instellen - {SIT}',
   description: 'Stel een nieuw wachtwoord in voor je SIT account.',
 }
 

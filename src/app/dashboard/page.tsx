@@ -32,15 +32,15 @@ export default async function DashboardPage({
   const supabase = createServiceClient()
 
   // -------------------------------------------------------------------------
-  // Parallel data fetching — optimized to minimize query count
+  // Parallel data fetching - optimized to minimize query count
   //
   // Eliminated queries vs. original:
   //  - Merged two member_badges queries (#8 + #15) into one
   //  - Removed separate "approved challenge submissions" query (#6)
-  //    — use allSubmissions (#10) and filter in JS instead
-  //  - challenge_submissions now joins challenges() — no waterfall query
-  //  - getEquippedAccessories returns definitions — no follow-up query
-  //  - getEquippedAccessories receives member data — no internal members query
+  //    - use allSubmissions (#10) and filter in JS instead
+  //  - challenge_submissions now joins challenges() - no waterfall query
+  //  - getEquippedAccessories returns definitions - no follow-up query
+  //  - getEquippedAccessories receives member data - no internal members query
   // -------------------------------------------------------------------------
 
   const now = new Date().toISOString()
@@ -88,7 +88,7 @@ export default async function DashboardPage({
       .or(`active_until.is.null,active_until.gte.${now}`)
       .eq('type', 'quest'),
 
-    // 6. Member badges — single query with earned_at AND equipped_slot (merged old #8 + #15)
+    // 6. Member badges - single query with earned_at AND equipped_slot (merged old #8 + #15)
     supabase
       .from('member_badges')
       .select('badge_id, earned_at, equipped_slot')
@@ -158,7 +158,7 @@ export default async function DashboardPage({
   if (!member) redirect('/login')
 
   // -------------------------------------------------------------------------
-  // Second parallel batch — equipped accessories needs member data from batch 1
+  // Second parallel batch - equipped accessories needs member data from batch 1
   // -------------------------------------------------------------------------
 
   const cardEquipmentResult = await getEquippedAccessories(memberId, {
@@ -169,7 +169,7 @@ export default async function DashboardPage({
   const accessoryDefMap = cardEquipmentResult.definitions
 
   // -------------------------------------------------------------------------
-  // Process challenge submissions -> activity items (no waterfall — data comes from join)
+  // Process challenge submissions -> activity items (no waterfall - data comes from join)
   // -------------------------------------------------------------------------
 
   const allSubmissionRows = allSubmissionsResult.data ?? []
@@ -276,7 +276,7 @@ export default async function DashboardPage({
   }
 
   // -------------------------------------------------------------------------
-  // Equipment mapping — uses definitions from getEquippedAccessories (no extra query)
+  // Equipment mapping - uses definitions from getEquippedAccessories (no extra query)
   // -------------------------------------------------------------------------
 
   let equipmentProp: MemberCardEquipment | undefined
@@ -340,7 +340,7 @@ export default async function DashboardPage({
   const username = (member.display_name as string) || (member.email as string)?.split('@')[0] || 'lid'
 
   // -------------------------------------------------------------------------
-  // BadgesTab props — derived from single merged member_badges query
+  // BadgesTab props - derived from single merged member_badges query
   // -------------------------------------------------------------------------
 
   const allBadgeRows = memberBadgesResult.data ?? []

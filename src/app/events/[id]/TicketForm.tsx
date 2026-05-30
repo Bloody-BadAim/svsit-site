@@ -274,7 +274,7 @@ export default function TicketForm({
           {loading
             ? 'Bezig...'
             : isPaid
-              ? `Afrekenen — €${displayPrice}`
+              ? `Afrekenen - €${displayPrice}`
               : 'Aanmelden'
           }
         </button>

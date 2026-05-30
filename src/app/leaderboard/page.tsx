@@ -10,7 +10,7 @@ import Footer from '@/components/Footer'
 import LeaderboardContent from './LeaderboardContent'
 
 export const metadata: Metadata = {
-  title: 'Leaderboard — {SIT}',
+  title: 'Leaderboard - {SIT}',
   description: 'De meest actieve SIT leden. Wie staat bovenaan?',
 }
 
@@ -81,7 +81,7 @@ const getTop10 = unstable_cache(
   { revalidate: 60 }
 )
 
-// ─── Page (server component — data only) ──────────────────────────────────────
+// ─── Page (server component - data only) ──────────────────────────────────────
 
 export default async function LeaderboardPage() {
   const session = await auth()
@@ -89,7 +89,7 @@ export default async function LeaderboardPage() {
 
   const top10 = await getTop10()
 
-  // Bubble ranking — only if logged in
+  // Bubble ranking - only if logged in
   let bubble: BubbleData | null = null
   if (session?.user?.id) {
     const memberId = session.user.id

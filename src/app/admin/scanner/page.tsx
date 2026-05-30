@@ -29,7 +29,7 @@ export default function ScannerPage() {
         ]
         setDbEvents(merged)
       } catch {
-        // stil falen — scanner werkt ook zonder events lijst
+        // stil falen - scanner werkt ook zonder events lijst
       } finally {
         setLoading(false)
       }
@@ -60,7 +60,7 @@ export default function ScannerPage() {
         )}
       </div>
 
-      {/* Event selectie — toon dropdown als geen event actief is via de store */}
+      {/* Event selectie - toon dropdown als geen event actief is via de store */}
       {!loading && dbEvents.length > 0 && (
         <div className="mb-6">
           <label
@@ -79,7 +79,7 @@ export default function ScannerPage() {
               border: '1px solid var(--color-border)',
             }}
           >
-            <option value="">— geen event geselecteerd —</option>
+            <option value="">- geen event geselecteerd -</option>
             {dbEvents.map((ev) => (
               <option key={ev.id} value={ev.id}>
                 [{ev.status.toUpperCase()}] {ev.title}

@@ -271,7 +271,7 @@ export default function HoldToJoinButton({ href }: { href: string }) {
       ctx.globalAlpha = 1;
     }
 
-    // Center glow — intensifies with progress
+    // Center glow - intensifies with progress
     if (progress > 0.1) {
       const glowRadius = lerp(20, 80, progress);
       const glowAlpha = lerp(0.02, 0.15, progress);
@@ -305,7 +305,7 @@ export default function HoldToJoinButton({ href }: { href: string }) {
     const cy = h / 2;
 
     try {
-      // Step 1: Rapid convergence (500ms) — all particles rush to center
+      // Step 1: Rapid convergence (500ms) - all particles rush to center
       let convergenceStart = performance.now();
       const particles = particlesRef.current;
 

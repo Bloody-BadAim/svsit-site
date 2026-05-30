@@ -22,7 +22,7 @@ export default function StatsOverview({ stats }: StatsOverviewProps) {
 
   return (
     <div className="space-y-5">
-      {/* Hero numbers — asymmetric, not a uniform grid */}
+      {/* Hero numbers - asymmetric, not a uniform grid */}
       <div className="flex flex-wrap gap-5">
         <div
           className="relative flex-1 min-w-[180px] p-5 overflow-hidden"
@@ -76,7 +76,7 @@ export default function StatsOverview({ stats }: StatsOverviewProps) {
         </div>
       </div>
 
-      {/* Breakdowns — horizontal bars, not card grids */}
+      {/* Breakdowns - horizontal bars, not card grids */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div
           className="relative p-5 overflow-hidden"

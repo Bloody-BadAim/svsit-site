@@ -52,7 +52,7 @@ export async function GET(
     const endTime = event.end_date
       ? new Date(event.end_date).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })
       : null
-    const timeStr = endTime ? `${startTime} — ${endTime}` : startTime
+    const timeStr = endTime ? `${startTime} - ${endTime}` : startTime
 
     // Format price
     const paidAmount = ticket.paid_amount as number

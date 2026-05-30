@@ -58,7 +58,7 @@ export default function ChallengeManager() {
       setPoints(50)
       setActiveUntil('')
     } catch {
-      setError('Netwerkfout — probeer opnieuw')
+      setError('Netwerkfout - probeer opnieuw')
     } finally {
       setLoading(false)
     }

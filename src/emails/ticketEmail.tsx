@@ -20,7 +20,7 @@ import { C, SitLogo } from "./components/EmailLayout";
 interface TicketEmailProps {
   eventTitle: string;
   eventDate: string; // e.g. "27 MAART 2026"
-  eventTime: string; // e.g. "17:00 — 21:00"
+  eventTime: string; // e.g. "17:00 - 21:00"
   eventLocation: string;
   buyerName: string;
   buyerEmail: string;
@@ -74,7 +74,7 @@ export default function TicketEmail({
   price,
   qrCodeDataUrl,
 }: TicketEmailProps) {
-  const previewText = `Jouw ticket voor ${eventTitle} — ${eventDate}`;
+  const previewText = `Jouw ticket voor ${eventTitle} - ${eventDate}`;
 
   return (
     <Html lang="nl">
@@ -89,7 +89,7 @@ export default function TicketEmail({
         }}
       >
         {/* ---------------------------------------------------------------- */}
-        {/* Outer wrapper — centres content */}
+        {/* Outer wrapper - centres content */}
         {/* ---------------------------------------------------------------- */}
         <Container
           style={{
@@ -131,7 +131,7 @@ export default function TicketEmail({
             {/* Two-column ticket layout */}
             <Row style={{ margin: "0" }}>
               {/* ============================================================
-                  LEFT COLUMN — event info
+                  LEFT COLUMN - event info
                   ============================================================ */}
               <Column
                 style={{
@@ -167,7 +167,7 @@ export default function TicketEmail({
                   // event ticket
                 </Text>
 
-                {/* Event title — BIG */}
+                {/* Event title - BIG */}
                 <Text
                   style={{
                     fontFamily: TC.heading,
@@ -243,7 +243,7 @@ export default function TicketEmail({
               </Column>
 
               {/* ============================================================
-                  RIGHT COLUMN — code block, QR, ticket nr, price
+                  RIGHT COLUMN - code block, QR, ticket nr, price
                   ============================================================ */}
               <Column
                 style={{
@@ -253,7 +253,7 @@ export default function TicketEmail({
                   backgroundColor: C.surfaceAlt,
                 }}
               >
-                {/* Terminal window — code block */}
+                {/* Terminal window - code block */}
                 <table
                   cellPadding={0}
                   cellSpacing={0}
@@ -433,7 +433,7 @@ export default function TicketEmail({
             </Section>
 
             {/* ---------------------------------------------------------------- */}
-            {/* Footer strip — instructions + association info                  */}
+            {/* Footer strip - instructions + association info                  */}
             {/* ---------------------------------------------------------------- */}
             <Section
               style={{
@@ -484,7 +484,7 @@ export default function TicketEmail({
             </Section>
           </Section>
 
-          {/* Bottom accent bar — reversed order */}
+          {/* Bottom accent bar - reversed order */}
           <Section style={{ padding: "0", margin: "0" }}>
             <table
               cellPadding={0}
@@ -515,7 +515,7 @@ export default function TicketEmail({
                 letterSpacing: "0.03em",
               }}
             >
-              Dit is een automatisch gegenereerd ticket van SIT — Studievereniging ICT HvA.
+              Dit is een automatisch gegenereerd ticket van SIT - Studievereniging ICT HvA.
               <br />
               Bewaar dit ticket. Vragen? Mail naar{" "}
               <span style={{ color: C.gold }}>bestuur@svsit.nl</span>
@@ -536,7 +536,7 @@ export function TicketEmailPreview() {
     <TicketEmail
       eventTitle="Get Together"
       eventDate="27 MAART 2026"
-      eventTime="17:00 — 21:00"
+      eventTime="17:00 - 21:00"
       eventLocation="Keizersgracht 424, Amsterdam"
       buyerName="Matin Khajehfard"
       buyerEmail="matin@svsit.nl"

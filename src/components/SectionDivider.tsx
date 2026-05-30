@@ -25,7 +25,7 @@ const VARIANTS: Record<string, React.CSSProperties> = {
 };
 
 /* ═══════════════════════════════════════════════
-   Pixel Art Characters — box-shadow technique
+   Pixel Art Characters - box-shadow technique
    Each character is a 1x1 div scaled up, with
    box-shadows defining every pixel.
    ═══════════════════════════════════════════════ */
@@ -41,7 +41,7 @@ const Bl = "#93C5FD"; // light blue
 const S = "#FDE68A"; // skin
 const R = "#EF4444"; // red (effects)
 
-// Knight facing right — 9×11
+// Knight facing right - 9×11
 const KNIGHT: PixelRow[] = [
   [0, 0, Gd, Gd, Gd, 0, 0, 0, 0],
   [0, Gd, G, G, G, Gd, 0, 0, 0],
@@ -56,7 +56,7 @@ const KNIGHT: PixelRow[] = [
   [0, Gd, G, 0, 0, G, Gd, 0, 0],
 ];
 
-// Mage facing left — 9×11
+// Mage facing left - 9×11
 const MAGE: PixelRow[] = [
   [0, 0, 0, 0, 0, Bd, 0, 0, 0],
   [0, 0, 0, 0, Bd, Bd, Bd, 0, 0],
@@ -238,7 +238,7 @@ export default function SectionDivider({
       aria-hidden="true"
       className={`relative w-full pointer-events-none ${className}`}
     >
-      {/* Background shield — keeps divider darkness consistent over the circuit bg */}
+      {/* Background shield - keeps divider darkness consistent over the circuit bg */}
       <div className="absolute inset-0 bg-[var(--color-bg)]/70" />
       <div className="relative" style={VARIANTS[variant]} />
     </div>

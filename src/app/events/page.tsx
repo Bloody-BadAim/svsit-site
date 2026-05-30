@@ -36,10 +36,10 @@ const getEvents = unstable_cache(
 )
 
 export const metadata: Metadata = {
-  title: 'Events — {SIT}',
+  title: 'Events - {SIT}',
   description: 'Bekijk alle aankomende events van SIT, de studievereniging voor HBO-ICT aan de HvA.',
   openGraph: {
-    title: 'Events — {SIT}',
+    title: 'Events - {SIT}',
     description: 'Borrels, hackathons, tech talks, game nights en meer. Bekijk het SIT event programma.',
     siteName: '{SIT}',
     locale: 'nl_NL',
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Events — {SIT}',
+    title: 'Events - {SIT}',
     description: 'Borrels, hackathons, tech talks, game nights en meer bij SIT.',
   },
 }

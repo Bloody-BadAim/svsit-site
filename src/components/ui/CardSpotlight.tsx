@@ -48,13 +48,13 @@ export const CardSpotlight = ({
       onMouseMove={handleMouseMove}
       {...props}
     >
-      {/* Spotlight overlay — CSS radial gradient, no three.js */}
+      {/* Spotlight overlay - CSS radial gradient, no three.js */}
       <div
         ref={spotlightRef}
         className="pointer-events-none absolute z-0 -inset-px opacity-0 transition duration-300 group-hover/spotlight:opacity-100"
         style={{ backgroundColor: color }}
       />
-      {/* Dot glow layer — replaces CanvasRevealEffect */}
+      {/* Dot glow layer - replaces CanvasRevealEffect */}
       <div
         ref={dotRef}
         className="pointer-events-none absolute z-0 -inset-px opacity-0 transition duration-300 group-hover/spotlight:opacity-60"

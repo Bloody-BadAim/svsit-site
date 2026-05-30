@@ -1,4 +1,4 @@
-// src/lib/badgeDefs.ts — pure data, no server imports
+// src/lib/badgeDefs.ts - pure data, no server imports
 // Import this in client components. Import badgeEngine for server-only functions.
 import type { BadgeDef } from '@/types/gamification'
 

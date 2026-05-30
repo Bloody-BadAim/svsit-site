@@ -37,7 +37,7 @@ export default function BuyButton({ accessoryId, price, canAfford }: BuyButtonPr
       setBought(true)
       router.refresh()
     } catch {
-      setError('Netwerkfout — probeer opnieuw')
+      setError('Netwerkfout - probeer opnieuw')
     } finally {
       setLoading(false)
     }

@@ -144,7 +144,7 @@ function FramePreview({ def }: { def: AccessoryDefinition }) {
   let innerStyle: React.CSSProperties = {}
 
   if (name.includes('neon')) {
-    // Neon Frame — cyan electric glow
+    // Neon Frame - cyan electric glow
     outerStyle = {
       background: 'rgba(0,255,255,0.08)',
       border: '2px solid #00e5ff',
@@ -156,7 +156,7 @@ function FramePreview({ def }: { def: AccessoryDefinition }) {
       opacity: 0.7,
     }
   } else if (name.includes('matrix')) {
-    // Matrix Frame — green scanline pattern
+    // Matrix Frame - green scanline pattern
     outerStyle = {
       background: 'repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,255,70,0.12) 3px, rgba(0,255,70,0.12) 4px)',
       border: '2px solid #00ff46',
@@ -168,7 +168,7 @@ function FramePreview({ def }: { def: AccessoryDefinition }) {
       background: 'rgba(0,255,70,0.06)',
     }
   } else if (name.includes('gold')) {
-    // Gold Frame — gold shimmer gradient
+    // Gold Frame - gold shimmer gradient
     outerStyle = {
       background: 'linear-gradient(135deg, #b8860b, #ffd700, #daa520, #ffd700, #b8860b)',
       boxShadow: '0 0 14px rgba(255,215,0,0.4)',
@@ -179,7 +179,7 @@ function FramePreview({ def }: { def: AccessoryDefinition }) {
       opacity: 0.8,
     }
   } else if (name.includes('ice') || name.includes('crystal')) {
-    // Ice Crystal Frame — blue/white crystalline
+    // Ice Crystal Frame - blue/white crystalline
     outerStyle = {
       background: 'linear-gradient(135deg, rgba(173,216,230,0.2), rgba(135,206,250,0.15), rgba(255,255,255,0.1))',
       border: '2px solid #87cefa',
@@ -191,7 +191,7 @@ function FramePreview({ def }: { def: AccessoryDefinition }) {
       opacity: 0.7,
     }
   } else if (name.includes('fire') || name.includes('flame')) {
-    // Fire Frame — red/orange flame gradient
+    // Fire Frame - red/orange flame gradient
     outerStyle = {
       background: 'linear-gradient(180deg, #ef4444, #f97316, #facc15)',
       boxShadow: '0 0 14px rgba(239,68,68,0.45)',
@@ -202,7 +202,7 @@ function FramePreview({ def }: { def: AccessoryDefinition }) {
       opacity: 0.8,
     }
   } else {
-    // Fallback — rarity-based (for unknown frames)
+    // Fallback - rarity-based (for unknown frames)
     const color = getRarityBorder(def.rarity)
     const isGradient = color.includes('gradient')
     outerStyle = {
@@ -627,7 +627,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
     }
   }
 
-  // Equipped map (category -> row) — stickers stored separately (multiple allowed)
+  // Equipped map (category -> row) - stickers stored separately (multiple allowed)
   const [equippedMap, setEquippedMap] = useState<Map<AccessoryCategory, MemberAccessoryRow>>(() => {
     const m = new Map<AccessoryCategory, MemberAccessoryRow>()
     for (const row of equipped) {

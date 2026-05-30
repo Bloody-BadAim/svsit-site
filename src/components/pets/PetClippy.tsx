@@ -49,7 +49,7 @@ export function PetClippy({ size = 48 }: PetProps) {
         </path>
         {/* Left eye white */}
         <circle cx="13" cy="15" r="2" fill="white" />
-        {/* Left pupil — looks around */}
+        {/* Left pupil - looks around */}
         <circle cy="15" r="1" fill="#333333">
           <animate
             attributeName="cx"
@@ -61,7 +61,7 @@ export function PetClippy({ size = 48 }: PetProps) {
         </circle>
         {/* Right eye white */}
         <circle cx="19" cy="15" r="2" fill="white" />
-        {/* Right pupil — looks around */}
+        {/* Right pupil - looks around */}
         <circle cy="15" r="1" fill="#333333">
           <animate
             attributeName="cx"

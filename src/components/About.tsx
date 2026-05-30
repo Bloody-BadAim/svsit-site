@@ -319,7 +319,7 @@ export default function About() {
       <div className="relative max-w-[1400px] mx-auto">
         <SectionLabel number="01" label="over sit" />
 
-        {/* Heading — word-by-word reveal */}
+        {/* Heading - word-by-word reveal */}
         <div ref={headingRef} className="mb-8 md:mb-12" style={{ perspective: "600px" }}>
           <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight uppercase">
             <span className="block">

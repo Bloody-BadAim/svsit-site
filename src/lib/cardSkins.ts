@@ -225,7 +225,7 @@ export const CARD_SKINS: CardSkin[] = [
     background: 'linear-gradient(135deg, #0c0c0e 0%, #0c0a06 50%, #0c0c0e 100%)',
     accent: '#F29E18',
     animated: true,
-    // Double diagonal lines — premium
+    // Double diagonal lines - premium
     overlay: 'repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(242,158,24,0.02) 15px, rgba(242,158,24,0.02) 16px, transparent 16px, transparent 17px, rgba(242,158,24,0.02) 17px, rgba(242,158,24,0.02) 18px)',
     overlayOpacity: 1,
     innerBorder: 'rgba(242,158,24,0.12)',

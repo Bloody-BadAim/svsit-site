@@ -708,7 +708,7 @@ function TrackCard({ track, memberId }: { track: TrackItem; memberId: string }) 
         )}
       </button>
 
-      {/* Milestones — collapsible */}
+      {/* Milestones - collapsible */}
       <AnimatePresence initial={false}>
         {open && (
           <motion.div

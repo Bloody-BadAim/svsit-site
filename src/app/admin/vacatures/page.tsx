@@ -395,7 +395,7 @@ export default function AdminVacaturesPage() {
                     )}
                   </div>
                   <span className="font-mono text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
-                    {vacature.company}{vacature.location ? ` — ${vacature.location}` : ''}
+                    {vacature.company}{vacature.location ? ` - ${vacature.location}` : ''}
                   </span>
                 </div>
 

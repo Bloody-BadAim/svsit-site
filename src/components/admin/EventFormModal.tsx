@@ -185,7 +185,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
               letterSpacing: '0.06em',
             }}
           >
-            {isEdit ? `> event.edit — ${event.title}` : '> event.create'}
+            {isEdit ? `> event.edit - ${event.title}` : '> event.create'}
           </h2>
           <button onClick={onClose} style={{ color: 'var(--color-text-muted)', cursor: 'pointer' }}>
             <X size={16} />

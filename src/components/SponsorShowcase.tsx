@@ -5,7 +5,7 @@ import { PARTNERS } from "@/lib/partners";
 import { TextScramble } from "@/components/ui/TextScramble";
 
 // ---------------------------------------------------------------------------
-// Homepage teaser — minimal partner logo-wall.
+// Homepage teaser - minimal partner logo-wall.
 // Full network lives on /partners. Data comes from @/lib/partners.
 // ---------------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ export default function SponsorShowcase() {
 
   return (
     <section ref={ref} className="relative py-16 md:py-20 px-6 md:px-12 lg:px-24">
-      {/* Background shield — keeps section darkness consistent over the circuit bg */}
+      {/* Background shield - keeps section darkness consistent over the circuit bg */}
       <div className="absolute inset-0 bg-[var(--color-bg)]/70 pointer-events-none" />
 
       <div className="relative z-[1]">
@@ -69,7 +69,7 @@ export default function SponsorShowcase() {
           verbonden aan 200+ ICT-studenten
         </div>
 
-        {/* Logo wall — wordmarks */}
+        {/* Logo wall - wordmarks */}
         <div className="flex flex-wrap items-center gap-x-8 gap-y-5 md:gap-x-12">
           {PARTNERS.map((p, i) => {
             const wordmark = (

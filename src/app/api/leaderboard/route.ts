@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     let bubble = null
     const member = memberResult.data
     if (memberId && member) {
-      // Above count, above list, and below list are independent — run in parallel
+      // Above count, above list, and below list are independent - run in parallel
       const [aboveCountResult, aboveResult, belowResult] = await Promise.all([
         supabase
           .from('members')

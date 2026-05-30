@@ -478,7 +478,7 @@ export default function KonamiGame() {
             />
           </div>
           <div style={{ color: BRAND.muted, fontSize: "11px", marginTop: "12px", opacity: 0.5 }}>
-            WASD / Arrow Keys to move — Catch items, avoid bugs
+            WASD / Arrow Keys to move - Catch items, avoid bugs
           </div>
         </>
       ) : (

@@ -5,7 +5,7 @@ import Lenis from "@studio-freight/lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Single registration point for ScrollTrigger — all other components
+// Single registration point for ScrollTrigger - all other components
 // import ScrollTrigger for API calls but do NOT register it again.
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ limitCallbacks: true });
@@ -59,7 +59,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         gsap.ticker.add(rafCallback);
         gsap.ticker.lagSmoothing(0);
       } catch {
-        // Lenis failed — fall back to native scroll (ScrollTrigger still works)
+        // Lenis failed - fall back to native scroll (ScrollTrigger still works)
       }
 
       // Batch a single ScrollTrigger.refresh() after everything is wired up

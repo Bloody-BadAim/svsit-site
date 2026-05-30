@@ -65,12 +65,12 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
 
     if (res.ok && json.data) {
       const { name, event_title } = json.data
-      setMessage(`TICKET CHECK-IN [OK] — ${name} voor ${event_title}`)
+      setMessage(`TICKET CHECK-IN [OK] - ${name} voor ${event_title}`)
       setMessageType('success')
       // Flash green with name
       setFlashName(name || 'Ingecheckt')
       setTimeout(() => setFlashName(null), 3000)
-      // Store last scan — punten 0 since this is just a check-in
+      // Store last scan - punten 0 since this is just a check-in
       setLaatsteScan({
         memberId: ticketId,
         email: name || ticketId,
@@ -111,7 +111,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
 
     if (res.ok) {
       const displayName = email || id
-      setMessage(`PUNTEN +${punten} — ${displayName} bij ${resolvedEventNaam || 'event'}`)
+      setMessage(`PUNTEN +${punten} - ${displayName} bij ${resolvedEventNaam || 'event'}`)
       setMessageType('success')
       setLaatsteScan({
         memberId: id,
@@ -160,7 +160,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
     } else if (detected.kind === 'ledenpas') {
       await submitScan(detected.id, detected.email)
     } else {
-      // Plain ID — treat as ledenpas member ID (existing behaviour)
+      // Plain ID - treat as ledenpas member ID (existing behaviour)
       await submitScan(memberId)
     }
   }
@@ -264,7 +264,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
         Auto-detect: Ticket check-in of Punten scan
       </div>
 
-      {/* Scanner config (punten + reden — only needed for ledenpas flow) */}
+      {/* Scanner config (punten + reden - only needed for ledenpas flow) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
@@ -372,7 +372,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
           <p className="text-sm" style={{ color: 'var(--color-text)' }}>
             {laatsteScan.email}
             {laatsteScan.punten > 0 && (
-              <> — <span style={{ color: 'var(--color-accent-gold)' }}>+{laatsteScan.punten}</span></>
+              <> - <span style={{ color: 'var(--color-accent-gold)' }}>+{laatsteScan.punten}</span></>
             )}
           </p>
         </div>

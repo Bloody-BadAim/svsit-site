@@ -482,7 +482,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
               {scanHistory.slice(0, 20).map((scan, i) => (
                 <div key={i} className="flex items-center justify-between py-1 px-2 rounded text-xs" style={{ backgroundColor: 'var(--color-bg)' }}>
                   <span style={{ color: 'var(--color-text-muted)' }}>
-                    {new Date(scan.created_at).toLocaleDateString('nl-NL')} — {scan.reason || scan.category}
+                    {new Date(scan.created_at).toLocaleDateString('nl-NL')} - {scan.reason || scan.category}
                   </span>
                   <span className="font-bold" style={{ color: 'var(--color-accent-gold)' }}>+{scan.points}</span>
                 </div>

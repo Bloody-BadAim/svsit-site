@@ -74,12 +74,12 @@ const FAQ_ITEMS: FaqItem[] = [
       "Commissies zijn teams van leden die specifieke taken op zich nemen: events organiseren, socials beheren, educatie content maken, games organiseren, en meer. Je kunt je bij aanmelding al voor een commissie opgeven, of later instappen.",
     icon: Users,
     color: "#3B82F6",
-    link: { href: "/commissies", label: "Bekijk commissies" },
+    link: { href: "/over-ons", label: "Bekijk commissies" },
   },
   {
     question: "Hoe werkt het XP / leaderboard systeem?",
     answer:
-      "Door events te bezoeken, badges te verdienen en actief te zijn verdien je XP. Hiermee stijg je in level en kun je op het leaderboard komen. Het is een leuke manier om je betrokkenheid te zien, maar volledig optioneel — je hoeft er niks mee te doen.",
+      "Door events te bezoeken, badges te verdienen en actief te zijn verdien je XP. Hiermee stijg je in level en kun je op het leaderboard komen. Het is een leuke manier om je betrokkenheid te zien, maar volledig optioneel - je hoeft er niks mee te doen.",
     icon: Trophy,
     color: "#F29E18",
     link: { href: "/leaderboard", label: "Leaderboard" },

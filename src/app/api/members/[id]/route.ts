@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 
-// GET — Lid ophalen (eigen profiel of admin)
+// GET - Lid ophalen (eigen profiel of admin)
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -51,7 +51,7 @@ export async function GET(
   }
 }
 
-// DELETE — Lid verwijderen (admin only)
+// DELETE - Lid verwijderen (admin only)
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -82,7 +82,7 @@ export async function DELETE(
   }
 }
 
-// PATCH — Update lid (eigen profiel of admin)
+// PATCH - Update lid (eigen profiel of admin)
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

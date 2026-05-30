@@ -5,7 +5,7 @@ import { createServiceClient } from '@/lib/supabase'
 import { checkAndGrantAutoBadges } from '@/lib/rewards'
 import { grantXp, calculateXpReward } from '@/lib/xpEngine'
 
-// GET — Scan geschiedenis per event (admin only)
+// GET - Scan geschiedenis per event (admin only)
 export async function GET(req: NextRequest) {
   try {
     const session = await auth()
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST — Punten toekennen (admin only)
+// POST - Punten toekennen (admin only)
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()

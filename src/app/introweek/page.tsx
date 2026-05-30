@@ -20,12 +20,12 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Introweek 2026 — {SIT}',
+  title: 'Introweek 2026 - {SIT}',
   description:
-    'Welkom bij HBO-ICT! SIT is de community voor ICT-studenten aan de HvA. Introweek 31 aug – 4 sep: events, workshops, en meer.',
+    'Welkom bij HBO-ICT! SIT is de community voor ICT-studenten aan de HvA. Introweek 31 aug - 4 sep: events, workshops, en meer.',
   openGraph: {
-    title: 'Introweek 2026 — {SIT}',
-    description: 'Introweek 31 aug – 4 sep: SIT Hub, Survival Quest, en Aloha Amsterdam. Word lid voor €9,99.',
+    title: 'Introweek 2026 - {SIT}',
+    description: 'Introweek 31 aug - 4 sep: SIT Hub, Survival Quest, en Aloha Amsterdam. Word lid voor €9,99.',
     siteName: '{SIT}',
     locale: 'nl_NL',
     type: 'website',
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Introweek 2026 — {SIT}',
-    description: 'Introweek 31 aug – 4 sep: SIT Hub, Survival Quest, en Aloha Amsterdam.',
+    title: 'Introweek 2026 - {SIT}',
+    description: 'Introweek 31 aug - 4 sep: SIT Hub, Survival Quest, en Aloha Amsterdam.',
   },
 }
 
@@ -44,7 +44,7 @@ const SCHEDULE = [
   {
     tag: 'HELE WEEK',
     title: 'SIT Hub',
-    date: 'ma 31 aug – vr 4 sep',
+    date: 'ma 31 aug - vr 4 sep',
     time: 'Doorlopend',
     location: 'Wibauthuis, 5e verdieping',
     color: '#3B82F6',
@@ -62,7 +62,7 @@ const SCHEDULE = [
     color: '#F29E18',
     icon: Compass,
     description:
-      'Interactieve scavenger hunt over de campus. Strijd in teams om punten — van Nintendo games tot prompt engineering challenges.',
+      'Interactieve scavenger hunt over de campus. Strijd in teams om punten - van Nintendo games tot prompt engineering challenges.',
     highlights: ['Teams van ~15', '8 stations', 'Nintendo games', 'Prompt engineering'],
   },
   {
@@ -74,7 +74,7 @@ const SCHEDULE = [
     color: '#22C55E',
     icon: Gamepad2,
     description:
-      'Bowling, lasergamen en glow minigolf bij Aloha Amsterdam — pal naast Centraal Station. Open voor iedereen!',
+      'Bowling, lasergamen en glow minigolf bij Aloha Amsterdam - pal naast Centraal Station. Open voor iedereen!',
     highlights: ['Bowling', 'Lasergamen', 'Glow minigolf', 'Nieuw lid? €10 all-in'],
   },
 ]
@@ -85,7 +85,7 @@ const PERKS = [
   {
     icon: Code,
     title: 'Gratis dev tools',
-    description: 'GitHub Education, JetBrains, en meer — via het SIT Starterpakket.',
+    description: 'GitHub Education, JetBrains, en meer - via het SIT Starterpakket.',
   },
   {
     icon: Calendar,
@@ -110,7 +110,7 @@ const PERKS = [
   {
     icon: Github,
     title: 'Projecten',
-    description: 'Bouw mee aan echte projecten — van de SIT website tot game servers.',
+    description: 'Bouw mee aan echte projecten - van de SIT website tot game servers.',
   },
 ]
 
@@ -198,7 +198,7 @@ export default function IntroweekPage() {
 
               <p className="font-mono text-sm md:text-base max-w-xl leading-relaxed mb-8" style={{ color: '#A1A1AA' }}>
                 SIT is de community van HBO-ICT aan de HvA. Events, workshops, hackathons,
-                game avonden — en als lid krijg je gratis dev tools en toegang tot alles.
+                game avonden - en als lid krijg je gratis dev tools en toegang tot alles.
               </p>
 
               {/* Date badge */}
@@ -212,7 +212,7 @@ export default function IntroweekPage() {
               >
                 <Calendar size={16} style={{ color: '#F29E18' }} />
                 <span className="font-mono text-sm font-semibold" style={{ color: '#F29E18' }}>
-                  31 aug – 4 sep 2026
+                  31 aug - 4 sep 2026
                 </span>
                 <span className="font-mono text-xs" style={{ color: '#71717A' }}>
                   Wibauthuis
@@ -492,12 +492,12 @@ export default function IntroweekPage() {
                   borderRadius: '6px',
                 }}
               >
-                WORD LID — €9,99
+                WORD LID - €9,99
                 <ArrowRight size={14} />
               </Link>
 
               <p className="font-mono text-xs mt-4" style={{ color: '#71717A' }}>
-                Of kom gewoon langs bij de SIT Hub — geen druk, geen verplichting.
+                Of kom gewoon langs bij de SIT Hub - geen druk, geen verplichting.
               </p>
 
               <div className="flex items-center justify-center gap-3 mt-4">

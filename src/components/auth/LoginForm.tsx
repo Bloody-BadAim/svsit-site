@@ -101,7 +101,7 @@ export default function LoginForm() {
           </p>
         )}
 
-        {/* Inloggen button — gold per design doc */}
+        {/* Inloggen button - gold per design doc */}
         <button
           type="submit"
           disabled={loading}

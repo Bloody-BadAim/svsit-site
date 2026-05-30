@@ -39,7 +39,7 @@ export default function SectionLabel({
         {/* <span className="absolute top-0 left-6 md:left-12 lg:left-24 right-6 md:right-12 lg:right-24 h-px bg-gradient-to-r from-[var(--color-accent-gold)] via-[var(--color-accent-gold)] to-transparent origin-left z-10" /> */}
       </div>
 
-      {/* Section title — large and readable */}
+      {/* Section title - large and readable */}
       <TextScramble
         as="h2"
         className="font-display text-2xl md:text-3xl font-bold text-[var(--color-text)] tracking-tight uppercase"

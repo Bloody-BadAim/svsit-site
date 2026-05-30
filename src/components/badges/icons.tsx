@@ -1,4 +1,4 @@
-// Badge SVG icons — stroke-based, 24x24 viewBox, no fills
+// Badge SVG icons - stroke-based, 24x24 viewBox, no fills
 
 import type { ReactElement } from 'react'
 
@@ -7,7 +7,7 @@ interface IconProps {
   color?: string
 }
 
-// 1. IconJoined — checkmark inside a circle
+// 1. IconJoined - checkmark inside a circle
 export function IconJoined({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -26,7 +26,7 @@ export function IconJoined({ size = 20, color = 'currentColor' }: IconProps): Re
   )
 }
 
-// 2. IconFirstEvent — ticket/admission ticket shape
+// 2. IconFirstEvent - ticket/admission ticket shape
 export function IconFirstEvent({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -45,7 +45,7 @@ export function IconFirstEvent({ size = 20, color = 'currentColor' }: IconProps)
   )
 }
 
-// 3. IconHackathon — code brackets </>
+// 3. IconHackathon - code brackets </>
 export function IconHackathon({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -65,7 +65,7 @@ export function IconHackathon({ size = 20, color = 'currentColor' }: IconProps):
   )
 }
 
-// 4. IconBorrel5 — a drink glass
+// 4. IconBorrel5 - a drink glass
 export function IconBorrel5({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -86,7 +86,7 @@ export function IconBorrel5({ size = 20, color = 'currentColor' }: IconProps): R
   )
 }
 
-// 5. IconBorrel10 — crown on top of a glass
+// 5. IconBorrel10 - crown on top of a glass
 export function IconBorrel10({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -107,7 +107,7 @@ export function IconBorrel10({ size = 20, color = 'currentColor' }: IconProps): 
   )
 }
 
-// 6. IconHelper — open hand (helping gesture)
+// 6. IconHelper - open hand (helping gesture)
 export function IconHelper({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -127,7 +127,7 @@ export function IconHelper({ size = 20, color = 'currentColor' }: IconProps): Re
   )
 }
 
-// 7. IconOG — vintage/old-style shield
+// 7. IconOG - vintage/old-style shield
 export function IconOG({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -147,7 +147,7 @@ export function IconOG({ size = 20, color = 'currentColor' }: IconProps): ReactE
   )
 }
 
-// 8. IconBestuur — curly braces { } (SIT logo style)
+// 8. IconBestuur - curly braces { } (SIT logo style)
 export function IconBestuur({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -166,7 +166,7 @@ export function IconBestuur({ size = 20, color = 'currentColor' }: IconProps): R
   )
 }
 
-// 9. IconStreak — flame
+// 9. IconStreak - flame
 export function IconStreak({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -184,7 +184,7 @@ export function IconStreak({ size = 20, color = 'currentColor' }: IconProps): Re
   )
 }
 
-// 10. IconAllrounder — star with radiating lines
+// 10. IconAllrounder - star with radiating lines
 export function IconAllrounder({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -202,7 +202,7 @@ export function IconAllrounder({ size = 20, color = 'currentColor' }: IconProps)
   )
 }
 
-// 11. IconFullstack — stacked layers (3 horizontal layers)
+// 11. IconFullstack - stacked layers (3 horizontal layers)
 export function IconFullstack({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -222,7 +222,7 @@ export function IconFullstack({ size = 20, color = 'currentColor' }: IconProps):
   )
 }
 
-// 12. IconAI — neural network (3 connected nodes)
+// 12. IconAI - neural network (3 connected nodes)
 export function IconAI({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -245,7 +245,7 @@ export function IconAI({ size = 20, color = 'currentColor' }: IconProps): ReactE
   )
 }
 
-// 13. IconSecurity — lock/padlock
+// 13. IconSecurity - lock/padlock
 export function IconSecurity({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -265,7 +265,7 @@ export function IconSecurity({ size = 20, color = 'currentColor' }: IconProps): 
   )
 }
 
-// 14. IconPartyAnimal — party hat (triangle with decorations)
+// 14. IconPartyAnimal - party hat (triangle with decorations)
 export function IconPartyAnimal({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -287,7 +287,7 @@ export function IconPartyAnimal({ size = 20, color = 'currentColor' }: IconProps
   )
 }
 
-// 15. IconCommunityBuilder — network/connections (nodes connected by lines)
+// 15. IconCommunityBuilder - network/connections (nodes connected by lines)
 export function IconCommunityBuilder({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg
@@ -313,7 +313,7 @@ export function IconCommunityBuilder({ size = 20, color = 'currentColor' }: Icon
   )
 }
 
-// 16. IconFirstPurchase — shopping bag
+// 16. IconFirstPurchase - shopping bag
 export function IconFirstPurchase({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -324,7 +324,7 @@ export function IconFirstPurchase({ size = 20, color = 'currentColor' }: IconPro
   )
 }
 
-// 17. IconProfileComplete — user with checkmark
+// 17. IconProfileComplete - user with checkmark
 export function IconProfileComplete({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -335,7 +335,7 @@ export function IconProfileComplete({ size = 20, color = 'currentColor' }: IconP
   )
 }
 
-// 18. IconStreak7 — lightning bolt (extended streak)
+// 18. IconStreak7 - lightning bolt (extended streak)
 export function IconStreak7({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -344,7 +344,7 @@ export function IconStreak7({ size = 20, color = 'currentColor' }: IconProps): R
   )
 }
 
-// 19. IconNightOwl — moon with stars
+// 19. IconNightOwl - moon with stars
 export function IconNightOwl({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -356,7 +356,7 @@ export function IconNightOwl({ size = 20, color = 'currentColor' }: IconProps): 
   )
 }
 
-// 20. IconMentor — graduation cap
+// 20. IconMentor - graduation cap
 export function IconMentor({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -366,7 +366,7 @@ export function IconMentor({ size = 20, color = 'currentColor' }: IconProps): Re
   )
 }
 
-// 21. IconDoubleXpDay — zap with sparkle (100+ XP in a day)
+// 21. IconDoubleXpDay - zap with sparkle (100+ XP in a day)
 export function IconDoubleXpDay({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -378,7 +378,7 @@ export function IconDoubleXpDay({ size = 20, color = 'currentColor' }: IconProps
   )
 }
 
-// 22. IconBossSlayer — crossed swords
+// 22. IconBossSlayer - crossed swords
 export function IconBossSlayer({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -395,7 +395,7 @@ export function IconBossSlayer({ size = 20, color = 'currentColor' }: IconProps)
   )
 }
 
-// 23. IconMaxCategory — chart bar (500+ XP in one category)
+// 23. IconMaxCategory - chart bar (500+ XP in one category)
 export function IconMaxCategory({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -407,7 +407,7 @@ export function IconMaxCategory({ size = 20, color = 'currentColor' }: IconProps
   )
 }
 
-// 24. IconHacker — terminal prompt
+// 24. IconHacker - terminal prompt
 export function IconHacker({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -417,7 +417,7 @@ export function IconHacker({ size = 20, color = 'currentColor' }: IconProps): Re
   )
 }
 
-// 25. IconCompletionist — trophy
+// 25. IconCompletionist - trophy
 export function IconCompletionist({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -431,7 +431,7 @@ export function IconCompletionist({ size = 20, color = 'currentColor' }: IconPro
   )
 }
 
-// 26. IconBdflWitness — eye (witness)
+// 26. IconBdflWitness - eye (witness)
 export function IconBdflWitness({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -443,7 +443,7 @@ export function IconBdflWitness({ size = 20, color = 'currentColor' }: IconProps
   )
 }
 
-// 27. Icon404 — clock showing 4:04
+// 27. Icon404 - clock showing 4:04
 export function Icon404({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -455,7 +455,7 @@ export function Icon404({ size = 20, color = 'currentColor' }: IconProps): React
   )
 }
 
-// 28. IconNoLife — calendar with all days checked
+// 28. IconNoLife - calendar with all days checked
 export function IconNoLife({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -468,7 +468,7 @@ export function IconNoLife({ size = 20, color = 'currentColor' }: IconProps): Re
   )
 }
 
-// 29. IconKonami — retro pixel arrow sequence (up up down down left right)
+// 29. IconKonami - retro pixel arrow sequence (up up down down left right)
 export function IconKonami({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -476,19 +476,19 @@ export function IconKonami({ size = 20, color = 'currentColor' }: IconProps): Re
       <rect x="4" y="8" width="16" height="12" rx="3" stroke={color} strokeWidth={1.5} />
       {/* D-pad */}
       <path d="M8 12V16M6 14H10" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
-      {/* Arrow sequence dots — the konami code */}
+      {/* Arrow sequence dots - the konami code */}
       <circle cx="15" cy="11.5" r="1" fill={color} opacity="0.9" />
       <circle cx="17.5" cy="13" r="1" fill={color} opacity="0.7" />
       <circle cx="15" cy="14.5" r="1" fill={color} opacity="0.5" />
       <circle cx="17.5" cy="16" r="1" fill={color} opacity="0.3" />
-      {/* Top arrows — up up */}
+      {/* Top arrows - up up */}
       <path d="M9 5L12 2L15 5" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
       <path d="M10 7L12 5L14 7" stroke={color} strokeWidth={1} strokeLinecap="round" opacity="0.5" />
     </svg>
   )
 }
 
-// 30. IconFirstBdfl — ornate crown with 3 jewels and radiant lines
+// 30. IconFirstBdfl - ornate crown with 3 jewels and radiant lines
 export function IconFirstBdfl({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -496,7 +496,7 @@ export function IconFirstBdfl({ size = 20, color = 'currentColor' }: IconProps):
       <line x1="12" y1="1" x2="12" y2="4" stroke={color} strokeWidth={0.8} opacity="0.3" />
       <line x1="6" y1="3" x2="8" y2="5" stroke={color} strokeWidth={0.8} opacity="0.3" />
       <line x1="18" y1="3" x2="16" y2="5" stroke={color} strokeWidth={0.8} opacity="0.3" />
-      {/* Crown body — elaborate */}
+      {/* Crown body - elaborate */}
       <path d="M3 8L6 14H18L21 8L17 12L12 6L7 12L3 8Z" stroke={color} strokeWidth={1.5} strokeLinejoin="round" fill={color} fillOpacity="0.1" />
       {/* Crown base */}
       <rect x="5" y="14" width="14" height="3" rx="1" stroke={color} strokeWidth={1.5} fill={color} fillOpacity="0.08" />
@@ -511,7 +511,7 @@ export function IconFirstBdfl({ size = 20, color = 'currentColor' }: IconProps):
   )
 }
 
-// 31. IconFounderXi — shield with XI monogram and laurel wreath
+// 31. IconFounderXi - shield with XI monogram and laurel wreath
 export function IconFounderXi({ size = 20, color = 'currentColor' }: IconProps): ReactElement {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -519,7 +519,7 @@ export function IconFounderXi({ size = 20, color = 'currentColor' }: IconProps):
       <path d="M12 2L3 6V12C3 16.97 7.03 21 12 22C16.97 21 21 16.97 21 12V6L12 2Z" stroke={color} strokeWidth={1.5} fill={color} fillOpacity="0.06" />
       {/* Inner shield border */}
       <path d="M12 4.5L5.5 7.5V12C5.5 15.87 8.36 19.2 12 20C15.64 19.2 18.5 15.87 18.5 12V7.5L12 4.5Z" stroke={color} strokeWidth={0.6} opacity="0.3" />
-      {/* XI monogram — bold and centered */}
+      {/* XI monogram - bold and centered */}
       <text x="12" y="14.5" textAnchor="middle" fontFamily="monospace" fontSize="8" fontWeight="bold" fill={color} opacity="0.9">XI</text>
       {/* Laurel branches */}
       <path d="M5 18C6.5 16 8 15 9 15" stroke={color} strokeWidth={0.8} opacity="0.4" strokeLinecap="round" />

@@ -34,12 +34,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "{SIT} — Studievereniging ICT",
+  title: "{SIT} - Studievereniging ICT",
   metadataBase: "https://svsit.nl",
   description:
     "De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Door studenten. Voor studenten. In tech.",
   openGraph: {
-    title: "{SIT} — Studievereniging ICT",
+    title: "{SIT} - Studievereniging ICT",
     description:
       "De studievereniging voor HBO-ICT studenten aan de HvA. Events, community, en alles wat je studietijd beter maakt.",
     siteName: "{SIT}",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "{SIT} — Studievereniging ICT",
+    title: "{SIT} - Studievereniging ICT",
     description:
       "De studievereniging voor HBO-ICT studenten aan de HvA. Events, community, en alles wat je studietijd beter maakt.",
   },
@@ -81,7 +81,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              name: "SIT — Studievereniging ICT",
+              name: "SIT - Studievereniging ICT",
               alternateName: "SIT",
               url: "https://svsit.nl",
               logo: "https://svsit.nl/icon.svg",

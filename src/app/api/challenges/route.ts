@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 
-// GET — List active challenges (authenticated users)
+// GET - List active challenges (authenticated users)
 export async function GET(req: NextRequest) {
   try {
     const session = await auth()
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST — Create challenge (admin only)
+// POST - Create challenge (admin only)
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()

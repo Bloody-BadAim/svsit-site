@@ -447,7 +447,7 @@ export default function MemberCard({
             style={{ inset: 10, border: `1px solid ${skinDef.innerBorder || 'rgba(255,255,255,0.05)'}` }}
           />
 
-          {/* Frame corner decorations — only if frame equipped */}
+          {/* Frame corner decorations - only if frame equipped */}
           {frameVisuals && (() => {
             const cc = frameVisuals.cornerColor;
             return (

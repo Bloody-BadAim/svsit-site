@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { requireAdmin, handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 
-// GET — List all pending submissions (admin only)
+// GET - List all pending submissions (admin only)
 export async function GET() {
   try {
     const result = await requireAdmin()

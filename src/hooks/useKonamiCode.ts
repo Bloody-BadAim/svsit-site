@@ -40,7 +40,7 @@ export function useKonamiCode(onActivate: () => void): KonamiState {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ triggerId: 'konami' }),
-            }).catch(() => {/* silently ignore — user may not be logged in */});
+            }).catch(() => {/* silently ignore - user may not be logged in */});
             return 0;
           }
           return next;

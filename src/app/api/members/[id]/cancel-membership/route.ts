@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 
-// POST — Lidmaatschap opzeggen (eigen profiel)
+// POST - Lidmaatschap opzeggen (eigen profiel)
 export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

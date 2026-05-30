@@ -7,7 +7,7 @@ const FEED_DATA = [
   { who: "GameIT", act: "merged D&D-avond #14", tag: "gameit", color: "var(--color-accent-red)" },
   { who: "AI4HvA", act: "deployde AI Marathon 2026", tag: "ai", color: "var(--color-accent-blue)" },
   { who: "Hugo", act: "scheduled tech talk: Clean Code", tag: "educo", color: "var(--color-accent-green)" },
-  { who: "Matin", act: "signed sponsor — ChipSoft", tag: "sponsoring", color: "var(--color-accent-gold)" },
+  { who: "Matin", act: "signed sponsor - ChipSoft", tag: "sponsoring", color: "var(--color-accent-gold)" },
   { who: "Community", act: "onboardde 12 nieuwe leden", tag: "community", color: "var(--color-accent-blue)" },
   { who: "ServCo", act: "shipped svsit.nl v11", tag: "servco", color: "var(--color-accent-blue)" },
   { who: "Thijmen", act: "boekte Thuishaven feest", tag: "events", color: "var(--color-accent-gold)" },

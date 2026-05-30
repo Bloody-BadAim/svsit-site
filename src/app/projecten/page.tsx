@@ -61,7 +61,7 @@ export default function ProjectenPage() {
           {'>'} projecten
         </h1>
         <p className="font-mono text-sm" style={{ color: 'var(--color-text-muted)' }}>
-          Gebouwd door SIT leden — hackathon winnaars, community tools, games en meer
+          Gebouwd door SIT leden - hackathon winnaars, community tools, games en meer
         </p>
       </div>
 

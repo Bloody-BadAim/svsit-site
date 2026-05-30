@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import bcrypt from 'bcryptjs'
 
-// PATCH — Wachtwoord wijzigen
+// PATCH - Wachtwoord wijzigen
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

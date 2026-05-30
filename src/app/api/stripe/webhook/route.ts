@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
       const invoice = event.data.object
       const customerId = invoice.customer as string
 
-      // Skip eerste invoice — die wordt al afgehandeld door checkout.session.completed
+      // Skip eerste invoice - die wordt al afgehandeld door checkout.session.completed
       if (invoice.billing_reason === 'subscription_create') {
         console.log(`[webhook] Skipping initial invoice for customer: ${customerId}`)
         break

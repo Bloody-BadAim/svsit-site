@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import "./circuitBackground.css";
 
 /**
- * CircuitBackground — full-page fixed circuit-board background.
+ * CircuitBackground - full-page fixed circuit-board background.
  *
  * Ported from the Claude Design handoff (sit/project/hero): a PCB canvas with
  * Manhattan traces, vias, SMD parts and glowing energy pulses, plus a fixed
@@ -106,7 +106,7 @@ export default function CircuitBackground() {
     let statics: HTMLCanvasElement | null = null;
     let raf = 0;
 
-    // Pre-rendered radial-glow sprite per color — drawImage is GPU-cheap and
+    // Pre-rendered radial-glow sprite per color - drawImage is GPU-cheap and
     // replaces per-frame ctx.shadowBlur (the dominant cost in the old engine).
     const glowCache = new Map<string, HTMLCanvasElement>();
     function glowSprite(col: string): HTMLCanvasElement {

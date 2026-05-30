@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 
-// GET — Alle projecten (publiek)
+// GET - Alle projecten (publiek)
 export async function GET() {
   try {
     const supabase = createServiceClient()
@@ -20,7 +20,7 @@ export async function GET() {
   }
 }
 
-// POST — Project aanmaken (admin only)
+// POST - Project aanmaken (admin only)
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()

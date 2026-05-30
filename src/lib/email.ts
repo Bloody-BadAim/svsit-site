@@ -82,7 +82,7 @@ export async function sendTicketEmail(params: SendTicketParams) {
         minute: '2-digit',
       })
     : null
-  const timeStr = endTime ? `${startTime} — ${endTime}` : startTime
+  const timeStr = endTime ? `${startTime} - ${endTime}` : startTime
 
   // Format price
   const priceStr =
@@ -127,7 +127,7 @@ export async function sendTicketEmail(params: SendTicketParams) {
   await transporter.sendMail({
     from: process.env.SMTP_FROM || 'SIT <matin.khajehfard@svsit.nl>',
     to: params.to,
-    subject: `Je ticket voor ${params.eventTitle} — {SIT}`,
+    subject: `Je ticket voor ${params.eventTitle} - {SIT}`,
     html,
     ...(pdfBuffer ? {
       attachments: [{

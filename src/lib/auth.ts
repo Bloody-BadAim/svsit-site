@@ -53,7 +53,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const limit = rateLimit(email)
         if (!limit.success) {
           console.warn(
-            `[auth] Rate limit hit for: ${email} — reset in ${limit.resetIn}s`
+            `[auth] Rate limit hit for: ${email} - reset in ${limit.resetIn}s`
           )
           throw new RateLimitError()
         }

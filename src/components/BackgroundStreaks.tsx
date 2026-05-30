@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 /**
- * BackgroundStreaks — Brand kit diagonal lines with ICT/network data flow.
+ * BackgroundStreaks - Brand kit diagonal lines with ICT/network data flow.
  *
  * Concept: diagonal lines at -22° (matching Figma brand kit) start perfectly
  * straight, then develop subtle bends as you scroll. Small "data packets"

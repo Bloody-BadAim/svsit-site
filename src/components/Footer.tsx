@@ -7,7 +7,6 @@ import SitLogo from "@/components/SitLogo";
 const NAV_LINKS = [
   { href: "/over-ons", label: "Over Ons", type: "dir" },
   { href: "/events", label: "Events", type: "dir" },
-  { href: "/commissies", label: "Commissies", type: "dir" },
   { href: "/projecten", label: "Projecten", type: "dir" },
   { href: "/partners", label: "Partners", type: "dir" },
   { href: "/vacatures", label: "Vacatures", type: "dir" },

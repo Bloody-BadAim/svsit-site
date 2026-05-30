@@ -4,7 +4,7 @@ import { createServiceClient } from '@/lib/supabase'
 import { auth } from '@/lib/auth'
 import { handleError } from '@/lib/apiAuth'
 
-// POST — Nieuw lid aanmaken (registratie)
+// POST - Nieuw lid aanmaken (registratie)
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET — Ledenlijst (admin only)
+// GET - Ledenlijst (admin only)
 export async function GET() {
   try {
     const session = await auth()

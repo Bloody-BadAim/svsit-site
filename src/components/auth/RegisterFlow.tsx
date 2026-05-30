@@ -448,7 +448,7 @@ export default function RegisterFlow() {
                 color: 'var(--color-bg)',
               }}
             >
-              {loading ? 'Bezig...' : 'Word lid — €9,99/jaar'}
+              {loading ? 'Bezig...' : 'Word lid - €9,99/jaar'}
               {!loading && <ArrowRight size={14} />}
             </button>
 
@@ -476,14 +476,14 @@ export default function RegisterFlow() {
         </div>
       )}
 
-      {/* Socials — always visible */}
+      {/* Socials - always visible */}
       <div
         className="mt-10 pt-8"
         style={{ borderTop: '1px solid var(--color-border)' }}
       >
         <p className="font-mono text-xs text-center mb-4" style={{ color: 'var(--color-text-muted)' }}>
           <span style={{ color: 'var(--color-accent-green)' }}>{'// '}</span>
-          volg ons — mis niks
+          volg ons - mis niks
         </p>
         <div className="flex flex-wrap justify-center gap-2">
           {SOCIALS.map((s) => (

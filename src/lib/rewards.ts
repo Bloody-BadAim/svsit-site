@@ -1,4 +1,4 @@
-// src/lib/rewards.ts — V2 rewrite
+// src/lib/rewards.ts - V2 rewrite
 import { createServiceClient } from '@/lib/supabase'
 import { grantBadge } from '@/lib/badgeEngine'
 import type { StatCategory } from '@/types/database'
@@ -130,7 +130,7 @@ export async function checkAndGrantAutoBadges(memberId: string): Promise<string[
     .map((b) => b.id)
   const hasAllUpToEpic = commonToEpicIds.every((id) => ownedBadges.has(id))
 
-  // Auto-grant checks — scan-based
+  // Auto-grant checks - scan-based
   if (scanCount >= 1 && await grantBadge(memberId, 'badge_first_event')) granted.push('badge_first_event')
   if (borrelCount >= 5 && await grantBadge(memberId, 'badge_borrel_5')) granted.push('badge_borrel_5')
   if (borrelCount >= 10 && await grantBadge(memberId, 'badge_borrel_10')) granted.push('badge_borrel_10')
@@ -138,7 +138,7 @@ export async function checkAndGrantAutoBadges(memberId: string): Promise<string[
   if (hasStreak3 && await grantBadge(memberId, 'badge_streak_3')) granted.push('badge_streak_3')
   if (hasStreak7 && await grantBadge(memberId, 'badge_streak_7')) granted.push('badge_streak_7')
 
-  // Auto-grant checks — profile/purchase/xp
+  // Auto-grant checks - profile/purchase/xp
   if (profileComplete && await grantBadge(memberId, 'badge_profile_complete')) granted.push('badge_profile_complete')
   if (purchases && purchases.length > 0 && await grantBadge(memberId, 'badge_first_purchase')) granted.push('badge_first_purchase')
   if (hasXpDay && await grantBadge(memberId, 'badge_double_xp_day')) granted.push('badge_double_xp_day')

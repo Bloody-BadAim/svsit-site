@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Partners — single source of truth
+// Partners - single source of truth
 // Used by the homepage teaser (SponsorShowcase) and the /partners network page.
 // Add a new partner here and both surfaces update.
 // ---------------------------------------------------------------------------
@@ -35,14 +35,14 @@ export const PARTNERS: Partner[] = [
   {
     name: "HvA",
     tier: "strategisch",
-    tagline: "Onze hogeschool — de thuisbasis van elke SIT-student.",
+    tagline: "Onze hogeschool - de thuisbasis van elke SIT-student.",
     url: "https://www.hva.nl",
     slug: "hva",
   },
   {
     name: "CERN",
     tier: "strategisch",
-    tagline: "Europees lab voor deeltjesfysica — waar ICT op wereldschaal draait.",
+    tagline: "Europees lab voor deeltjesfysica - waar ICT op wereldschaal draait.",
     url: "https://home.cern",
     slug: "cern",
   },
@@ -56,7 +56,7 @@ export const PARTNERS: Partner[] = [
   {
     name: "JetBrains",
     tier: "sponsor",
-    tagline: "Developer tools — de IDE's die je elke dag draait.",
+    tagline: "Developer tools - de IDE's die je elke dag draait.",
     url: "https://www.jetbrains.com",
     slug: "jetbrains",
   },
@@ -84,7 +84,7 @@ export const PARTNERS: Partner[] = [
   {
     name: "FemIT",
     tier: "partner",
-    tagline: "Vrouwen in IT — community & inclusie.",
+    tagline: "Vrouwen in IT - community & inclusie.",
     url: "https://www.femit.nl",
     slug: "femit",
   },

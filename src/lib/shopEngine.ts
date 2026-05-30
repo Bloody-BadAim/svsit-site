@@ -76,7 +76,7 @@ export async function purchaseItem(
       .from('shop_transactions')
       .insert({ member_id: memberId, accessory_id: accessoryId, coins_spent: 0 })
   } else {
-    // Atomic purchase via Supabase RPC — prevents TOCTOU race condition
+    // Atomic purchase via Supabase RPC - prevents TOCTOU race condition
     // The RPC checks duplicate ownership, verifies balance, deducts coins,
     // inserts accessory, and logs transaction in a single transaction.
     const { data: result, error } = await supabase.rpc('purchase_item', {
@@ -91,7 +91,7 @@ export async function purchaseItem(
     if (!rpcResult.success) return { success: false, error: rpcResult.error }
   }
 
-  // Decrease stock (outside RPC — not race-critical since stock is advisory)
+  // Decrease stock (outside RPC - not race-critical since stock is advisory)
   if (item.stock !== null) {
     await supabase
       .from('accessory_definitions')

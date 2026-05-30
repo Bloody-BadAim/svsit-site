@@ -5,7 +5,7 @@ import { equipBadge, unequipBadge } from '@/lib/badgeEngine'
 import { getBadgeSlotCount } from '@/lib/levelEngine'
 import { createServiceClient } from '@/lib/supabase'
 
-// POST /api/badges — equip or unequip a badge via the member_badges table
+// POST /api/badges - equip or unequip a badge via the member_badges table
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()
