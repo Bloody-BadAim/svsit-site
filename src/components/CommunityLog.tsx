@@ -37,8 +37,14 @@ function daysUntilIntroweek(): number {
 
 export default function CommunityLog() {
   const [rows, setRows] = useState<FeedRow[]>([]);
+  const [days, setDays] = useState<number | null>(null);
   const indexRef = useRef(0);
   const idRef = useRef(0);
+
+  // Bereken pas na mount: Date.now() in render geeft anders hydration mismatch (React #418).
+  useEffect(() => {
+    setDays(daysUntilIntroweek());
+  }, []);
 
   // Initial fill
   useEffect(() => {
@@ -147,7 +153,7 @@ export default function CommunityLog() {
         <span>
           introweek in{" "}
           <strong className="text-[var(--color-accent-gold)]">
-            {daysUntilIntroweek()}
+            {days ?? "-"}
           </strong>{" "}
           dagen
         </span>

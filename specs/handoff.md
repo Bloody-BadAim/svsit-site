@@ -1,13 +1,13 @@
 # Handoff - SIT Website (svsit.nl) - 2026-05-30
 
 ## Doel
-Commissie- en about-pagina samengevoegd tot een stamboom ("Het Moederbord"), rommel opgeruimd, partners in navbar, em dashes weg (anti-slop).
+Commissie- en about-pagina samengevoegd tot een stamboom ("Het Moederbord"), rommel opgeruimd, partners in navbar, em dashes weg (anti-slop). Gecommit + gedeployed.
 
 ## Status
 - Fase: Post-launch onderhoud (geen losse taak-ID)
-- Taak: Sessie 20 - Moederbord cleanup + nav + foto's + anti-slop KLAAR
+- Taak: Sessie 20 - Moederbord cleanup + nav + foto's + anti-slop + DEPLOY KLAAR
 - Gate: n.v.t. (live site)
-- Nog niet gecommit/gedeployed (wacht op user-akkoord)
+- Commit `3bb2958` gepusht naar main, gedeployed naar Vercel prod (svsit.nl)
 
 ## Gewijzigde files (deze sessie)
 - `src/lib/moederbord.ts` - foto's wesley/mats/nick/idil/matin gevuld, riley naar .jpg
@@ -19,23 +19,26 @@ Commissie- en about-pagina samengevoegd tot een stamboom ("Het Moederbord"), rom
 - Hele src: alle em/en dashes (314) vervangen door hyphen
 
 ## Wat werkt
-- npx next build groen: /over-ons (static), /partners, /commissies + /organisatie (308 redirects)
-- Footer had Partners-link al, geen commissies/organisatie meer
-- Geen placeholder-copy (alle "placeholder" hits zijn form-attributes)
+- Commit 3bb2958 (135 files) gepusht + Vercel deploy groen, svsit.nl live
+- Lighthouse desktop alle paginas: / Perf 93 (CLS 0.05), /over-ons 99, /events 100, /partners 100, /projecten 100, /vacatures 100, /faq 100, /introweek 100. Alle TBT 0ms, LCP 0.5-0.7s
+- Homepage laagst (93) door CLS 0.05 - kleine layout shift, enige verbeterpunt
+- /commissies + /organisatie -> 308 redirect naar /over-ons (geverifieerd live)
 
 ## Wat niet werkte / geleerde lessen
-- Geen problemen. Box-drawing comments (U+2500) bleven staan; alleen echte em/en dash (U+2014/2013) vervangen.
+- Lighthouse faalde eerst met "Unable to connect to Chrome" - npx default zoekt geen Chrome. Fix: CHROME_PATH=/usr/bin/google-chrome-stable + --chrome-flags="--headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage"
 
 ## Blokkades
 - Geen
 
 ## Volgende stappen
-1. Commit + Vercel deploy (wacht op user-akkoord)
+1. Homepage CLS 0.05 + React error #418 (hydration text mismatch) fixen
 2. Foto's Liam/Thijmen/Jamiro/Yusuf toevoegen wanneer beschikbaar (nu initialen)
 3. Visuele QA: 7 modules in 1 rij op desktop kan krap zijn
+4. NOTION_API_KEY check in Vercel env (oude TODO)
 
 ## Key context (voor nieuwe sessie)
 - Stamboom-bron = /over-ons (Moederbord). /commissies + /organisatie zijn 308 redirects.
 - Data single source: src/lib/moederbord.ts. Bestuur XII = 4 leden met "over"-intro.
 - Foto-bron map: C:\Users\matin\Desktop\HvA\SIT\Bestuur\XII (Liam/Thijmen/Jamiro/Yusuf ontbreken nog)
 - Partners staan nu OOK in navbar (vorige sessie bewust alleen footer; user wilde navbar erbij)
+- Lighthouse runnen: CHROME_PATH=/usr/bin/google-chrome-stable npx --no-install lighthouse <url> --chrome-flags="--headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage"
