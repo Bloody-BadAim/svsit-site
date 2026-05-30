@@ -236,8 +236,11 @@ export default function SectionDivider({
   return (
     <div
       aria-hidden="true"
-      className={`w-full pointer-events-none ${className}`}
-      style={VARIANTS[variant]}
-    />
+      className={`relative w-full pointer-events-none ${className}`}
+    >
+      {/* Background shield — keeps divider darkness consistent over the circuit bg */}
+      <div className="absolute inset-0 bg-[var(--color-bg)]/70" />
+      <div className="relative" style={VARIANTS[variant]} />
+    </div>
   );
 }
