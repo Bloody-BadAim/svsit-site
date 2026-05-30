@@ -65,15 +65,15 @@ export default function Home() {
         <main id="main-content" className="relative z-[1] flex-1">
           <Hero />
           <About />
-          <SectionDivider variant="scroll" />
+          <SectionDivider variant="line" />
           <WhyJoin />
-          <SectionDivider variant="scroll" />
+          <SectionDivider variant="line" />
           <Events />
           <EventTicker />
           <Testimonials />
-          <SectionDivider variant="scroll" />
+          <SectionDivider variant="line" />
           <SponsorShowcase />
-          <SectionDivider variant="scroll" />
+          <SectionDivider variant="line" />
           <JoinCta />
         </main>
         <Footer />
