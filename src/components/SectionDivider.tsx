@@ -1,5 +1,5 @@
 interface SectionDividerProps {
-  variant?: "glow" | "line" | "fade" | "battle";
+  variant?: "glow" | "line" | "fade" | "battle" | "scroll";
   className?: string;
 }
 
@@ -219,6 +219,21 @@ export default function SectionDivider({
 }: SectionDividerProps) {
   if (variant === "battle") {
     return <PixelBattle />;
+  }
+
+  // Gold line + chevron, matching the hero "scroll down" indicator.
+  if (variant === "scroll") {
+    return (
+      <div
+        aria-hidden="true"
+        className={`w-full pointer-events-none flex flex-col items-center gap-1.5 py-12 md:py-16 ${className}`}
+      >
+        <div className="w-px h-8 bg-gradient-to-b from-transparent via-[var(--color-accent-gold)]/40 to-[var(--color-accent-gold)]/70" />
+        <span className="font-mono text-xs text-[var(--color-accent-gold)] opacity-70">
+          ▼
+        </span>
+      </div>
+    );
   }
 
   return (

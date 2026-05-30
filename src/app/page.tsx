@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import PageScrollProgress from "@/components/PageScrollProgress";
+import SectionDivider from "@/components/SectionDivider";
 
 export const metadata: Metadata = {
   title: "{SIT} — Studievereniging ICT | HvA Amsterdam",
@@ -63,14 +64,16 @@ export default function Home() {
         <Navbar />
         <main id="main-content" className="relative z-[1] flex-1">
           <Hero />
-          {/* <SectionDivider variant="glow" /> */}
           <About />
-          {/* <SectionDivider variant="line" /> */}
+          <SectionDivider variant="scroll" />
           <WhyJoin />
+          <SectionDivider variant="scroll" />
           <Events />
           <EventTicker />
           <Testimonials />
+          <SectionDivider variant="scroll" />
           <SponsorShowcase />
+          <SectionDivider variant="scroll" />
           <JoinCta />
         </main>
         <Footer />

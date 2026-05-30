@@ -67,6 +67,10 @@ export default function SponsorShowcase() {
       ref={ref}
       className="relative py-16 md:py-20 px-6 md:px-12 lg:px-24"
     >
+      {/* Background shield — keeps section darkness consistent over the circuit bg */}
+      <div className="absolute inset-0 bg-[var(--color-bg)]/70 pointer-events-none" />
+
+      <div className="relative z-[1]">
       {/* Top accent line */}
       <div
         className="absolute top-0 left-6 md:left-12 lg:left-24 right-6 md:right-12 lg:right-24 h-px"
@@ -199,6 +203,7 @@ export default function SponsorShowcase() {
             {config.label}
           </span>
         ))}
+      </div>
       </div>
     </section>
   );

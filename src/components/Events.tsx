@@ -156,6 +156,10 @@ export default function Events() {
       id="events"
       className="relative pt-28 md:pt-40 pb-20 md:pb-28 px-6 md:px-12 lg:px-24"
     >
+      {/* Background shield — keeps section darkness consistent over the circuit bg */}
+      <div className="absolute inset-0 bg-[var(--color-bg)]/70 pointer-events-none" />
+
+      <div className="relative z-[1]">
       <SectionLabel number="03" label="Events" />
 
       {/* ── Filter pills ── */}
@@ -340,6 +344,7 @@ export default function Events() {
             Meer events worden aangekondigd...
           </p>
         </div>
+      </div>
       </div>
     </section>
   );

@@ -176,7 +176,7 @@ export default function Hero() {
     <section
       ref={heroRef}
       data-hero
-      className="relative flex items-center justify-center min-h-screen overflow-hidden"
+      className="relative flex items-center justify-center min-h-screen overflow-hidden pt-24 md:pt-28"
     >
       {/* Background = fixed CircuitBackground layer (rendered page-wide in page.tsx) */}
 
