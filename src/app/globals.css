@@ -218,6 +218,32 @@ body::before {
   -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black 10%, transparent 60%);
 }
 
+/* Hero overlay: dim background and apply subtle blur to improve contrast */
+.hero-overlay {
+  background: rgba(9, 9, 11, 0.6); /* stronger dim than previous 0.3 */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background-color 180ms ease, backdrop-filter 180ms ease;
+}
+
+/* Content wrapper hook (keeps z-indexing explicit) */
+.hero-content {
+  /* preserve existing stacking via utility classes; kept for future hooks */
+}
+
+/* Respect reduced-motion / provide toggle class */
+@media (prefers-reduced-motion: reduce) {
+  .hero-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+.reduce-motion .hero-overlay {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 /* Focus-visible styles for keyboard accessibility */
 :focus-visible {
   outline: 2px solid var(--color-accent-gold);

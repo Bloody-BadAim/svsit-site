@@ -183,10 +183,15 @@ export default function Hero() {
       data-hero
       className="relative flex items-center justify-center min-h-screen overflow-hidden pt-24 md:pt-28"
     >
+      {/* Dimming overlay to improve text contrast & optional blur */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-0 hero-overlay pointer-events-none"
+      />
       {/* Background = fixed CircuitBackground layer (rendered page-wide in page.tsx) */}
 
       {/* -- Content -- */}
-      <div className="relative z-10 flex flex-col items-start px-6 md:px-12 lg:px-24 w-full max-w-[1400px] mb-[8vh]">
+      <div className="hero-content relative z-10 flex flex-col items-start px-6 md:px-12 lg:px-24 w-full max-w-[1400px] mb-[8vh]">
         <div className="flex items-start gap-4 md:gap-8 lg:gap-12 w-full">
           {/* Line numbers */}
           <div className="hidden md:flex flex-col font-mono text-[var(--color-text-muted)] text-sm leading-[1.8] select-none opacity-30">
