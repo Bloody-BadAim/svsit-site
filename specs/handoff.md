@@ -1,44 +1,40 @@
 # Handoff — SIT Website (svsit.nl) — 2026-05-31
 
 ## Doel
-2 taken: (A) member-pas-scannen-voor-punten werkt niet goed met XP -> opgeruimd. (B) leden kunnen XP zichtbaar/verborgen zetten, geldt voor email EN leaderboard.
+Introweek pagina vervangen met Claude Design hyperspace handoff. Twee introweken (september 2026). Em dashes weg, encrypted decrypt-effect behouden.
 
 ## Status
 - Fase: 4 Implement (post-launch onderhoud, live op main)
-- Taak: T-scan-cleanup (A) + T-xp-visibility (B), MIDDEN IN UITVOERING
+- Taak: T-introweek-redesign AF (niet gecommit)
 - Gate: launch APPROVED (svsit.nl live)
-- Vorige taak T-leesbaarheid AF + gepusht (commit b67ce30)
+- Commits: nog GEEN voor deze taak. Wacht op user OK voor commit+push.
 
-## Diagnose (waarom A "werkt niet goed")
-- MyCardTab QR -> `svsit.nl/scan/{id}` = 404 (geen /scan route bestaat)
-- MemberCard `showQR` ({id,email} JSON) = nergens gerenderd (MyCardTab gaf showQR nooit door)
-- QRScanner ledenpas-modus verwacht JSON, getoonde QR is URL -> altijd invalid
-- /api/scans XP-bug: admin typt points 1-10, maar grant = FLAT calculateXpReward (5/10/25), points genegeerd
-- Event-XP dubbelt: self check-in (25) + admin scan
-- BESLISSING (wees artist): broken scan-flow + QR HELEMAAL WEG. Event-XP = enkel self check-in code. Admin handmatige punten (MemberDetailModal) blijft, maar XP = points fixen.
+## Gewijzigde files (deze sessie)
+- `src/app/introweek/page.tsx` — herschreven: server component, metadata (em dashes weg) + Navbar/IntroweekClient/Footer
+- `src/app/introweek/IntroweekClient.tsx` — NIEUW, 'use client', ~750 regels: boot overlay, 3D circuit hyperspace canvas, scramble hero, live countdown (31 aug 2026), TWEE-weken toggle (5 daycards elk), 3D tilt, expandable cards, decrypt-on-hover locked cards, survival kit, boarding-pass ticket finale, scoped `.iw` CSS
 
-## Gewijzigde files (deze sessie) — A deels klaar
-- `src/components/MemberCard.tsx` — KLAAR: showQR prop + QR render + qrData + react-qr-code import weg. Avatar = sticker/initialen.
-- `src/components/dashboard/tabs/MyCardTab.tsx` — KLAAR: FlipCard QR-back weg, showQR state + QR-knop weg, QRCode import weg. Card direct gerenderd (data-card div), 3 knoppen (EDIT/SAVE/SHARE). useEffect import behouden (ActivityRow gebruikt het).
+## Wat werkt
+- tsc --noEmit groen + npm run build groen, /introweek prerendert static (○)
+- Twee-weken toggle via React state `week`, week-panels met `.show` class
+- Hyperspace canvas, scramble, countdown, tilt, decrypt allemaal geport naar useEffect met cleanup
+- Em dashes overal weg (copy, scramble char set, JS consts). Lucide icons ipv emoji/inline SVG
 
-## Volgende stappen (NOG TE DOEN)
-1. Commit (2 atomic: A scan-cleanup, B xp-visibility). NIET pushen zonder user OK.
-
-## AF deze sessie (A + B code KLAAR, tsc + build groen)
-- A1 `QRScanner.tsx`: ledenpas-modus weg, alleen ticket check-in (parseTicketId + handleTicketCheckin + handmatige ticket-invoer). KLAAR.
-- A2 `api/scans/route.ts` POST: `const xpAmount = points` (was calculateXpReward), import weg. KLAAR.
-- B `api/members/[id]/route.ts`: leaderboard_visible in GET select + beide PATCH allowlists. KLAAR.
-- B `dashboard/profiel/page.tsx`: toggle xp.visibility (optimistic PATCH). KLAAR.
-- B `api/leaderboard/route.ts`: filter op 4 queries + isHidden flag. KLAAR.
-- B `leaderboard/page.tsx` (server, eigen queries): filter op top10 + bubble + isHidden. KLAAR.
-- B `leaderboard/LeaderboardContent.tsx`: isHidden prop + verborgen-melding. KLAAR.
-- B `api/cron/weekly-digest/route.ts`: top5 leaderboard `.eq('leaderboard_visible', true)`. KLAAR.
+## Wat niet werkte / geleerde lessen
+- TS custom CSS prop: `as React.CSSProperties` faalt (geen React namespace in nieuwe JSX transform) — gebruik `import { type CSSProperties } from 'react'` + `as CSSProperties`
+- Vanilla JS IIFEs (global DOM query) -> useEffect met rootRef-scoped querySelectorAll + cleanup. Tilt/expand/decrypt deps `[week]` zodat ze rebinden bij panel-switch
+- Design CSS scoped onder `.iw` + iw-prefixed keyframes om collision met grote globals.css te voorkomen
 
 ## Blokkades
 - Geen
 
-## Key context
-- Anti-slop: NOOIT dashes/emojis in UI, alleen Lucide icons. Caveman mode actief (prose terse, code normaal).
-- /api/scans ook gebruikt door MemberDetailModal (handmatig punten, geen event_id) + EventDetailPanel GET (lijst). Niet verwijderen.
-- MemberCardData.memberId/email velden blijven (share-link gebruikt memberId). Geen consument meer voor QR.
-- Supabase ref plgcqkbfvzwkqzkggmfh. ENIGE andere open punt: live Stripe e2e (user zelf).
+## Volgende stappen
+1. User OK vragen -> commit `feat: vervang introweek pagina met twee-weken hyperspace design` + push
+2. TODO vorige sessie: foto's Liam/Thijmen/Jamiro/Yusuf op /over-ons (nu initialen)
+3. Live Stripe e2e test (user zelf)
+
+## Key context (voor nieuwe sessie)
+- Design bron: /tmp/sit-handoff/sit/project/ (Introweek.html, introweek.css, introweek.js, introweek-hyperspace.js) — Claude Design bundle
+- Beslissing: project Navbar+Footer behouden voor site-consistentie, alleen design BODY herbouwd (niet de design eigen terminal-nav/footer)
+- Countdown target: `new Date('2026-08-31T13:00:00+02:00')`
+- Anti-slop: NOOIT dashes/emojis in UI, alleen Lucide icons. Caveman mode actief (full)
+- Supabase ref plgcqkbfvzwkqzkggmfh
