@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { COMMISSIES } from '@/lib/constants'
-import { Lightbulb, Check } from 'lucide-react'
+import { Lightbulb, Check, UserRound } from 'lucide-react'
 
 interface ClassSelectorProps {
   selected: string | null
@@ -26,6 +26,35 @@ export default function ClassSelector({
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Geen commissie - lid worden is genoeg, commissie is optioneel */}
+        <button
+          type="button"
+          onClick={() => {
+            onSelect(null)
+            setShowEigenIdee(false)
+          }}
+          className="text-left p-4 rounded-lg transition-all duration-200"
+          style={{
+            backgroundColor: selected === null && !isDocent ? 'rgba(242, 158, 24, 0.1)' : 'var(--color-surface)',
+            border: selected === null && !isDocent
+              ? '2px solid var(--color-accent-gold)'
+              : '1px solid var(--color-border)',
+          }}
+        >
+          <div className="flex items-center gap-3 mb-1">
+            <UserRound className="w-5 h-5" style={{ color: selected === null && !isDocent ? 'var(--color-accent-gold)' : 'var(--color-text-muted)' }} />
+            <span
+              className="font-semibold"
+              style={{ color: selected === null && !isDocent ? 'var(--color-accent-gold)' : 'var(--color-text)' }}
+            >
+              Nog geen voorkeur
+            </span>
+          </div>
+          <p className="text-sm ml-8" style={{ color: 'var(--color-text-muted)' }}>
+            Word gewoon lid. Een commissie kiezen kan altijd later.
+          </p>
+        </button>
+
         {COMMISSIES.map((commissie) => (
           <button
             key={commissie.id}
