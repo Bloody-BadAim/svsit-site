@@ -322,7 +322,7 @@ function DetailSheet({
           </button>
         </div>
 
-        <div className="sheet-body">
+        <div className="sheet-body" data-lenis-prevent>
           <div className="sheet-hero">
             <Avatar
               personKey={isComm ? c!.voorzitter : b!.person}

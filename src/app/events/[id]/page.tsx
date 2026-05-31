@@ -121,6 +121,11 @@ export default async function EventDetailPage(
   const spotsLeft = typedEvent.capacity !== null ? typedEvent.capacity - soldCount : null
   const isSoldOut = spotsLeft !== null && spotsLeft <= 0
 
+  // Past / completed / cancelled events should not show the signup form
+  const isCancelled = typedEvent.status === 'cancelled'
+  const isPast = typedEvent.status === 'completed' || new Date(typedEvent.date).getTime() < Date.now()
+  const hideSignup = isCancelled || isPast
+
   // Check-in: determine if we should show the check-in form
   const session = await auth()
   const isLoggedIn = !!session?.user?.id
@@ -428,8 +433,26 @@ export default async function EventDetailPage(
           </div>
         )}
 
-        {/* Ticket form or external link */}
-        {typedEvent.external_ticket_url ? (
+        {/* Ticket form or external link (hidden for past / completed / cancelled events) */}
+        {hideSignup ? (
+          // For past events without a published recap, show a small status note.
+          // When a recap is published, the Terugblik section below speaks for itself.
+          !typedEvent.recap_published && (
+            <div
+              className="mb-8 rounded-lg px-5 py-6 text-center"
+              style={{ background: '#18181B', border: '1px solid #27272A' }}
+            >
+              <p className="font-mono text-sm" style={{ color: '#A1A1AA' }}>
+                {isCancelled ? 'Dit event is afgelast.' : 'Dit event is geweest.'}
+              </p>
+              {!isCancelled && (
+                <p className="font-mono text-xs mt-2" style={{ color: '#71717A' }}>
+                  De terugblik volgt binnenkort.
+                </p>
+              )}
+            </div>
+          )
+        ) : typedEvent.external_ticket_url ? (
           <div className="mb-8">
             <a
               href={typedEvent.external_ticket_url}

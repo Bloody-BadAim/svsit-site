@@ -232,28 +232,37 @@ function RecapCard({ event }: { event: SitEvent }) {
   const day = dateObj.getDate()
   const months = ['JAN', 'FEB', 'MRT', 'APR', 'MEI', 'JUN', 'JUL', 'AUG', 'SEP', 'OKT', 'NOV', 'DEC']
   const month = months[dateObj.getMonth()]
-  const photoCount = event.recap_photos?.length ?? 0
+  const photos = event.recap_photos ?? []
 
   return (
-    <Link
-      href={`/events/${event.id}`}
-      className="group relative block rounded-lg overflow-hidden transition-all duration-200 hover:translate-y-[-2px]"
+    <div
+      className="relative rounded-lg overflow-hidden"
       style={{
         background: '#18181B',
         border: '1px solid #27272A',
       }}
     >
-      <div className="p-5">
-        <div className="flex items-start justify-between gap-3 mb-3">
+      {/* Top accent line */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px] opacity-50"
+        style={{ background: `linear-gradient(90deg, ${cat.color}, ${cat.color}00)` }}
+      />
+
+      <div className="p-5 sm:p-6">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
             <div className="font-mono text-center leading-none flex-shrink-0" style={{ color: '#71717A' }}>
               <div className="text-lg font-bold">{day}</div>
               <div className="text-[10px] tracking-widest mt-0.5 opacity-70">{month}</div>
             </div>
             <span className="w-1 h-1 rounded-full flex-shrink-0 opacity-40" style={{ background: '#71717A' }} />
-            <h2 className="font-mono text-sm sm:text-base font-semibold text-[#A1A1AA] group-hover:text-white transition-colors leading-tight">
+            <Link
+              href={`/events/${event.id}`}
+              className="font-mono text-sm sm:text-base font-semibold text-[#A1A1AA] hover:text-white transition-colors leading-tight"
+            >
               {event.title}
-            </h2>
+            </Link>
           </div>
           <span
             className="flex items-center gap-1 font-mono text-[10px] tracking-widest px-2 py-0.5 rounded-sm uppercase flex-shrink-0"
@@ -268,22 +277,42 @@ function RecapCard({ event }: { event: SitEvent }) {
           </span>
         </div>
 
+        {/* Full description */}
         {event.recap_description && (
-          <p className="text-xs text-[#71717A] leading-relaxed line-clamp-2 mb-3">
+          <p className="text-sm text-[#A1A1AA] leading-relaxed whitespace-pre-line mb-4">
             {event.recap_description}
           </p>
         )}
 
-        <div className="flex items-center justify-between">
-          <span className="font-mono text-[10px] text-[#71717A]">
-            {photoCount > 0 ? `${photoCount} foto${photoCount === 1 ? '' : "'s"}` : 'Lees meer'}
-          </span>
-          <span className="font-mono text-xs tracking-wider uppercase text-[#71717A] group-hover:text-[#D4D4D8] transition-colors">
-            Bekijk &rarr;
-          </span>
-        </div>
+        {/* Photo gallery */}
+        {photos.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {photos.map((url, i) => (
+              <a
+                key={i}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative aspect-[4/3] overflow-hidden group"
+                style={{
+                  borderRadius: '6px',
+                  border: '1px solid #27272A',
+                  backgroundColor: '#09090B',
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={url}
+                  alt={`${event.title} foto ${i + 1}`}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </a>
+            ))}
+          </div>
+        )}
       </div>
-    </Link>
+    </div>
   )
 }
 
@@ -360,7 +389,7 @@ export default async function EventsPage() {
               </span>
               <span className="flex-1 h-px" style={{ backgroundColor: '#27272A' }} />
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {recapList.map((event) => (
                 <RecapCard key={event.id} event={event} />
               ))}

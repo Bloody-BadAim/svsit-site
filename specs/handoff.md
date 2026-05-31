@@ -1,45 +1,37 @@
-# Handoff — SIT Website (svsit.nl) — 2026-05-31
+# Handoff — SIT website (svsit.nl) — 2026-05-31
 
 ## Doel
-Post-launch onderhoud. Juridische docs + Moederbord module-content. Live op main, Vercel auto-deploy.
+Events-pagina: recaps (foto's + beschrijving) inline tonen + geen aanmeldform op events die geweest zijn.
 
 ## Status
-- Fase: 4 Implement (post-launch onderhoud, live op main)
-- Taak: naam-fix + /documenten gebouwd (NIET gecommit). Volgende: Mats zijn Moederbord-module content
+- Fase: 4 Implement (post-launch, live op main)
+- Taak: events-page recap inline + signup-guard (sessie 27d) — KLAAR, NIET gecommit
 - Gate: launch APPROVED (svsit.nl live)
-- Commits: `f1cbf89` (privacyverklaring + footer link, GEPUSHT). Daarna NIET gecommit: naam-fix + /documenten + footer links
 
 ## Gewijzigde files (deze sessie, NIET gecommit)
-- `src/app/privacy/PrivacyContent.tsx` — naam "wie"-body -> "Studievereniging Innovatie en Technologie (SIT)"
-- `src/components/Footer.tsx` — export-ident -> StudieverenigingInnovatieEnTechnologie; NAV_LINKS: /privacy + /documenten links
-- `src/app/documenten/page.tsx` — NIEUW server metadata
-- `src/app/documenten/DocumentenContent.tsx` — NIEUW client, terminal-stijl, 3 doc-cards
-- `public/documenten/statuten-sit-2015.pdf` — NIEUW (614KB, uit XII-map)
+- `src/app/events/page.tsx` — RecapCard herschreven: geen Link-wrapper, full description (whitespace-pre-line) + foto-grid (grid-cols-2 sm:3, clickable img target=_blank, lazy), title los klikbaar. space-y-3 -> space-y-4.
+- `src/app/events/[id]/page.tsx` — `hideSignup` vlag (isCancelled || isPast: status==='completed' OF date<now). hideSignup -> geen TicketForm/extern. Geen recap_published -> status note ("Dit event is geweest"/"afgelast"). Recap published -> bestaande Terugblik sectie doet rest.
 
 ## Wat werkt
-- /privacy live (f1cbf89 gepusht), naam-fix lokaal klaar
-- /documenten lokaal klaar: Statuten download + HHR/Jaarverslag "binnenkort". tsc groen
-- Footer-links /privacy + /documenten
+- tsc --noEmit clean
+- Moederbord scroll-lock + Mats/Idil tekst + EduCo cross-highlight + socials (f5b97c1, gepusht)
+- Recap photo upload: public bucket + admin API route + file-input UI (daecfbf, gepusht, browser-getest werkt)
 
 ## Wat niet werkte / geleerde lessen
-- Grep `-i` param moet boolean zijn, niet string -> gebruik `[Hh]` regex ipv -i flag
+- Geen .env lokaal (keys in Vercel) -> e2e upload alleen via browser testbaar
 
 ## Blokkades
 - Geen
 
 ## Volgende stappen
-1. NIEUWE TAAK (Mats): bij openen van Mats zijn Moederbord detail-module moeten bepaalde dingen bovenaan/eerst staan. User vertelt details NA compact. Moederbord = src/components/Moederbord.tsx (DetailSheet), data src/lib/moederbord.ts (PEOPLE/BESTUUR/COMMISSIES)
-2. COMMIT pending: naam-fix + /documenten + footer (wacht op user "commit en push")
-3. HHR: zodra ALV bekrachtigt -> PDF in public/documenten + status "beschikbaar" in DocumentenContent
-4. TODO ouder: foto's Liam/Thijmen/Yusuf op /over-ons (initialen)
-5. SECURITY: rk_live key roteren (~/.config/stripe/live-restricted.key)
+1. NIET committen tot Matin "commit en push" zegt
+2. Visueel verifieren: /events (recap-cards) + /events/[id] van completed event
+3. Open TODOs: foto's Thijmen/Yusuf/Liam (initialen), HHR PDF na ALV, rotate Stripe rk_live key, NOTION_API_KEY weg uit Vercel
 
 ## Key context (voor nieuwe sessie)
-- Moederbord single source: `src/lib/moederbord.ts` (PEOPLE/BESTUUR 4 leden/COMMISSIES 7). DetailSheet altijd-gemount, body-lock guard op `selected`. CSS src/components/moederbord.css (.sheet-body flex:1 1 auto + min-height:0)
-- HHR-richting: geen los doc bestaat, ALV 8 mei agendapunt 9 "Bekrachtiging HHR", commissie BXI "3.7 HHR Art.20". HHR=flexibele laag bovenop vaste statuten, via ALV bekrachtigd
-- Statuten 2015 PDF: `C:\Users\matin\Desktop\HvA\SIT\Bestuur\XII\Statuten, 2015.pdf` -> gekopieerd naar public
-- Officiele naam = "Studievereniging Innovatie en Technologie (SIT)" (notarieel 26 nov 2015). Brand "{SIT}" elders mag blijven
-- Page-pattern: page.tsx (server, metadata) + Content.tsx (client). Wrap page-public + Navbar + main#main-content paddingTop 5rem + Footer
-- Terminal tokens: #F29E18 gold/#22C55E green/#3B82F6 blue/#A78BFA purple/#18181B surface/#27272A border/#A1A1AA text/#FAFAFA bright
-- Anti-slop: NOOIT dashes/emojis in UI, alleen Lucide icons. Commit alleen op expliciet "commit en push"
+- CAVEMAN MODE full actief (terse prose, normale code/commits)
+- Commit/push ALLEEN op expliciet "commit en push"
+- Recap-data: events tabel kolommen recap_description, recap_photos[], recap_published. Upload via /api/events/[id]/recap-photos (admin, service client, bucket 'recaps' public)
+- Codebase strip diacritics in NL tekst (echt niet echt)
 - Repo Bloody-BadAim/svsit-site, branch main. Supabase ref plgcqkbfvzwkqzkggmfh
+- Terminal tokens: #F29E18 gold/#22C55E green/#3B82F6 blue/#18181B surface/#27272A border/#71717A muted/#A1A1AA text/#FAFAFA bright
