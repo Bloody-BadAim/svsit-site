@@ -98,6 +98,16 @@ export default function RegisterFlow() {
     try {
       await createAccount()
 
+      // Log nieuwe credentials-user in, anders heeft de checkout-route geen sessie
+      if (!isMicrosoft && password) {
+        const result = await signIn('credentials', {
+          email,
+          password,
+          redirect: false,
+        })
+        if (result?.error) throw new Error('Inloggen na registratie mislukt')
+      }
+
       // Start Stripe checkout
       const checkoutRes = await fetch('/api/stripe/create-checkout', {
         method: 'POST',
