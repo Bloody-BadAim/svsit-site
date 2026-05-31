@@ -1,46 +1,35 @@
 # Handoff — SIT website (svsit.nl) — 2026-05-31
 
 ## Doel
-Post-launch onderhoud. Sessie 28: security-scan + secret-audit (Stripe + NOTION). Live op main, Vercel auto-deploy.
+Post-launch onderhoud SIT-verenigingssite. Live op main, Vercel auto-deploy.
 
 ## Status
 - Fase: 4 Implement (post-launch, live op main)
-- Sessie 28 KLAAR: security-scan repo (schoon) + NOTION_API_KEY-audit (niet in code). Handoff genoteerd, 2 docs-commits gepusht
+- Sessie 28 AFGESLOTEN: security-scan repo (schoon) + NOTION_API_KEY-audit (niet in code)
 - Gate: launch APPROVED (svsit.nl live)
 - Working tree schoon, niks open in code
 
-## Commits deze sessie (gepusht naar main)
-- `12179c5` docs: security-scan resultaat in handoff
-- `de3c936` docs: NOTION_API_KEY niet in code, alleen Vercel-env
-
-## Vorige sessie (27) — COMMIT `afe08c6` gepusht
-- `src/app/events/page.tsx` — RecapCard herschreven: full description + foto-grid inline (geen doorklik)
-- `src/app/events/[id]/page.tsx` — hideSignup vlag (cancelled/completed/verlopen) verbergt TicketForm + status-note
-- `src/components/Moederbord.tsx` — data-lenis-prevent op .sheet-body (wheel-scroll in module)
+## Gewijzigde files (deze sessie)
+- `specs/handoff.md` — security-scan + NOTION-audit genoteerd, sessie afgerond
 
 ## Wat werkt
-- Events: recaps tonen foto's+beschrijving inline op /events; geweest events tonen geen aanmeldform
-- Moederbord module wheel-scroll: Playwright-getest (scrollTop 0->142, background frozen)
-- Recap photo upload (sessie 27, daecfbf): public bucket + admin API + UI, browser-getest
+- Repo secret-clean: geen secrets in tracked files/history, .env* gitignored, 18 secrets via process.env
+- NOTION_API_KEY niet in code (alleen notion_id DB-kolom = legit member-sync)
+- Vorige sessie 27 (afe08c6): events-recap inline + signup-guard + Moederbord wheel-scroll, gepusht
 
 ## Wat niet werkte / geleerde lessen
-- Module wheel-scroll — Lenis (SmoothScroll.tsx, smoothWheel:true) kaapt alle wheel events globaal — fix: data-lenis-prevent op scroll-container. Symptoom: scrollbar-drag werkt, wiel niet
-- Dev server opruimen: turbopack respawnt, kill -9 npm-wrapper nodig
+- Grep-tool kapot (ripgrep binary ENOENT in pnpm-path) — fallback: `git grep` via Bash
+- Stripe rk_live key staat plaintext in ~/.config/stripe/live-restricted.key (perms 600, NIET in repo) — alleen lokaal
 
 ## Blokkades
-- Geen
+- Geen (code af). Resterende items vereisen externe input/dashboards
 
-## Volgende stappen
-1. Visueel verifieren op live (svsit.nl) na deploy: /events recaps + completed /events/[id] + Moederbord scroll
-2. Foto's Thijmen/Yusuf/Liam (nu initialen in moederbord.ts, photo:null)
+## Volgende stappen (allemaal extern, geen code)
+1. Visueel verifieren live svsit.nl: /events recaps + completed /events/[id] + Moederbord scroll
+2. Foto's Thijmen/Yusuf/Liam (nu photo:null in moederbord.ts)
 3. HHR PDF na ALV-bekrachtiging -> public/documenten + status "beschikbaar"
-4. SECURITY: rotate Stripe rk_live key (~/.config/stripe/live-restricted.key) -- OPTIONEEL, lage urgentie (zie scan hieronder)
-5. NOTION_API_KEY weg uit Vercel env -- NIET in code (geen process.env-ref, geen notion-dep, alleen notion_id DB-kolom = legit). Puur Vercel-dashboard actie: Settings > Environment Variables > NOTION_API_KEY verwijderen
-
-## Security-scan (2026-05-31)
-- Repo SCHOON: geen secrets in tracked files (service_role in SQL = RLS-docs, geen key), geen .env ooit gecommit, .env* gitignored, alle 18 secrets via process.env, niks hardcoded
-- Gelekte file ~/.config/stripe/live-restricted.key: rk_live_ restricted key, perms 600 (owner-only), NIET in repo/history. Plaintext op schijf maar correct afgeschermd. Roteren = optioneel (restricted scope, lage urgentie), kan alleen via Stripe-dashboard
-- Verdict: codebase-kant geen actie nodig
+4. Stripe rk_live roteren via Stripe-dashboard (OPTIONEEL, lage urgentie, restricted scope)
+5. NOTION_API_KEY weg uit Vercel-env (Settings > Environment Variables) — niet in code
 
 ## Key context (voor nieuwe sessie)
 - CAVEMAN MODE full actief (terse prose, normale code/commits)
@@ -49,3 +38,4 @@ Post-launch onderhoud. Sessie 28: security-scan + secret-audit (Stripe + NOTION)
 - Recap-data: events kolommen recap_description, recap_photos[], recap_published. Upload via /api/events/[id]/recap-photos (admin, service client, bucket 'recaps' public)
 - Codebase strip diacritics in NL tekst (echt niet echt)
 - Repo Bloody-BadAim/svsit-site, branch main. Supabase ref plgcqkbfvzwkqzkggmfh
+- Sessie 28 commits: 12179c5, de3c936, e57d752 (allemaal docs, gepusht)
