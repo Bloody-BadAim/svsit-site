@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 // ---------------------------------------------------------------------------
-// SIT_CURSOR.sys — developer/debugger HUD cursor.
+// SIT_CURSOR.sys - developer/debugger HUD cursor.
 // Gold crosshair reticle (1:1) + soft follower ring + magnetic lock-on +
 // live coordinate HUD + terminal caret over text fields + exec ripple on click.
 // Self-isolated: own <style>, hides native cursor only on fine-pointer devices,
@@ -33,7 +33,7 @@ export default function CustomCursor() {
     const root = rootRef.current;
     if (!root) return;
 
-    // Bail on coarse/touch pointers — keep the native cursor.
+    // Bail on coarse/touch pointers - keep the native cursor.
     const fine =
       typeof window.matchMedia === "function" &&
       window.matchMedia("(pointer: fine)").matches;

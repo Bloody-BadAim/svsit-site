@@ -188,7 +188,7 @@ function BoardChip({
       onClick={() => onClick({ type: "bestuur", id: m.id })}
     >
       <span className="board-code">{m.code}</span>
-      <Avatar personKey={m.person} color={m.color} size={62} />
+      <Avatar personKey={m.person} color={m.color} size={92} />
       <span className="board-name">{p.name}</span>
       <span className="board-role">{m.role}</span>
     </button>
@@ -242,7 +242,7 @@ function ModuleCard({
         {c.sub && <em>/{c.sub}</em>}
       </span>
       <span className="mod-vz">
-        <Avatar personKey={c.voorzitter} color={c.color} size={30} />
+        <Avatar personKey={c.voorzitter} color={c.color} size={44} />
         <span className="mod-vz-txt">
           <b>{vz ? vz.name : "Vacant"}</b>
           <i>{vz ? "Voorzitter" : "Zoekt voorzitter"}</i>
@@ -320,7 +320,7 @@ function DetailSheet({
             <Avatar
               personKey={isComm ? c!.voorzitter : b!.person}
               color={color}
-              size={84}
+              size={108}
             />
             <div>
               {isComm ? (

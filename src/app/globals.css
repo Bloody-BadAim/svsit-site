@@ -10,7 +10,7 @@
   --color-surface-hover: #1A1A1D;
   --color-border: rgba(255, 255, 255, 0.06);
   --color-text: #FAFAFA;
-  --color-text-muted: #888891;
+  --color-text-muted: #9CA3AF;
   --color-accent-gold: #F29E18;
   --color-accent-blue: #3B82F6;
   --color-accent-red: #EF4444;
@@ -64,6 +64,12 @@
   --font-display: var(--font-big-shoulders), 'Big Shoulders Display', sans-serif;
   --font-mono: var(--font-mono);
   --font-heading: var(--font-mono);
+  /* Leesbaarheid: kleine teksten (muted/p/descriptions) waren te klein.
+     xs 12->13px, sm 14->15px. Globaal, mobile-first. */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.15rem;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.4rem;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -257,7 +263,7 @@ body::before {
 
 /* ─── Events Section: Gaming UI Animations ─── */
 
-/* Glitch flicker — EventList hover (50ms, 2 frames) */
+/* Glitch flicker - EventList hover (50ms, 2 frames) */
 @keyframes glitchFlicker {
   0% {
     transform: translate(-2px, 0);
@@ -279,7 +285,7 @@ body::before {
   animation: glitchFlicker 50ms steps(2) forwards;
 }
 
-/* Glitch out — EventDetail exit transition (150ms) */
+/* Glitch out - EventDetail exit transition (150ms) */
 @keyframes glitchOut {
   0% {
     opacity: 1;
@@ -308,7 +314,7 @@ body::before {
   }
 }
 
-/* Scan reveal — EventDetail entrance (300ms) */
+/* Scan reveal - EventDetail entrance (300ms) */
 @keyframes scanReveal {
   from {
     clip-path: inset(0 0 100% 0);
@@ -319,7 +325,7 @@ body::before {
   }
 }
 
-/* Ambient scanline — persistent on detail panel (8s) */
+/* Ambient scanline - persistent on detail panel (8s) */
 @keyframes ambientScan {
   0% {
     transform: translateY(-100%);
@@ -330,7 +336,7 @@ body::before {
   }
 }
 
-/* Status indicator pulse — upcoming events (1.5s) */
+/* Status indicator pulse - upcoming events (1.5s) */
 @keyframes statusPulse {
 
   0%,
@@ -343,7 +349,7 @@ body::before {
   }
 }
 
-/* Horizontal blip — EventList hover feedback (100ms) */
+/* Horizontal blip - EventList hover feedback (100ms) */
 @keyframes hBlip {
   0% {
     transform: scaleX(0);
@@ -385,7 +391,7 @@ body::before {
   }
 }
 
-/* Hero code rain — pure CSS falling characters */
+/* Hero code rain - pure CSS falling characters */
 .code-rain-column {
   animation: rain-fall linear infinite;
   will-change: transform;
@@ -401,7 +407,7 @@ body::before {
   }
 }
 
-/* Member card holographic shine — composited with transform */
+/* Member card holographic shine - composited with transform */
 @keyframes cardShine {
 
   0%,
@@ -431,7 +437,7 @@ body::before {
   }
 }
 
-/* Pixel battle — SectionDivider easter egg (combined to avoid transform conflict) */
+/* Pixel battle - SectionDivider easter egg (combined to avoid transform conflict) */
 @keyframes pixelBattle {
 
   0%,
@@ -595,7 +601,7 @@ body::before {
   }
 }
 
-/* Border trail rotation — GPU composited via transform */
+/* Border trail rotation - GPU composited via transform */
 @keyframes borderTrailRotate {
   from {
     transform: rotate(0deg);
@@ -905,7 +911,7 @@ body::before {
   50%       { opacity: 1; transform: translateY(-6px) scale(1); }
 }
 
-/* Legacy compat — kept for any existing usages */
+/* Legacy compat - kept for any existing usages */
 @keyframes badge-particle-rotate {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

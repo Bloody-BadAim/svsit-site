@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   HET MOEDERBORD — scoped onder .mb-root, hergebruikt site-fonts.
+   HET MOEDERBORD - scoped onder .mb-root, hergebruikt site-fonts.
    Keyframes hernoemd (mb*) om globale botsingen te voorkomen.
    ═══════════════════════════════════════════════════════════ */
 
@@ -10,8 +10,8 @@
   --mb-line: rgba(255, 255, 255, 0.07);
   --mb-line2: rgba(255, 255, 255, 0.12);
   --mb-text: #fafafa;
-  --mb-muted: #888891;
-  --mb-muted2: #5b5b63;
+  --mb-muted: #9ca3af;
+  --mb-muted2: #6b6b74;
   --mb-gold: #f29e18;
   --mb-blue: #3b82f6;
   --mb-red: #ef4444;
@@ -60,7 +60,7 @@
 @keyframes mbpulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 .mb-root .cb-title { font-family: var(--mb-display); font-weight: 900; text-transform: uppercase; font-size: clamp(46px, 8.4vw, 118px); line-height: 0.92; letter-spacing: -0.01em; margin: 0; color: var(--mb-text); }
 .mb-root .cb-title span { color: var(--mb-gold); text-shadow: 0 0 calc(40px * var(--gm)) rgba(242, 158, 24, 0.45); }
-.mb-root .cb-lede { font-family: var(--mb-mono); font-size: clamp(13px, 1.4vw, 16px); line-height: 1.75; color: var(--mb-muted); max-width: 640px; margin: 24px 0 0; text-wrap: pretty; }
+.mb-root .cb-lede { font-family: var(--mb-mono); font-size: clamp(14px, 1.5vw, 17px); line-height: 1.75; color: var(--mb-muted); max-width: 640px; margin: 24px 0 0; text-wrap: pretty; }
 .mb-root .cb-lede b { color: var(--mb-text); font-weight: 700; }
 
 /* ── stage ── */
@@ -100,7 +100,7 @@
 
 .mb-root .board-chip {
   display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
-  padding: 16px 14px 14px; width: clamp(120px, 16vw, 168px); border-radius: 12px;
+  padding: 16px 14px 14px; width: clamp(140px, 17vw, 184px); border-radius: 12px;
   border: 1px solid var(--mb-line); background: var(--mb-surface2);
   position: relative; transition: border-color 0.3s, background 0.3s, transform 0.3s, opacity 0.3s, box-shadow 0.3s;
 }
@@ -109,7 +109,7 @@
 .mb-root .board-chip.is-dim { opacity: 0.32; }
 .mb-root .board-code { font-family: var(--mb-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.22em; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent); padding: 1px 7px; border-radius: 4px; }
 .mb-root .board-name { font-family: var(--mb-display); font-weight: 800; font-size: clamp(17px, 2vw, 22px); text-transform: uppercase; letter-spacing: 0.01em; line-height: 1; }
-.mb-root .board-role { font-family: var(--mb-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c); }
+.mb-root .board-role { font-family: var(--mb-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c); }
 
 /* ── chip avatar ── */
 .mb-root .chip-frame {
@@ -142,16 +142,16 @@
 @media (max-width: 899px) { .mb-root .mod-pad { top: 50%; left: -7px; transform: translateY(-50%); } }
 .mb-root .mod-head { display: flex; align-items: center; justify-content: space-between; }
 .mb-root .mod-code { font-family: var(--mb-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.2em; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); padding: 1px 7px; border-radius: 4px; }
-.mb-root .mod-status { display: flex; align-items: center; gap: 5px; font-family: var(--mb-mono); font-size: 8px; letter-spacing: 0.14em; color: var(--mb-muted); }
+.mb-root .mod-status { display: flex; align-items: center; gap: 5px; font-family: var(--mb-mono); font-size: 9.5px; letter-spacing: 0.12em; color: var(--mb-muted); }
 .mb-root .mod-status i { width: 5px; height: 5px; border-radius: 50%; background: var(--st, var(--mb-green)); box-shadow: 0 0 6px var(--st, var(--mb-green)); }
 .mb-root .mod-name { display: block; min-height: 2.16em; margin-top: 12px; font-family: var(--mb-display); font-weight: 800; font-size: clamp(14px, 1.45vw, 17px); text-transform: uppercase; line-height: 1.08; letter-spacing: 0.01em; word-break: normal; overflow-wrap: break-word; }
 .mb-root .mod-name em { display: block; font-style: normal; color: var(--mb-muted); font-size: 0.6em; margin-top: 3px; letter-spacing: 0.04em; }
 .mb-root .mod-vz { display: flex; align-items: center; gap: 9px; margin-top: 12px; }
 .mb-root .mod-vz-txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
-.mb-root .mod-vz-txt b { font-family: var(--mb-mono); font-size: 12px; font-weight: 600; color: var(--mb-text); }
-.mb-root .mod-vz-txt i { font-family: var(--mb-mono); font-style: normal; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c); }
-.mb-root .mod-tag { font-family: var(--mb-mono); font-size: 11px; line-height: 1.5; color: #c8c8cf; margin: 12px 0 0; text-wrap: pretty; }
-.mb-root .mod-cta { font-family: var(--mb-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c); opacity: 0.7; transition: opacity 0.3s; margin-top: auto; padding-top: 14px; }
+.mb-root .mod-vz-txt b { font-family: var(--mb-mono); font-size: 13px; font-weight: 600; color: var(--mb-text); }
+.mb-root .mod-vz-txt i { font-family: var(--mb-mono); font-style: normal; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c); }
+.mb-root .mod-tag { font-family: var(--mb-mono); font-size: 12.5px; line-height: 1.55; color: #d0d0d7; margin: 12px 0 0; text-wrap: pretty; }
+.mb-root .mod-cta { font-family: var(--mb-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c); opacity: 0.78; transition: opacity 0.3s; margin-top: auto; padding-top: 14px; }
 .mb-root .module:hover .mod-cta, .mb-root .module.is-active .mod-cta { opacity: 1; }
 
 /* ── footer / CTA ── */
@@ -163,7 +163,7 @@
 .mb-root .term-bar i:nth-child(2) { background: var(--mb-gold); }
 .mb-root .term-bar i:nth-child(3) { background: var(--mb-green); }
 .mb-root .term-bar span { font-family: var(--mb-mono); font-size: 10px; color: var(--mb-muted2); margin-left: 6px; }
-.mb-root .term-body { padding: 15px 16px; font-family: var(--mb-mono); font-size: 13px; line-height: 1.85; }
+.mb-root .term-body { padding: 15px 16px; font-family: var(--mb-mono); font-size: 14px; line-height: 1.85; }
 .mb-root .term-body p { margin: 0; color: #d4d4d8; }
 .mb-root .c-mut { color: var(--mb-muted2); }
 .mb-root .c-grn { color: var(--mb-green); }
@@ -179,7 +179,7 @@
 }
 .mb-root .btn-join:hover { transform: scale(1.035); box-shadow: 0 0 30px -6px var(--c, var(--mb-gold)); }
 .mb-root .btn-join.lg { font-size: 14px; padding: 15px 38px; background: var(--mb-gold); }
-.mb-root .cb-mail { font-family: var(--mb-mono); font-size: 12px; color: var(--mb-muted2); margin-top: 18px; }
+.mb-root .cb-mail { font-family: var(--mb-mono); font-size: 13px; color: var(--mb-muted); margin-top: 18px; }
 .mb-root .cb-mail a { color: var(--mb-muted); border-bottom: 1px solid var(--mb-line2); }
 .mb-root .cb-mail a:hover { color: var(--mb-gold); }
 
@@ -189,7 +189,7 @@
 .mb-sheet-wrap .sheet {
   --mb-mono: var(--font-mono), ui-monospace, monospace;
   --mb-display: var(--font-big-shoulders), var(--font-display), sans-serif;
-  --mb-text: #fafafa; --mb-muted: #888891; --mb-muted2: #5b5b63;
+  --mb-text: #fafafa; --mb-muted: #9ca3af; --mb-muted2: #6b6b74;
   --mb-line: rgba(255, 255, 255, 0.07); --mb-line2: rgba(255, 255, 255, 0.12); --mb-surface: #111113;
   position: relative; width: min(440px, 100%); height: 100%; background: var(--mb-surface);
   border-left: 1px solid var(--c); display: flex; flex-direction: column;
@@ -198,7 +198,7 @@
 @keyframes mbslidein { from { transform: translateX(46px); } to { transform: none; } }
 .mb-sheet-wrap .sheet-rail { height: 3px; background: var(--c); }
 .mb-sheet-wrap .sheet-bar { display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; border-bottom: 1px solid var(--mb-line); }
-.mb-sheet-wrap .sheet-prompt { font-family: var(--mb-mono); font-size: 12px; color: var(--mb-muted); }
+.mb-sheet-wrap .sheet-prompt { font-family: var(--mb-mono); font-size: 13px; color: var(--mb-muted); }
 .mb-sheet-wrap .sheet-prompt em { font-style: normal; }
 .mb-sheet-wrap .sheet-x { font-family: var(--mb-mono); font-size: 12px; color: var(--mb-muted2); transition: color 0.2s; }
 .mb-sheet-wrap .sheet-x:hover { color: var(--mb-text); }
@@ -206,21 +206,21 @@
 .mb-sheet-wrap .sheet-hero { display: flex; align-items: center; gap: 18px; }
 .mb-sheet-wrap .sheet-title { font-family: var(--mb-display); font-weight: 900; text-transform: uppercase; font-size: 34px; line-height: 0.9; margin: 0; }
 .mb-sheet-wrap .sheet-title em { font-style: normal; color: var(--mb-muted); font-size: 0.6em; }
-.mb-sheet-wrap .sheet-sub { font-family: var(--mb-mono); font-size: 13px; margin: 8px 0 0; }
+.mb-sheet-wrap .sheet-sub { font-family: var(--mb-mono); font-size: 14px; margin: 8px 0 0; }
 .mb-sheet-wrap .sheet-meta { font-family: var(--mb-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mb-muted2); margin: 5px 0 0; }
 .mb-sheet-wrap .sheet-block { display: flex; flex-direction: column; gap: 9px; }
 .mb-sheet-wrap .sheet-label { font-family: var(--mb-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; margin: 0; }
 .mb-sheet-wrap .sheet-quote { font-family: var(--mb-mono); font-size: 15px; line-height: 1.6; color: var(--mb-text); border-left: 2px solid; padding-left: 14px; margin: 0; }
-.mb-sheet-wrap .sheet-text { font-family: var(--mb-mono); font-size: 13px; line-height: 1.7; color: #c8c8cf; margin: 0; text-wrap: pretty; }
+.mb-sheet-wrap .sheet-text { font-family: var(--mb-mono); font-size: 14px; line-height: 1.7; color: #d0d0d7; margin: 0; text-wrap: pretty; }
 .mb-sheet-wrap .sheet-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.mb-sheet-wrap .sheet-list li { font-family: var(--mb-mono); font-size: 13px; line-height: 1.5; color: #c8c8cf; display: flex; gap: 8px; }
+.mb-sheet-wrap .sheet-list li { font-family: var(--mb-mono); font-size: 14px; line-height: 1.55; color: #d0d0d7; display: flex; gap: 8px; }
 .mb-sheet-wrap .sheet-list li span { color: var(--c); }
 .mb-sheet-wrap .sheet-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .mb-sheet-wrap .sheet-chip { font-family: var(--mb-mono); font-size: 12px; padding: 4px 11px; border-radius: 5px; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent); background: color-mix(in srgb, var(--c) 7%, transparent); }
 .mb-sheet-wrap .sheet-cta { margin-top: 6px; }
 .mb-sheet-wrap .sheet-cta .btn-join { display: inline-block; font-family: var(--mb-mono); font-weight: 700; font-size: 13px; letter-spacing: 0.08em; padding: 13px 30px; border-radius: 7px; background: var(--c, var(--mb-gold)); color: #09090b; transition: transform 0.2s, box-shadow 0.2s; }
 .mb-sheet-wrap .sheet-cta .btn-join:hover { transform: scale(1.035); box-shadow: 0 0 30px -6px var(--c, var(--mb-gold)); }
-.mb-sheet-wrap .sheet-fine { font-family: var(--mb-mono); font-size: 11px; color: var(--mb-muted2); margin: 12px 0 0; }
+.mb-sheet-wrap .sheet-fine { font-family: var(--mb-mono); font-size: 12px; color: var(--mb-muted); margin: 12px 0 0; }
 .mb-sheet-wrap .chip-frame {
   --clip: polygon(20% 0, 80% 0, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0 80%, 0 20%);
   display: grid; place-items: center; clip-path: var(--clip); background: var(--c); padding: 2px; flex: none;
