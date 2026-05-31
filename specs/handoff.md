@@ -1,18 +1,22 @@
 # Handoff — SIT website (svsit.nl) — 2026-05-31
 
 ## Doel
-Post-launch onderhoud. Events recaps zichtbaar maken + Moederbord scroll-bug. Live op main, Vercel auto-deploy.
+Post-launch onderhoud. Sessie 28: security-scan + secret-audit (Stripe + NOTION). Live op main, Vercel auto-deploy.
 
 ## Status
 - Fase: 4 Implement (post-launch, live op main)
-- Taak: events-recap inline + signup-guard + Moederbord wheel-scroll — KLAAR, gecommit+gepusht
+- Sessie 28 KLAAR: security-scan repo (schoon) + NOTION_API_KEY-audit (niet in code). Handoff genoteerd, 2 docs-commits gepusht
 - Gate: launch APPROVED (svsit.nl live)
+- Working tree schoon, niks open in code
 
-## Gewijzigde files (deze sessie) — COMMIT `afe08c6` gepusht
+## Commits deze sessie (gepusht naar main)
+- `12179c5` docs: security-scan resultaat in handoff
+- `de3c936` docs: NOTION_API_KEY niet in code, alleen Vercel-env
+
+## Vorige sessie (27) — COMMIT `afe08c6` gepusht
 - `src/app/events/page.tsx` — RecapCard herschreven: full description + foto-grid inline (geen doorklik)
 - `src/app/events/[id]/page.tsx` — hideSignup vlag (cancelled/completed/verlopen) verbergt TicketForm + status-note
 - `src/components/Moederbord.tsx` — data-lenis-prevent op .sheet-body (wheel-scroll in module)
-- `specs/handoff.md` — deze
 
 ## Wat werkt
 - Events: recaps tonen foto's+beschrijving inline op /events; geweest events tonen geen aanmeldform
