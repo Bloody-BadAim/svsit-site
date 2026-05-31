@@ -1,11 +1,15 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import dynamic from "next/dynamic";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ToastProvider } from "@/components/Toast";
+
+// Non-critical UI enhancement: HUD cursor, fine-pointer devices only
+const CustomCursor = dynamic(() => import("@/components/CustomCursor"));
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -106,6 +110,7 @@ export default function RootLayout({
         <ToastProvider>
           {children}
         </ToastProvider>
+        <CustomCursor />
         <Analytics />
         <SpeedInsights />
       </body>
