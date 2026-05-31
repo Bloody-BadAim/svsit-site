@@ -1,11 +1,10 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { QrCode, Palette, Share2, Download, Lock, ChevronRight, Zap, Target, Check } from 'lucide-react'
+import { Palette, Share2, Download, Lock, ChevronRight, Zap, Target, Check } from 'lucide-react'
 import { useToast } from '@/components/Toast'
 import MemberCard from '@/components/MemberCard'
 import type { MemberCardData, MemberCardEquipment } from '@/components/MemberCard'
-import QRCode from 'react-qr-code'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -37,74 +36,6 @@ export interface MyCardTabProps {
   nextUnlock: NextUnlock | null
   xpToday: number
   streak: number
-}
-
-// ---------------------------------------------------------------------------
-// QR flip card wrapper
-// ---------------------------------------------------------------------------
-
-function FlipCard({
-  showQR,
-  memberId,
-  cardData,
-  equipment,
-  activeSkin,
-}: {
-  showQR: boolean
-  memberId: string
-  cardData: MemberCardData
-  equipment?: MemberCardEquipment
-  activeSkin: string
-}) {
-  return (
-    <div style={{ perspective: '1000px' }}>
-      <div
-        className="relative transition-transform duration-500"
-        style={{
-          transformStyle: 'preserve-3d',
-          transform: showQR ? 'rotateY(180deg)' : 'rotateY(0deg)',
-        }}
-      >
-        {/* Front: Member Card */}
-        <div data-card style={{ backfaceVisibility: 'hidden' }}>
-          <MemberCard
-            data={{ ...cardData, skin: activeSkin }}
-            equipment={equipment}
-          />
-        </div>
-
-        {/* Back: QR Code */}
-        <div
-          className="absolute inset-0 flex flex-col items-center justify-center rounded-none"
-          style={{
-            backfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
-            background: '#0c0c0e',
-            border: '1px solid rgba(255,255,255,0.1)',
-          }}
-        >
-          <div
-            className="p-4 rounded-lg"
-            style={{ background: '#ffffff' }}
-          >
-            <QRCode
-              value={`https://svsit.nl/scan/${memberId}`}
-              size={200}
-              level="M"
-              bgColor="#ffffff"
-              fgColor="#09090B"
-            />
-          </div>
-          <p className="text-xs text-gray-500 font-mono mt-4 tracking-wider">
-            Scan bij events voor XP
-          </p>
-          <p className="text-[10px] text-gray-700 font-mono mt-1 opacity-50">
-            {memberId.slice(0, 8)}...
-          </p>
-        </div>
-      </div>
-    </div>
-  )
 }
 
 // ---------------------------------------------------------------------------
@@ -307,7 +238,6 @@ export default function MyCardTab({
   xpToday,
   streak,
 }: MyCardTabProps) {
-  const [showQR, setShowQR] = useState(false)
   const [shareStatus, setShareStatus] = useState<'idle' | 'done'>('idle')
   const cardRef = useRef<HTMLDivElement>(null)
   const { toast } = useToast()
@@ -363,29 +293,15 @@ export default function MyCardTab({
     <div className="grid grid-cols-1 lg:grid-cols-[380px_minmax(0,1fr)] gap-6 p-4 sm:p-6">
       {/* Left column: Card + actions */}
       <div className="flex flex-col gap-4" ref={cardRef}>
-        <FlipCard
-          showQR={showQR}
-          memberId={memberId}
-          cardData={cardData}
-          equipment={equipment}
-          activeSkin={activeSkin}
-        />
+        <div data-card>
+          <MemberCard
+            data={{ ...cardData, skin: activeSkin }}
+            equipment={equipment}
+          />
+        </div>
 
         {/* Action buttons */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <button
-            onClick={() => setShowQR(!showQR)}
-            className="flex flex-col items-center gap-1.5 py-4 px-3 sm:py-3 sm:px-2 text-xs font-mono tracking-wider transition-colors cursor-pointer"
-            style={{
-              border: showQR ? '1px solid var(--color-accent-gold)' : '1px solid rgba(255,255,255,0.06)',
-              backgroundColor: showQR ? 'rgba(242,158,24,0.06)' : 'rgba(255,255,255,0.02)',
-              color: showQR ? 'var(--color-accent-gold)' : 'var(--color-text-muted)',
-            }}
-          >
-            <QrCode size={16} />
-            <span className="text-[10px]">QR</span>
-          </button>
-
+        <div className="grid grid-cols-3 gap-2">
           <a
             href="/dashboard/card-editor"
             className="flex flex-col items-center gap-1.5 py-4 px-3 sm:py-3 sm:px-2 text-xs font-mono tracking-wider transition-colors"

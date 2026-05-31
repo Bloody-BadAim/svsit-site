@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { handleError, requireAdmin } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 import { checkAndGrantAutoBadges } from '@/lib/rewards'
-import { grantXp, calculateXpReward } from '@/lib/xpEngine'
+import { grantXp } from '@/lib/xpEngine'
 
 // GET - Scan geschiedenis per event (admin only)
 export async function GET(req: NextRequest) {
@@ -98,8 +98,9 @@ export async function POST(req: NextRequest) {
 
     if (scanError) throw scanError
 
-    // Grant XP + auto-badges in parallel (independent operations)
-    const xpAmount = calculateXpReward('scan', { eventName: event_name, points })
+    // Grant XP + auto-badges in parallel (independent operations).
+    // XP = admin-toegekende punten (1-10), niet de flat scan-reward.
+    const xpAmount = points
     await Promise.all([
       grantXp({
         memberId: member_id,

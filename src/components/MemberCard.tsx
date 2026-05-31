@@ -5,9 +5,6 @@ import { Star, Check, X } from "lucide-react";
 import { ROLLEN } from "@/lib/constants";
 import { getLevelForXp, getLevelProgress, getBadgeSlotCount } from "@/lib/levelEngine";
 import type { Role } from "@/types/database";
-import dynamic from "next/dynamic";
-
-const QRCode = dynamic(() => import("react-qr-code"), { ssr: false });
 import { getSkin } from "@/lib/cardSkins";
 import BadgeIcon from "@/components/badges/BadgeIcon";
 import { getBadgeDef, getRarityColor } from "@/lib/badgeDefs";
@@ -301,14 +298,12 @@ export default function MemberCard({
   style,
   children,
   data,
-  showQR = false,
   equipment,
 }: {
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
   data?: MemberCardData;
-  showQR?: boolean;
   equipment?: MemberCardEquipment;
 }) {
   // Placeholder or real data
@@ -360,10 +355,6 @@ export default function MemberCard({
 
   // Visible stickers: max 3
   const visibleStickers = equipment?.stickers?.slice(0, 3) ?? [];
-
-  const qrData = data?.memberId
-    ? JSON.stringify({ id: data.memberId, email: data.email })
-    : "";
 
   return (
     <div className={`relative ${className}`} style={style}>
@@ -536,27 +527,19 @@ export default function MemberCard({
 
           {/* ── Content ── */}
           <div className="relative z-20" style={{ padding: "32px 32px 28px" }}>
-            {/* Avatar/QR + player info */}
+            {/* Avatar + player info */}
             <div className="flex items-start gap-4 mb-7">
-              {/* Avatar or QR */}
+              {/* Avatar */}
               <div
                 className="w-20 h-20 shrink-0 flex items-center justify-center overflow-hidden"
                 style={{
-                  background: showQR && qrData ? "#ffffff" : "rgba(255,255,255,0.03)",
-                  border: showQR && qrData ? "none" : "1px solid rgba(255,255,255,0.08)",
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.08)",
                   borderRadius: 8,
                   position: 'relative',
                 }}
               >
-                {showQR && qrData ? (
-                  <QRCode
-                    value={qrData}
-                    size={72}
-                    level="M"
-                    bgColor="#ffffff"
-                    fgColor="#09090B"
-                  />
-                ) : visibleStickers.length > 0 ? (
+                {visibleStickers.length > 0 ? (
                   <span style={{ fontSize: 36, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }}>
                     {visibleStickers[0].emoji}
                   </span>

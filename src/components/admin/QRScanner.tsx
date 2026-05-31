@@ -13,45 +13,28 @@ type MessageType = 'success' | 'error' | 'warning'
 export default function QRScanner({ eventId, eventName }: QRScannerProps) {
   const scannerRef = useRef<HTMLDivElement>(null)
   const html5QrCodeRef = useRef<unknown>(null)
-  const { actiefEventNaam, laatsteScan, setLaatsteScan, scannerActief, setScannerActief } = useScannerStore()
+  const { setLaatsteScan, laatsteScan, scannerActief, setScannerActief } = useScannerStore()
 
   // Prefer explicit props; fall back to store values
-  const resolvedEventNaam = eventName ?? actiefEventNaam
   const resolvedEventId = eventId ?? undefined
 
-  // Scan-modus: 'ticket' = event check-in, 'ledenpas' = punten toekennen.
-  // Bepaalt welke velden zichtbaar zijn en hoe een scan verwerkt wordt.
-  const [mode, setMode] = useState<'ticket' | 'ledenpas'>('ticket')
-
-  const [memberId, setMemberId] = useState('')
-  const [punten, setPunten] = useState('1')
-  const [reden, setReden] = useState('')
+  const [ticketInput, setTicketInput] = useState('')
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<MessageType>('success')
   const [flashName, setFlashName] = useState<string | null>(null)
 
   // --- Detection logic ---
+  // Een ticket-QR draagt een JSON-payload { type: 'ticket', id }. Een kale
+  // string wordt als ticket-ID behandeld.
 
-  type ParsedQR =
-    | { kind: 'ticket'; id: string }
-    | { kind: 'ledenpas'; id: string; email: string }
-    | { kind: 'invalid' }
-
-  function detectQRType(raw: string): ParsedQR {
-    // Tickets en ledenpassen dragen beide een JSON-payload:
-    //   ticket:   { type: 'ticket', id }
-    //   ledenpas: { id, email }
+  function parseTicketId(raw: string): string | null {
     try {
       const parsed = JSON.parse(raw)
-      if (parsed.type === 'ticket' && typeof parsed.id === 'string') {
-        return { kind: 'ticket', id: parsed.id }
-      }
-      if (typeof parsed.id === 'string' && typeof parsed.email === 'string') {
-        return { kind: 'ledenpas', id: parsed.id, email: parsed.email }
-      }
-      return { kind: 'invalid' }
+      if (parsed.type === 'ticket' && typeof parsed.id === 'string') return parsed.id
+      return null
     } catch {
-      return { kind: 'invalid' }
+      // Geen JSON: behandel als kaal ticket-ID
+      return raw.trim() || null
     }
   }
 
@@ -93,95 +76,23 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
     setTimeout(() => setMessage(''), 5000)
   }
 
-  // --- Ledenpas points flow ---
+  // --- Scan handler (camera + handmatig) ---
 
-  async function submitScan(id: string, email?: string) {
-    if (!reden) {
-      setMessage('Vul een reden in')
-      setMessageType('error')
-      return
-    }
-
-    const res = await fetch('/api/scans', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        member_id: id,
-        points: parseInt(punten),
-        reason: reden,
-        event_name: resolvedEventNaam,
-        event_id: resolvedEventId,
-      }),
-    })
-
-    if (res.ok) {
-      const displayName = email || id
-      setMessage(`PUNTEN +${punten} - ${displayName} bij ${resolvedEventNaam || 'event'}`)
-      setMessageType('success')
-      setLaatsteScan({
-        memberId: id,
-        email: displayName,
-        punten: parseInt(punten),
-        timestamp: new Date().toISOString(),
-      })
-      setMemberId('')
-    } else {
-      const { error } = await res.json()
-      setMessage(error || 'Fout bij scannen')
-      setMessageType('error')
-    }
-
-    setTimeout(() => setMessage(''), 5000)
-  }
-
-  // --- Unified scan handler (camera + manual) ---
-
-  function warnWrongMode(detectedKind: 'ticket' | 'ledenpas') {
-    const msg = detectedKind === 'ticket'
-      ? 'Dit is een ticket - wissel naar Check-in modus'
-      : 'Dit is een ledenpas - wissel naar Punten modus'
-    setMessage(msg)
-    setMessageType('warning')
-    setTimeout(() => setMessage(''), 5000)
-  }
-
-  async function routeScan(detected: ParsedQR) {
-    if (detected.kind === 'invalid') {
+  async function handleScan(raw: string) {
+    const ticketId = parseTicketId(raw)
+    if (!ticketId) {
       setMessage('Ongeldig QR code')
       setMessageType('error')
       setTimeout(() => setMessage(''), 5000)
       return
     }
-    if (mode === 'ticket') {
-      if (detected.kind === 'ticket') await handleTicketCheckin(detected.id)
-      else warnWrongMode(detected.kind)
-    } else {
-      if (detected.kind === 'ledenpas') await submitScan(detected.id, detected.email)
-      else warnWrongMode(detected.kind)
-    }
+    await handleTicketCheckin(ticketId)
   }
 
-  async function handleScan(raw: string) {
-    await routeScan(detectQRType(raw))
-  }
-
-  // --- Manual input handler ---
-  // Veld bevat een volledige QR-payload OF een kale ID. JSON wordt eerst
-  // geparsed; een kale ID wordt afgehandeld volgens de actieve modus
-  // (ticket-modus -> ticket UUID, ledenpas-modus -> member ID).
   async function handleManualSubmit() {
-    if (!memberId) return
-
-    const detected = detectQRType(memberId)
-
-    if (detected.kind === 'invalid') {
-      // Kale ID: route volgens actieve modus
-      if (mode === 'ticket') await handleTicketCheckin(memberId)
-      else await submitScan(memberId)
-      return
-    }
-
-    await routeScan(detected)
+    if (!ticketInput) return
+    await handleScan(ticketInput)
+    setTicketInput('')
   }
 
   // --- Camera setup ---
@@ -266,69 +177,6 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
         </div>
       )}
 
-      {/* Mode toggle: bepaalt wat een scan doet */}
-      <div
-        className="grid grid-cols-2 gap-2 p-1 rounded-lg"
-        style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
-      >
-        <button
-          onClick={() => setMode('ticket')}
-          className="py-2.5 px-4 rounded-lg text-sm font-semibold transition-colors"
-          style={{
-            backgroundColor: mode === 'ticket' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
-            color: mode === 'ticket' ? 'var(--color-accent-blue)' : 'var(--color-text-muted)',
-            border: `1px solid ${mode === 'ticket' ? 'var(--color-accent-blue)' : 'transparent'}`,
-            fontFamily: 'var(--font-mono)',
-          }}
-        >
-          Check-in (ticket)
-        </button>
-        <button
-          onClick={() => setMode('ledenpas')}
-          className="py-2.5 px-4 rounded-lg text-sm font-semibold transition-colors"
-          style={{
-            backgroundColor: mode === 'ledenpas' ? 'rgba(242, 158, 24, 0.15)' : 'transparent',
-            color: mode === 'ledenpas' ? 'var(--color-gold)' : 'var(--color-text-muted)',
-            border: `1px solid ${mode === 'ledenpas' ? 'var(--color-gold)' : 'transparent'}`,
-            fontFamily: 'var(--font-mono)',
-          }}
-        >
-          Punten (ledenpas)
-        </button>
-      </div>
-
-      {/* Scanner config (punten + reden - alleen in ledenpas modus) */}
-      {mode === 'ledenpas' && (
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-            punten (ledenpas)
-          </label>
-          <input
-            type="number"
-            min="1"
-            value={punten}
-            onChange={(e) => setPunten(e.target.value)}
-            className="w-full py-2 px-3 rounded-lg text-sm outline-none"
-            style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
-          />
-        </div>
-        <div>
-          <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-            reden (ledenpas)
-          </label>
-          <input
-            type="text"
-            value={reden}
-            onChange={(e) => setReden(e.target.value)}
-            placeholder="Event aanwezigheid, workshop, etc."
-            className="w-full py-2 px-3 rounded-lg text-sm outline-none"
-            style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
-          />
-        </div>
-      </div>
-      )}
-
       {/* Camera scanner */}
       <div
         className="rounded-lg overflow-hidden"
@@ -362,21 +210,21 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
           Handmatige invoer
         </h3>
         <p className="text-xs mb-3" style={{ color: 'var(--color-text-muted)', opacity: 0.7 }}>
-          {mode === 'ticket' ? 'Voer een ticket ID in om in te checken' : 'Voer een member ID in om punten toe te kennen'}
+          Voer een ticket ID in om in te checken
         </p>
         <div className="flex gap-2">
           <input
             type="text"
-            value={memberId}
-            onChange={(e) => setMemberId(e.target.value)}
+            value={ticketInput}
+            onChange={(e) => setTicketInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
-            placeholder="Member ID, ticket ID of volledige QR payload..."
+            placeholder="Ticket ID of volledige QR payload..."
             className="flex-1 py-2 px-3 rounded-lg text-sm outline-none"
             style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
           />
           <button
             onClick={handleManualSubmit}
-            disabled={!memberId}
+            disabled={!ticketInput}
             className="py-2 px-4 rounded-lg text-sm font-semibold disabled:opacity-50"
             style={{ backgroundColor: 'var(--color-accent-gold)', color: 'var(--color-bg)' }}
           >
