@@ -71,15 +71,26 @@ export async function PATCH(
       )
     }
 
-    // Update to checked_in
+    // Update to checked_in. De extra .eq('status', 'paid') maakt de transitie
+    // atomair: UPDATE ... WHERE id=? AND status='paid' raakt maar 1 rij. Bij
+    // gelijktijdige scans wint er eentje; de andere matcht niets meer.
     const { data: updated, error: updateError } = await supabase
       .from('tickets')
       .update({ status: 'checked_in', checked_in_at: new Date().toISOString() })
       .eq('id', id)
+      .eq('status', 'paid')
       .select('id, email, name, status, checked_in_at, event_id')
-      .single()
+      .maybeSingle()
 
     if (updateError) throw updateError
+
+    // Geen rij geraakt: een gelijktijdige check-in was net iets eerder.
+    if (!updated) {
+      return NextResponse.json(
+        { data: null, error: 'Al ingecheckt', meta: null },
+        { status: 409 }
+      )
+    }
 
     // Get event title for scanner display
     const { data: event } = await supabase

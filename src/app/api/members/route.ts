@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs'
 import { createServiceClient } from '@/lib/supabase'
 import { auth } from '@/lib/auth'
 import { handleError } from '@/lib/apiAuth'
+import type { TablesInsert } from '@/lib/database.types'
 
 // POST - Nieuw lid aanmaken (registratie)
 export async function POST(req: NextRequest) {
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Nieuw lid aanmaken
-    const insertData: Record<string, unknown> = {
+    const insertData: TablesInsert<'members'> = {
       email,
       display_name: display_name || null,
       role: role || 'member',

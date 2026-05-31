@@ -84,6 +84,12 @@ export async function POST(
       .select('id, member_id, points, reason, event_name, event_id, category, created_at')
       .single()
 
+    // Unique-violation (23505) = gelijktijdige check-in won de race. De partial
+    // unique index scans_self_checkin_unique sluit het TOCTOU-gat dat de SELECT
+    // hierboven openliet.
+    if (scanError?.code === '23505') {
+      return NextResponse.json({ error: 'Je bent al ingecheckt voor dit event' }, { status: 409 })
+    }
     if (scanError) throw scanError
 
     // 7. Grant XP + auto-badges

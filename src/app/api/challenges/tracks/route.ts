@@ -57,7 +57,7 @@ export async function GET(_req: NextRequest) {
       }
 
       const group = trackMap.get(trackId)!
-      group.milestones.push(milestone)
+      group.milestones.push(milestone as Challenge)
       group.totalCount++
 
       if (completedChallengeIds.has(milestone.id)) {

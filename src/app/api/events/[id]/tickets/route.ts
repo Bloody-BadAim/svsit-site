@@ -73,7 +73,7 @@ export async function POST(
     // Prijs bepalen (cents). Gratis events: 0. Betaald: lid- vs niet-lid-prijs.
     const priceInCents = !event.is_paid
       ? 0
-      : (memberFlag && event.price_members !== null ? event.price_members : event.price_nonmembers)
+      : (memberFlag && event.price_members !== null ? event.price_members : event.price_nonmembers) ?? 0
 
     const ticketStatus = event.is_paid ? 'pending' : 'paid'
     const ticketNumber = generateTicketNumber()
@@ -83,9 +83,11 @@ export async function POST(
     const { data: bookedTicket, error: bookError } = await supabase
       .rpc('book_event_ticket', {
         p_event_id: eventId,
-        p_member_id: member_id ?? null,
+        // book_event_ticket accepteert null voor member_id/name; gegenereerde
+        // Args-types modelleren de nullable functieparams niet, vandaar de cast.
+        p_member_id: (member_id ?? null) as string,
         p_email: email,
-        p_name: name ?? null,
+        p_name: (name ?? null) as string,
         p_status: ticketStatus,
         p_paid_amount: priceInCents,
         p_ticket_number: ticketNumber,

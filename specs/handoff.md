@@ -1,41 +1,43 @@
 # Handoff — SIT Website (svsit.nl) — 2026-05-31
 
 ## Doel
-Custom HUD-cursor (SIT_CURSOR.sys) site-breed toepassen zonder bug. Live op main.
+Drie mitigaties uit de graph-analyse: (a) createServiceClient typen, (b) authz-audit, (c) check-in race dichten.
 
 ## Status
 - Fase: 4 Implement (post-launch onderhoud, live op main)
-- Taak: custom cursor geport + gemount
+- Taak: a/b/c afgerond, code groen
 - Gate: launch APPROVED (svsit.nl live)
 
 ## Gewijzigde files (deze sessie)
-- `src/components/CustomCursor.tsx` — NIEUW. React-port van Claude Design SIT_CURSOR.sys HUD-cursor
-- `src/app/layout.tsx` — `dynamic()` import + `<CustomCursor/>` na ToastProvider (globaal)
+- `src/lib/database.types.ts` — NIEUW, gegenereerd uit live DB (ref plgcqkbfvzwkqzkggmfh)
+- `src/lib/supabase.ts` — 3 clients getypeerd met `<Database>`
+- `src/app/api/challenges/submissions/[id]/route.ts` — `as StatCategory` cast
+- `src/app/api/challenges/tracks/route.ts` — `as Challenge` cast
+- `src/app/api/events/[id]/tickets/route.ts` — price `?? 0` + nullable RPC-args cast
+- `src/app/api/members/route.ts` — insertData `TablesInsert<'members'>`
+- `src/app/dashboard/card-editor/page.tsx` — `ComponentProps` boundary cast
+- `src/app/api/events/tickets/[id]/checkin/route.ts` — atomaire UPDATE `.eq('status','paid')` + 409
+- `src/app/api/events/[id]/checkin/route.ts` — vangt unique-violation 23505 -> 409
+- `supabase/migrations/20260531-01-prevent-duplicate-self-checkin.sql` — NIEUW (NIET applied)
 
 ## Wat werkt
-- `next build` "Compiled successfully in 18.4s", 58/58 static, Proxy middleware actief
-- tsc --noEmit clean
-- Cursor: gold reticle 1:1 + follower ring + magnetic lock-on + coord-HUD + text-caret + exec-ripple + trail
-- Bail-outs: pointer:fine only, prefers-reduced-motion (lerp=1), mobile/coarse -> native cursor + display:none
+- tsc --noEmit clean, `npm run build` OK (Proxy middleware actief)
+- 11 type-fouten die opdoken na typing allemaal gefixt zonder `any`
+- Authz-audit: 42 routes, geen gaten
 
 ## Wat niet werkte / geleerde lessen
-- Oude (sessie 23 verwijderde) CustomCursor lekte RAF+listeners over route-changes = de "bug". Fix: volledige useEffect-cleanup (cancelAnimationFrame + clearInterval + removeEventListener + class strip + ripple purge)
-- Self-isolated `<style>` in component i.p.v. globals.css = geen tangle, makkelijk te verwijderen
+- Supabase gegenereerde types: DB-enums = `string`, RPC-args = non-null (nullability niet gemodelleerd) -> cast op grens met comment
+- Member self-checkin TOCTOU kan app-code alleen niet sluiten -> partial unique index nodig (scanned_by IS NULL discrimineert self vs admin scan)
 
 ## Blokkades
-- Geen
+- Geen (wacht op user-beslissing voor 2 shared-state acties)
 
 ## Volgende stappen
-1. Live Stripe end-to-end test: betaald event -> webhook checkout.session.completed -> mail+PDF. Check STRIPE_WEBHOOK_SECRET in Vercel
-2. Bestuursfoto's Liam/Thijmen/Jamiro/Yusuf in moederbord (nu initialen)
-3. NOTION_API_KEY uit Vercel env (niet meer gebruikt)
-4. Events-sectie homepage leeg — events in DB zetten of bewust laten
-5. Cursor live testen op desktop (npm run dev), evt accent/magnet finetunen via CFG
+1. User-OK: `apply_migration` op LIVE DB plgcqkbfvzwkqzkggmfh (20260531-01). Zonder index = points-farming-gat open
+2. User-OK: commit + push alle wijzigingen
+3. Daarna: live Stripe e2e (STRIPE_WEBHOOK_SECRET in Vercel)
 
 ## Key context (voor nieuwe sessie)
-- Supabase ref `plgcqkbfvzwkqzkggmfh`. Events uit DB niet Notion
-- Bestuur XII = huidig; badge_founder_xi + cardSkins 'Bestuur XI' = historisch/verdiend, NIET wijzigen
-- src/proxy.ts = ACTIEVE auth middleware (Next 16 hernoemde middleware.ts)
-- CustomCursor config hardcoded in CFG (accent #F29E18, lock brackets, magnet 0.28). Demo control-deck NIET geport
-- Cursor gemount in layout.tsx = GLOBAAL (layout remount niet bij route-change dus geen leak)
-- Homepage flow: Hero->About->WhyJoin->Events->Testimonials->SponsorShowcase(Partners)->JoinCta
+- createServiceClient = service-role (bypasst RLS) -> elke caller MOET eigen authz; audit bevestigde dat dit klopt
+- Migratie-index discriminator: self-checkin `scanned_by: null`, admin-scan `scanned_by: session.user.email`
+- Genereer DB-types opnieuw via `mcp__supabase__generate_typescript_types` na schema-wijziging

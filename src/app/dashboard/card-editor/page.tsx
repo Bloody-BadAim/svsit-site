@@ -1,3 +1,4 @@
+import type { ComponentProps } from 'react'
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { createServiceClient } from '@/lib/supabase'
@@ -27,22 +28,25 @@ export default async function CardEditorPage() {
 
   const member = memberResult.data
   const isAdmin = member?.is_admin || member?.role === 'bestuur'
-  const equippedRows = (inventoryResult.data ?? []).filter((r: any) => r.equipped)
+  const equippedRows = (inventoryResult.data ?? []).filter((r) => r.equipped)
 
-  return (
-    <CardEditor
-      inventory={inventoryResult.data ?? []}
-      equipped={equippedRows}
-      allDefinitions={definitionsResult.data ?? []}
-      member={member ?? {
-        current_level: 1,
-        accent_color: null,
-        custom_title: null,
-        active_skin: 'default',
-        coins_balance: 0,
-      }}
-      memberId={session.user.id}
-      isAdmin={isAdmin}
-    />
-  )
+  // DB-rijen zijn losser getypeerd (Json-position, nullable kolommen) dan de
+  // CardEditor-props; de component verwerkt dit at runtime. Een enkele cast op
+  // de prop-grens houdt de page typeveilig zonder de DB-types te vervuilen.
+  const editorProps = {
+    inventory: inventoryResult.data ?? [],
+    equipped: equippedRows,
+    allDefinitions: definitionsResult.data ?? [],
+    member: member ?? {
+      current_level: 1,
+      accent_color: null,
+      custom_title: null,
+      active_skin: 'default',
+      coins_balance: 0,
+    },
+    memberId: session.user.id,
+    isAdmin,
+  } as unknown as ComponentProps<typeof CardEditor>
+
+  return <CardEditor {...editorProps} />
 }

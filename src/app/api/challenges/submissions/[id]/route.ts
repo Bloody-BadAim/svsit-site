@@ -3,7 +3,7 @@ import { requireAdmin, handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 import { checkAndGrantAutoBadges } from '@/lib/rewards'
 import { grantXp } from '@/lib/xpEngine'
-import type { SubmissionStatus } from '@/types/database'
+import type { SubmissionStatus, StatCategory } from '@/types/database'
 
 // PATCH - Approve or reject a challenge submission (admin only)
 export async function PATCH(
@@ -59,7 +59,7 @@ export async function PATCH(
           amount: challenge.points,
           source: 'challenge',
           sourceId: id,
-          category: challenge.category,
+          category: challenge.category as StatCategory,
         })
       }
 
