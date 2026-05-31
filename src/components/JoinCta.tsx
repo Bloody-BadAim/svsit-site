@@ -195,7 +195,7 @@ export default function JoinCta() {
                 stickers: [],
               }}
             >
-              <HoldToJoinButton href="/login" />
+              <HoldToJoinButton href="/lid-worden" />
               <p className="font-mono text-[11px] text-[var(--color-text-muted)] opacity-40 mt-3 text-center">
                 100+ studenten gingen je voor
               </p>

@@ -18,7 +18,7 @@ export const PEOPLE: Record<string, Person> = {
   mats: { name: "Mats", initials: "MS", photo: "/bestuur/mats.jpeg" },
   thijmen: { name: "Thijmen", initials: "TH", photo: null },
   yusuf: { name: "Yusuf", initials: "YU", photo: null },
-  jamiro: { name: "Jamiro", initials: "JA", photo: null },
+  jamiro: { name: "Jamiro", initials: "JA", photo: "/bestuur/jamiro.jpeg" },
   nick: { name: "Nick", initials: "NI", photo: "/bestuur/nick.jpeg" },
   riley: { name: "Riley", initials: "RI", photo: "/bestuur/riley.jpg" },
   liam: { name: "Liam", initials: "LI", photo: null },
