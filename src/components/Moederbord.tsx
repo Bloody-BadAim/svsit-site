@@ -265,6 +265,7 @@ function DetailSheet({
   onClose: () => void;
 }) {
   useEffect(() => {
+    if (!selected) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
@@ -274,7 +275,7 @@ function DetailSheet({
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [onClose]);
+  }, [selected, onClose]);
 
   if (!selected) return null;
   const isComm = selected.type === "commissie";

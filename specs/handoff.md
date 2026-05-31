@@ -1,40 +1,40 @@
 # Handoff — SIT Website (svsit.nl) — 2026-05-31
 
 ## Doel
-Introweek pagina vervangen met Claude Design hyperspace handoff. Twee introweken (september 2026). Em dashes weg, encrypted decrypt-effect behouden.
+Post-launch onderhoud. Introweek redesign + registratieflow fixes. Live op main, Vercel auto-deploy.
 
 ## Status
 - Fase: 4 Implement (post-launch onderhoud, live op main)
-- Taak: T-introweek-redesign AF (niet gecommit)
+- Taak: stripe e2e geverifieerd + moederbord scroll-bugs gefixt (NIET gecommit, wacht op seintje)
 - Gate: launch APPROVED (svsit.nl live)
-- Commits: nog GEEN voor deze taak. Wacht op user OK voor commit+push.
+- Commits vorige sessie: `b7779ff` (introweek), `e66fd17` (jamiro foto + word-lid knop), `9ee80ab` (commissie optioneel), `e008070` (checkout login fix). Allen gepusht origin/main.
+- UNCOMMITTED nu: Moederbord.tsx + moederbord.css (2 scroll fixes)
 
 ## Gewijzigde files (deze sessie)
-- `src/app/introweek/page.tsx` — herschreven: server component, metadata (em dashes weg) + Navbar/IntroweekClient/Footer
-- `src/app/introweek/IntroweekClient.tsx` — NIEUW, 'use client', ~750 regels: boot overlay, 3D circuit hyperspace canvas, scramble hero, live countdown (31 aug 2026), TWEE-weken toggle (5 daycards elk), 3D tilt, expandable cards, decrypt-on-hover locked cards, survival kit, boarding-pass ticket finale, scoped `.iw` CSS
+- `src/components/Moederbord.tsx` — DetailSheet effect: body-lock alleen als `selected` (was: lock bij elke mount -> telefoon scroll vast)
+- `src/components/moederbord.css` — `.sheet-body` flex:1 1 auto + min-height:0 (flexbox scroll-fix desktop paneel) + touch/overscroll
+- (vorige sessie, al gepusht): introweek redesign, jamiro foto, JoinCta knop, ClassSelector, RegisterFlow signIn-fix
 
 ## Wat werkt
-- tsc --noEmit groen + npm run build groen, /introweek prerendert static (○)
-- Twee-weken toggle via React state `week`, week-panels met `.show` class
-- Hyperspace canvas, scramble, countdown, tilt, decrypt allemaal geport naar useEffect met cleanup
-- Em dashes overal weg (copy, scramble char set, JS consts). Lucide icons ipv emoji/inline SVG
+- tsc --noEmit groen na elke fix
+- Registratieflow volledig geaudit: stap1 validatie, rolmapping (member/contributor/mentor), /api/members dedup+bcrypt, create-checkout (sessie-email), webhook activatie/renewal/cancel idempotent, betaal-later signIn+redirect
+- Dashboard /dashboard/tickets werkt (query op email, QR + PDF), niet kapot
 
 ## Wat niet werkte / geleerde lessen
-- TS custom CSS prop: `as React.CSSProperties` faalt (geen React namespace in nieuwe JSX transform) — gebruik `import { type CSSProperties } from 'react'` + `as CSSProperties`
-- Vanilla JS IIFEs (global DOM query) -> useEffect met rootRef-scoped querySelectorAll + cleanup. Tilt/expand/decrypt deps `[week]` zodat ze rebinden bij panel-switch
-- Design CSS scoped onder `.iw` + iw-prefixed keyframes om collision met grote globals.css te voorkomen
+- handlePayAndJoin betaalknop faalde voor nieuwe email/wachtwoord-leden: account aangemaakt maar niet ingelogd -> create-checkout 401 "Niet ingelogd". Fix: signIn('credentials') voor checkout-fetch, net als handleSkipPayment
+- Tickets nav leek "kapot" maar was leeg-state (account zonder tickets), code werkt
+- Commissie was code-matig al optioneel (role default member, knoppen op akkoord gated) maar UI miste expliciete geen-commissie keuze
 
 ## Blokkades
 - Geen
 
 ## Volgende stappen
-1. User OK vragen -> commit `feat: vervang introweek pagina met twee-weken hyperspace design` + push
-2. TODO vorige sessie: foto's Liam/Thijmen/Jamiro/Yusuf op /over-ons (nu initialen)
-3. Live Stripe e2e test (user zelf)
+1. Live Stripe e2e test registratie (user zelf) — verifieer credentials-user betaalflow nu werkt
+2. TODO: foto's Liam/Thijmen/Yusuf op /over-ons (nog initialen, Jamiro nu klaar)
 
 ## Key context (voor nieuwe sessie)
-- Design bron: /tmp/sit-handoff/sit/project/ (Introweek.html, introweek.css, introweek.js, introweek-hyperspace.js) — Claude Design bundle
-- Beslissing: project Navbar+Footer behouden voor site-consistentie, alleen design BODY herbouwd (niet de design eigen terminal-nav/footer)
-- Countdown target: `new Date('2026-08-31T13:00:00+02:00')`
+- Webhook activeert membership async; success_url /dashboard?welcome=true kan kort niet-actief tonen tot webhook landt
+- create-checkout negeert body-email, gebruikt session.user.email (security)
+- COMMISSIES id 'servo' in constants.ts vs 'servco' in moederbord.ts (los, registratie gebruikt constants)
 - Anti-slop: NOOIT dashes/emojis in UI, alleen Lucide icons. Caveman mode actief (full)
-- Supabase ref plgcqkbfvzwkqzkggmfh
+- Supabase ref plgcqkbfvzwkqzkggmfh. Repo Bloody-BadAim/svsit-site
