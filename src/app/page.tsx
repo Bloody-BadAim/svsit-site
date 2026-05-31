@@ -35,7 +35,6 @@ const CircuitBackground = dynamic(() => import("@/components/CircuitBackground")
 const About = dynamic(() => import("@/components/About"));
 const WhyJoin = dynamic(() => import("@/components/WhyJoin"));
 const Events = dynamic(() => import("@/components/Events"));
-const EventTicker = dynamic(() => import("@/components/EventTicker"));
 const Testimonials = dynamic(() => import("@/components/Testimonials"));
 const SponsorShowcase = dynamic(() => import("@/components/SponsorShowcase"));
 const JoinCta = dynamic(() => import("@/components/JoinCta"));
@@ -67,7 +66,6 @@ export default function Home() {
           <WhyJoin />
           <SectionDivider variant="line" />
           <Events />
-          <EventTicker />
           <Testimonials />
           <SectionDivider variant="line" />
           <SponsorShowcase />

@@ -375,27 +375,6 @@ body::before {
   }
 }
 
-/* EventTicker — dual-track scrolling marquee */
-@keyframes tickerScroll {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes tickerScrollReverse {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(50%);
-  }
-}
-
 /* Member card holographic shine — composited with transform */
 @keyframes cardShine {
 

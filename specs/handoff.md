@@ -1,7 +1,15 @@
 # Handoff — SIT Website (svsit.nl) — 2026-05-31
 
 ## Doel
-Homepage flow + data-accuratesse fixen: Bestuur XII overal, 100+ leden, dode code weg, native cursor, consistente sectie-spacing.
+Homepage flow + data-accuratesse fixen (sessie 22-23) + EventTicker/Partners merge (sessie 24).
+
+## Sessie 24 — EventTicker + Partners merge
+- EventTicker.tsx VERWIJDERD (mix event+partner namen). Uit page.tsx + dode tickerScroll keyframes uit globals.css
+- SponsorShowcase.tsx = enige Partners-sectie met infinite-marquee van partner-NAMEN (@/lib/partners). Elegant: font-display semibold uppercase tracking-[0.12em], muted->tier-kleur op hover, diamant-separator, full-bleed + ProgressiveBlur
+- Flow nu: Hero->About->WhyJoin->Events->Testimonials->SponsorShowcase->JoinCta. TSC groen. playwright devDep behouden
+
+## Eerdere doel (sessie 22-23)
+Bestuur XII overal, 100+ leden, dode code weg, native cursor, consistente sectie-spacing.
 
 ## Status
 - Fase: 4 Implement (post-launch onderhoud, site is live op main)
