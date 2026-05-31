@@ -35,7 +35,7 @@ const SECTIONS: Section[] = [
     icon: ShieldCheck,
     color: "#F29E18",
     body: [
-      "Studievereniging ICT (SIT) is de studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Wij verwerken jouw persoonsgegevens als je lid wordt of onze site gebruikt.",
+      "Studievereniging Innovatie en Technologie (SIT) is de studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Wij verwerken jouw persoonsgegevens als je lid wordt of onze site gebruikt.",
       "Verantwoordelijke: het bestuur van SIT. Bereikbaar via bestuur@svsit.nl, Wibauthuis, Wibautstraat 3b, 1091 GH Amsterdam.",
     ],
   },

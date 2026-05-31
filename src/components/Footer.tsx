@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { href: "/leaderboard", label: "Leaderboard", type: "dir" },
   { href: "/faq", label: "FAQ", type: "file" },
   { href: "/privacy", label: "Privacy", type: "file" },
+  { href: "/documenten", label: "Documenten", type: "dir" },
   { href: "/login", label: "Word Lid", type: "file" },
 ];
 
@@ -185,7 +186,7 @@ export default function Footer() {
             </div>
             <div className="font-mono text-xs text-[#71717A] mb-3 flex items-center gap-2">
               <span className="text-blue">export default</span>
-              <span className="text-[#A1A1AA]">StudieverenigingICT</span>
+              <span className="text-[#A1A1AA]">StudieverenigingInnovatieEnTechnologie</span>
             </div>
             <p className="font-mono text-sm text-[#A1A1AA] leading-relaxed">
               Studievereniging voor alle HBO-ICT studenten aan de HvA.
