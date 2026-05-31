@@ -90,6 +90,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
   const [recapDesc, setRecapDesc] = useState(event.recap_description || '')
   const [recapPhotos, setRecapPhotos] = useState(event.recap_photos?.join('\n') || '')
   const [recapSaving, setRecapSaving] = useState(false)
+  const [recapUploading, setRecapUploading] = useState(false)
 
   // ── Fetch on mount
   const fetchTickets = useCallback(async () => {
@@ -184,6 +185,32 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
       alert(err instanceof Error ? err.message : 'Recap opslaan mislukt')
     } finally {
       setRecapSaving(false)
+    }
+  }
+
+  async function handleRecapUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    setRecapUploading(true)
+    try {
+      const form = new FormData()
+      Array.from(files).forEach((f) => form.append('files', f))
+      const res = await fetch(`/api/events/${event.id}/recap-photos`, {
+        method: 'POST',
+        body: form,
+      })
+      const { data, error } = await res.json()
+      if (error) throw new Error(error)
+      const urls: string[] = data?.urls || []
+      setRecapPhotos((prev) => {
+        const existing = prev.split('\n').map((u) => u.trim()).filter(Boolean)
+        return [...existing, ...urls].join('\n')
+      })
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Uploaden mislukt')
+    } finally {
+      setRecapUploading(false)
+      e.target.value = ''
     }
   }
 
@@ -319,6 +346,20 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
                 placeholder="Korte terugblik op het event..."
                 style={{ ...inputStyle, resize: 'vertical' }}
               />
+            </div>
+            <div>
+              <label style={labelStyle}>Foto&apos;s uploaden</label>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+                multiple
+                onChange={handleRecapUpload}
+                disabled={recapUploading}
+                style={{ ...inputStyle, padding: '6px 8px', cursor: recapUploading ? 'wait' : 'pointer' }}
+              />
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-text-muted)', marginTop: 4 }}>
+                {recapUploading ? 'Bezig met uploaden...' : 'JPG, PNG, WebP, AVIF of GIF, max 10MB per foto. URLs worden hieronder ingevuld.'}
+              </p>
             </div>
             <div>
               <label style={labelStyle}>Foto URLs (1 per regel)</label>
