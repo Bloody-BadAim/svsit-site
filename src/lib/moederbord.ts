@@ -32,6 +32,10 @@ export interface BoardMember {
   color: string;
   /** Korte intro in eerste persoon - bestuur vertelt kort over zichzelf. */
   over: string;
+  /** Optionele socials, getoond in het detailpaneel. */
+  socials?: { instagram?: string; linkedin?: string };
+  /** Commissie-ids die mee oplichten bij hover op deze chip. */
+  highlights?: string[];
 }
 
 // Bestuur XII - de centrale CPU.
@@ -52,7 +56,7 @@ export const BESTUUR: BoardMember[] = [
     code: "SEC",
     color: "#EF4444",
     over:
-      "Als secretaris hou ik de boel georganiseerd: notulen, planning en communicatie. Ik zorg dat afspraken niet verdwijnen en dat iedereen weet wat er speelt.",
+      "Als secretaris zorg ik dat de boel georganiseerd blijft: van notulen en planning tot communicatie en opvolging. Ik hou bij wat er afgesproken is en zorg dat niemand iets mist. Ook breng ik wat enthousiasme mee om er echt iets moois van te maken.",
   },
   {
     id: "wesley",
@@ -70,7 +74,13 @@ export const BESTUUR: BoardMember[] = [
     code: "VVZ",
     color: "#22C55E",
     over:
-      "Als vice-voorzitter spring ik bij waar nodig en denk ik mee over de koers. Daarnaast ben ik betrokken bij EduCo en Community.",
+      "Als vice voorzitter ben ik het tweede gezicht van SIT. Met trots zet ik mij in voor beter onderwijs in Nederland, en bouw ik community voor alle studenten. Ik ben betrokken bij EduCo en ik denk mee over de koers van de studievereniging en HBO-ICT.",
+    socials: {
+      instagram: "https://instagram.com/mats.reinhart",
+      linkedin:
+        "https://www.linkedin.com/posts/the-yoda-scrolls_kicking-off-the-a-initiative-connection-activity-7349061717047336960-4TLe",
+    },
+    highlights: ["educo"],
   },
 ];
 

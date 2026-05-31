@@ -217,6 +217,9 @@
 .mb-sheet-wrap .sheet-list li span { color: var(--c); }
 .mb-sheet-wrap .sheet-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .mb-sheet-wrap .sheet-chip { font-family: var(--mb-mono); font-size: 12px; padding: 4px 11px; border-radius: 5px; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent); background: color-mix(in srgb, var(--c) 7%, transparent); }
+.mb-sheet-wrap .sheet-chip-link { display: inline-flex; align-items: center; gap: 7px; padding: 6px 13px; transition: background 0.2s, border-color 0.2s, transform 0.2s; }
+.mb-sheet-wrap .sheet-chip-link:hover { transform: translateY(-1px); border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
+.mb-sheet-wrap .sheet-chip-link svg { width: 13px; height: 13px; }
 .mb-sheet-wrap .sheet-cta { margin-top: 6px; }
 .mb-sheet-wrap .sheet-cta .btn-join { display: inline-block; font-family: var(--mb-mono); font-weight: 700; font-size: 13px; letter-spacing: 0.08em; padding: 13px 30px; border-radius: 7px; background: var(--c, var(--mb-gold)); color: #09090b; transition: transform 0.2s, box-shadow 0.2s; }
 .mb-sheet-wrap .sheet-cta .btn-join:hover { transform: scale(1.035); box-shadow: 0 0 30px -6px var(--c, var(--mb-gold)); }

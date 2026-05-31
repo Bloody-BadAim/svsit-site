@@ -7,6 +7,7 @@ import {
   useCallback,
   type CSSProperties,
 } from "react";
+import { Instagram, Linkedin } from "lucide-react";
 import {
   PEOPLE,
   BESTUUR,
@@ -270,10 +271,15 @@ function DetailSheet({
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
+    const html = document.documentElement;
+    const prevHtml = html.style.overflow;
+    const prevBody = document.body.style.overflow;
+    html.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
     return () => {
       window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
+      html.style.overflow = prevHtml;
+      document.body.style.overflow = prevBody;
     };
   }, [selected, onClose]);
 
@@ -456,6 +462,39 @@ function DetailSheet({
                 </p>
                 <p className="sheet-text">bestuur@svsit.nl</p>
               </div>
+              {b!.socials && (b!.socials.instagram || b!.socials.linkedin) && (
+                <div className="sheet-block">
+                  <p className="sheet-label" style={{ color }}>
+                    {">"} socials
+                  </p>
+                  <div className="sheet-chips">
+                    {b!.socials.instagram && (
+                      <a
+                        className="sheet-chip sheet-chip-link"
+                        style={{ "--c": color } as CSSVars}
+                        href={b!.socials.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Instagram size={13} aria-hidden="true" />
+                        Instagram
+                      </a>
+                    )}
+                    {b!.socials.linkedin && (
+                      <a
+                        className="sheet-chip sheet-chip-link"
+                        style={{ "--c": color } as CSSVars}
+                        href={b!.socials.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Linkedin size={13} aria-hidden="true" />
+                        LinkedIn
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -516,7 +555,9 @@ export default function Moederbord() {
     if (hover.kind === "commissie") return hover.id === id;
     if (hover.kind === "bestuur") {
       const c = COMMISSIES.find((x) => x.id === id);
-      return !!c && c.voorzitter === hover.id;
+      if (c && c.voorzitter === hover.id) return true;
+      const m = BESTUUR.find((x) => x.id === hover.id);
+      return !!m && !!m.highlights?.includes(id);
     }
     return false;
   };
