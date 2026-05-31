@@ -31,7 +31,7 @@ Post-launch onderhoud. Events recaps zichtbaar maken + Moederbord scroll-bug. Li
 2. Foto's Thijmen/Yusuf/Liam (nu initialen in moederbord.ts, photo:null)
 3. HHR PDF na ALV-bekrachtiging -> public/documenten + status "beschikbaar"
 4. SECURITY: rotate Stripe rk_live key (~/.config/stripe/live-restricted.key) -- OPTIONEEL, lage urgentie (zie scan hieronder)
-5. NOTION_API_KEY weg uit Vercel env
+5. NOTION_API_KEY weg uit Vercel env -- NIET in code (geen process.env-ref, geen notion-dep, alleen notion_id DB-kolom = legit). Puur Vercel-dashboard actie: Settings > Environment Variables > NOTION_API_KEY verwijderen
 
 ## Security-scan (2026-05-31)
 - Repo SCHOON: geen secrets in tracked files (service_role in SQL = RLS-docs, geen key), geen .env ooit gecommit, .env* gitignored, alle 18 secrets via process.env, niks hardcoded
