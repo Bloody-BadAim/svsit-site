@@ -1,43 +1,44 @@
 # Handoff — SIT Website (svsit.nl) — 2026-05-31
 
 ## Doel
-Drie mitigaties uit de graph-analyse: (a) createServiceClient typen, (b) authz-audit, (c) check-in race dichten.
+2 taken: (A) member-pas-scannen-voor-punten werkt niet goed met XP -> opgeruimd. (B) leden kunnen XP zichtbaar/verborgen zetten, geldt voor email EN leaderboard.
 
 ## Status
 - Fase: 4 Implement (post-launch onderhoud, live op main)
-- Taak: a/b/c afgerond, code groen
+- Taak: T-scan-cleanup (A) + T-xp-visibility (B), MIDDEN IN UITVOERING
 - Gate: launch APPROVED (svsit.nl live)
+- Vorige taak T-leesbaarheid AF + gepusht (commit b67ce30)
 
-## Gewijzigde files (deze sessie)
-- `src/lib/database.types.ts` — NIEUW, gegenereerd uit live DB (ref plgcqkbfvzwkqzkggmfh)
-- `src/lib/supabase.ts` — 3 clients getypeerd met `<Database>`
-- `src/app/api/challenges/submissions/[id]/route.ts` — `as StatCategory` cast
-- `src/app/api/challenges/tracks/route.ts` — `as Challenge` cast
-- `src/app/api/events/[id]/tickets/route.ts` — price `?? 0` + nullable RPC-args cast
-- `src/app/api/members/route.ts` — insertData `TablesInsert<'members'>`
-- `src/app/dashboard/card-editor/page.tsx` — `ComponentProps` boundary cast
-- `src/app/api/events/tickets/[id]/checkin/route.ts` — atomaire UPDATE `.eq('status','paid')` + 409
-- `src/app/api/events/[id]/checkin/route.ts` — vangt unique-violation 23505 -> 409
-- `supabase/migrations/20260531-01-prevent-duplicate-self-checkin.sql` — NIEUW (NIET applied)
+## Diagnose (waarom A "werkt niet goed")
+- MyCardTab QR -> `svsit.nl/scan/{id}` = 404 (geen /scan route bestaat)
+- MemberCard `showQR` ({id,email} JSON) = nergens gerenderd (MyCardTab gaf showQR nooit door)
+- QRScanner ledenpas-modus verwacht JSON, getoonde QR is URL -> altijd invalid
+- /api/scans XP-bug: admin typt points 1-10, maar grant = FLAT calculateXpReward (5/10/25), points genegeerd
+- Event-XP dubbelt: self check-in (25) + admin scan
+- BESLISSING (wees artist): broken scan-flow + QR HELEMAAL WEG. Event-XP = enkel self check-in code. Admin handmatige punten (MemberDetailModal) blijft, maar XP = points fixen.
 
-## Wat werkt
-- tsc --noEmit clean, `npm run build` OK (Proxy middleware actief)
-- 11 type-fouten die opdoken na typing allemaal gefixt zonder `any`
-- Authz-audit: 42 routes, geen gaten
+## Gewijzigde files (deze sessie) — A deels klaar
+- `src/components/MemberCard.tsx` — KLAAR: showQR prop + QR render + qrData + react-qr-code import weg. Avatar = sticker/initialen.
+- `src/components/dashboard/tabs/MyCardTab.tsx` — KLAAR: FlipCard QR-back weg, showQR state + QR-knop weg, QRCode import weg. Card direct gerenderd (data-card div), 3 knoppen (EDIT/SAVE/SHARE). useEffect import behouden (ActivityRow gebruikt het).
 
-## Wat niet werkte / geleerde lessen
-- Supabase gegenereerde types: DB-enums = `string`, RPC-args = non-null (nullability niet gemodelleerd) -> cast op grens met comment
-- Member self-checkin TOCTOU kan app-code alleen niet sluiten -> partial unique index nodig (scanned_by IS NULL discrimineert self vs admin scan)
+## Volgende stappen (NOG TE DOEN)
+1. Commit (2 atomic: A scan-cleanup, B xp-visibility). NIET pushen zonder user OK.
+
+## AF deze sessie (A + B code KLAAR, tsc + build groen)
+- A1 `QRScanner.tsx`: ledenpas-modus weg, alleen ticket check-in (parseTicketId + handleTicketCheckin + handmatige ticket-invoer). KLAAR.
+- A2 `api/scans/route.ts` POST: `const xpAmount = points` (was calculateXpReward), import weg. KLAAR.
+- B `api/members/[id]/route.ts`: leaderboard_visible in GET select + beide PATCH allowlists. KLAAR.
+- B `dashboard/profiel/page.tsx`: toggle xp.visibility (optimistic PATCH). KLAAR.
+- B `api/leaderboard/route.ts`: filter op 4 queries + isHidden flag. KLAAR.
+- B `leaderboard/page.tsx` (server, eigen queries): filter op top10 + bubble + isHidden. KLAAR.
+- B `leaderboard/LeaderboardContent.tsx`: isHidden prop + verborgen-melding. KLAAR.
+- B `api/cron/weekly-digest/route.ts`: top5 leaderboard `.eq('leaderboard_visible', true)`. KLAAR.
 
 ## Blokkades
-- Geen (wacht op user-beslissing voor 2 shared-state acties)
+- Geen
 
-## Volgende stappen
-1. User-OK: `apply_migration` op LIVE DB plgcqkbfvzwkqzkggmfh (20260531-01). Zonder index = points-farming-gat open
-2. User-OK: commit + push alle wijzigingen
-3. Daarna: live Stripe e2e (STRIPE_WEBHOOK_SECRET in Vercel)
-
-## Key context (voor nieuwe sessie)
-- createServiceClient = service-role (bypasst RLS) -> elke caller MOET eigen authz; audit bevestigde dat dit klopt
-- Migratie-index discriminator: self-checkin `scanned_by: null`, admin-scan `scanned_by: session.user.email`
-- Genereer DB-types opnieuw via `mcp__supabase__generate_typescript_types` na schema-wijziging
+## Key context
+- Anti-slop: NOOIT dashes/emojis in UI, alleen Lucide icons. Caveman mode actief (prose terse, code normaal).
+- /api/scans ook gebruikt door MemberDetailModal (handmatig punten, geen event_id) + EventDetailPanel GET (lijst). Niet verwijderen.
+- MemberCardData.memberId/email velden blijven (share-link gebruikt memberId). Geen consument meer voor QR.
+- Supabase ref plgcqkbfvzwkqzkggmfh. ENIGE andere open punt: live Stripe e2e (user zelf).

@@ -127,6 +127,8 @@ export default function ProfielPage() {
   const [memberSince, setMemberSince] = useState<string | null>(null)
   const [expiresAt, setExpiresAt] = useState<string | null>(null)
   const [points, setPoints] = useState(0)
+  const [leaderboardVisible, setLeaderboardVisible] = useState(true)
+  const [visibilitySaving, setVisibilitySaving] = useState(false)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(true)
@@ -156,6 +158,7 @@ export default function ProfielPage() {
           setExpiresAt((member.membership_expires_at as string | null | undefined) ?? null)
           setMemberSince((member.membership_started_at as string | undefined) ?? (member.created_at as string | undefined) ?? null)
           setPoints((member.total_xp as number) || 0)
+          setLeaderboardVisible((member.leaderboard_visible as boolean | undefined) ?? true)
           setHasPassword(!!member.has_password)
         }
       })
@@ -179,6 +182,22 @@ export default function ProfielPage() {
     setMessage(res.ok ? 'config.saved' : 'error: save_failed')
     setSaving(false)
     setTimeout(() => setMessage(''), 3000)
+  }
+
+  async function handleToggleVisibility() {
+    if (!session?.user?.id || visibilitySaving) return
+    const next = !leaderboardVisible
+    setVisibilitySaving(true)
+    setLeaderboardVisible(next) // optimistic
+
+    const res = await fetch(`/api/members/${session.user.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ leaderboard_visible: next }),
+    })
+
+    if (!res.ok) setLeaderboardVisible(!next) // rollback
+    setVisibilitySaving(false)
   }
 
   async function handlePasswordChange() {
@@ -450,6 +469,43 @@ export default function ProfielPage() {
 
             {/* Rank badge */}
             <RankBadge points={points} />
+
+            {/* Divider */}
+            <div style={{ borderTop: '1px dashed rgba(255,255,255,0.06)' }} />
+
+            {/* Leaderboard visibility toggle */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
+                  xp.visibility
+                </span>
+                <button
+                  onClick={handleToggleVisibility}
+                  disabled={visibilitySaving}
+                  role="switch"
+                  aria-checked={leaderboardVisible}
+                  className="relative inline-flex items-center transition-all duration-200 disabled:opacity-50"
+                  style={{
+                    width: 40,
+                    height: 20,
+                    backgroundColor: leaderboardVisible ? 'var(--color-accent-green)' : 'rgba(255,255,255,0.1)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                >
+                  <motion.span
+                    className="block"
+                    animate={{ x: leaderboardVisible ? 21 : 2 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    style={{ width: 14, height: 14, backgroundColor: 'var(--color-bg)' }}
+                  />
+                </button>
+              </div>
+              <p className="font-mono text-[10px] leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+                {leaderboardVisible
+                  ? '// je XP is zichtbaar op het leaderboard en in de wekelijkse mail'
+                  : '// je XP is verborgen op het leaderboard en in de wekelijkse mail'}
+              </p>
+            </div>
 
             {/* Member since creation fallback */}
             {!memberSince && (

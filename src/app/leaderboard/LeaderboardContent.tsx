@@ -291,9 +291,10 @@ interface Props {
   top10: LeaderEntry[]
   bubble: BubbleData | null
   isLoggedIn: boolean
+  isHidden?: boolean
 }
 
-export default function LeaderboardContent({ top10, bubble, isLoggedIn }: Props) {
+export default function LeaderboardContent({ top10, bubble, isLoggedIn, isHidden = false }: Props) {
   const podium = top10.slice(0, 3)
   const rest = top10.slice(3)
 
@@ -348,7 +349,29 @@ export default function LeaderboardContent({ top10, bubble, isLoggedIn }: Props)
       )}
 
       {/* ── Bubble ranking ── */}
-      {bubble ? (
+      {isHidden ? (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1], delay: 0.4 }}
+          className="mt-4 rounded-lg px-5 py-4 font-mono text-sm text-center"
+          style={{
+            backgroundColor: 'var(--color-surface)',
+            border: '1px solid var(--color-border)',
+            color: 'var(--color-text-muted)',
+          }}
+        >
+          Je XP is verborgen. Zet het aan in je{' '}
+          <a
+            href="/dashboard/profiel"
+            className="underline underline-offset-4"
+            style={{ color: 'var(--color-accent-gold)' }}
+          >
+            profiel
+          </a>{' '}
+          om je positie te tonen.
+        </motion.div>
+      ) : bubble ? (
         <BubbleSection bubble={bubble} />
       ) : (
         !isLoggedIn && (

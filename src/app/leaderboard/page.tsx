@@ -61,6 +61,7 @@ const getTop10 = unstable_cache(
       .select('id, email, display_name, total_xp, current_level, is_admin')
       .eq('membership_active', true)
       .eq('is_admin', false)
+      .eq('leaderboard_visible', true)
       .order('total_xp', { ascending: false })
       .limit(10)
 
@@ -91,21 +92,28 @@ export default async function LeaderboardPage() {
 
   // Bubble ranking - only if logged in
   let bubble: BubbleData | null = null
+  let isHidden = false
   if (session?.user?.id) {
     const memberId = session.user.id
 
     const { data: member } = await supabase
       .from('members')
-      .select('total_xp, current_level, email, display_name')
+      .select('total_xp, current_level, email, display_name, leaderboard_visible')
       .eq('id', memberId)
       .single()
 
-    if (member) {
+    // Lid heeft zichzelf verborgen: geen eigen bubble tonen
+    if (member && member.leaderboard_visible === false) {
+      isHidden = true
+    }
+
+    if (member && !isHidden) {
       const { count: aboveCount } = await supabase
         .from('members')
         .select('id', { count: 'exact', head: true })
         .eq('membership_active', true)
         .eq('is_admin', false)
+        .eq('leaderboard_visible', true)
         .gt('total_xp', member.total_xp as number)
 
       const position = (aboveCount ?? 0) + 1
@@ -116,6 +124,7 @@ export default async function LeaderboardPage() {
           .select('id, email, display_name, total_xp, current_level, is_admin')
           .eq('membership_active', true)
           .eq('is_admin', false)
+          .eq('leaderboard_visible', true)
           .gt('total_xp', member.total_xp as number)
           .order('total_xp', { ascending: true })
           .limit(5),
@@ -124,6 +133,7 @@ export default async function LeaderboardPage() {
           .select('id, email, display_name, total_xp, current_level, is_admin')
           .eq('membership_active', true)
           .eq('is_admin', false)
+          .eq('leaderboard_visible', true)
           .lt('total_xp', member.total_xp as number)
           .order('total_xp', { ascending: false })
           .limit(5),
@@ -198,6 +208,7 @@ export default async function LeaderboardPage() {
           top10={top10}
           bubble={bubble}
           isLoggedIn={!!session}
+          isHidden={isHidden}
         />
       </main>
 

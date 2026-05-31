@@ -15,12 +15,13 @@ export async function GET(req: NextRequest) {
         .select('id, email, display_name, total_xp, current_level, is_admin')
         .eq('membership_active', true)
         .eq('is_admin', false)
+        .eq('leaderboard_visible', true)
         .order('total_xp', { ascending: false })
         .limit(10),
       memberId
         ? supabase
             .from('members')
-            .select('total_xp, current_level, email, display_name')
+            .select('total_xp, current_level, email, display_name, leaderboard_visible')
             .eq('id', memberId)
             .single()
         : Promise.resolve({ data: null, error: null }),
@@ -38,7 +39,9 @@ export async function GET(req: NextRequest) {
 
     let bubble = null
     const member = memberResult.data
-    if (memberId && member) {
+    // Verberg de eigen bubble als het lid zichzelf op hidden heeft gezet
+    const isHidden = !!member && member.leaderboard_visible === false
+    if (memberId && member && !isHidden) {
       // Above count, above list, and below list are independent - run in parallel
       const [aboveCountResult, aboveResult, belowResult] = await Promise.all([
         supabase
@@ -46,12 +49,14 @@ export async function GET(req: NextRequest) {
           .select('id', { count: 'exact', head: true })
           .eq('membership_active', true)
           .eq('is_admin', false)
+          .eq('leaderboard_visible', true)
           .gt('total_xp', member.total_xp as number),
         supabase
           .from('members')
           .select('id, email, display_name, total_xp, current_level, is_admin')
           .eq('membership_active', true)
           .eq('is_admin', false)
+          .eq('leaderboard_visible', true)
           .gt('total_xp', member.total_xp as number)
           .order('total_xp', { ascending: true })
           .limit(5),
@@ -60,6 +65,7 @@ export async function GET(req: NextRequest) {
           .select('id, email, display_name, total_xp, current_level, is_admin')
           .eq('membership_active', true)
           .eq('is_admin', false)
+          .eq('leaderboard_visible', true)
           .lt('total_xp', member.total_xp as number)
           .order('total_xp', { ascending: false })
           .limit(5),
@@ -96,7 +102,7 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ top10: sanitizedTop10, bubble })
+    return NextResponse.json({ top10: sanitizedTop10, bubble, isHidden })
   } catch (err) {
     return handleError(err)
   }

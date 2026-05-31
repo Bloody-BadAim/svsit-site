@@ -29,7 +29,7 @@ export async function GET(
     id, email, display_name, student_number, role, commissie, commissie_voorstel,
     total_xp, current_level, coins_balance, custom_title, accent_color,
     membership_active, membership_started_at, membership_expires_at,
-    stripe_customer_id, active_skin, password_hash,
+    stripe_customer_id, active_skin, password_hash, leaderboard_visible,
     is_admin, created_at,
     member_commissies ( commissie_id, role_in_commissie, commissies ( id, slug, naam ) )
   `)
@@ -106,8 +106,8 @@ export async function PATCH(
 
     // Welke velden mag het lid zelf updaten vs admin
     const allowedFields = isAdmin
-      ? ['student_number', 'role', 'commissie', 'commissie_voorstel', 'total_xp', 'active_skin', 'display_name', 'hva_email', 'membership_active', 'membership_expires_at', 'membership_started_at']
-      : ['student_number', 'active_skin', 'display_name', 'hva_email']
+      ? ['student_number', 'role', 'commissie', 'commissie_voorstel', 'total_xp', 'active_skin', 'display_name', 'hva_email', 'membership_active', 'membership_expires_at', 'membership_started_at', 'leaderboard_visible']
+      : ['student_number', 'active_skin', 'display_name', 'hva_email', 'leaderboard_visible']
 
     const updateData: Record<string, unknown> = {}
     for (const field of allowedFields) {

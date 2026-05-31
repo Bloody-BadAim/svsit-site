@@ -115,13 +115,14 @@ export async function GET(req: NextRequest) {
         .order('date', { ascending: true })
         .limit(10),
 
-      // Top 5 leaderboard (exclude admins/bestuur)
+      // Top 5 leaderboard (exclude admins/bestuur + hidden leden)
       supabase
         .from('members')
         .select('email, display_name, total_xp')
         .eq('membership_active', true)
         .eq('is_admin', false)
         .neq('role', 'bestuur')
+        .eq('leaderboard_visible', true)
         .order('total_xp', { ascending: false })
         .limit(5),
 
