@@ -19,7 +19,7 @@ gsap.registerPlugin(ScrollTrigger);
 function NoEventsPlaceholder() {
   return (
     <div
-      className="py-10 px-6 rounded-xl text-center font-mono text-sm text-[var(--color-text-muted)]"
+      className="py-10 px-6 rounded-xl text-center font-mono text-sm text-muted"
       style={{
         border: "1px dashed var(--color-border)",
         background: "rgba(255,255,255,0.01)",

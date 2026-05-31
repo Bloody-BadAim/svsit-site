@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, lazy, Suspense } from "react";
+import Link from "next/link";
 
 import CommunityLog from "@/components/CommunityLog";
 
@@ -30,7 +31,8 @@ function useCounter(target: number, duration = 1800, delay = 1200) {
     started.current = true;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    setCount(0);
+    // Defer initial setState to avoid synchronous state update inside effect
+    const initTimer = window.setTimeout(() => setCount(0), 0);
     const start = performance.now();
     let raf: number;
     const step = (now: number) => {
@@ -46,7 +48,10 @@ function useCounter(target: number, duration = 1800, delay = 1200) {
       if (progress < 1) raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      clearTimeout(initTimer);
+      cancelAnimationFrame(raf);
+    };
   }, [target, duration, delay]);
 
   return count;
@@ -234,9 +239,9 @@ export default function Hero() {
                 }`}
             >
               {/* Primary CTA */}
-              <a
+              <Link
                 href="/#join"
-                className="hero-cta-primary group relative px-10 py-4 bg-[var(--color-accent-gold)] text-[var(--color-bg)] font-mono font-bold text-sm tracking-widest uppercase overflow-hidden transition-transform duration-200 hover:scale-[1.03] active:scale-[0.97]"
+                className="hero-cta-primary group relative px-10 py-4 bg-gold text-background font-mono font-bold text-sm tracking-widest uppercase overflow-hidden transition-transform duration-200 hover:scale-[1.03] active:scale-[0.97]"
               >
                 <Suspense fallback={null}>
                   <GlowEffect
@@ -257,10 +262,10 @@ export default function Hero() {
                   <span className="text-[var(--color-bg)]/50 text-xs">{"]"}</span>
                 </span>
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-              </a>
+              </Link>
 
               {/* Secondary CTA */}
-              <a
+              <Link
                 href="/#events"
                 className="hero-cta-secondary group/events relative px-10 py-4 border border-[var(--color-border)] text-[var(--color-text-muted)] font-mono text-sm tracking-widest uppercase overflow-hidden hover:border-[var(--color-accent-gold)] hover:text-[var(--color-text)] transition-all duration-300 hover:scale-[1.03] active:scale-[0.97]"
               >
@@ -276,7 +281,7 @@ export default function Hero() {
                     {">"}
                   </span>
                 </span>
-              </a>
+              </Link>
             </div>
 
             {/* Stat counters -- social proof */}

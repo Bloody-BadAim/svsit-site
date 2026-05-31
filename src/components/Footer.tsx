@@ -137,7 +137,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer id="footer" className="relative z-[1] bg-[var(--color-bg)] overflow-hidden">
+    <footer id="footer" className="relative z-1 bg-background overflow-hidden">
       {/* Scanline grid texture - CSS only */}
       <div
         aria-hidden="true"
@@ -161,16 +161,16 @@ export default function Footer() {
       />
 
       {/* ASCII art separator */}
-      <div aria-hidden="true" className="relative z-[1] font-mono text-[10px] leading-none text-[#71717A] select-none overflow-hidden whitespace-nowrap">
+      <div aria-hidden="true" className="relative z-1 font-mono text-[10px] leading-none text-[#71717A] select-none overflow-hidden whitespace-nowrap">
         <div className="flex items-center h-8">
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+          <div className="flex-1 h-px bg-linear-to-r from-transparent via-gold to-transparent opacity-30" />
         </div>
         <div className="text-center opacity-20 tracking-[0.5em] pb-4">
           &#123;&#47;&#42; &#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61; &#42;&#47;&#125;
         </div>
       </div>
 
-      <div ref={contentRef} className="relative z-[1] max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24">
+      <div ref={contentRef} className="relative z-1 max-w-350 mx-auto px-6 md:px-12 lg:px-24">
         {/* ZONE 1: Logo + Terminal prompt */}
         <div
           data-footer-zone
@@ -183,7 +183,7 @@ export default function Footer() {
               <span className="font-mono text-[11px] text-[#71717A]">v11.0</span>
             </div>
             <div className="font-mono text-xs text-[#71717A] mb-3 flex items-center gap-2">
-              <span className="text-[var(--color-accent-blue)]">export default</span>
+              <span className="text-blue">export default</span>
               <span className="text-[#A1A1AA]">StudieverenigingICT</span>
             </div>
             <p className="font-mono text-sm text-[#A1A1AA] leading-relaxed">

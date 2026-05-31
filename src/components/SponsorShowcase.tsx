@@ -41,13 +41,13 @@ export default function SponsorShowcase() {
         {/* Header block (padded) */}
         <div className="px-6 md:px-12 lg:px-24">
           {/* Top accent line */}
-          <div
+          {/* <div
             className="absolute top-0 left-6 md:left-12 lg:left-24 right-6 md:right-12 lg:right-24 h-px"
             style={{
               background:
                 "linear-gradient(90deg, rgba(242,158,24,0.3), rgba(59,130,246,0.2), transparent)",
             }}
-          />
+          /> */}
 
           {/* Section label */}
           <div className="mb-7 md:mb-9">
