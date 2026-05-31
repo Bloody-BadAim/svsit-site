@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { href: "/vacatures", label: "Vacatures", type: "dir" },
   { href: "/leaderboard", label: "Leaderboard", type: "dir" },
   { href: "/faq", label: "FAQ", type: "file" },
+  { href: "/privacy", label: "Privacy", type: "file" },
   { href: "/login", label: "Word Lid", type: "file" },
 ];
 
