@@ -2,15 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { isReducedMotion, onMotionChange } from "@/lib/motion";
 import HboIctVormtaal from "@/components/HboIctVormtaal";
 
 // ---------------------------------------------------------------------------
-// HboIctSection — co-branding sectie op de homepage. Fuseert de SIT-identiteit
-// (donker, terminal/circuit, mono labels, gouden accent, scherpe hoeken) met
-// de HBO-ICT huisstijl (scherpe chevron-vormtaal + accentkleuren + wit logo).
-//
-// SIT-goud blijft het dominante accent; HBO-ICT-kleuren zijn secundair.
+// HboIctSection - compacte co-brand banner. Diagonale split: links de donkere
+// SIT terminal-surface met de copy, rechts een bold HBO-ICT triangle-veld dat
+// via een scherpe diagonale rand in de SIT-laag snijdt. Dit is de ene plek waar
+// HBO-ICT kleur luid mag zijn. SIT-goud blijft het accent op de tekstkant.
 // Reduced motion: eindstaat is altijd zichtbaar; animatie wordt overgeslagen.
 // ---------------------------------------------------------------------------
 
@@ -35,7 +35,7 @@ export default function HboIctSection() {
           observer.disconnect();
         }
       },
-      { threshold: 0.25 }
+      { threshold: 0.3 }
     );
     observer.observe(ref.current);
     return () => observer.disconnect();
@@ -43,96 +43,53 @@ export default function HboIctSection() {
 
   // Zichtbaar = altijd onder reduced motion; anders pas bij in-view.
   const shown = reduced || inView;
+  const ease = "cubic-bezier(0.16,1,0.3,1)";
 
   return (
     <section
       ref={ref}
-      className="relative py-24 md:py-32 overflow-hidden"
+      className="relative px-6 md:px-12 lg:px-24 py-16 md:py-20"
       aria-labelledby="hboict-heading"
     >
-      {/* Donkere SIT-laag boven de circuit-achtergrond */}
-      <div className="absolute inset-0 bg-[var(--color-bg)]/70 pointer-events-none" />
-
-      {/* Vormtaal-band bovenaan, full-bleed accent */}
       <div
-        className="absolute top-0 left-0 right-0 h-8 md:h-10 pointer-events-none overflow-hidden"
+        className="relative mx-auto max-w-7xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg)]"
         style={{
-          opacity: shown ? 0.4 : 0,
+          opacity: shown ? 1 : 0,
+          transform: shown || reduced ? "translateY(0)" : "translateY(20px)",
           transition: reduced
             ? undefined
-            : "opacity 0.8s cubic-bezier(0.16,1,0.3,1)",
+            : `opacity 0.7s ${ease}, transform 0.7s ${ease}`,
         }}
       >
-        <HboIctVormtaal className="w-full h-full" />
-      </div>
-
-      {/* Dunne goud -> indigo divider die de twee merken "fuseert" */}
-      <div
-        className="absolute top-8 md:top-10 left-0 right-0 h-px pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(90deg, var(--color-accent-gold), var(--hboict-blue) 55%, transparent)",
-          opacity: shown ? 0.7 : 0,
-          transition: reduced
-            ? undefined
-            : "opacity 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s",
-        }}
-      />
-
-      <div className="relative z-[1] px-6 md:px-12 lg:px-24">
-        <div
-          className="relative grid gap-10 lg:gap-16 lg:grid-cols-[1.2fr_1fr] items-center border border-[var(--color-border)] bg-[var(--color-surface)]/60 p-8 md:p-12"
-          style={{
-            opacity: shown ? 1 : 0,
-            transform: shown || reduced ? "translateY(0)" : "translateY(16px)",
-            transition: reduced
-              ? undefined
-              : "opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.15s, transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.15s",
-          }}
-        >
-          {/* Zij-accent: smalle verticale vormtaal-strip op desktop */}
-          <div
-            aria-hidden="true"
-            className="hidden lg:block absolute right-0 top-0 bottom-0 w-1.5 overflow-hidden"
-            style={{ opacity: 0.6 }}
-          >
-            <HboIctVormtaal
-              className="h-full w-full"
-              style={{ transform: "rotate(90deg) scale(2.4)" }}
-            />
-          </div>
-
-          {/* Tekstkolom */}
-          <div>
+        <div className="relative grid md:grid-cols-[1.15fr_1fr] min-h-[320px] md:h-[360px]">
+          {/* ---- Kopkant: donkere SIT terminal-surface met copy ---- */}
+          <div className="relative z-[2] flex flex-col justify-center gap-5 bg-[var(--color-surface)] p-7 md:p-10 lg:p-12">
             {/* Mono eyebrow in goud */}
-            <div className="flex items-center gap-4 mb-5">
+            <div className="flex items-center gap-3">
               <span className="font-mono text-xs text-[var(--color-accent-gold)] tracking-[0.3em] uppercase">
                 {"> officieel.partner"}
               </span>
-              <span className="w-12 h-px bg-[var(--color-accent-gold)]" />
+              <span className="h-px w-10 bg-[var(--color-accent-gold)]" />
             </div>
 
             {/* Display headline, Big Shoulders, uppercase */}
             <h2
               id="hboict-heading"
-              className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--color-text)] tracking-tight uppercase leading-[0.95]"
+              className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--color-text)] tracking-tight uppercase leading-[0.92]"
             >
               Dé studievereniging van HBO-ICT
             </h2>
 
-            {/* Paragraaf */}
-            <p className="mt-6 max-w-xl text-sm md:text-base text-[var(--color-text-muted)] leading-relaxed">
-              SIT is de officiële studievereniging van HBO-ICT aan de
-              Hogeschool van Amsterdam. Gebouwd door en voor HBO-ICT
-              studenten. We verbinden de opleiding met de community en het
-              werkveld zodat je verder komt.
+            {/* Eén korte punchy regel (studententoon, geen dashes/komma's) */}
+            <p className="max-w-md text-sm md:text-base text-[var(--color-text-muted)] leading-snug">
+              Door studenten voor studenten. Wij zijn jouw plek binnen de opleiding.
             </p>
 
-            {/* Payoff in SIT-mono, caps, HBO-ICT accentkleur */}
-            <div className="mt-8 flex items-center gap-3">
+            {/* Payoff in mono caps, HBO-ICT cyaan accent */}
+            <div className="flex items-center gap-3">
               <span
                 aria-hidden="true"
-                className="block w-2 h-2 rotate-45"
+                className="block h-2 w-2 rotate-45"
                 style={{ backgroundColor: "var(--hboict-red)" }}
               />
               <span
@@ -141,37 +98,71 @@ export default function HboIctSection() {
               >
                 Creating Tomorrow
               </span>
+              <ArrowUpRight
+                className="h-4 w-4"
+                style={{ color: "var(--hboict-cyan)" }}
+                aria-hidden="true"
+              />
             </div>
           </div>
 
-          {/* Logo-kolom: wit HBO-ICT lockup op donkere surface */}
-          <div className="flex lg:justify-end">
-            <div className="relative border border-[var(--color-border)] bg-[var(--color-bg)]/60 px-6 py-7 md:px-8 md:py-9 w-full lg:w-auto">
-              {/* Hoek-accent in HBO-ICT indigo */}
+          {/* ---- Bold HBO-ICT triangle-veld rechts ---- */}
+          <div aria-hidden="true" className="relative">
+            <HboIctVormtaal
+              variant="triangles"
+              count={10}
+              opacity={shown ? 1 : 0}
+              className="absolute inset-0 h-full w-full"
+              style={{
+                transition: reduced ? undefined : `opacity 0.8s ${ease} 0.15s`,
+              }}
+            />
+          </div>
+
+          {/* ---- Scherpe diagonale rand die de twee merken fuseert ---- */}
+          {/* SIT-surface snijdt schuin in het vormtaal-veld (alleen desktop) */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-y-0 left-0 right-0 z-[1] hidden md:block bg-[var(--color-surface)]"
+            style={{
+              clipPath: "polygon(0 0, 60% 0, 48% 100%, 0 100%)",
+            }}
+          />
+          {/* Goud -> indigo lichtlijn langs de diagonaal */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-y-0 left-0 right-0 z-[3] hidden md:block"
+            style={{
+              clipPath:
+                "polygon(59.4% 0, 60% 0, 48% 100%, 47.4% 100%)",
+              background:
+                "linear-gradient(180deg, var(--color-accent-gold), var(--hboict-blue-accent))",
+              opacity: shown ? 0.9 : 0,
+              transition: reduced ? undefined : `opacity 0.8s ${ease} 0.25s`,
+            }}
+          />
+
+          {/* ---- Wit HBO-ICT logo, drijvend op het vormtaal-veld ---- */}
+          <div className="absolute z-[4] bottom-5 right-5 md:bottom-7 md:right-7">
+            <div className="relative border border-white/30 bg-[var(--color-bg)]/85 px-4 py-3 backdrop-blur-sm">
               <span
                 aria-hidden="true"
-                className="absolute -top-px -left-px w-4 h-4 border-t border-l"
-                style={{ borderColor: "var(--hboict-blue-accent)" }}
+                className="absolute -top-px -left-px h-3 w-3 border-t border-l"
+                style={{ borderColor: "var(--color-accent-gold)" }}
               />
               <span
                 aria-hidden="true"
-                className="absolute -bottom-px -right-px w-4 h-4 border-b border-r"
-                style={{ borderColor: "var(--color-accent-gold)" }}
+                className="absolute -bottom-px -right-px h-3 w-3 border-b border-r"
+                style={{ borderColor: "var(--hboict-cyan)" }}
               />
               <Image
                 src="/hbo-ict-wit.png"
                 alt="HBO-ICT - Hogeschool van Amsterdam"
                 width={240}
                 height={41}
-                className="h-auto w-[200px] md:w-[240px]"
+                className="h-auto w-[150px] md:w-[180px]"
                 priority={false}
               />
-              <p className="mt-4 font-mono text-[var(--color-text-muted)] text-xs">
-                <span style={{ color: "var(--color-accent-green)" }}>
-                  {"// "}
-                </span>
-                aangesloten bij de opleiding
-              </p>
             </div>
           </div>
         </div>
