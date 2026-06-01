@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 
-export const dynamic = 'force-dynamic'
+// Cache de sitemap 1 uur op de edge i.p.v. elke crawl Supabase te queryen
+export const revalidate = 3600
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = 'https://svsit.nl'

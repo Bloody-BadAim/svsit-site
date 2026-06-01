@@ -3,13 +3,17 @@ import bcrypt from 'bcryptjs'
 import { createServiceClient } from '@/lib/supabase'
 import { auth } from '@/lib/auth'
 import { handleError } from '@/lib/apiAuth'
+import { rateLimit } from '@/lib/rateLimit'
 import type { TablesInsert } from '@/lib/database.types'
 
 // POST - Nieuw lid aanmaken (registratie)
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { email: rawEmail, password, display_name, student_number, hva_email, role, commissie, commissie_voorstel } = body
+    // SECURITY: `role`/`is_admin` worden bewust NIET uit de body gelezen.
+    // Registratie mag nooit een rol toekennen - rollen beheert een admin via
+    // /api/admin/members/[id]/role. Anders kan iedereen zich admin maken.
+    const { email: rawEmail, password, display_name, student_number, hva_email, commissie, commissie_voorstel } = body
 
     if (!rawEmail) {
       return NextResponse.json({ data: null, error: 'Email is verplicht', meta: null }, { status: 400 })
@@ -22,19 +26,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ data: null, error: 'Ongeldig emailadres', meta: null }, { status: 400 })
     }
 
+    // Rate limit: voorkom massaal aanmaken van nep-accounts
+    if (!rateLimit(`register:${email}`).success) {
+      return NextResponse.json({ data: null, error: 'Te veel pogingen, probeer later opnieuw', meta: null }, { status: 429 })
+    }
+
     const supabase = createServiceClient()
 
-    // Check of email al bestaat
+    // Check of email al bestaat (incl. of het account al een wachtwoord heeft)
     const { data: existing } = await supabase
       .from('members')
-      .select('id')
+      .select('id, password_hash')
       .eq('email', email)
       .single()
 
     if (existing) {
-      // Update bestaand lid (bijv. Microsoft user die registratie flow doorloopt)
+      // Account claimen: een vooraf aangemaakt lid voltooit registratie. Alleen
+      // toegestaan als het account nog GEEN wachtwoord heeft - anders zou dit een
+      // account-overname zijn van een bestaand lid door iemand die het e-mailadres
+      // kent. Rol blijft ongewijzigd (wordt nooit via deze route gezet).
+      if (existing.password_hash) {
+        return NextResponse.json({ data: null, error: 'Dit emailadres is al geregistreerd', meta: null }, { status: 409 })
+      }
+
       const updateData: Record<string, unknown> = {
-        role: role || 'member',
         commissie: commissie || null,
         commissie_voorstel: commissie_voorstel || null,
         student_number: student_number || null,
@@ -57,11 +72,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ data, error: null, meta: null })
     }
 
-    // Nieuw lid aanmaken
+    // Nieuw lid aanmaken - altijd met rol 'member'
     const insertData: TablesInsert<'members'> = {
       email,
       display_name: display_name || null,
-      role: role || 'member',
+      role: 'member',
       commissie: commissie || null,
       commissie_voorstel: commissie_voorstel || null,
       student_number: student_number || null,

@@ -66,23 +66,33 @@ export default function CommunityLog() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const interval = setInterval(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+
+    const tick = () => {
       const d = FEED_DATA[indexRef.current % FEED_DATA.length];
       indexRef.current++;
-      setRows((prev) => {
-        const next = [
-          ...prev.slice(-(MAX_ROWS - 1)),
-          {
-            id: idRef.current++,
-            hash: generateHash(),
-            ...d,
-          },
-        ];
-        return next;
-      });
-    }, 2500);
+      setRows((prev) => [
+        ...prev.slice(-(MAX_ROWS - 1)),
+        { id: idRef.current++, hash: generateHash(), ...d },
+      ]);
+    };
 
-    return () => clearInterval(interval);
+    const start = () => {
+      if (!interval) interval = setInterval(tick, 2500);
+    };
+    const stop = () => {
+      if (interval) { clearInterval(interval); interval = null; }
+    };
+
+    // Pauzeer wanneer de tab verborgen is - geen re-renders op de achtergrond
+    const onVisibility = () => (document.hidden ? stop() : start());
+    document.addEventListener("visibilitychange", onVisibility);
+    if (!document.hidden) start();
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      stop();
+    };
   }, []);
 
   return (

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { createServiceClient } from '@/lib/supabase'
 import { sendPasswordResetEmail } from '@/lib/email'
+import { rateLimit } from '@/lib/rateLimit'
 
 const TOKEN_EXPIRY_DAYS = 7
 
@@ -14,6 +15,11 @@ export async function POST(req: NextRequest) {
     }
 
     const email = rawEmail.toLowerCase().trim()
+
+    // Rate limit: voorkom reset-mail flooding van een adres
+    if (!rateLimit(`forgot:${email}`).success) {
+      return NextResponse.json({ success: true })
+    }
     const supabase = createServiceClient()
 
     // Zoek member

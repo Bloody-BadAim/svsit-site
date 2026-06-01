@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { handleError, requireAdmin } from '@/lib/apiAuth'
+import { auth } from '@/lib/auth'
 import { stripe } from '@/lib/stripe'
 import { createServiceClient } from '@/lib/supabase'
 import { sendTicketEmail, generateTicketNumber } from '@/lib/email'
 import { parseFormFields, validateCustomData } from '@/lib/eventForm'
+import { rateLimit } from '@/lib/rateLimit'
 import type { Json } from '@/lib/database.types'
 
 // GET - Lijst van tickets voor een event (admin/bestuur only)
@@ -42,16 +44,27 @@ export async function POST(
   try {
     const { id: eventId } = await params
     const body = await req.json()
-    const { email, name, member_id, isMember, custom_data } = body as {
+    const { email, name, custom_data } = body as {
       email: string
       name?: string
-      member_id?: string
-      isMember?: boolean
       custom_data?: unknown
     }
 
+    // SECURITY: lidmaatschap + member_id NIET uit de body vertrouwen (anders kan
+    // iedereen de leden-prijs pakken of een boeking op andermans account zetten).
+    // Leid af uit de sessie: alleen een ingelogd lid met actief lidmaatschap
+    // krijgt de ledenprijs.
+    const session = await auth()
+    const member_id = session?.user?.id ?? null
+    const isMember = session?.user?.membershipActive ?? false
+
     if (!email) {
       return NextResponse.json({ data: null, error: 'Email is verplicht', meta: null }, { status: 400 })
+    }
+
+    // Rate limit: voorkom spam-aanmeldingen + bevestigingsmail-flooding
+    if (!rateLimit(`ticket:${String(email).toLowerCase()}`).success) {
+      return NextResponse.json({ data: null, error: 'Te veel aanmeldingen, probeer later opnieuw', meta: null }, { status: 429 })
     }
 
     const supabase = createServiceClient()

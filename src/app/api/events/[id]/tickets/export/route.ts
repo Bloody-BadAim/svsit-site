@@ -4,8 +4,12 @@ import { createServiceClient } from '@/lib/supabase'
 import { parseFormFields, displayValue, type CustomData } from '@/lib/eventForm'
 
 function csvCell(value: string): string {
+  // Formule-injectie neutraliseren: cellen die met = + - @ of tab/CR beginnen
+  // kunnen in Excel/Sheets als formule uitvoeren. Prefix met apostrof.
+  let v = value
+  if (/^[=+\-@\t\r]/.test(v)) v = `'${v}`
   // Altijd quoten + interne quotes verdubbelen -> veilig tegen komma's/newlines
-  return `"${value.replace(/"/g, '""')}"`
+  return `"${v.replace(/"/g, '""')}"`
 }
 
 function slugify(s: string): string {
