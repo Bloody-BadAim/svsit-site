@@ -1,41 +1,40 @@
-# Handoff — SIT website (svsit.nl) — 2026-05-31
+# Handoff — SIT Website (svsit-site) — 2026-06-01
 
 ## Doel
-Post-launch onderhoud SIT-verenigingssite. Live op main, Vercel auto-deploy.
+SIT studievereniging website. Events, members, sponsors, ticketing. Live op svsit.nl.
 
 ## Status
-- Fase: 4 Implement (post-launch, live op main)
-- Sessie 28 AFGESLOTEN: security-scan repo (schoon) + NOTION_API_KEY-audit (niet in code)
-- Gate: launch APPROVED (svsit.nl live)
-- Working tree schoon, niks open in code
+- Fase: 9 Launch (live, onderhoud/fixes)
+- Taak: Gratis-badge fix + SITE_CONFIG-refactor (beide klaar, gedeployed)
+- Gate: merged to main 26 mei, in productie
 
 ## Gewijzigde files (deze sessie)
-- `specs/handoff.md` — security-scan + NOTION-audit genoteerd, sessie afgerond
+- `src/lib/constants.ts` — nieuw `SITE_CONFIG` (email/socials/address/stats/membership/introweek)
+- `src/app/events/page.tsx` + `events/[id]/page.tsx` — Gratis-badge weg (PriceBadge return null)
+- 26 files totaal refereren SITE_CONFIG i.p.v. hardcoded contact/socials/prijs/stats/datum
 
 ## Wat werkt
-- Repo secret-clean: geen secrets in tracked files/history, .env* gitignored, 18 secrets via process.env
-- NOTION_API_KEY niet in code (alleen notion_id DB-kolom = legit member-sync)
-- Vorige sessie 27 (afe08c6): events-recap inline + signup-guard + Moederbord wheel-scroll, gepusht
+- Build clean (npm run build), tsc clean
+- Commit `0d8fae5` (Gratis-badge) + `566c4ee` (SITE_CONFIG) gepusht main, beide live via vercel --prod
+- 0 hardcoded urls/invite-codes/emails over (git grep geverifieerd)
+- FAQ-bug 8→7 commissies gefixt (COMMISSIES.length)
 
 ## Wat niet werkte / geleerde lessen
-- Grep-tool kapot (ripgrep binary ENOENT in pnpm-path) — fallback: `git grep` via Bash
-- Stripe rk_live key staat plaintext in ~/.config/stripe/live-restricted.key (perms 600, NIET in repo) — alleen lokaal
+- Bulk-refactor gedelegeerd aan general-purpose agent: deed alleen wat in expliciete lijst stond. Miste invite-codes RegisterFlow + email-templates (member/ticket/weeklyDigest) + EmailComposer — zelf afgemaakt. Les: email-templates apart benoemen bij contact-refactors.
+- Countdown homepage was 10:00, introweek-pagina 13:00 (drift). Geünificeerd naar 13:00 via SITE_CONFIG.introweek.startIso.
 
 ## Blokkades
-- Geen (code af). Resterende items vereisen externe input/dashboards
+- Geen
 
-## Volgende stappen (allemaal extern, geen code)
-1. Visueel verifieren live svsit.nl: /events recaps + completed /events/[id] + Moederbord scroll
-2. Foto's Thijmen/Yusuf/Liam (nu photo:null in moederbord.ts)
-3. HHR PDF na ALV-bekrachtiging -> public/documenten + status "beschikbaar"
-4. Stripe rk_live roteren via Stripe-dashboard (OPTIONEEL, lage urgentie, restricted scope)
-5. NOTION_API_KEY weg uit Vercel-env (Settings > Environment Variables) — niet in code
+## Volgende stappen
+1. P3: FAQ-content nog 2x (`faq/page.tsx` JSON-LD + `FaqContent.tsx` UI) — contact/prijs nu via config, maar tekst-arrays dupliceren. Overweeg 1 source.
+2. Lidprijs €9,99 in SITE_CONFIG moet matchen met Stripe-prijs (los systeem) bij wijziging.
+3. Foto's Thijmen/Yusuf/Liam (photo:null in moederbord.ts)
+4. NOTION_API_KEY weg uit Vercel-dashboard (niet in code, puur dashboard-actie)
 
 ## Key context (voor nieuwe sessie)
-- CAVEMAN MODE full actief (terse prose, normale code/commits)
-- Commit/push ALLEEN op expliciet "commit en push"
-- Lenis-les: modals/drawers met eigen overflow in smooth-scroll pagina vereisen data-lenis-prevent
-- Recap-data: events kolommen recap_description, recap_photos[], recap_published. Upload via /api/events/[id]/recap-photos (admin, service client, bucket 'recaps' public)
-- Codebase strip diacritics in NL tekst (echt niet echt)
-- Repo Bloody-BadAim/svsit-site, branch main. Supabase ref plgcqkbfvzwkqzkggmfh
-- Sessie 28 commits: 12179c5, de3c936, e57d752 (allemaal docs, gepusht)
+- `SITE_CONFIG` in `src/lib/constants.ts` = single source contact/socials/stats/prijs/introweek-datum. Importeer overal, niet hardcoden. Veilig in server+client+email-templates (constants importeert alleen types).
+- Display-handles (`@sv.sit` marketing-copy, Navbar-tekst, Footer ariaLabel) bewust gelaten — roteren nooit.
+- Events Gratis-badge = data-gedreven (events.is_paid via Supabase). Admin EventFormModal:305 kiest ticket-mode per event.
+- Codebase strip diacritics (écht -> echt); anti-slop: geen em/en dashes in UI.
+- Vercel deploy: `vercel --prod --yes` vanuit repo root, aliased naar svsit.nl.
