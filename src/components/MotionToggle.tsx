@@ -19,6 +19,7 @@ export default function MotionToggle() {
     if (!mounted) return
     document.documentElement.classList.toggle('reduce-motion', reduced)
     localStorage.setItem('sit-reduced-motion', String(reduced))
+    window.dispatchEvent(new Event('sit:motionchange'))
   }, [reduced, mounted])
 
   if (!mounted) return null

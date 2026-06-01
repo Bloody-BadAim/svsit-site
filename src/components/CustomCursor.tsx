@@ -14,7 +14,7 @@ const CFG = {
   accent: "#F29E18",
   lock: "brackets" as "brackets" | "braces" | "box",
   trail: true,
-  coords: true,
+  coords: false,
   magnet: 0.28,
 };
 
@@ -66,11 +66,6 @@ export default function CustomCursor() {
     let rect: (DOMRect & { _stale?: boolean }) | null = null;
     let isText = false;
     let inside = false;
-
-    const pad = (n: number) => {
-      n = Math.max(0, Math.round(n));
-      return n < 1000 ? ("000" + n).slice(-4) : String(n);
-    };
 
     const labelFor = (el: HTMLElement) => {
       if (el.dataset && el.dataset.cursorLabel) return el.dataset.cursorLabel;
@@ -132,7 +127,8 @@ export default function CustomCursor() {
       root.appendChild(r);
       r.addEventListener("animationend", () => r.remove());
     };
-    const onDown = () => {
+    const onDown = (e: PointerEvent) => {
+      if (e.button !== 0) return;
       root.classList.add("down");
       exec(raw.x, raw.y);
     };
@@ -195,9 +191,7 @@ export default function CustomCursor() {
       elHud.classList.toggle("flipy", flipY);
       elHud.style.transform =
         "translate3d(" + soft.x + "px," + soft.y + "px,0)";
-      if (CFG.coords && !target)
-        elHudVal.textContent = "x:" + pad(raw.x) + " y:" + pad(raw.y);
-      elHud.style.opacity = (CFG.coords || target) && inside ? "1" : "0";
+      elHud.style.opacity = target && inside ? "1" : "0";
 
       if (target && !isText && rect) {
         const p = 6;

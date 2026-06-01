@@ -15,12 +15,10 @@ export default function MagneticHero({ children }: MagneticHeroProps) {
 
   useEffect(() => {
     setMounted(true)
-    const reduced = document.documentElement.classList.contains('reduce-motion')
-    if (reduced) return
 
-    // Only on desktop (pointer: fine)
+    const isReduced = () => document.documentElement.classList.contains('reduce-motion')
     const hasPointer = window.matchMedia('(pointer: fine)').matches
-    if (!hasPointer) return
+    let running = false
 
     const handleMove = (e: MouseEvent) => {
       if (!containerRef.current) return
@@ -56,14 +54,37 @@ export default function MagneticHero({ children }: MagneticHeroProps) {
       rafRef.current = requestAnimationFrame(animate)
     }
 
-    window.addEventListener('mousemove', handleMove)
-    window.addEventListener('mouseleave', handleLeave)
-    rafRef.current = requestAnimationFrame(animate)
+    const start = () => {
+      if (running) return
+      running = true
+      window.addEventListener('mousemove', handleMove)
+      window.addEventListener('mouseleave', handleLeave)
+      rafRef.current = requestAnimationFrame(animate)
+    }
 
-    return () => {
+    const stop = () => {
+      if (!running) return
+      running = false
       window.removeEventListener('mousemove', handleMove)
       window.removeEventListener('mouseleave', handleLeave)
       cancelAnimationFrame(rafRef.current)
+      targetRef.current = { x: 0, y: 0 }
+      currentRef.current = { x: 0, y: 0 }
+      if (containerRef.current) containerRef.current.style.transform = 'none'
+    }
+
+    // Only on desktop (pointer: fine)
+    if (!isReduced() && hasPointer) start()
+
+    const sync = () => {
+      if (isReduced()) stop()
+      else if (hasPointer) start()
+    }
+    window.addEventListener('sit:motionchange', sync)
+
+    return () => {
+      window.removeEventListener('sit:motionchange', sync)
+      stop()
     }
   }, [mounted])
 

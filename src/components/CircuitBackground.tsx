@@ -70,7 +70,9 @@ export default function CircuitBackground() {
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isReduced = () =>
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      document.documentElement.classList.contains("reduce-motion");
 
     const C = {
       gold: "#F29E18",
@@ -373,6 +375,13 @@ export default function CircuitBackground() {
     const FRAME_MS = 1000 / 30;
     let last = 0;
     function frame(time: number) {
+      // Honor the site toggle / OS setting live: draw one static frame and go
+      // idle (no further rAF scheduled) so "static" truly stops the animation.
+      if (isReduced()) {
+        paintOnce();
+        raf = 0;
+        return;
+      }
       if (last && time - last < FRAME_MS) {
         raf = requestAnimationFrame(frame);
         return;
@@ -422,7 +431,7 @@ export default function CircuitBackground() {
     }
 
     function startLoop() {
-      if (reduce || document.hidden) return;
+      if (isReduced() || document.hidden) return;
       if (raf) return;
       last = 0;
       raf = requestAnimationFrame(frame);
@@ -451,6 +460,17 @@ export default function CircuitBackground() {
     };
     document.addEventListener("visibilitychange", onVisibility);
 
+    // react live to the site's // motion / // static toggle
+    const onMotionChange = () => {
+      if (isReduced()) {
+        stopLoop();
+        paintOnce();
+      } else {
+        startLoop();
+      }
+    };
+    window.addEventListener("sit:motionchange", onMotionChange);
+
     let rt: ReturnType<typeof setTimeout>;
     const onResize = () => {
       clearTimeout(rt);
@@ -467,6 +487,7 @@ export default function CircuitBackground() {
       stopLoop();
       clearTimeout(rt);
       document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("sit:motionchange", onMotionChange);
       window.removeEventListener("resize", onResize);
     };
   }, []);

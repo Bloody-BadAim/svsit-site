@@ -688,6 +688,9 @@ body::before {
   scroll-behavior: auto !important;
 }
 
+/* Hide the grainy noise overlay under static for visual clarity */
+.reduce-motion body::before { display: none !important; }
+
 /* ── MemberCard Frame Style Keyframes ── */
 
 /* Neon frame: pulsing inner glow */
