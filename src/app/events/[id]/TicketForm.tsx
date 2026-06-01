@@ -19,6 +19,8 @@ const fieldInputStyle: React.CSSProperties = {
   backgroundColor: 'rgba(255,255,255,0.05)',
   color: 'var(--color-text)',
   border: '1px solid rgba(255,255,255,0.10)',
+  // donkere native dropdown-popup (anders witte popup met lichte tekst = onleesbaar)
+  colorScheme: 'dark',
 }
 
 export default function TicketForm({

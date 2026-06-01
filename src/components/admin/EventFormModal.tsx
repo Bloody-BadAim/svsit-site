@@ -148,7 +148,6 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.title || !form.date) return
-    setSaving(true)
     setError(null)
 
     const isPaid = ticketMode === 'own'
@@ -162,6 +161,33 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
         if (f.placeholder?.trim()) out.placeholder = f.placeholder.trim()
         return out
       })
+
+    // Validatie aanmeld-velden + ticketverkoop voor we opslaan
+    const labels = cleanFields.map((f) => f.label.toLowerCase())
+    const dup = labels.find((l, i) => labels.indexOf(l) !== i)
+    if (dup) {
+      setError(`Dubbel aanmeld-veld: "${dup}". Geef elk veld een unieke naam.`)
+      return
+    }
+    const badSelect = cleanFields.find((f) => f.type === 'select' && (!f.options || f.options.length === 0))
+    if (badSelect) {
+      setError(`Dropdown "${badSelect.label}" heeft geen opties. Voeg minstens één optie toe.`)
+      return
+    }
+    if (cleanFields.length > 25) {
+      setError('Maximaal 25 aanmeld-velden per event.')
+      return
+    }
+    if (isPaid && euroCents(form.price_members) === 0 && euroCents(form.price_nonmembers) === 0) {
+      setError('Vul minstens één prijs in voor eigen verkoop, of kies "Gratis / geen tickets".')
+      return
+    }
+    if (ticketMode === 'external' && !form.external_ticket_url.trim()) {
+      setError('Vul een ticket-URL in voor externe verkoop.')
+      return
+    }
+
+    setSaving(true)
 
     const body = {
       title: form.title,

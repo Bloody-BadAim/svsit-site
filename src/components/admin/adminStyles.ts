@@ -10,6 +10,8 @@ export const inputStyle: React.CSSProperties = {
   outline: 'none',
   width: '100%',
   borderRadius: 0,
+  // donkere native dropdown-popup (anders witte popup met lichte tekst = onleesbaar)
+  colorScheme: 'dark',
 }
 
 export const labelStyle: React.CSSProperties = {

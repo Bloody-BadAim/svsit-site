@@ -70,6 +70,15 @@ export async function POST(
       throw eventError
     }
 
+    // Geen aanmelding op afgelaste of afgelopen events (UI verbergt de form al,
+    // maar een directe API-call moet ook geweigerd worden)
+    if (event.status === 'cancelled') {
+      return NextResponse.json({ data: null, error: 'Dit event is afgelast', meta: null }, { status: 409 })
+    }
+    if (event.status === 'completed') {
+      return NextResponse.json({ data: null, error: 'Dit event is al geweest', meta: null }, { status: 409 })
+    }
+
     // Custom aanmeld-velden valideren tegen de definities op het event
     const formFields = parseFormFields(event.form_fields)
     const validation = validateCustomData(formFields, custom_data)
