@@ -7,6 +7,7 @@ import SectionLabel from "@/components/SectionLabel";
 import HoldToJoinButton from "@/components/HoldToJoinButton";
 import MemberCard from "@/components/MemberCard";
 import { SITE_CONFIG } from "@/lib/constants";
+import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 export default function JoinCta() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -14,16 +15,57 @@ export default function JoinCta() {
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return;
-
     let ctx: gsap.Context | null = null;
     let cancelled = false;
+    let hasIdleCb = false;
+    let idleId: number | null = null;
 
-    const hasIdleCb = "requestIdleCallback" in window;
-    const idleId: number = hasIdleCb
-      ? window.requestIdleCallback(initGsap)
-      : (setTimeout(initGsap, 1) as unknown as number);
+    // De reveal-targets gebruiken autoAlpha (opacity + visibility). Niet
+    // pre-hidden in JSX, maar een halverwege onderbroken tween (live toggle)
+    // kan visibility:hidden achterlaten -> expliciet terug naar zichtbaar.
+    function showAll() {
+      const targets: Element[] = [];
+      if (leftRef.current) {
+        targets.push(...Array.from(leftRef.current.querySelectorAll("[data-animate]")));
+      }
+      if (cardRef.current) targets.push(cardRef.current);
+      if (targets.length) {
+        gsap.set(targets, {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          clearProps: "transform",
+        });
+      }
+    }
+
+    function setup() {
+      cancelled = false;
+
+      if (isReducedMotion()) {
+        showAll();
+        return;
+      }
+
+      hasIdleCb = "requestIdleCallback" in window;
+      idleId = hasIdleCb
+        ? window.requestIdleCallback(initGsap)
+        : (setTimeout(initGsap, 1) as unknown as number);
+    }
+
+    function teardown() {
+      cancelled = true;
+      if (idleId !== null) {
+        if (hasIdleCb) {
+          window.cancelIdleCallback(idleId);
+        } else {
+          clearTimeout(idleId);
+        }
+        idleId = null;
+      }
+      ctx?.revert();
+      ctx = null;
+    }
 
     function initGsap() {
       if (cancelled) return;
@@ -70,14 +112,16 @@ export default function JoinCta() {
       }, sectionRef);
     }
 
+    setup();
+
+    const unsubscribe = onMotionChange(() => {
+      teardown();
+      setup();
+    });
+
     return () => {
-      cancelled = true;
-      if (hasIdleCb) {
-        window.cancelIdleCallback(idleId);
-      } else {
-        clearTimeout(idleId);
-      }
-      ctx?.revert();
+      unsubscribe();
+      teardown();
     };
   }, []);
 

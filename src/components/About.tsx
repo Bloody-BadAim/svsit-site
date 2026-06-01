@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import SectionLabel from "@/components/SectionLabel";
 import { BorderTrail } from "@/components/ui/BorderTrail";
+import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 const codeLines = [
   "// sit.config.ts",
@@ -61,9 +62,14 @@ export default function About() {
   const [codeInView, setCodeInView] = useState(false);
   const [highlightLine, setHighlightLine] = useState(-1);
 
-  // Code block line reveal when in view
+  // Code block line reveal when in view. Under reduced motion, show all
+  // lines immediately (no line-by-line interval) so content is never blank.
   useEffect(() => {
     if (!codeInView) return;
+    if (isReducedMotion()) {
+      setVisibleLines(codeLines.length);
+      return;
+    }
     let i = 0;
     const interval = setInterval(() => {
       i++;
@@ -76,8 +82,7 @@ export default function About() {
   // Code block idle highlight cycle after reveal
   useEffect(() => {
     if (visibleLines < codeLines.length) return;
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return;
+    if (isReducedMotion()) return;
 
     let current = 0;
     const interval = setInterval(() => {
@@ -90,12 +95,8 @@ export default function About() {
   }, [visibleLines]);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    let ctx: gsap.Context | null = null;
-    let cancelled = false;
-
-    // Observe code block for line-by-line reveal (independent of GSAP)
+    // Observe code block for line-by-line reveal (independent of GSAP).
+    // This stays mounted across motion changes so content always reveals.
     let codeObserver: IntersectionObserver | null = null;
     if (codeRef.current) {
       codeObserver = new IntersectionObserver(
@@ -110,12 +111,26 @@ export default function About() {
       codeObserver.observe(codeRef.current);
     }
 
-    // Defer all GSAP/ScrollTrigger setup until after first paint to avoid
-    // forced reflows from getBoundingClientRect during initial render
+    let ctx: gsap.Context | null = null;
+    let cancelled = false;
+    let idleId: number | null = null;
     const hasIdleCb = "requestIdleCallback" in window;
-    const idleId: number = hasIdleCb
-      ? window.requestIdleCallback(initGsap)
-      : (setTimeout(initGsap, 1) as unknown as number);
+
+    function setup() {
+      const prefersReducedMotion = isReducedMotion();
+
+      // Reduced motion: skip all GSAP intro tweens. Every reveal target
+      // (heading words, body text, accent line) relies on its natural,
+      // fully-visible CSS state -- the fromTo initial (opacity:0 / scaleX:0)
+      // is only applied while a tween exists, so skipping leaves them visible.
+      if (prefersReducedMotion) return;
+
+      // Defer all GSAP/ScrollTrigger setup until after first paint to avoid
+      // forced reflows from getBoundingClientRect during initial render
+      idleId = hasIdleCb
+        ? window.requestIdleCallback(initGsap)
+        : (setTimeout(initGsap, 1) as unknown as number);
+    }
 
     function initGsap() {
       if (cancelled) return;
@@ -124,7 +139,7 @@ export default function About() {
         // Word-by-word heading reveal
         if (headingRef.current) {
           const words = headingRef.current.querySelectorAll(".heading-word");
-          if (words.length && !prefersReducedMotion) {
+          if (words.length) {
             gsap.fromTo(
               Array.from(words),
               { opacity: 0, y: 24, rotateX: -15 },
@@ -147,7 +162,7 @@ export default function About() {
 
           // Gold text glow pulse on the ICT studenten words
           const goldWords = headingRef.current.querySelectorAll(".heading-gold");
-          if (goldWords.length && !prefersReducedMotion) {
+          if (goldWords.length) {
             gsap.fromTo(
               Array.from(goldWords),
               { textShadow: "0 0 0px rgba(245, 158, 11, 0)" },
@@ -174,7 +189,7 @@ export default function About() {
         }
 
         // Body text reveal (opacity + translateY instead of clipPath)
-        if (textRef.current && !prefersReducedMotion) {
+        if (textRef.current) {
           gsap.fromTo(
             textRef.current,
             { opacity: 0, y: 20 },
@@ -195,7 +210,7 @@ export default function About() {
         }
 
         // Accent line scale
-        if (accentRef.current && !prefersReducedMotion) {
+        if (accentRef.current) {
           gsap.fromTo(
             accentRef.current,
             { scaleX: 0 },
@@ -214,7 +229,7 @@ export default function About() {
         }
 
         // Floating fragments parallax
-        if (fragmentsRef.current && !prefersReducedMotion) {
+        if (fragmentsRef.current) {
           const frags = fragmentsRef.current.querySelectorAll(".floating-frag");
           frags.forEach((frag) => {
             gsap.to(frag, {
@@ -232,14 +247,34 @@ export default function About() {
       }, sectionRef);
     }
 
-    return () => {
+    function teardown() {
       cancelled = true;
-      if (hasIdleCb) {
-        window.cancelIdleCallback(idleId);
-      } else {
-        clearTimeout(idleId);
+      if (idleId !== null) {
+        if (hasIdleCb) {
+          window.cancelIdleCallback(idleId);
+        } else {
+          clearTimeout(idleId);
+        }
+        idleId = null;
       }
       ctx?.revert();
+      ctx = null;
+    }
+
+    setup();
+
+    // Re-evaluate the gate when the in-site // static toggle or the OS
+    // setting changes: tear down existing tweens and re-run setup (which
+    // skips tweens entirely when reduced, leaving content at visible CSS).
+    const unsubscribe = onMotionChange(() => {
+      teardown();
+      cancelled = false;
+      setup();
+    });
+
+    return () => {
+      unsubscribe();
+      teardown();
       codeObserver?.disconnect();
     };
   }, []);

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import SitLogo from "@/components/SitLogo";
 import { SITE_CONFIG } from "@/lib/constants";
+import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 const NAV_LINKS = [
   { href: "/over-ons", label: "Over Ons", type: "dir" },
@@ -102,39 +103,72 @@ export default function Footer() {
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-    if (prefersReducedMotion || !contentRef.current) return;
+    let observer: IntersectionObserver | null = null;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && contentRef.current) {
-            const sections =
-              contentRef.current.querySelectorAll("[data-footer-zone]");
-            gsap.fromTo(
-              Array.from(sections),
-              { opacity: 0, y: 20 },
-              {
-                opacity: 1,
-                y: 0,
-                duration: 0.6,
-                stagger: 0.12,
-                ease: "power3.out",
-              }
-            );
-            observer.disconnect();
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
+    // Footer-zones niet pre-hidden in JSX; fromTo verbergt alleen tijdens de
+    // tween. Bij reduced (of een onderbroken live-tween) expliciet zichtbaar.
+    function showAll() {
+      if (!contentRef.current) return;
+      const sections = contentRef.current.querySelectorAll("[data-footer-zone]");
+      gsap.set(Array.from(sections), {
+        opacity: 1,
+        y: 0,
+        clearProps: "transform",
+      });
+    }
 
-    const footerEl = contentRef.current.closest("footer");
-    if (footerEl) observer.observe(footerEl);
+    function setup() {
+      if (!contentRef.current) return;
 
-    return () => observer.disconnect();
+      if (isReducedMotion()) {
+        showAll();
+        return;
+      }
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && contentRef.current) {
+              const sections =
+                contentRef.current.querySelectorAll("[data-footer-zone]");
+              gsap.fromTo(
+                Array.from(sections),
+                { opacity: 0, y: 20 },
+                {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.6,
+                  stagger: 0.12,
+                  ease: "power3.out",
+                }
+              );
+              observer?.disconnect();
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      const footerEl = contentRef.current.closest("footer");
+      if (footerEl) observer.observe(footerEl);
+    }
+
+    function teardown() {
+      observer?.disconnect();
+      observer = null;
+    }
+
+    setup();
+
+    const unsubscribe = onMotionChange(() => {
+      teardown();
+      setup();
+    });
+
+    return () => {
+      unsubscribe();
+      teardown();
+    };
   }, []);
 
   const year = new Date().getFullYear();

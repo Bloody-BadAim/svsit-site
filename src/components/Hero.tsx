@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import Link from "next/link";
 
 import CommunityLog from "@/components/CommunityLog";
+import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 // Lazy-load non-LCP-critical components to avoid blocking initial paint
 const GlowEffect = lazy(() =>
@@ -29,7 +30,7 @@ function useCounter(target: number, duration = 1800, delay = 1200) {
   useEffect(() => {
     if (started.current) return;
     started.current = true;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (isReducedMotion()) return;
 
     // Defer initial setState to avoid synchronous state update inside effect
     const initTimer = window.setTimeout(() => setCount(0), 0);
@@ -84,6 +85,12 @@ export default function Hero() {
   const scrollArrowRef = useRef<HTMLSpanElement>(null);
   const [isVisible, setIsVisible] = useState(true);
 
+  // Intro-reveal classes. Onder // static (reducedMotion) GEEN opacity-0/animate
+  // -> elementen direct zichtbaar (anders blijven ze blank, want de fadeIn-delay
+  // wordt niet door de globale reduce-motion regel afgevangen).
+  const intro = (anim: string) =>
+    reducedMotion ? "" : `opacity-0 ${phase === "done" ? anim : ""}`;
+
   // Pause animations when hero scrolls out of view
   useEffect(() => {
     if (!heroRef.current) return;
@@ -95,11 +102,12 @@ export default function Hero() {
     return () => observer.disconnect();
   }, []);
 
-  // Check reduced motion once
+  // Check reduced motion, and stay live with the in-site // static toggle
+  // and OS setting so GSAP reveals re-evaluate without a reload.
   useEffect(() => {
-    setReducedMotion(
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    );
+    setReducedMotion(isReducedMotion());
+    const unsubscribe = onMotionChange(() => setReducedMotion(isReducedMotion()));
+    return unsubscribe;
   }, []);
 
   // Typing animation -- runs only on return visits
@@ -201,7 +209,7 @@ export default function Hero() {
 
           <div className="flex flex-col flex-1 min-w-0">
             {/* Terminal prompt line */}
-            <p className="font-mono text-[11px] sm:text-sm md:text-base text-[var(--color-text-muted)] mb-2 opacity-0 animate-[fadeIn_0.5s_ease_0.8s_forwards]">
+            <p className={`font-mono text-[11px] sm:text-sm md:text-base text-[var(--color-text-muted)] mb-2 ${reducedMotion ? "" : "opacity-0 animate-[fadeIn_0.5s_ease_0.8s_forwards]"}`}>
               <span className="text-[var(--color-accent-green)]">$</span>
               <span className="text-[var(--color-accent-blue)]">{" ~/hva/hbo-ict"}</span>
               <span className="text-[var(--color-text-muted)]">{" > "}</span>
@@ -216,8 +224,7 @@ export default function Hero() {
 
             {/* Subtitle -- styled as terminal output */}
             <div
-              className={`font-mono text-sm md:text-base mb-3 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.2s_forwards]" : ""
-                }`}
+              className={`font-mono text-sm md:text-base mb-3 ${intro("animate-[fadeIn_0.6s_ease_0.2s_forwards]")}`}
             >
               <span className="text-[var(--color-accent-green)]">{">"}</span>
               <span className="text-[var(--color-text-muted)]"> Studievereniging ICT</span>
@@ -227,8 +234,7 @@ export default function Hero() {
 
             {/* Tagline -- bigger, bolder */}
             <p
-              className={`font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight leading-[1.1] max-w-2xl mb-8 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.4s_forwards]" : ""
-                }`}
+              className={`font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight leading-[1.1] max-w-2xl mb-8 ${intro("animate-[fadeIn_0.6s_ease_0.4s_forwards]")}`}
             >
               <span className="text-[var(--color-accent-blue)]">Door</span>{" "}
               <span className="text-[var(--color-text)]">studenten.</span>{" "}
@@ -240,8 +246,7 @@ export default function Hero() {
 
             {/* CTAs -- game-lobby style */}
             <div
-              className={`flex flex-col sm:flex-row gap-4 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_0.6s_forwards]" : ""
-                }`}
+              className={`flex flex-col sm:flex-row gap-4 ${intro("animate-[fadeIn_0.6s_ease_0.6s_forwards]")}`}
             >
               {/* Primary CTA */}
               <Link
@@ -291,8 +296,7 @@ export default function Hero() {
 
             {/* Stat counters -- social proof */}
             <div
-              className={`flex items-center gap-6 sm:gap-8 md:gap-10 mt-10 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_1s_forwards]" : ""
-                }`}
+              className={`flex items-center gap-6 sm:gap-8 md:gap-10 mt-10 ${intro("animate-[fadeIn_0.6s_ease_1s_forwards]")}`}
             >
               {STATS.map((stat, i) => (
                 <StatCounter key={stat.label} {...stat} index={i} />
@@ -301,8 +305,7 @@ export default function Hero() {
 
             {/* Bottom line -- Amsterdam x marks */}
             <div
-              className={`flex items-center gap-3 mt-6 font-mono text-sm opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_1.3s_forwards]" : ""
-                }`}
+              className={`flex items-center gap-3 mt-6 font-mono text-sm ${intro("animate-[fadeIn_0.6s_ease_1.3s_forwards]")}`}
             >
               <span className="w-8 h-px bg-[var(--color-text-muted)] opacity-40" />
               <span className="text-[var(--color-accent-red)] font-bold">x</span>
@@ -322,8 +325,7 @@ export default function Hero() {
 
       {/* Scroll indicator */}
       <div
-        className={`absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-0 ${phase === "done" ? "animate-[fadeIn_0.6s_ease_1.5s_forwards]" : ""
-          }`}
+        className={`absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 ${intro("animate-[fadeIn_0.6s_ease_1.5s_forwards]")}`}
       >
         <span className="font-mono text-xs text-[var(--color-text-muted)] tracking-wider opacity-70">
           scroll down

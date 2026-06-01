@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
 import { CardSpotlight } from "@/components/ui/CardSpotlight";
 import { SITE_CONFIG } from "@/lib/constants";
+import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 const achievements = [
   {
@@ -98,30 +99,62 @@ export default function WhyJoin() {
   const cardsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (prefersReducedMotion) {
-      if (cardsRef.current) {
-        const cards = cardsRef.current.querySelectorAll(".achievement-card");
-        cards.forEach((card) => {
-          (card as HTMLElement).style.opacity = "1";
-          (card as HTMLElement).style.transform = "none";
-        });
-      }
-      return;
-    }
-
     let ctx: gsap.Context | null = null;
     let cancelled = false;
+    let hasIdleCb = false;
+    let idleId: number | null = null;
 
-    // Defer ScrollTrigger setup until after first paint to avoid
-    // forced reflows from layout property reads during initial render
-    const hasIdleCb = "requestIdleCallback" in window;
-    const idleId: number = hasIdleCb
-      ? window.requestIdleCallback(initGsap)
-      : (setTimeout(initGsap, 1) as unknown as number);
+    // Zet alle reveal-targets in hun finale ZICHTBARE staat. De cards zijn
+    // niet pre-hidden in JSX, maar als een tween halverwege liep (live toggle)
+    // dan moeten opacity/transform/ring/stat terug naar zichtbaar.
+    function showAll() {
+      if (!cardsRef.current) return;
+      const cards = cardsRef.current.querySelectorAll(".achievement-card");
+      gsap.set(Array.from(cards), {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        clearProps: "transform",
+      });
+      const rings = cardsRef.current.querySelectorAll(".achievement-ring");
+      gsap.set(Array.from(rings), { strokeDashoffset: 0 });
+      // Stat-counters terug naar hun eind-tekst
+      const stats = cardsRef.current.querySelectorAll<HTMLElement>(".stat-value");
+      stats.forEach((statEl) => {
+        const rawStat = statEl.getAttribute("data-stat") || "";
+        statEl.textContent = rawStat;
+      });
+    }
+
+    function setup() {
+      cancelled = false;
+
+      if (isReducedMotion()) {
+        showAll();
+        return;
+      }
+
+      // Defer ScrollTrigger setup until after first paint to avoid
+      // forced reflows from layout property reads during initial render
+      hasIdleCb = "requestIdleCallback" in window;
+      idleId = hasIdleCb
+        ? window.requestIdleCallback(initGsap)
+        : (setTimeout(initGsap, 1) as unknown as number);
+    }
+
+    function teardown() {
+      cancelled = true;
+      if (idleId !== null) {
+        if (hasIdleCb) {
+          window.cancelIdleCallback(idleId);
+        } else {
+          clearTimeout(idleId);
+        }
+        idleId = null;
+      }
+      ctx?.revert();
+      ctx = null;
+    }
 
     function initGsap() {
       if (cancelled) return;
@@ -215,14 +248,16 @@ export default function WhyJoin() {
       }, sectionRef);
     }
 
+    setup();
+
+    const unsubscribe = onMotionChange(() => {
+      teardown();
+      setup();
+    });
+
     return () => {
-      cancelled = true;
-      if (hasIdleCb) {
-        window.cancelIdleCallback(idleId);
-      } else {
-        clearTimeout(idleId);
-      }
-      ctx?.revert();
+      unsubscribe();
+      teardown();
     };
   }, []);
 

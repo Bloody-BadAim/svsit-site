@@ -224,6 +224,26 @@
   .pnet .grid .node { animation: none !important; opacity: 1 !important; translate: 0 !important; }
   .pnet .node .scan::before, .pnet .net-rail::after, .pnet .core-chip::after, .pnet .onl i, .pnet .p-status .live i, .pnet .slot-cmd .cur, .pnet .live-trace { animation: none !important; }
 }
+
+/* in-site "// static" toggle (.reduce-motion on <html>) — keep nodes fully visible, no loops */
+.reduce-motion .pnet .pnet-node,
+.reduce-motion .pnet .node {
+  opacity: 1 !important;
+  translate: 0 0 !important;
+  animation: none !important;
+}
+.reduce-motion .pnet .net-rail::after {
+  animation: none !important;
+  opacity: 0 !important;
+}
+.reduce-motion .pnet .node .scan::before,
+.reduce-motion .pnet .core-chip::after,
+.reduce-motion .pnet .onl i,
+.reduce-motion .pnet .p-status .live i,
+.reduce-motion .pnet .slot-cmd .cur,
+.reduce-motion .pnet .live-trace {
+  animation: none !important;
+}
 @media (max-width: 640px) {
   .pnet .net-rail { display: none; }
   .pnet .node { min-height: 200px; }

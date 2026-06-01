@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import SectionLabel from "@/components/SectionLabel";
 import { SITE_CONFIG } from "@/lib/constants";
+import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 const TESTIMONIALS = [
   {
@@ -105,25 +106,50 @@ export default function Testimonials() {
   const cardsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) {
-      if (cardsRef.current) {
-        const cards = cardsRef.current.querySelectorAll(".testi-card");
-        cards.forEach((card) => {
-          (card as HTMLElement).style.opacity = "1";
-          (card as HTMLElement).style.transform = "none";
-        });
-      }
-      return;
-    }
-
     let ctx: gsap.Context | null = null;
     let cancelled = false;
+    let hasIdleCb = false;
+    let idleId: number | null = null;
 
-    const hasIdleCb = "requestIdleCallback" in window;
-    const idleId: number = hasIdleCb
-      ? window.requestIdleCallback(initGsap)
-      : (setTimeout(initGsap, 1) as unknown as number);
+    // Cards niet pre-hidden in JSX; fromTo verbergt alleen tijdens de tween.
+    // Bij reduced (of een onderbroken live-tween) expliciet zichtbaar zetten.
+    function showAll() {
+      if (!cardsRef.current) return;
+      const cards = cardsRef.current.querySelectorAll(".testi-card");
+      gsap.set(Array.from(cards), {
+        opacity: 1,
+        y: 0,
+        clearProps: "transform",
+      });
+    }
+
+    function setup() {
+      cancelled = false;
+
+      if (isReducedMotion()) {
+        showAll();
+        return;
+      }
+
+      hasIdleCb = "requestIdleCallback" in window;
+      idleId = hasIdleCb
+        ? window.requestIdleCallback(initGsap)
+        : (setTimeout(initGsap, 1) as unknown as number);
+    }
+
+    function teardown() {
+      cancelled = true;
+      if (idleId !== null) {
+        if (hasIdleCb) {
+          window.cancelIdleCallback(idleId);
+        } else {
+          clearTimeout(idleId);
+        }
+        idleId = null;
+      }
+      ctx?.revert();
+      ctx = null;
+    }
 
     function initGsap() {
       if (cancelled) return;
@@ -152,14 +178,16 @@ export default function Testimonials() {
       }, sectionRef);
     }
 
+    setup();
+
+    const unsubscribe = onMotionChange(() => {
+      teardown();
+      setup();
+    });
+
     return () => {
-      cancelled = true;
-      if (hasIdleCb) {
-        window.cancelIdleCallback(idleId);
-      } else {
-        clearTimeout(idleId);
-      }
-      ctx?.revert();
+      unsubscribe();
+      teardown();
     };
   }, []);
 
