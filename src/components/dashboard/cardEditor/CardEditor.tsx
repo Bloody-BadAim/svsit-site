@@ -8,6 +8,7 @@ import type { AccessoryCategory, BadgeRarity, UnlockRule } from '@/types/gamific
 import MemberCard from '@/components/MemberCard'
 import type { MemberCardEquipment } from '@/components/MemberCard'
 import { resolvePetComponent, derivePetId } from '@/components/pets'
+import { StickerIcon } from '@/components/stickerIcons'
 import { getRarityColor } from '@/lib/badgeDefs'
 import { getSkin } from '@/lib/cardSkins'
 import { useToast } from '@/components/Toast'
@@ -261,10 +262,10 @@ function EffectPreview({ effectName, rarity }: { effectName: string; rarity: Bad
 }
 
 function StickerPreview({ def }: { def: AccessoryDefinition }) {
-  const content = (def.preview_data?.emoji as string) || (def.preview_data?.content as string) || '?'
+  const glyph = (def.preview_data?.emoji as string) || (def.preview_data?.content as string) || '?'
   return (
-    <div className="w-full h-full rounded flex items-center justify-center text-lg">
-      {content}
+    <div className="w-full h-full rounded flex items-center justify-center" style={{ color: 'var(--color-text)' }}>
+      <StickerIcon glyph={glyph} size={22} />
     </div>
   )
 }
@@ -300,6 +301,7 @@ function ItemVisual({ def }: { def: AccessoryDefinition }) {
 interface GridItemProps {
   def: AccessoryDefinition
   owned: MemberAccessoryRow | undefined
+  levelMet: boolean
   isEquipped: boolean
   onEquip: (id: string) => void
   onUnequip: (id: string) => void
@@ -308,8 +310,10 @@ interface GridItemProps {
   index: number
 }
 
-function GridItem({ def, owned, isEquipped, onEquip, onUnequip, onHoverStart, onHoverEnd, index }: GridItemProps) {
-  const isLocked = !owned
+function GridItem({ def, owned, levelMet, isEquipped, onEquip, onUnequip, onHoverStart, onHoverEnd, index }: GridItemProps) {
+  // Level-gated items zijn beschikbaar zodra het level gehaald is, ook zonder
+  // bestaande inventory-row (lazy grant gebeurt server-side bij equippen).
+  const isLocked = !owned && !levelMet
   const rarityColor = getRarityColor(def.rarity)
 
   function handleClick() {
@@ -605,6 +609,12 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
   const tabBarRef = useRef<HTMLDivElement>(null)
   const [indicatorStyle, setIndicatorStyle] = useState<{ left: number; width: number }>({ left: 0, width: 0 })
 
+  const memberLevel = member.current_level ?? 1
+  // Level-gated item is beschikbaar zodra het vereiste level gehaald is
+  function isLevelMet(def: AccessoryDefinition): boolean {
+    return def.unlock_rule?.type === 'level' && memberLevel >= def.unlock_rule.level
+  }
+
   // Build owned accessory set
   const ownedMap = new Map<string, MemberAccessoryRow>()
   for (const row of inventory) {
@@ -742,7 +752,24 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
         body: JSON.stringify({ accessoryId }),
       })
       if (res.ok) {
-        const row = ownedMap.get(accessoryId)
+        // Level-gated item zonder inventory-row: bouw een rij uit de definitie
+        // zodat de optimistische equip-update ook voor net-gegrante items werkt.
+        let row = ownedMap.get(accessoryId)
+        if (!row) {
+          const def = allDefinitions.find((d) => d.id === accessoryId)
+          if (def) {
+            row = {
+              id: `level-${accessoryId}`,
+              member_id: memberId,
+              accessory_id: accessoryId,
+              equipped: true,
+              position: null,
+              acquired_via: 'level_up',
+              acquired_at: new Date().toISOString(),
+              accessory_definitions: def,
+            }
+          }
+        }
         if (row?.accessory_definitions) {
           const cat = row.accessory_definitions.category
           if (cat === 'sticker') {
@@ -776,8 +803,9 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
       })
       if (res.ok) {
         const row = ownedMap.get(accessoryId)
-        if (row?.accessory_definitions) {
-          const cat = row.accessory_definitions.category
+        const cat = row?.accessory_definitions?.category
+          ?? allDefinitions.find((d) => d.id === accessoryId)?.category
+        if (cat) {
           if (cat === 'sticker') {
             setEquippedStickers((prev) => prev.filter((s) => s.accessory_id !== accessoryId))
           } else {
@@ -970,7 +998,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
           <div className="flex items-center gap-2 font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.15)' }}>
             <span>
               <span style={{ color: '#F29E18' }}>
-                {tabDefs.filter(d => ownedMap.has(d.id)).length}
+                {tabDefs.filter(d => ownedMap.has(d.id) || isLevelMet(d)).length}
               </span>
               /{tabDefs.length}
             </span>
@@ -1010,6 +1038,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
                         key={def.id}
                         def={def}
                         owned={owned}
+                        levelMet={isLevelMet(def)}
                         isEquipped={isEquipped}
                         onEquip={handleEquip}
                         onUnequip={handleUnequip}

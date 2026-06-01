@@ -102,21 +102,69 @@ export async function getEquippedAccessories(
   return { equipment, definitions }
 }
 
-export async function equipAccessory(memberId: string, accessoryId: string, position?: { x: number; y: number }): Promise<boolean> {
-  const supabase = createServiceClient()
-
-  const { data: accessory } = await supabase
+/**
+ * Zorgt dat het lid de accessory bezit. Geeft de categorie terug, of null als
+ * het lid 'm niet bezit en niet via level kan ontgrendelen.
+ *
+ * De winkel bestaat niet meer als unlock-route, dus level-gated accessories
+ * worden lazy gegrant: zodra het lid het vereiste level heeft, krijgt het de
+ * accessory automatisch bij de eerste keer equippen.
+ */
+async function ensureOwned(
+  supabase: ReturnType<typeof createServiceClient>,
+  memberId: string,
+  accessoryId: string
+): Promise<AccessoryCategory | null> {
+  const { data: owned } = await supabase
     .from('member_accessories')
     .select('accessory_id, accessory_definitions(category)')
     .eq('member_id', memberId)
     .eq('accessory_id', accessoryId)
     .single()
 
-  if (!accessory) return false
-  const raw = accessory.accessory_definitions as unknown
-  const def = (Array.isArray(raw) ? raw[0] : raw) as { category: string } | null
-  if (!def) return false
-  const category = def.category as AccessoryCategory
+  if (owned) {
+    const raw = owned.accessory_definitions as unknown
+    const def = (Array.isArray(raw) ? raw[0] : raw) as { category: string } | null
+    return def ? (def.category as AccessoryCategory) : null
+  }
+
+  // Nog niet in bezit: alleen toekennen als de unlock_rule een level is dat het
+  // lid al gehaald heeft.
+  const { data: def } = await supabase
+    .from('accessory_definitions')
+    .select('id, category, unlock_rule')
+    .eq('id', accessoryId)
+    .single()
+
+  if (!def) return null
+  const rule = def.unlock_rule as { type?: string; level?: number } | null
+  if (rule?.type !== 'level' || typeof rule.level !== 'number') return null
+
+  const { data: member } = await supabase
+    .from('members')
+    .select('current_level')
+    .eq('id', memberId)
+    .single()
+
+  const level = member?.current_level ?? 1
+  if (level < rule.level) return null
+
+  const { error: grantError } = await supabase.from('member_accessories').insert({
+    member_id: memberId,
+    accessory_id: accessoryId,
+    equipped: false,
+    acquired_via: 'level_up',
+  })
+  if (grantError) return null
+
+  return def.category as AccessoryCategory
+}
+
+export async function equipAccessory(memberId: string, accessoryId: string, position?: { x: number; y: number }): Promise<boolean> {
+  const supabase = createServiceClient()
+
+  const category = await ensureOwned(supabase, memberId, accessoryId)
+  if (!category) return false
 
   if (category !== 'sticker') {
     const { data: currentEquipped } = await supabase

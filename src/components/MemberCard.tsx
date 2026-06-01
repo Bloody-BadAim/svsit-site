@@ -7,6 +7,7 @@ import { getLevelForXp, getLevelProgress, getBadgeSlotCount } from "@/lib/levelE
 import type { Role } from "@/types/database";
 import { getSkin } from "@/lib/cardSkins";
 import BadgeIcon from "@/components/badges/BadgeIcon";
+import { StickerIcon } from "@/components/stickerIcons";
 import { getBadgeDef, getRarityColor } from "@/lib/badgeDefs";
 import { resolvePetComponent } from "@/components/pets";
 
@@ -540,8 +541,8 @@ export default function MemberCard({
                 }}
               >
                 {visibleStickers.length > 0 ? (
-                  <span style={{ fontSize: 36, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }}>
-                    {visibleStickers[0].emoji}
+                  <span style={{ color: '#FFFFFF', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))', display: 'flex' }}>
+                    <StickerIcon glyph={visibleStickers[0].emoji} size={36} />
                   </span>
                 ) : (
                   <span style={{
@@ -784,12 +785,12 @@ export default function MemberCard({
                 left: `${sticker.x}%`,
                 top: `${sticker.y}%`,
                 transform: "translate(-50%, -50%)",
-                fontSize: 22,
+                color: '#FFFFFF',
                 lineHeight: 1,
                 filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))",
               }}
             >
-              {sticker.emoji}
+              <StickerIcon glyph={sticker.emoji} size={22} />
             </div>
           ))}
 
