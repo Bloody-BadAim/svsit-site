@@ -72,7 +72,7 @@ function HboIctCoBrandStrip() {
               id="overons-cobrand-heading"
               className="font-display text-xl md:text-2xl font-bold uppercase tracking-tight leading-[1.05] text-[var(--color-text)]"
             >
-              Het Moederbord van SIT - de officiële studievereniging van HBO-ICT
+              Het Moederbord van SIT. Dé officiële studievereniging van HBO-ICT
               aan de HvA
             </p>
           </div>

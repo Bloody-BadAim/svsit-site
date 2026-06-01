@@ -35,7 +35,7 @@ export const PARTNERS: Partner[] = [
   {
     name: "HBO-ICT",
     tier: "strategisch",
-    tagline: "De opleiding HBO-ICT aan de HvA - waar {SIT} thuishoort.",
+    tagline: "De opleiding HBO-ICT aan de HvA. Waar {SIT} thuishoort.",
     url: "https://www.hva.nl/opleidingen/hbo-ict",
     slug: "hbo-ict",
   },

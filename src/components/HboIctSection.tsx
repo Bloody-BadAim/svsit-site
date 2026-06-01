@@ -124,8 +124,8 @@ export default function HboIctSection() {
             <p className="mt-6 max-w-xl text-sm md:text-base text-[var(--color-text-muted)] leading-relaxed">
               SIT is de officiële studievereniging van HBO-ICT aan de
               Hogeschool van Amsterdam. Gebouwd door en voor HBO-ICT
-              studenten - we verbinden de opleiding met de community, het
-              werkveld en alles wat je nodig hebt om verder te komen.
+              studenten. We verbinden de opleiding met de community en het
+              werkveld zodat je verder komt.
             </p>
 
             {/* Payoff in SIT-mono, caps, HBO-ICT accentkleur */}
