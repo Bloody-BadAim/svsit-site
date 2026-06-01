@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ToastProvider } from "@/components/Toast";
+import { SITE_CONFIG } from "@/lib/constants";
 
 // Non-critical UI enhancement: HUD cursor, fine-pointer devices only
 const CustomCursor = dynamic(() => import("@/components/CustomCursor"));
@@ -92,12 +93,12 @@ export default function RootLayout({
               description:
                 "De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam.",
               foundingDate: "2014",
-              email: "bestuur@svsit.nl",
+              email: SITE_CONFIG.email,
               sameAs: [
-                "https://www.instagram.com/sv.sit",
-                "https://www.tiktok.com/@sit_hva",
-                "https://linkedin.com/company/svsit-hbo-ict",
-                "https://discord.gg/68QjRVRRUM",
+                SITE_CONFIG.socials.instagram.url,
+                SITE_CONFIG.socials.tiktok.url,
+                SITE_CONFIG.socials.linkedin.url,
+                SITE_CONFIG.socials.discord.url,
               ],
               parentOrganization: {
                 "@type": "EducationalOrganization",

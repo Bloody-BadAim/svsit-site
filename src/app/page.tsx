@@ -4,15 +4,16 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import PageScrollProgress from "@/components/PageScrollProgress";
 import SectionDivider from "@/components/SectionDivider";
+import { SITE_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "{SIT} - Studievereniging ICT | HvA Amsterdam",
   description:
-    "De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Events, workshops, hackathons, community en gratis dev tools. Word lid voor €9,99/jaar.",
+    `De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Events, workshops, hackathons, community en gratis dev tools. Word lid voor ${SITE_CONFIG.membership.pricePerYear}.`,
   openGraph: {
     title: "{SIT} - Studievereniging ICT",
     description:
-      "Events, workshops, hackathons, community en gratis dev tools voor HBO-ICT studenten aan de HvA. Word lid voor €9,99/jaar.",
+      `Events, workshops, hackathons, community en gratis dev tools voor HBO-ICT studenten aan de HvA. Word lid voor ${SITE_CONFIG.membership.pricePerYear}.`,
     siteName: "{SIT}",
     locale: "nl_NL",
     type: "website",

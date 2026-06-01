@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { PARTNERS, TIER_META, TIER_ORDER } from "@/lib/partners";
+import { SITE_CONFIG } from "@/lib/constants";
 import { TextScramble } from "@/components/ui/TextScramble";
 import "./partnersNetwork.css";
 
@@ -207,7 +208,7 @@ export default function PartnersNetwork() {
             })}
 
             {/* OPEN SLOT */}
-            <a className="node slot" href="mailto:sponsoring@svsit.nl?subject=Partner%20worden%20bij%20SIT">
+            <a className="node slot" href={`mailto:${SITE_CONFIG.sponsoringEmail}?subject=Partner%20worden%20bij%20SIT`}>
               <Pins />
               <Corners />
               <div className="spot" />
@@ -215,7 +216,7 @@ export default function PartnersNetwork() {
               <p className="slot-cmd">
                 <span className="c-green">$</span> partner --add<span className="cur" />
               </p>
-              <p className="slot-sub">jouw logo hier · sponsoring@svsit.nl</p>
+              <p className="slot-sub">jouw logo hier · {SITE_CONFIG.sponsoringEmail}</p>
             </a>
           </div>
         </div>

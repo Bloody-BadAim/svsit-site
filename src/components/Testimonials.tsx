@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import SectionLabel from "@/components/SectionLabel";
+import { SITE_CONFIG } from "@/lib/constants";
 
 const TESTIMONIALS = [
   {
@@ -81,7 +82,7 @@ function DiscordCard() {
         </div>
         <div>
           <span className="font-mono text-[11px] text-[var(--color-accent-green)]">rosa</span>
-          <p className="font-mono text-xs text-[var(--color-text-muted)] mt-0.5">het is letterlijk 9,99 voor een heel jaar</p>
+          <p className="font-mono text-xs text-[var(--color-text-muted)] mt-0.5">het is letterlijk {SITE_CONFIG.membership.price} voor een heel jaar</p>
         </div>
         <div>
           <span className="font-mono text-[11px] text-[var(--color-accent-blue)]">wesley_dev</span>

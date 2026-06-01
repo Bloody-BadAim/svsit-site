@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import ClassSelector from './ClassSelector'
-import { COMMISSIES, ROLLEN } from '@/lib/constants'
+import { COMMISSIES, ROLLEN, SITE_CONFIG } from '@/lib/constants'
 import type { Role } from '@/types/database'
 import { Check, ArrowRight, User, GraduationCap } from 'lucide-react'
 
@@ -153,10 +153,10 @@ export default function RegisterFlow() {
   }
 
   const SOCIALS = [
-    { href: 'https://www.instagram.com/sv.sit', label: '@sv.sit', platform: 'Instagram', color: '#F29E18' },
-    { href: 'https://www.tiktok.com/@sit_hva', label: '@sit_hva', platform: 'TikTok', color: '#EF4444' },
-    { href: 'https://chat.whatsapp.com/LCndNz4xGZW0tqXWkNabaL', label: 'WhatsApp groep', platform: 'WhatsApp', color: '#25D366' },
-    { href: 'https://discord.gg/68QjRVRRUM', label: 'Discord server', platform: 'Discord', color: '#5865F2' },
+    { href: SITE_CONFIG.socials.instagram.url, label: SITE_CONFIG.socials.instagram.handle, platform: 'Instagram', color: '#F29E18' },
+    { href: SITE_CONFIG.socials.tiktok.url, label: SITE_CONFIG.socials.tiktok.handle, platform: 'TikTok', color: '#EF4444' },
+    { href: SITE_CONFIG.socials.whatsapp.url, label: 'WhatsApp groep', platform: 'WhatsApp', color: '#25D366' },
+    { href: SITE_CONFIG.socials.discord.url, label: 'Discord server', platform: 'Discord', color: '#5865F2' },
   ]
 
   return (
@@ -458,7 +458,7 @@ export default function RegisterFlow() {
                 color: 'var(--color-bg)',
               }}
             >
-              {loading ? 'Bezig...' : 'Word lid - €9,99/jaar'}
+              {loading ? 'Bezig...' : `Word lid - ${SITE_CONFIG.membership.pricePerYear}`}
               {!loading && <ArrowRight size={14} />}
             </button>
 

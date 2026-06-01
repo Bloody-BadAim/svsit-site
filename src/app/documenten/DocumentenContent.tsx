@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SITE_CONFIG } from "@/lib/constants";
 import {
   FileText,
   Download,
@@ -206,13 +207,13 @@ export default function DocumentenContent() {
             <div>
               <span style={{ color: "#22C55E" }}>$</span>{" "}
               <span style={{ color: "#FAFAFA" }}>mail</span>{" "}
-              <span style={{ color: "#3B82F6" }}>bestuur@svsit.nl</span>
+              <span style={{ color: "#3B82F6" }}>{SITE_CONFIG.email}</span>
             </div>
           </div>
 
           <div className="flex flex-wrap gap-3 mt-5">
             <a
-              href="mailto:bestuur@svsit.nl"
+              href={`mailto:${SITE_CONFIG.email}`}
               className="inline-flex items-center gap-2 px-4 py-2 rounded font-mono text-xs tracking-wider transition-all hover:scale-[1.02]"
               style={{
                 color: "#F29E18",

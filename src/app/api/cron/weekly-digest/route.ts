@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer'
 import { render } from '@react-email/components'
 import { createServiceClient } from '@/lib/supabase'
 import WeeklyDigestEmail from '@/emails/weeklyDigestEmail'
+import { SITE_CONFIG } from '@/lib/constants'
 
 // ─── SMTP transport (same setup as lib/email.ts) ─────────────────────────────
 
@@ -187,7 +188,7 @@ export async function GET(req: NextRequest) {
     // ── Send emails in batches ────────────────────────────────────────────
 
     const transporter = getSmtpTransporter()
-    const from = process.env.SMTP_FROM || 'SIT <matin.khajehfard@svsit.nl>'
+    const from = process.env.SMTP_FROM || SITE_CONFIG.fromEmail
     let sent = 0
     let failed = 0
 

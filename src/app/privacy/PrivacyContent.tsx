@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SITE_CONFIG } from "@/lib/constants";
 import {
   ShieldCheck,
   Database,
@@ -36,7 +37,7 @@ const SECTIONS: Section[] = [
     color: "#F29E18",
     body: [
       "Studievereniging Innovatie en Technologie (SIT) is de studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Wij verwerken jouw persoonsgegevens als je lid wordt of onze site gebruikt.",
-      "Verantwoordelijke: het bestuur van SIT. Bereikbaar via bestuur@svsit.nl, Wibauthuis, Wibautstraat 3b, 1091 GH Amsterdam.",
+      `Verantwoordelijke: het bestuur van SIT. Bereikbaar via ${SITE_CONFIG.email}, ${SITE_CONFIG.address.venue}, ${SITE_CONFIG.address.street}, ${SITE_CONFIG.address.postal}.`,
     ],
   },
   {
@@ -100,7 +101,7 @@ const SECTIONS: Section[] = [
     icon: Clock,
     color: "#3B82F6",
     body: [
-      "We bewaren je gegevens zolang je lid bent. Wil je dat we je account en gegevens verwijderen? Stuur een mail naar bestuur@svsit.nl en we regelen het.",
+      `We bewaren je gegevens zolang je lid bent. Wil je dat we je account en gegevens verwijderen? Stuur een mail naar ${SITE_CONFIG.email} en we regelen het.`,
     ],
   },
   {
@@ -109,7 +110,7 @@ const SECTIONS: Section[] = [
     icon: UserCheck,
     color: "#22C55E",
     body: [
-      "Onder de AVG heb je recht op inzage, correctie en verwijdering van je gegevens, en kun je bezwaar maken tegen verwerking. Mail bestuur@svsit.nl en we reageren zo snel mogelijk. Niet tevreden? Je kunt een klacht indienen bij de Autoriteit Persoonsgegevens.",
+      `Onder de AVG heb je recht op inzage, correctie en verwijdering van je gegevens, en kun je bezwaar maken tegen verwerking. Mail ${SITE_CONFIG.email} en we reageren zo snel mogelijk. Niet tevreden? Je kunt een klacht indienen bij de Autoriteit Persoonsgegevens.`,
     ],
   },
 ];
@@ -239,13 +240,13 @@ export default function PrivacyContent() {
             <div>
               <span style={{ color: "#22C55E" }}>$</span>{" "}
               <span style={{ color: "#FAFAFA" }}>mail</span>{" "}
-              <span style={{ color: "#3B82F6" }}>bestuur@svsit.nl</span>
+              <span style={{ color: "#3B82F6" }}>{SITE_CONFIG.email}</span>
             </div>
           </div>
 
           <div className="flex flex-wrap gap-3 mt-5">
             <a
-              href="mailto:bestuur@svsit.nl"
+              href={`mailto:${SITE_CONFIG.email}`}
               className="inline-flex items-center gap-2 px-4 py-2 rounded font-mono text-xs tracking-wider transition-all hover:scale-[1.02]"
               style={{
                 color: "#F29E18",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { SITE_CONFIG } from "@/lib/constants";
 
 const FEED_DATA = [
   { who: "Idil", act: "pushte een nieuwe Kroegentocht", tag: "events", color: "var(--color-accent-gold)" },
@@ -31,7 +32,7 @@ function generateHash() {
 }
 
 function daysUntilIntroweek(): number {
-  const target = new Date("2026-08-31T10:00:00+02:00").getTime();
+  const target = new Date(SITE_CONFIG.introweek.startIso).getTime();
   return Math.max(Math.floor((target - Date.now()) / 86400000), 0);
 }
 

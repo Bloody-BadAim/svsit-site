@@ -18,6 +18,7 @@ import {
   type Commissie,
   type BoardMember,
 } from "@/lib/moederbord";
+import { SITE_CONFIG } from "@/lib/constants";
 import "./moederbord.css";
 
 const cls = (...a: Array<string | false | null | undefined>) =>
@@ -460,7 +461,7 @@ function DetailSheet({
                 <p className="sheet-label" style={{ color }}>
                   {">"} bereikbaar via
                 </p>
-                <p className="sheet-text">bestuur@svsit.nl</p>
+                <p className="sheet-text">{SITE_CONFIG.email}</p>
               </div>
               {b!.socials && (b!.socials.instagram || b!.socials.linkedin) && (
                 <div className="sheet-block">
@@ -722,7 +723,7 @@ export default function Moederbord() {
           MELD JE AAN
         </a>
         <p className="cb-mail">
-          Of mail naar <a href="mailto:bestuur@svsit.nl">bestuur@svsit.nl</a>
+          Of mail naar <a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a>
         </p>
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { SITE_CONFIG } from "@/lib/constants";
 
 export default function ConsoleEasterEgg() {
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function ConsoleEasterEgg() {
       "color: #27272A; font-family: monospace;"
     );
     console.log(
-      "%c> %cInteresse in meehelpen? %cbestuur@svsit.nl",
+      `%c> %cInteresse in meehelpen? %c${SITE_CONFIG.email}`,
       "color: #F29E18; font-family: monospace; font-size: 12px;",
       "color: #A1A1AA; font-family: monospace; font-size: 12px;",
       "color: #3B82F6; font-family: monospace; font-size: 12px; text-decoration: underline;"

@@ -1,5 +1,6 @@
 import { Text, Link, Hr } from "@react-email/components";
 import EmailLayout, { C } from "./components/EmailLayout";
+import { SITE_CONFIG } from "@/lib/constants";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -137,18 +138,18 @@ export default function MemberEmail({
         </Link>
         {" | "}
         <Link
-          href="mailto:bestuur@svsit.nl"
+          href={`mailto:${SITE_CONFIG.email}`}
           style={{ color: C.gold, textDecoration: "none" }}
         >
-          bestuur@svsit.nl
+          {SITE_CONFIG.email}
         </Link>
         <br />
         Instagram:{" "}
         <Link
-          href="https://www.instagram.com/sv.sit"
+          href={SITE_CONFIG.socials.instagram.url}
           style={{ color: C.muted, textDecoration: "none" }}
         >
-          @sv.sit
+          {SITE_CONFIG.socials.instagram.handle}
         </Link>
       </Text>
     </EmailLayout>

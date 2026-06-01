@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import SitLogo from "@/components/SitLogo";
+import { SITE_CONFIG } from "@/lib/constants";
 
 const NAV_LINKS = [
   { href: "/over-ons", label: "Over Ons", type: "dir" },
@@ -19,7 +20,7 @@ const NAV_LINKS = [
 
 const SOCIALS = [
   {
-    href: "https://www.instagram.com/sv.sit",
+    href: SITE_CONFIG.socials.instagram.url,
     ariaLabel: "Instagram: @sv.sit",
     command: "open",
     target: "instagram",
@@ -33,7 +34,7 @@ const SOCIALS = [
     ),
   },
   {
-    href: "https://www.tiktok.com/@sit_hva",
+    href: SITE_CONFIG.socials.tiktok.url,
     ariaLabel: "TikTok: @sit_hva",
     command: "open",
     target: "tiktok",
@@ -45,7 +46,7 @@ const SOCIALS = [
     ),
   },
   {
-    href: "https://chat.whatsapp.com/LCndNz4xGZW0tqXWkNabaL",
+    href: SITE_CONFIG.socials.whatsapp.url,
     ariaLabel: "WhatsApp groep",
     command: "join",
     target: "whatsapp",
@@ -57,7 +58,7 @@ const SOCIALS = [
     ),
   },
   {
-    href: "https://discord.gg/68QjRVRRUM",
+    href: SITE_CONFIG.socials.discord.url,
     ariaLabel: "Discord server",
     command: "join",
     target: "discord",
@@ -69,7 +70,7 @@ const SOCIALS = [
     ),
   },
   {
-    href: "https://linkedin.com/company/svsit-hbo-ict",
+    href: SITE_CONFIG.socials.linkedin.url,
     ariaLabel: "LinkedIn: /company/svsit",
     command: "open",
     target: "linkedin",
@@ -83,10 +84,10 @@ const SOCIALS = [
     ),
   },
   {
-    href: "mailto:bestuur@svsit.nl",
-    ariaLabel: "E-mail: bestuur@svsit.nl",
+    href: `mailto:${SITE_CONFIG.email}`,
+    ariaLabel: `E-mail: ${SITE_CONFIG.email}`,
     command: "mail",
-    target: "bestuur@svsit.nl",
+    target: SITE_CONFIG.email,
     hoverColor: "var(--color-accent-green)",
     icon: (
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -284,23 +285,23 @@ export default function Footer() {
                 <span className="text-[var(--color-accent-blue)]">&quot;email&quot;</span>
                 <span className="text-[#71717A]">: </span>
                 <a
-                  href="mailto:bestuur@svsit.nl"
+                  href={`mailto:${SITE_CONFIG.email}`}
                   className="text-[var(--color-accent-green)] hover:text-[var(--color-text)] transition-colors duration-200"
                 >
-                  &quot;bestuur@svsit.nl&quot;
+                  &quot;{SITE_CONFIG.email}&quot;
                 </a>
                 <span className="text-[#71717A]">,</span>
               </div>
               <div className="pl-4">
                 <span className="text-[var(--color-accent-blue)]">&quot;locatie&quot;</span>
                 <span className="text-[#71717A]">: </span>
-                <span className="text-[#A1A1AA]">&quot;Wibauthuis, Wibautstraat 3b&quot;</span>
+                <span className="text-[#A1A1AA]">&quot;{SITE_CONFIG.address.venue}, {SITE_CONFIG.address.street}&quot;</span>
                 <span className="text-[#71717A]">,</span>
               </div>
               <div className="pl-4">
                 <span className="text-[var(--color-accent-blue)]">&quot;postcode&quot;</span>
                 <span className="text-[#71717A]">: </span>
-                <span className="text-[#A1A1AA]">&quot;1091 GH Amsterdam&quot;</span>
+                <span className="text-[#A1A1AA]">&quot;{SITE_CONFIG.address.postal}&quot;</span>
               </div>
               <div className="text-[#71717A]">&#125;</div>
             </div>

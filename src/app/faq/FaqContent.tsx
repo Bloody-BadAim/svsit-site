@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { SITE_CONFIG } from "@/lib/constants";
 import {
   ChevronDown,
   Ticket,
@@ -32,7 +33,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Wat is SIT?",
     answer:
-      "SIT is de studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. We organiseren events, workshops, hackathons, game avonden en meer. Met 100+ leden en 8 commissies is er altijd iets te doen.",
+      `SIT is de studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. We organiseren events, workshops, hackathons, game avonden en meer. Met ${SITE_CONFIG.stats.members} leden en ${SITE_CONFIG.stats.commissies} commissies is er altijd iets te doen.`,
     icon: Users,
     color: "#F29E18",
     link: { href: "/over-ons", label: "Over ons" },
@@ -40,7 +41,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Wat kost het lidmaatschap?",
     answer:
-      "Het lidmaatschap kost eenmalig €9,99 per jaar. Geen verborgen kosten, geen maandelijkse abonnementen. Je kunt betalen via iDEAL of creditcard. Je kunt ook eerst rondkijken en later betalen.",
+      `Het lidmaatschap kost eenmalig ${SITE_CONFIG.membership.priceLabel} per jaar. Geen verborgen kosten, geen maandelijkse abonnementen. Je kunt betalen via iDEAL of creditcard. Je kunt ook eerst rondkijken en later betalen.`,
     icon: CreditCard,
     color: "#22C55E",
     link: { href: "/lid-worden", label: "Word lid" },
@@ -94,7 +95,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Hoe bereik ik het bestuur?",
     answer:
-      "Stuur een mail naar bestuur@svsit.nl, DM ons op Instagram (@sv.sit) of TikTok (@sit_hva), of join onze WhatsApp groep of Discord server. Je kunt ook langskomen op de Wibauthuis (5e verdieping) tijdens een van onze events of de SIT Hub.",
+      `Stuur een mail naar ${SITE_CONFIG.email}, DM ons op Instagram (${SITE_CONFIG.socials.instagram.handle}) of TikTok (${SITE_CONFIG.socials.tiktok.handle}), of join onze WhatsApp groep of Discord server. Je kunt ook langskomen op de ${SITE_CONFIG.address.venue} (${SITE_CONFIG.address.floor}) tijdens een van onze events of de SIT Hub.`,
     icon: Mail,
     color: "#3B82F6",
   },
@@ -288,7 +289,7 @@ export default function FaqContent() {
             <div className="mt-1">
               <span style={{ color: "#22C55E" }}>$</span>{" "}
               <span style={{ color: "#FAFAFA" }}>mail</span>{" "}
-              <span style={{ color: "#3B82F6" }}>bestuur@svsit.nl</span>
+              <span style={{ color: "#3B82F6" }}>{SITE_CONFIG.email}</span>
             </div>
             <div className="mt-1">
               <span style={{ color: "#22C55E" }}>$</span>{" "}
@@ -299,7 +300,7 @@ export default function FaqContent() {
 
           <div className="flex flex-wrap gap-3 mt-5">
             <a
-              href="mailto:bestuur@svsit.nl"
+              href={`mailto:${SITE_CONFIG.email}`}
               className="inline-flex items-center gap-2 px-4 py-2 rounded font-mono text-xs tracking-wider transition-all hover:scale-[1.02]"
               style={{
                 color: "#F29E18",

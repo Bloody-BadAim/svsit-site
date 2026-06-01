@@ -12,6 +12,7 @@ import {
   Hr,
 } from "@react-email/components";
 import { C, SitLogo } from "./components/EmailLayout";
+import { SITE_CONFIG } from "@/lib/constants";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -518,7 +519,7 @@ export default function TicketEmail({
               Dit is een automatisch gegenereerd ticket van SIT - Studievereniging ICT HvA.
               <br />
               Bewaar dit ticket. Vragen? Mail naar{" "}
-              <span style={{ color: C.gold }}>bestuur@svsit.nl</span>
+              <span style={{ color: C.gold }}>{SITE_CONFIG.email}</span>
             </Text>
           </Section>
         </Container>

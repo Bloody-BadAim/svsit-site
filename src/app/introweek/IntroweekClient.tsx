@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Lock, Check, Users, Coffee, Zap, Sparkles, Send, ChevronDown } from 'lucide-react'
+import { SITE_CONFIG } from '@/lib/constants'
 
 // ── Program data (two intro weeks) ───────────────────────────────────────────
 
@@ -125,7 +126,7 @@ const KIT = [
     color: 'var(--blue)',
     Icon: Zap,
     title: 'Direct ingeplugd',
-    body: 'Toegang tot 7 commissies, de Discord en de eigen SIT-server, vanaf dag een.',
+    body: `Toegang tot ${SITE_CONFIG.stats.commissies} commissies, de Discord en de eigen SIT-server, vanaf dag een.`,
   },
   {
     idx: '04',
@@ -282,7 +283,7 @@ export default function IntroweekClient() {
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
-    const target = new Date('2026-08-31T13:00:00+02:00').getTime()
+    const target = new Date(SITE_CONFIG.introweek.startIso).getTime()
     const cells = {
       d: root.querySelector('[data-cd="d"]') as HTMLElement,
       h: root.querySelector('[data-cd="h"]') as HTMLElement,
@@ -759,7 +760,7 @@ export default function IntroweekClient() {
                   <h2 className="seclabel-title">// claim je plek</h2>
                 </div>
                 <h2 className="reveal">Een klik en<br />je hoort er<br /><span className="c-gold">bij</span>.</h2>
-                <p className="finale-body reveal">Introweek is <b>gratis voor leden</b>. Lid worden kost 9,99 euro voor een heel jaar, en je krijgt er een complete community, 50+ events en een netwerk van 200+ HBO-ICT studenten bij.</p>
+                <p className="finale-body reveal">Introweek is <b>gratis voor leden</b>. Lid worden kost {SITE_CONFIG.membership.price} euro voor een heel jaar, en je krijgt er een complete community, {SITE_CONFIG.stats.events} events en een netwerk van {SITE_CONFIG.stats.students} HBO-ICT studenten bij.</p>
                 <ul className="finale-list reveal">
                   <li><span className="ck"><Check size={15} /></span> Volledige introweek, alle dagen</li>
                   <li><span className="ck"><Check size={15} /></span> Alle events &amp; borrels het hele jaar</li>
@@ -785,7 +786,7 @@ export default function IntroweekClient() {
                     <div className="tk-grid">
                       <div><div className="k">gate</div><div className="v c-gold">31 AUG</div></div>
                       <div><div className="k">seat</div><div className="v">1A · jij</div></div>
-                      <div><div className="k">prijs</div><div className="v c-green">9,99/jr</div></div>
+                      <div><div className="k">prijs</div><div className="v c-green">{SITE_CONFIG.membership.price}/jr</div></div>
                     </div>
                     <div className="tk-barcode" />
                     <a href="/lid-worden" className="tk-cta">$ word lid, check in</a>

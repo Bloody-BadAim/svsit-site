@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Mail, Send, Users, AlertTriangle, Check, X, FileText } from 'lucide-react'
 import { inputStyle as baseInputStyle, labelStyle as baseLabelStyle } from '@/components/admin/adminStyles'
 import { CornerDecorations } from '@/components/ui/CornerDecorations'
+import { SITE_CONFIG } from '@/lib/constants'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -165,7 +166,7 @@ function EmailPreview({ subject, body }: { subject: string; body: string }) {
         <div style={{ fontSize: 10, color: '#6B7280', marginTop: 8, lineHeight: 1.8 }}>
           <span style={{ color: '#F29E18' }}>svsit.nl</span>
           {' | '}
-          <span style={{ color: '#F29E18' }}>bestuur@svsit.nl</span>
+          <span style={{ color: '#F29E18' }}>{SITE_CONFIG.email}</span>
         </div>
       </div>
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import IntroweekClient from './IntroweekClient'
+import { SITE_CONFIG } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'Introweek 2026 - {SIT}',
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Introweek 2026 - {SIT}',
     description:
-      'Twee introweken in september 2026. Programma, survival kit en je plek in de community. Word lid voor 9,99 euro.',
+      `Twee introweken in september 2026. Programma, survival kit en je plek in de community. Word lid voor ${SITE_CONFIG.membership.price} euro.`,
     siteName: '{SIT}',
     locale: 'nl_NL',
     type: 'website',

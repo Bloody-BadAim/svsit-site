@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
 import HoldToJoinButton from "@/components/HoldToJoinButton";
 import MemberCard from "@/components/MemberCard";
+import { SITE_CONFIG } from "@/lib/constants";
 
 export default function JoinCta() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -153,7 +154,7 @@ export default function JoinCta() {
             <div data-animate className="mt-10">
               <div className="flex items-baseline gap-3">
                 <span className="font-display text-5xl md:text-6xl font-bold text-[var(--color-accent-gold)]">
-                  &euro;9,99
+                  {SITE_CONFIG.membership.priceLabel}
                 </span>
                 <span className="font-mono text-sm text-[var(--color-text-muted)]">
                   per jaar - geen verborgen kosten
@@ -165,7 +166,7 @@ export default function JoinCta() {
               {[
                 "Toegang tot alle events & borrels",
                 "Meedraaien in elke commissie",
-                "Netwerk van 100+ studenten, alumni & bedrijven",
+                `Netwerk van ${SITE_CONFIG.stats.members} studenten, alumni & bedrijven`,
                 "Dev-tools, AI Labs & de SIT-server",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 font-mono text-sm text-[var(--color-text-muted)]">
@@ -197,7 +198,7 @@ export default function JoinCta() {
             >
               <HoldToJoinButton href="/lid-worden" />
               <p className="font-mono text-[11px] text-[var(--color-text-muted)] opacity-40 mt-3 text-center">
-                100+ studenten gingen je voor
+                {SITE_CONFIG.stats.members} studenten gingen je voor
               </p>
               <p className="font-mono text-[11px] text-[var(--color-text-muted)] mt-2 text-center">
                 Al lid?{" "}

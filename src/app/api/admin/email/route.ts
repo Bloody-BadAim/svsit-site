@@ -4,6 +4,7 @@ import { render } from '@react-email/components'
 import { requireAdmin, handleError } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
 import MemberEmail from '@/emails/memberEmail'
+import { SITE_CONFIG } from '@/lib/constants'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -140,7 +141,7 @@ export async function POST(req: NextRequest) {
 
     // Send emails via Gmail SMTP (batch of 10 at a time to avoid rate limits)
     const transporter = getSmtpTransporter()
-    const from = process.env.SMTP_FROM || 'SIT <matin.khajehfard@svsit.nl>'
+    const from = process.env.SMTP_FROM || SITE_CONFIG.fromEmail
     let sent = 0
     let failed = 0
 

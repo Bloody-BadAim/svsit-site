@@ -33,6 +33,47 @@ export const ADMIN_EMAILS = [
 ]
 
 // ---------------------------------------------------------------------------
+// Site config — single source of truth for contact, socials, stats, prijs,
+// en introweek-datum. Importeer overal i.p.v. hardcoden.
+// ---------------------------------------------------------------------------
+
+export const SITE_CONFIG = {
+  domain: 'svsit.nl',
+  url: 'https://svsit.nl',
+  email: 'bestuur@svsit.nl',
+  sponsoringEmail: 'sponsoring@svsit.nl',
+  fromEmail: 'SIT <matin.khajehfard@svsit.nl>',
+  address: {
+    venue: 'Wibauthuis',
+    street: 'Wibautstraat 3b',
+    postal: '1091 GH Amsterdam',
+    floor: '5e verdieping',
+  },
+  socials: {
+    instagram: { url: 'https://www.instagram.com/sv.sit', handle: '@sv.sit' },
+    tiktok: { url: 'https://www.tiktok.com/@sit_hva', handle: '@sit_hva' },
+    discord: { url: 'https://discord.gg/68QjRVRRUM' },
+    whatsapp: { url: 'https://chat.whatsapp.com/LCndNz4xGZW0tqXWkNabaL' },
+    linkedin: { url: 'https://linkedin.com/company/svsit-hbo-ict' },
+  },
+  stats: {
+    members: '100+',
+    students: '200+',
+    events: '50+',
+    commissies: COMMISSIES.length,
+  },
+  membership: {
+    price: '9,99',
+    priceLabel: '€9,99',
+    pricePerYear: '€9,99/jaar',
+  },
+  introweek: {
+    year: 2026,
+    startIso: '2026-08-31T13:00:00+02:00',
+  },
+} as const
+
+// ---------------------------------------------------------------------------
 // Stat categories
 // ---------------------------------------------------------------------------
 

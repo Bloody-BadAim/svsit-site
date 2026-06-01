@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FaqContent from "./FaqContent";
+import { SITE_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "FAQ - {SIT}",
@@ -26,7 +27,7 @@ const FAQ_STRUCTURED_DATA = {
       name: "Wat is SIT?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "SIT is de studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. We organiseren events, workshops, hackathons, game avonden en meer. Met 100+ leden en 8 commissies is er altijd iets te doen.",
+        text: `SIT is de studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. We organiseren events, workshops, hackathons, game avonden en meer. Met ${SITE_CONFIG.stats.members} leden en ${SITE_CONFIG.stats.commissies} commissies is er altijd iets te doen.`,
       },
     },
     {
@@ -34,7 +35,7 @@ const FAQ_STRUCTURED_DATA = {
       name: "Wat kost het lidmaatschap?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Het lidmaatschap kost eenmalig \u20ac9,99 per jaar. Geen verborgen kosten, geen maandelijkse abonnementen. Je kunt betalen via iDEAL of creditcard.",
+        text: `Het lidmaatschap kost eenmalig ${SITE_CONFIG.membership.priceLabel} per jaar. Geen verborgen kosten, geen maandelijkse abonnementen. Je kunt betalen via iDEAL of creditcard.`,
       },
     },
     {
@@ -90,7 +91,7 @@ const FAQ_STRUCTURED_DATA = {
       name: "Hoe bereik ik het bestuur?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Stuur een mail naar bestuur@svsit.nl, DM ons op Instagram (@sv.sit) of TikTok (@sit_hva), of join onze WhatsApp groep of Discord server.",
+        text: `Stuur een mail naar ${SITE_CONFIG.email}, DM ons op Instagram (${SITE_CONFIG.socials.instagram.handle}) of TikTok (${SITE_CONFIG.socials.tiktok.handle}), of join onze WhatsApp groep of Discord server.`,
       },
     },
   ],

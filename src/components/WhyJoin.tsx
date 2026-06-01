@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
 import { CardSpotlight } from "@/components/ui/CardSpotlight";
+import { SITE_CONFIG } from "@/lib/constants";
 
 const achievements = [
   {
@@ -33,8 +34,8 @@ const achievements = [
   },
   {
     title: "Nog geen tientje",
-    desc: "Eenmalig €9,99 per jaar. Geen verborgen kosten. Inclusief toegang tot alle events, dev tools en de volledige SIT community.",
-    stat: "€9,99",
+    desc: `Eenmalig ${SITE_CONFIG.membership.priceLabel} per jaar. Geen verborgen kosten. Inclusief toegang tot alle events, dev tools en de volledige SIT community.`,
+    stat: SITE_CONFIG.membership.priceLabel,
     statLabel: "per jaar",
     color: "#22C55E",
     rgb: [34, 197, 94] as number[],

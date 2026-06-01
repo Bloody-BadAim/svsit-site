@@ -1,5 +1,6 @@
 import { Text, Link, Hr, Section, Row, Column } from "@react-email/components";
 import EmailLayout, { C } from "./components/EmailLayout";
+import { SITE_CONFIG } from "@/lib/constants";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -415,10 +416,10 @@ export default function WeeklyDigestEmail({
         </Link>
         {" | "}
         <Link
-          href="mailto:bestuur@svsit.nl"
+          href={`mailto:${SITE_CONFIG.email}`}
           style={{ color: C.gold, textDecoration: "none" }}
         >
-          bestuur@svsit.nl
+          {SITE_CONFIG.email}
         </Link>
       </Text>
 
@@ -432,15 +433,15 @@ export default function WeeklyDigestEmail({
           lineHeight: "1.8",
         }}
       >
-        <Link href="https://www.instagram.com/sv.sit" style={{ color: C.muted, textDecoration: "none" }}>Instagram</Link>
+        <Link href={SITE_CONFIG.socials.instagram.url} style={{ color: C.muted, textDecoration: "none" }}>Instagram</Link>
         {" · "}
-        <Link href="https://discord.gg/68QjRVRRUM" style={{ color: C.muted, textDecoration: "none" }}>Discord</Link>
+        <Link href={SITE_CONFIG.socials.discord.url} style={{ color: C.muted, textDecoration: "none" }}>Discord</Link>
         {" · "}
-        <Link href="https://linkedin.com/company/svsit-hbo-ict" style={{ color: C.muted, textDecoration: "none" }}>LinkedIn</Link>
+        <Link href={SITE_CONFIG.socials.linkedin.url} style={{ color: C.muted, textDecoration: "none" }}>LinkedIn</Link>
         {" · "}
-        <Link href="https://chat.whatsapp.com/LCndNz4xGZW0tqXWkNabaL" style={{ color: C.muted, textDecoration: "none" }}>WhatsApp</Link>
+        <Link href={SITE_CONFIG.socials.whatsapp.url} style={{ color: C.muted, textDecoration: "none" }}>WhatsApp</Link>
         {" · "}
-        <Link href="https://www.tiktok.com/@sit_hva" style={{ color: C.muted, textDecoration: "none" }}>TikTok</Link>
+        <Link href={SITE_CONFIG.socials.tiktok.url} style={{ color: C.muted, textDecoration: "none" }}>TikTok</Link>
       </Text>
     </EmailLayout>
   );
