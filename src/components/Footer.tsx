@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import SitLogo from "@/components/SitLogo";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -379,6 +380,31 @@ export default function Footer() {
               <svg width="60" height="24" viewBox="0 0 120 48" fill="currentColor" className="text-[#A1A1AA]">
                 <text x="0" y="36" fontFamily="var(--font-mono)" fontSize="28" fontWeight="700">FEMIT</text>
               </svg>
+            </a>
+          </div>
+
+          {/* Co-brand lockup: officiele studievereniging van HBO-ICT */}
+          <div className="mb-8">
+            <div className="h-px bg-[rgba(255,255,255,0.06)] mb-6" />
+            <a
+              href="https://www.hva.nl/opleidingen/hbo-ict-voltijd"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex flex-col gap-2.5 opacity-50 hover:opacity-80 transition-opacity duration-300 w-fit"
+              aria-label="Officiele studievereniging van HBO-ICT, Hogeschool van Amsterdam"
+            >
+              <Image
+                src="/hbo-ict-wit.png"
+                alt="HBO-ICT - Hogeschool van Amsterdam"
+                width={177}
+                height={30}
+                className="h-auto w-[150px] md:w-[177px]"
+              />
+              <span className="font-mono text-[11px] text-[#71717A] leading-relaxed">
+                Officiele studievereniging van HBO-ICT
+                <span className="text-[#52525B]"> &middot; </span>
+                Hogeschool van Amsterdam
+              </span>
             </a>
           </div>
 

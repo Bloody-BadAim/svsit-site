@@ -15,6 +15,14 @@
   --color-accent-blue: #3B82F6;
   --color-accent-red: #EF4444;
   --color-accent-green: #22C55E;
+  /* HBO-ICT huisstijl (co-branding: SIT = studievereniging van HBO-ICT).
+     Gebruikt als accent naast SIT-gold, niet ter vervanging. */
+  --hboict-blue: #0F00AF;
+  --hboict-red: #FF003C;
+  --hboict-purple: #8500E9;
+  --hboict-blue-accent: #0000FF;
+  --hboict-cyan: #00FFFF;
+  --hboict-yellow: #FFFF00;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);

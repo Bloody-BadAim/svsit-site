@@ -34,6 +34,7 @@ const CircuitBackground = dynamic(() => import("@/components/CircuitBackground")
 // Below-the-fold sections: code-split to reduce initial JS bundle
 // Each pulls in GSAP ScrollTrigger, motion, lucide-react, etc. only when needed
 const About = dynamic(() => import("@/components/About"));
+const HboIctSection = dynamic(() => import("@/components/HboIctSection"));
 const WhyJoin = dynamic(() => import("@/components/WhyJoin"));
 const Events = dynamic(() => import("@/components/Events"));
 const Testimonials = dynamic(() => import("@/components/Testimonials"));
@@ -63,6 +64,8 @@ export default function Home() {
         <main id="main-content" className="relative z-[1] flex-1">
           <Hero />
           <About />
+          <SectionDivider variant="line" />
+          <HboIctSection />
           <SectionDivider variant="line" />
           <WhyJoin />
           <SectionDivider variant="line" />

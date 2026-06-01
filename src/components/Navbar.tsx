@@ -63,15 +63,20 @@ export default function Navbar() {
           }`}
       >
         <div className="flex items-center justify-between px-6 md:px-12 py-4">
-          {/* Logo with blinking cursor */}
+          {/* Logo with blinking cursor + HBO-ICT co-brand tag */}
           <a
             href="/"
-            className="font-mono font-bold text-lg hover:drop-shadow-[0_0_8px_rgba(242,158,24,0.4)] transition-all duration-300"
+            className="group/logo flex items-center gap-2.5 font-mono font-bold text-lg hover:drop-shadow-[0_0_8px_rgba(242,158,24,0.4)] transition-all duration-300"
           >
-            <span className="text-[var(--color-accent-gold)]">{"{"}</span>
-            <span className="text-[var(--color-text)]">SIT</span>
-            <span className="text-[var(--color-accent-gold)]">{"}"}</span>
+            <span>
+              <span className="text-[var(--color-accent-gold)]">{"{"}</span>
+              <span className="text-[var(--color-text)]">SIT</span>
+              <span className="text-[var(--color-accent-gold)]">{"}"}</span>
+            </span>
             {/* <span className="inline-block w-[2px] h-[1em] bg-[var(--color-accent-gold)] ml-0.5 align-middle animate-pulse" /> */}
+            <span className="hidden sm:inline-block font-mono text-[11px] font-normal text-[var(--color-text-muted)] tracking-tight border-l border-[var(--color-border)] pl-2.5 group-hover/logo:text-[var(--color-text)] transition-colors duration-300">
+              van HBO-ICT
+            </span>
           </a>
 
           {/* Desktop nav */}
