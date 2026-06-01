@@ -38,6 +38,7 @@ const HboIctSection = dynamic(() => import("@/components/HboIctSection"));
 const WhyJoin = dynamic(() => import("@/components/WhyJoin"));
 const Events = dynamic(() => import("@/components/Events"));
 const Testimonials = dynamic(() => import("@/components/Testimonials"));
+const FemItSection = dynamic(() => import("@/components/FemItSection"));
 const SponsorShowcase = dynamic(() => import("@/components/SponsorShowcase"));
 const JoinCta = dynamic(() => import("@/components/JoinCta"));
 const Footer = dynamic(() => import("@/components/Footer"));
@@ -71,6 +72,8 @@ export default function Home() {
           <SectionDivider variant="line" />
           <Events />
           <Testimonials />
+          <SectionDivider variant="line" />
+          <FemItSection />
           <SectionDivider variant="line" />
           <SponsorShowcase />
           <SectionDivider variant="line" />

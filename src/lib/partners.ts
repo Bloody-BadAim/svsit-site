@@ -84,8 +84,8 @@ export const PARTNERS: Partner[] = [
   {
     name: "FemIT",
     tier: "partner",
-    tagline: "Vrouwen in IT - community & inclusie.",
-    url: "https://www.femit.nl",
+    tagline: "Het vrouwennetwerk van HBO-ICT. Samen sterker in tech.",
+    url: "https://nl.linkedin.com/company/femithva",
     slug: "femit",
   },
   {

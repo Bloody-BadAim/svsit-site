@@ -169,9 +169,11 @@ export default function PartnersNetwork() {
             {PARTNERS.map((p) => {
               const tier = TIER_META[p.tier];
               const isHboIct = p.slug === "hbo-ict";
+              const isFemIt = p.slug === "femit";
               // HBO-ICT is the home opleiding: brand it with the HBO-ICT
               // indigo/purple accent instead of the generic tier color.
-              const accent = isHboIct ? "#0F00AF" : tier.color;
+              // FemIT gets its own purple brand accent + logo mark.
+              const accent = isHboIct ? "#0F00AF" : isFemIt ? "#5B2BD6" : tier.color;
               const nodeStyle = isHboIct
                 ? {
                     ["--c" as string]: accent,
@@ -181,7 +183,11 @@ export default function PartnersNetwork() {
                     ["--hboict-red" as string]: "#FF003C",
                   }
                 : { ["--c" as string]: accent };
-              const nodeClass = isHboIct ? "node hboict" : "node";
+              const nodeClass = isHboIct
+                ? "node hboict"
+                : isFemIt
+                  ? "node femit"
+                  : "node";
               const inner = (
                 <>
                   <Pins />
@@ -201,6 +207,20 @@ export default function PartnersNetwork() {
                         height={30}
                         priority={false}
                       />
+                    </h3>
+                  ) : isFemIt ? (
+                    <h3 className="node-logo femit-logo">
+                      <Image
+                        className="femit-mark"
+                        src="/femit-logo.png"
+                        alt="FemIT"
+                        width={56}
+                        height={56}
+                        priority={false}
+                      />
+                      <TextScramble as="span" trigger={inView} duration={0.6} speed={0.03}>
+                        {p.name}
+                      </TextScramble>
                     </h3>
                   ) : (
                     <h3 className="node-logo">

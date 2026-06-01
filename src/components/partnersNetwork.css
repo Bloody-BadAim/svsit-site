@@ -166,6 +166,14 @@
 .pnet .hboict-logo img { width: 100%; max-width: 172px; height: auto; display: block; }
 .pnet .node.hboict { border-color: color-mix(in srgb, var(--hboict-blue) 55%, rgba(255,255,255,0.08)); }
 
+/* FemIT vrouwennetwerk-node: paarse merkkleur via --c + logo-mark */
+.pnet .node.femit { border-color: color-mix(in srgb, var(--c) 45%, rgba(255,255,255,0.08)); }
+.pnet .femit-logo { display: flex; align-items: center; gap: 0.6rem; margin: 1rem 0 0.55rem; }
+.pnet .femit-logo .femit-mark {
+  width: 48px; height: auto; display: block; flex: none;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c) 45%, transparent));
+}
+
 .pnet .node-tag { font-family: var(--font-mono); font-size: 0.76rem; color: var(--color-text-muted); line-height: 1.5; position: relative; z-index: 2; }
 .pnet .node-foot {
   margin-top: 1.05rem; padding-top: 0.85rem; border-top: 1px solid rgba(255, 255, 255, 0.07);
