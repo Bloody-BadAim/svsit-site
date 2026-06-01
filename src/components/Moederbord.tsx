@@ -7,6 +7,7 @@ import {
   useCallback,
   type CSSProperties,
 } from "react";
+import Image from "next/image";
 import { Instagram, Linkedin } from "lucide-react";
 import {
   PEOPLE,
@@ -59,8 +60,14 @@ function Avatar({
     >
       <span className="chip-inner">
         {p && p.photo ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={p.photo} alt={p.name} width={size} height={size} loading="lazy" />
+          <Image
+            src={p.photo}
+            alt={p.name}
+            width={size}
+            height={size}
+            loading="lazy"
+            style={{ objectFit: "cover" }}
+          />
         ) : (
           <span
             className="chip-ini"

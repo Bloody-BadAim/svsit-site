@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { createServiceClient } from '@/lib/supabase'
-import { sendTicketEmail, generateTicketNumber } from '@/lib/email'
+import { sendTicketEmail, generateTicketNumber, sendWelcomeEmail } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   const body = await req.text()
@@ -103,6 +103,16 @@ export async function POST(req: NextRequest) {
 
       console.log(`[webhook] Processing membership checkout for member: ${memberId}`)
 
+      // Haal huidige status op voordat we activeren, zodat we de welkomstmail
+      // alleen bij een EERSTE activatie sturen (niet bij re-checkout van een al
+      // actief lid). membership_active=false/null => nieuw lid.
+      const { data: existingMember } = await supabase
+        .from('members')
+        .select('email, display_name, membership_active')
+        .eq('id', memberId)
+        .maybeSingle()
+      const isFirstActivation = !existingMember?.membership_active
+
       // Haal subscription op van Stripe voor echte period_end
       let expiresAt: Date
       if (session.subscription) {
@@ -149,6 +159,20 @@ export async function POST(req: NextRequest) {
       }
 
       console.log(`[webhook] Member ${memberId} activated, expires ${expiresAt.toISOString()}`)
+
+      // Eenmalige welkomstmail (SH-01) - alleen bij eerste activatie. Mag de
+      // webhook nooit breken: faalt de mail, dan loggen en gewoon 200 sturen.
+      if (isFirstActivation && existingMember?.email) {
+        try {
+          await sendWelcomeEmail(
+            existingMember.email as string,
+            (existingMember.display_name as string | null) ?? null
+          )
+          console.log(`[webhook] Welcome email sent to ${existingMember.email}`)
+        } catch (welcomeErr) {
+          console.error('[webhook] Welcome email failed:', welcomeErr)
+        }
+      }
       break
     }
 

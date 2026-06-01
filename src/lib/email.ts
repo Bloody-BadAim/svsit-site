@@ -3,6 +3,7 @@ import QRCode from 'qrcode'
 import { render } from '@react-email/components'
 import TicketEmail from '@/emails/ticketEmail'
 import PasswordResetEmail from '@/emails/passwordResetEmail'
+import MemberEmail from '@/emails/memberEmail'
 import { generateTicketPdf } from '@/lib/pdfTicket'
 
 // ── Gmail SMTP transport (all outbound email) ──
@@ -35,6 +36,33 @@ export async function sendPasswordResetEmail(
     from: process.env.SMTP_FROM || 'SIT <matin.khajehfard@svsit.nl>',
     to,
     subject: 'Stel je wachtwoord in voor SIT',
+    html,
+  })
+}
+
+/**
+ * Eenmalige welkomstmail bij het activeren van een nieuw lidmaatschap (SH-01).
+ * Gooit door bij falen; de webhook-caller vangt dit af en stuurt alsnog 200 terug.
+ */
+export async function sendWelcomeEmail(to: string, voornaam: string | null) {
+  const firstName = voornaam?.split(' ')[0] || to.split('@')[0]
+
+  const subject = 'Welkom bij SIT - je lidmaatschap is actief'
+  const body =
+    `Top dat je lid bent geworden van Studievereniging ICT. Je lidmaatschap is nu actief.\n\n` +
+    `Je krijgt korting op onze events, toegang tot het ledenportaal en je hoort als eerste over nieuwe activiteiten, commissies en sponsorkansen.\n\n` +
+    `Check svsit.nl voor alle aankomende activiteiten en log in op je dashboard om je gegevens te beheren.\n\n` +
+    `We zien je snel bij een van onze events!`
+
+  const html = await render(
+    MemberEmail({ voornaam: firstName, subject, body })
+  )
+
+  const transporter = getSmtpTransporter()
+  await transporter.sendMail({
+    from: process.env.SMTP_FROM || 'SIT <matin.khajehfard@svsit.nl>',
+    to,
+    subject,
     html,
   })
 }

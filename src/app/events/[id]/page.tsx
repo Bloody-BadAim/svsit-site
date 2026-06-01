@@ -6,8 +6,6 @@ import { parseFormFields } from '@/lib/eventForm'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-export const dynamic = 'force-dynamic'
-
 const getEvent = unstable_cache(
   async (id: string) => {
     const supabase = createServiceClient()

@@ -6,7 +6,12 @@ import Link from 'next/link'
 import { Calendar, MapPin, Users, Camera } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 
+// Dynamisch renderen: de query draait op de service-client (geen build-time env)
+// en data ververst via unstable_cache (60s). Voorkomt build-time prerender fout.
 export const dynamic = 'force-dynamic'
+
+const EVENT_COLUMNS =
+  'id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, external_ticket_url, checkin_code, notion_id, recap_description, recap_photos, recap_published, form_fields, created_by, created_at'
 
 const getEvents = unstable_cache(
   async () => {
@@ -14,13 +19,13 @@ const getEvents = unstable_cache(
     const [upcomingResult, recapResult] = await Promise.all([
       supabase
         .from('events')
-        .select('*')
+        .select(EVENT_COLUMNS)
         .in('status', ['upcoming', 'active'])
         .gte('date', new Date().toISOString())
         .order('date', { ascending: true }),
       supabase
         .from('events')
-        .select('*')
+        .select(EVENT_COLUMNS)
         .eq('status', 'completed')
         .eq('recap_published', true)
         .order('date', { ascending: false })
