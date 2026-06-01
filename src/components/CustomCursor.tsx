@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 // ---------------------------------------------------------------------------
 // SIT_CURSOR.sys - developer/debugger HUD cursor.
@@ -28,6 +29,10 @@ const TRAIL_N = 7;
 
 export default function CustomCursor() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const [motionTick, setMotionTick] = useState(0);
+
+  // Her-evalueer (activeer/deactiveer) live wanneer // static wisselt
+  useEffect(() => onMotionChange(() => setMotionTick((t) => t + 1)), []);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -38,6 +43,9 @@ export default function CustomCursor() {
       typeof window.matchMedia === "function" &&
       window.matchMedia("(pointer: fine)").matches;
     if (!fine) return;
+
+    // Onder // static (of OS reduced-motion): geen custom HUD-cursor, native terug.
+    if (isReducedMotion()) return;
 
     const REDUCE =
       typeof window.matchMedia === "function" &&
@@ -248,7 +256,7 @@ export default function CustomCursor() {
       doc.documentElement.classList.remove("sit-cursor-on");
       root.querySelectorAll(".sc-exec").forEach((n) => n.remove());
     };
-  }, []);
+  }, [motionTick]);
 
   return (
     <>

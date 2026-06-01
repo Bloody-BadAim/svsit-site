@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { SITE_CONFIG } from "@/lib/constants";
+import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 const FEED_DATA = [
   { who: "Idil", act: "pushte een nieuwe Kroegentocht", tag: "events", color: "var(--color-accent-gold)" },
@@ -64,8 +65,6 @@ export default function CommunityLog() {
 
   // Auto-scroll new entries
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
     let interval: ReturnType<typeof setInterval> | null = null;
 
     const tick = () => {
@@ -78,19 +77,22 @@ export default function CommunityLog() {
     };
 
     const start = () => {
-      if (!interval) interval = setInterval(tick, 2500);
+      // Niet starten onder reduced motion (// static) of verborgen tab
+      if (interval || isReducedMotion() || document.hidden) return;
+      interval = setInterval(tick, 2500);
     };
     const stop = () => {
       if (interval) { clearInterval(interval); interval = null; }
     };
+    const sync = () => (isReducedMotion() || document.hidden ? stop() : start());
 
-    // Pauzeer wanneer de tab verborgen is - geen re-renders op de achtergrond
-    const onVisibility = () => (document.hidden ? stop() : start());
-    document.addEventListener("visibilitychange", onVisibility);
-    if (!document.hidden) start();
+    document.addEventListener("visibilitychange", sync);
+    const unsub = onMotionChange(sync);
+    sync();
 
     return () => {
-      document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener("visibilitychange", sync);
+      unsub();
       stop();
     };
   }, []);
