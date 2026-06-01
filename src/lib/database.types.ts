@@ -235,6 +235,7 @@ export type Database = {
           description: string | null
           end_date: string | null
           external_ticket_url: string | null
+          form_fields: Json
           id: string
           is_paid: boolean | null
           location: string | null
@@ -259,6 +260,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           external_ticket_url?: string | null
+          form_fields?: Json
           id?: string
           is_paid?: boolean | null
           location?: string | null
@@ -283,6 +285,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           external_ticket_url?: string | null
+          form_fields?: Json
           id?: string
           is_paid?: boolean | null
           location?: string | null
@@ -786,6 +789,7 @@ export type Database = {
         Row: {
           checked_in_at: string | null
           created_at: string | null
+          custom_data: Json
           email: string
           event_id: string
           id: string
@@ -799,6 +803,7 @@ export type Database = {
         Insert: {
           checked_in_at?: string | null
           created_at?: string | null
+          custom_data?: Json
           email: string
           event_id: string
           id?: string
@@ -812,6 +817,7 @@ export type Database = {
         Update: {
           checked_in_at?: string | null
           created_at?: string | null
+          custom_data?: Json
           email?: string
           event_id?: string
           id?: string
@@ -938,6 +944,7 @@ export type Database = {
     Functions: {
       book_event_ticket: {
         Args: {
+          p_custom_data?: Json
           p_email: string
           p_event_id: string
           p_member_id: string
@@ -949,6 +956,7 @@ export type Database = {
         Returns: {
           checked_in_at: string | null
           created_at: string | null
+          custom_data: Json
           email: string
           event_id: string
           id: string

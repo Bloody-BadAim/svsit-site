@@ -2,6 +2,7 @@ import { createServiceClient } from '@/lib/supabase'
 import { unstable_cache } from 'next/cache'
 import { auth } from '@/lib/auth'
 import type { SitEvent } from '@/types/database'
+import { parseFormFields } from '@/lib/eventForm'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -16,7 +17,7 @@ const getEvent = unstable_cache(
       .eq('id', id)
       .single()
     if (error || !data) return null
-    return data as SitEvent
+    return data as unknown as SitEvent
   },
   ['event-detail'],
   { revalidate: 60 }
@@ -470,6 +471,7 @@ export default async function EventDetailPage(
             priceNonmembersCents={typedEvent.price_nonmembers}
             isSoldOut={isSoldOut}
             categoryColor={cat.color}
+            formFields={parseFormFields(typedEvent.form_fields)}
           />
         )}
 

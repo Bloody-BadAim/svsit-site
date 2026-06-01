@@ -1,3 +1,5 @@
+import type { FormField, CustomData } from '@/lib/eventForm'
+
 export type Role = 'member' | 'contributor' | 'mentor' | 'bestuur'
 
 export type MembershipStatus = 'active' | 'expired' | 'pending'
@@ -86,6 +88,7 @@ export interface SitEvent {
   recap_description: string | null
   recap_photos: string[] | null
   recap_published: boolean
+  form_fields: FormField[]
   created_by: string | null
   created_at: string
 }
@@ -100,6 +103,7 @@ export interface Ticket {
   stripe_session_id: string | null
   paid_amount: number
   ticket_number: string | null
+  custom_data: CustomData
   created_at: string
   checked_in_at: string | null
 }

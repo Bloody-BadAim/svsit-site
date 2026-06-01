@@ -26,6 +26,7 @@ interface DbEvent {
   recap_description: string | null
   recap_photos: string[] | null
   recap_published: boolean
+  form_fields?: unknown
   created_at: string
 }
 

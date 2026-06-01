@@ -27,8 +27,8 @@ const getEvents = unstable_cache(
         .limit(6),
     ])
     return {
-      eventList: (upcomingResult.error || !upcomingResult.data) ? [] : upcomingResult.data as SitEvent[],
-      recapList: (recapResult.error || !recapResult.data) ? [] : recapResult.data as SitEvent[],
+      eventList: (upcomingResult.error || !upcomingResult.data) ? [] : upcomingResult.data as unknown as SitEvent[],
+      recapList: (recapResult.error || !recapResult.data) ? [] : recapResult.data as unknown as SitEvent[],
     }
   },
   ['events-page'],

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { handleError, requireAdmin } from '@/lib/apiAuth'
 import { createServiceClient } from '@/lib/supabase'
+import { parseFormFields } from '@/lib/eventForm'
+import type { Json } from '@/lib/database.types'
 import type { StatCategory } from '@/types/database'
 
 // GET - Enkel event met ticket count (publiek)
@@ -14,7 +16,7 @@ export async function GET(
     const supabase = createServiceClient()
 
     const [eventResult, ticketResult] = await Promise.all([
-      supabase.from('events').select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, external_ticket_url, recap_description, recap_photos, recap_published, created_by, created_at').eq('id', id).single(),
+      supabase.from('events').select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, external_ticket_url, recap_description, recap_photos, recap_published, form_fields, created_by, created_at').eq('id', id).single(),
       supabase
         .from('tickets')
         .select('*', { count: 'exact', head: true })
@@ -68,6 +70,7 @@ export async function PATCH(
       'recap_photos',
       'recap_published',
       'external_ticket_url',
+      'form_fields',
     ] as const
 
     type AllowedField = typeof allowedFields[number]
@@ -88,6 +91,7 @@ export async function PATCH(
       recap_description: string | null
       recap_photos: string[] | null
       recap_published: boolean
+      form_fields: Json
     }>
 
     const updateData: UpdatePayload = {}
@@ -95,6 +99,11 @@ export async function PATCH(
       if (field in body) {
         (updateData as Record<AllowedField, unknown>)[field] = body[field]
       }
+    }
+
+    // form_fields server-side saneren i.p.v. rauwe body opslaan
+    if ('form_fields' in body) {
+      updateData.form_fields = parseFormFields(body.form_fields) as unknown as Json
     }
 
     if (Object.keys(updateData).length === 0) {
@@ -106,7 +115,7 @@ export async function PATCH(
       .from('events')
       .update(updateData)
       .eq('id', id)
-      .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, external_ticket_url, created_by, created_at')
+      .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, external_ticket_url, form_fields, created_by, created_at')
       .single()
 
     if (error) {

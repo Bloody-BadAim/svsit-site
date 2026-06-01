@@ -1,8 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Check } from 'lucide-react'
+import { X, Check, Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react'
 import { inputStyle, labelStyle } from '@/components/admin/adminStyles'
+import {
+  type FormField,
+  type FormFieldType,
+  FORM_FIELD_TYPES,
+  FORM_FIELD_TYPE_LABELS,
+  parseFormFields,
+  newFieldId,
+} from '@/lib/eventForm'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -23,6 +31,7 @@ interface DbEvent {
   recap_description: string | null
   recap_photos: string[] | null
   recap_published: boolean
+  form_fields?: unknown
   created_at: string
 }
 
@@ -113,6 +122,29 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
   const initialTicketMode: TicketMode = event?.external_ticket_url ? 'external' : event?.is_paid ? 'own' : 'none'
   const [ticketMode, setTicketMode] = useState<TicketMode>(initialTicketMode)
 
+  // Custom aanmeld-velden per event
+  const [fields, setFields] = useState<FormField[]>(parseFormFields(event?.form_fields))
+
+  function addField() {
+    setFields((prev) => [...prev, { id: newFieldId(), label: '', type: 'text', required: false }])
+  }
+  function updateField(id: string, patch: Partial<FormField>) {
+    setFields((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch } : f)))
+  }
+  function removeField(id: string) {
+    setFields((prev) => prev.filter((f) => f.id !== id))
+  }
+  function moveField(id: string, dir: -1 | 1) {
+    setFields((prev) => {
+      const i = prev.findIndex((f) => f.id === id)
+      const j = i + dir
+      if (i < 0 || j < 0 || j >= prev.length) return prev
+      const next = [...prev]
+      ;[next[i], next[j]] = [next[j], next[i]]
+      return next
+    })
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.title || !form.date) return
@@ -120,6 +152,17 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
     setError(null)
 
     const isPaid = ticketMode === 'own'
+
+    // Lege velden (geen label) weglaten; bij dropdown lege opties strippen
+    const cleanFields: FormField[] = fields
+      .filter((f) => f.label.trim())
+      .map((f) => {
+        const out: FormField = { id: f.id, label: f.label.trim(), type: f.type, required: f.required }
+        if (f.type === 'select') out.options = (f.options ?? []).map((o) => o.trim()).filter(Boolean)
+        if (f.placeholder?.trim()) out.placeholder = f.placeholder.trim()
+        return out
+      })
+
     const body = {
       title: form.title,
       description: form.description || null,
@@ -133,6 +176,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
       price_nonmembers: isPaid ? euroCents(form.price_nonmembers) : 0,
       capacity: form.capacity ? parseInt(form.capacity, 10) : null,
       external_ticket_url: ticketMode === 'external' ? (form.external_ticket_url || null) : null,
+      form_fields: cleanFields,
     }
 
     try {
@@ -365,6 +409,105 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
                   placeholder="https://..."
                   style={inputStyle}
                 />
+              </div>
+            )}
+
+            {/* Custom aanmeld-velden (niet bij externe ticketverkoop, want dat
+                gaat via een externe site) */}
+            {ticketMode !== 'external' && (
+              <div style={{ gridColumn: '1 / -1', marginTop: 4 }}>
+                <label style={labelStyle}>Aanmeld-velden (extra vragen per deelnemer)</label>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-text-muted)', margin: '0 0 8px' }}>
+                  Naam en e-mail worden altijd gevraagd. Voeg hier extra velden toe (bijv. shirtmaat, dieetwens).
+                </p>
+
+                {fields.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 10 }}>
+                    {fields.map((f, idx) => (
+                      <div
+                        key={f.id}
+                        style={{
+                          border: '1px solid var(--color-border)',
+                          background: 'rgba(255,255,255,0.02)',
+                          padding: 10,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 8,
+                        }}
+                      >
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <input
+                            type="text"
+                            value={f.label}
+                            onChange={(e) => updateField(f.id, { label: e.target.value })}
+                            placeholder="Vraag / label"
+                            style={{ ...inputStyle, flex: 2 }}
+                          />
+                          <select
+                            value={f.type}
+                            onChange={(e) => updateField(f.id, { type: e.target.value as FormFieldType })}
+                            style={{ ...inputStyle, flex: 1 }}
+                          >
+                            {FORM_FIELD_TYPES.map((t) => (
+                              <option key={t} value={t}>{FORM_FIELD_TYPE_LABELS[t]}</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {f.type === 'select' && (
+                          <input
+                            type="text"
+                            value={(f.options ?? []).join(', ')}
+                            onChange={(e) => updateField(f.id, { options: e.target.value.split(',').map((o) => o.trimStart()) })}
+                            placeholder="Opties, komma-gescheiden (bijv. S, M, L)"
+                            style={inputStyle}
+                          />
+                        )}
+
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-text-muted)', cursor: 'pointer' }}>
+                            <input
+                              type="checkbox"
+                              checked={f.required}
+                              onChange={(e) => updateField(f.id, { required: e.target.checked })}
+                            />
+                            Verplicht
+                          </label>
+                          <div style={{ display: 'flex', gap: 6 }}>
+                            <button type="button" onClick={() => moveField(f.id, -1)} disabled={idx === 0}
+                              style={{ color: 'var(--color-text-muted)', cursor: idx === 0 ? 'not-allowed' : 'pointer', opacity: idx === 0 ? 0.3 : 1 }} aria-label="Omhoog">
+                              <ArrowUp size={14} />
+                            </button>
+                            <button type="button" onClick={() => moveField(f.id, 1)} disabled={idx === fields.length - 1}
+                              style={{ color: 'var(--color-text-muted)', cursor: idx === fields.length - 1 ? 'not-allowed' : 'pointer', opacity: idx === fields.length - 1 ? 0.3 : 1 }} aria-label="Omlaag">
+                              <ArrowDown size={14} />
+                            </button>
+                            <button type="button" onClick={() => removeField(f.id)}
+                              style={{ color: 'var(--color-accent-red)', cursor: 'pointer' }} aria-label="Verwijderen">
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={addField}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    padding: '6px 14px',
+                    background: 'transparent',
+                    border: '1px dashed var(--color-border)',
+                    color: 'var(--color-text-muted)',
+                    fontFamily: 'var(--font-mono)', fontSize: 12,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Plus size={14} /> Veld toevoegen
+                </button>
               </div>
             )}
           </div>

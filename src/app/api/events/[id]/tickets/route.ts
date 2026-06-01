@@ -3,6 +3,8 @@ import { handleError, requireAdmin } from '@/lib/apiAuth'
 import { stripe } from '@/lib/stripe'
 import { createServiceClient } from '@/lib/supabase'
 import { sendTicketEmail, generateTicketNumber } from '@/lib/email'
+import { parseFormFields, validateCustomData } from '@/lib/eventForm'
+import type { Json } from '@/lib/database.types'
 
 // GET - Lijst van tickets voor een event (admin/bestuur only)
 export async function GET(
@@ -19,7 +21,7 @@ export async function GET(
     const { data, error, count } = await supabase
       .from('tickets')
       .select(
-        'id, event_id, member_id, email, name, status, stripe_session_id, paid_amount, created_at, checked_in_at, members(id, email, student_number, role)',
+        'id, event_id, member_id, email, name, status, stripe_session_id, paid_amount, custom_data, created_at, checked_in_at, members(id, email, student_number, role)',
         { count: 'exact' }
       )
       .eq('event_id', eventId)
@@ -40,11 +42,12 @@ export async function POST(
   try {
     const { id: eventId } = await params
     const body = await req.json()
-    const { email, name, member_id, isMember } = body as {
+    const { email, name, member_id, isMember, custom_data } = body as {
       email: string
       name?: string
       member_id?: string
       isMember?: boolean
+      custom_data?: unknown
     }
 
     if (!email) {
@@ -56,7 +59,7 @@ export async function POST(
     // 1. Haal event op
     const { data: event, error: eventError } = await supabase
       .from('events')
-      .select('id, title, date, end_date, location, is_paid, price_members, price_nonmembers, capacity, status')
+      .select('id, title, date, end_date, location, is_paid, price_members, price_nonmembers, capacity, status, form_fields')
       .eq('id', eventId)
       .single()
 
@@ -65,6 +68,13 @@ export async function POST(
         return NextResponse.json({ data: null, error: 'Event niet gevonden', meta: null }, { status: 404 })
       }
       throw eventError
+    }
+
+    // Custom aanmeld-velden valideren tegen de definities op het event
+    const formFields = parseFormFields(event.form_fields)
+    const validation = validateCustomData(formFields, custom_data)
+    if (!validation.ok) {
+      return NextResponse.json({ data: null, error: validation.error, meta: null }, { status: 400 })
     }
 
     // Determine member status: explicit isMember flag takes priority, fallback to member_id presence
@@ -91,6 +101,7 @@ export async function POST(
         p_status: ticketStatus,
         p_paid_amount: priceInCents,
         p_ticket_number: ticketNumber,
+        p_custom_data: validation.clean as unknown as Json,
       })
       .single()
     const ticket = bookedTicket as { id: string; [key: string]: unknown } | null

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import type { FormField, CustomData } from '@/lib/eventForm'
 
 interface TicketFormProps {
   eventId: string
@@ -9,6 +10,15 @@ interface TicketFormProps {
   priceNonmembersCents: number
   isSoldOut: boolean
   categoryColor: string
+  formFields: FormField[]
+}
+
+const fieldInputClass =
+  'w-full py-3 px-4 rounded-md text-sm font-mono outline-none transition-all duration-200 placeholder:text-[var(--color-text-muted)]/30 focus:border-[var(--color-accent-gold)]'
+const fieldInputStyle: React.CSSProperties = {
+  backgroundColor: 'rgba(255,255,255,0.05)',
+  color: 'var(--color-text)',
+  border: '1px solid rgba(255,255,255,0.10)',
 }
 
 export default function TicketForm({
@@ -18,13 +28,19 @@ export default function TicketForm({
   priceNonmembersCents,
   isSoldOut,
   categoryColor,
+  formFields,
 }: TicketFormProps) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [isMember, setIsMember] = useState(false)
+  const [customData, setCustomData] = useState<CustomData>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+
+  function setField(id: string, value: string | boolean) {
+    setCustomData((prev) => ({ ...prev, [id]: value }))
+  }
 
   const currentPrice = isMember ? priceMembersCents : priceNonmembersCents
   const displayPrice = (currentPrice / 100).toFixed(2).replace('.00', ',-')
@@ -32,6 +48,17 @@ export default function TicketForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+
+    // Client-side check op verplichte custom velden (server valideert nogmaals)
+    for (const f of formFields) {
+      const v = customData[f.id]
+      const empty = f.type === 'checkbox' ? v !== true : !String(v ?? '').trim()
+      if (f.required && empty) {
+        setError(`"${f.label}" is verplicht`)
+        return
+      }
+    }
+
     setLoading(true)
 
     try {
@@ -43,6 +70,7 @@ export default function TicketForm({
           name,
           member_id: null,
           isMember,
+          custom_data: customData,
         }),
       })
 
@@ -208,6 +236,91 @@ export default function TicketForm({
             }}
           />
         </div>
+
+        {/* Custom aanmeld-velden per event */}
+        {formFields.map((f) => {
+          const labelEl = (
+            <label
+              htmlFor={`cf-${f.id}`}
+              className="block font-mono text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider mb-2"
+            >
+              {f.label}{f.required ? ' *' : ''}
+            </label>
+          )
+
+          if (f.type === 'checkbox') {
+            return (
+              <div key={f.id} className="flex items-start gap-3 py-2">
+                <input
+                  id={`cf-${f.id}`}
+                  type="checkbox"
+                  checked={customData[f.id] === true}
+                  onChange={(e) => setField(f.id, e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded border-2 cursor-pointer accent-[var(--color-accent-gold)]"
+                  style={{ backgroundColor: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.15)' }}
+                />
+                <label htmlFor={`cf-${f.id}`} className="text-sm cursor-pointer select-none" style={{ color: 'var(--color-text)' }}>
+                  {f.label}{f.required ? ' *' : ''}
+                </label>
+              </div>
+            )
+          }
+
+          if (f.type === 'textarea') {
+            return (
+              <div key={f.id}>
+                {labelEl}
+                <textarea
+                  id={`cf-${f.id}`}
+                  rows={3}
+                  value={String(customData[f.id] ?? '')}
+                  onChange={(e) => setField(f.id, e.target.value)}
+                  required={f.required}
+                  placeholder={f.placeholder ?? ''}
+                  className={fieldInputClass}
+                  style={{ ...fieldInputStyle, resize: 'vertical' }}
+                />
+              </div>
+            )
+          }
+
+          if (f.type === 'select') {
+            return (
+              <div key={f.id}>
+                {labelEl}
+                <select
+                  id={`cf-${f.id}`}
+                  value={String(customData[f.id] ?? '')}
+                  onChange={(e) => setField(f.id, e.target.value)}
+                  required={f.required}
+                  className={fieldInputClass}
+                  style={fieldInputStyle}
+                >
+                  <option value="">Kies...</option>
+                  {(f.options ?? []).map((o) => (
+                    <option key={o} value={o}>{o}</option>
+                  ))}
+                </select>
+              </div>
+            )
+          }
+
+          return (
+            <div key={f.id}>
+              {labelEl}
+              <input
+                id={`cf-${f.id}`}
+                type={f.type === 'number' ? 'number' : f.type === 'date' ? 'date' : 'text'}
+                value={String(customData[f.id] ?? '')}
+                onChange={(e) => setField(f.id, e.target.value)}
+                required={f.required}
+                placeholder={f.placeholder ?? ''}
+                className={fieldInputClass}
+                style={fieldInputStyle}
+              />
+            </div>
+          )
+        })}
 
         {/* Member checkbox */}
         <div className="flex items-start gap-3 py-2">

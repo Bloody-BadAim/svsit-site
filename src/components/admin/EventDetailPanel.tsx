@@ -6,6 +6,8 @@ import { formatDate } from '@/lib/utils'
 import { inputStyle, labelStyle } from '@/components/admin/adminStyles'
 import { CornerDecorations } from '@/components/ui/CornerDecorations'
 import { useScannerStore } from '@/stores/useScannerStore'
+import { Download } from 'lucide-react'
+import { parseFormFields, displayValue, type FormField, type CustomData } from '@/lib/eventForm'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -26,6 +28,7 @@ interface DbEvent {
   recap_description: string | null
   recap_photos: string[] | null
   recap_published: boolean
+  form_fields?: unknown
   created_at: string
 }
 
@@ -35,6 +38,7 @@ interface Ticket {
   name: string | null
   status: 'pending' | 'paid' | 'cancelled' | 'checked_in'
   paid_amount: number
+  custom_data?: CustomData | null
   created_at: string
 }
 
@@ -217,6 +221,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
   // ── Ticket stats
   const paidCount = tickets.filter((t) => t.status === 'paid' || t.status === 'checked_in').length
   const checkedInCount = tickets.filter((t) => t.status === 'checked_in').length
+  const formFields: FormField[] = parseFormFields(event.form_fields)
   const pct = paidCount > 0 ? Math.round((checkedInCount / paidCount) * 100) : 0
 
   const btnStyle = (color: string, filled = false): React.CSSProperties => ({
@@ -393,9 +398,24 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
 
       {/* Tickets */}
       <div>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)', marginBottom: 8 }}>
-          Tickets
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)' }}>
+            Aanmeldingen
+          </p>
+          {tickets.length > 0 && (
+            <a
+              href={`/api/events/${event.id}/tickets/export`}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 5,
+                fontFamily: 'var(--font-mono)', fontSize: 11,
+                color: 'var(--color-accent-gold)', textDecoration: 'none',
+                border: '1px solid var(--color-border)', padding: '4px 10px',
+              }}
+            >
+              <Download size={12} /> CSV-export
+            </a>
+          )}
+        </div>
 
         {/* Attendance summary */}
         {tickets.length > 0 && (
@@ -449,6 +469,19 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
                     <span style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11, marginLeft: 8 }}>
                       {ticket.email}
                     </span>
+                  )}
+                  {formFields.length > 0 && ticket.custom_data && (
+                    <div style={{ marginTop: 3, display: 'flex', flexWrap: 'wrap', gap: '2px 10px' }}>
+                      {formFields.map((f) => {
+                        const val = displayValue(f, ticket.custom_data as CustomData)
+                        if (!val) return null
+                        return (
+                          <span key={f.id} style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-text-muted)' }}>
+                            {f.label}: <span style={{ color: 'var(--color-text)' }}>{val}</span>
+                          </span>
+                        )
+                      })}
+                    </div>
                   )}
                 </div>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
