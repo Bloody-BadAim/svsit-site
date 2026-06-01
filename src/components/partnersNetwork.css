@@ -161,6 +161,11 @@
   font-size: clamp(1.55rem, 2.6vw, 2.2rem); color: var(--color-text); margin: 1.1rem 0 0.5rem;
   position: relative; z-index: 2;
 }
+/* HBO-ICT thuisbasis-node: wit logo i.p.v. tekst, indigo-accent via --c */
+.pnet .hboict-logo { margin: 1rem 0 0.55rem; }
+.pnet .hboict-logo img { width: 100%; max-width: 172px; height: auto; display: block; }
+.pnet .node.hboict { border-color: color-mix(in srgb, var(--hboict-blue) 55%, rgba(255,255,255,0.08)); }
+
 .pnet .node-tag { font-family: var(--font-mono); font-size: 0.76rem; color: var(--color-text-muted); line-height: 1.5; position: relative; z-index: 2; }
 .pnet .node-foot {
   margin-top: 1.05rem; padding-top: 0.85rem; border-top: 1px solid rgba(255, 255, 255, 0.07);

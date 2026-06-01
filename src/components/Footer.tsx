@@ -387,7 +387,7 @@ export default function Footer() {
           <div className="mb-8">
             <div className="h-px bg-[rgba(255,255,255,0.06)] mb-6" />
             <a
-              href="https://www.hva.nl/opleidingen/hbo-ict-voltijd"
+              href="https://www.hva.nl/opleidingen/hbo-ict"
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex flex-col gap-2.5 opacity-50 hover:opacity-80 transition-opacity duration-300 w-fit"

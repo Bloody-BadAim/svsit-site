@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import Image from 'next/image'
 import { Lock, Check, Users, Coffee, Zap, Sparkles, Send, ChevronDown } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/constants'
+import HboIctVormtaal from '@/components/HboIctVormtaal'
 
 // ── Program data (two intro weeks) ───────────────────────────────────────────
 
@@ -656,6 +658,11 @@ export default function IntroweekClient() {
       <header className="ihero" id="top">
         <div className="wrap">
           <div className="ih-eyebrow"><span className="pdot" /> twee introweken · september 2026 · HvA Amsterdam</div>
+          <div className="ih-cobrand reveal">
+            <Image src="/hbo-ict-wit.png" alt="HBO-ICT - Hogeschool van Amsterdam" width={200} height={34} className="ih-cobrand-logo" priority={false} />
+            <span className="ih-cobrand-rule" aria-hidden="true" />
+            <span className="ih-cobrand-line mono">introweek · de studievereniging van HBO-ICT</span>
+          </div>
           <p className="ih-kicker reveal in"><span className="c-muted">$</span> ~/hva/hbo-ict <span className="c-muted">&gt;</span> ./start --new-student</p>
           <h1 className="ih-title">
             <span className="brace">{'{'}</span>
@@ -753,6 +760,13 @@ export default function IntroweekClient() {
         <section className="finale" id="join">
           <div className="ghost">JOIN</div>
           <div className="wrap">
+            <div className="iw-cobrand-bar reveal">
+              <div className="iw-cobrand-strip" aria-hidden="true"><HboIctVormtaal /></div>
+              <div className="iw-cobrand-foot">
+                <Image src="/hbo-ict-wit.png" alt="HBO-ICT - Hogeschool van Amsterdam" width={176} height={30} className="iw-cobrand-foot-logo" priority={false} />
+                <span className="mono">// SIT is dé studievereniging van HBO-ICT · Creating Tomorrow</span>
+              </div>
+            </div>
             <div className="finale-grid">
               <div>
                 <div className="seclabel reveal">
@@ -1066,6 +1080,28 @@ const CSS = `
 .iw .tk-cta:hover { box-shadow: 0 16px 44px -10px rgba(242,158,24,.55); transform: translateY(-2px); }
 
 .iw .reveal { opacity: 1; transform: none; }
+
+/* ── HBO-ICT CO-BRAND (hero eyebrow lockup) ── */
+.iw .ih-cobrand {
+  display: inline-flex; align-items: center; gap: .9rem; flex-wrap: wrap; justify-content: center;
+  margin: 0 auto 1.3rem; padding: .55rem 1.1rem; border-radius: 8px;
+  border: 1px solid var(--border-strong); background: rgba(17,17,19,.5); backdrop-filter: blur(6px);
+}
+.iw .ih-cobrand-logo { height: 22px; width: auto; opacity: .92; }
+.iw .ih-cobrand-rule { width: 1px; height: 1rem; background: linear-gradient(var(--gold), var(--hboict-blue)); opacity: .8; }
+.iw .ih-cobrand-line { font-size: .68rem; letter-spacing: .14em; text-transform: lowercase; color: var(--muted); }
+@media (max-width: 480px) { .iw .ih-cobrand-rule { display: none; } .iw .ih-cobrand-line { font-size: .62rem; letter-spacing: .1em; } }
+
+/* ── HBO-ICT CO-BRAND (finale lockup) ── */
+.iw .iw-cobrand-bar { position: relative; z-index: 2; margin-bottom: clamp(2.2rem, 5vw, 3.6rem); border: 1px solid var(--border-strong); border-radius: 12px; overflow: hidden; background: linear-gradient(160deg, rgba(24,24,27,.7), rgba(9,9,11,.92)); }
+.iw .iw-cobrand-strip { height: 18px; opacity: .5; }
+.iw .iw-cobrand-strip svg { width: 100%; height: 100%; display: block; }
+.iw .iw-cobrand-foot { display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap; padding: 1rem 1.3rem; border-top: 1px solid var(--border); }
+.iw .iw-cobrand-foot::before { content: ""; align-self: stretch; width: 2px; background: linear-gradient(var(--gold), var(--hboict-blue)); border-radius: 2px; }
+.iw .iw-cobrand-foot-logo { height: 26px; width: auto; opacity: .92; }
+.iw .iw-cobrand-foot .mono { font-size: .72rem; letter-spacing: .08em; color: var(--muted-2); }
+.iw .iw-cobrand-foot .mono::first-letter { color: var(--gold); }
+@media (max-width: 560px) { .iw .iw-cobrand-foot { gap: .8rem; padding: .9rem 1rem; } .iw .iw-cobrand-foot .mono { font-size: .66rem; } }
 
 @media (prefers-reduced-motion: reduce) {
   .iw .hyper-core, .iw .ih-eyebrow .pdot, .iw .day-soon .sd, .iw .compiling, .iw .ticket, .iw .ih-scroll .arr, .iw #boot::before { animation: none !important; }

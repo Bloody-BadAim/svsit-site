@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { PARTNERS, TIER_META, TIER_ORDER } from "@/lib/partners";
 import { SITE_CONFIG } from "@/lib/constants";
 import { TextScramble } from "@/components/ui/TextScramble";
@@ -167,6 +168,20 @@ export default function PartnersNetwork() {
             {/* Partners */}
             {PARTNERS.map((p) => {
               const tier = TIER_META[p.tier];
+              const isHboIct = p.slug === "hbo-ict";
+              // HBO-ICT is the home opleiding: brand it with the HBO-ICT
+              // indigo/purple accent instead of the generic tier color.
+              const accent = isHboIct ? "#0F00AF" : tier.color;
+              const nodeStyle = isHboIct
+                ? {
+                    ["--c" as string]: accent,
+                    ["--hboict-blue" as string]: "#0F00AF",
+                    ["--hboict-purple" as string]: "#8500E9",
+                    ["--hboict-cyan" as string]: "#00FFFF",
+                    ["--hboict-red" as string]: "#FF003C",
+                  }
+                : { ["--c" as string]: accent };
+              const nodeClass = isHboIct ? "node hboict" : "node";
               const inner = (
                 <>
                   <Pins />
@@ -174,14 +189,26 @@ export default function PartnersNetwork() {
                   <div className="spot" />
                   <div className="scan" />
                   <div className="node-head">
-                    <span className="badge">{tier.label}</span>
+                    <span className="badge">{isHboIct ? "THUISBASIS" : tier.label}</span>
                     <span className="onl"><i />online</span>
                   </div>
-                  <h3 className="node-logo">
-                    <TextScramble as="span" trigger={inView} duration={0.6} speed={0.03}>
-                      {p.name}
-                    </TextScramble>
-                  </h3>
+                  {isHboIct ? (
+                    <h3 className="node-logo hboict-logo">
+                      <Image
+                        src="/hbo-ict-wit.png"
+                        alt="HBO-ICT"
+                        width={177}
+                        height={30}
+                        priority={false}
+                      />
+                    </h3>
+                  ) : (
+                    <h3 className="node-logo">
+                      <TextScramble as="span" trigger={inView} duration={0.6} speed={0.03}>
+                        {p.name}
+                      </TextScramble>
+                    </h3>
+                  )}
                   <p className="node-tag">{p.tagline}</p>
                   <div className="node-foot">
                     <span className="addr">node://<b>{p.slug}</b></span>
@@ -192,8 +219,8 @@ export default function PartnersNetwork() {
               return p.url ? (
                 <a
                   key={p.slug}
-                  className="node"
-                  style={{ ["--c" as string]: tier.color }}
+                  className={nodeClass}
+                  style={nodeStyle}
                   href={p.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -201,7 +228,7 @@ export default function PartnersNetwork() {
                   {inner}
                 </a>
               ) : (
-                <article key={p.slug} className="node" style={{ ["--c" as string]: tier.color }}>
+                <article key={p.slug} className={nodeClass} style={nodeStyle}>
                   {inner}
                 </article>
               );

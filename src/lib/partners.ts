@@ -33,11 +33,11 @@ export const TIER_ORDER: PartnerTier[] = [
 
 export const PARTNERS: Partner[] = [
   {
-    name: "HvA",
+    name: "HBO-ICT",
     tier: "strategisch",
-    tagline: "Onze hogeschool - de thuisbasis van elke SIT-student.",
-    url: "https://www.hva.nl",
-    slug: "hva",
+    tagline: "De opleiding HBO-ICT aan de HvA - waar {SIT} thuishoort.",
+    url: "https://www.hva.nl/opleidingen/hbo-ict",
+    slug: "hbo-ict",
   },
   {
     name: "CERN",
