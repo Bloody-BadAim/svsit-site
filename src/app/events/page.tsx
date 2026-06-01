@@ -86,18 +86,7 @@ function formatTime(dateStr: string): string {
 
 function PriceBadge({ event }: { event: SitEvent }) {
   if (!event.is_paid) {
-    return (
-      <span
-        className="font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded-sm"
-        style={{
-          color: '#22C55E',
-          border: '1px solid rgba(34, 197, 94, 0.4)',
-          background: 'rgba(34, 197, 94, 0.08)',
-        }}
-      >
-        Gratis
-      </span>
-    )
+    return null
   }
 
   const lowestPrice = Math.min(event.price_members, event.price_nonmembers)

@@ -251,19 +251,6 @@ export default async function EventDetailPage(
                 {cat.label}
               </span>
 
-              {!typedEvent.is_paid && (
-                <span
-                  className="font-mono text-[10px] tracking-widest px-2 py-0.5 rounded-sm uppercase"
-                  style={{
-                    color: '#22C55E',
-                    border: '1px solid rgba(34, 197, 94, 0.4)',
-                    background: 'rgba(34, 197, 94, 0.08)',
-                  }}
-                >
-                  Gratis
-                </span>
-              )}
-
               {isSoldOut && (
                 <span
                   className="font-mono text-[10px] tracking-widest px-2 py-0.5 rounded-sm uppercase"
