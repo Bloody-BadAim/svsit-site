@@ -29,6 +29,7 @@ const bigShoulders = localFont({
   src: "../fonts/BigShouldersDisplay-latin.woff2",
   variable: "--font-big-shoulders",
   display: "swap",
+  preload: true,
   weight: "700 800",
 });
 

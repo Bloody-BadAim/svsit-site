@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect } from 'react'
 
 interface MagneticHeroProps {
   children: React.ReactNode
@@ -8,14 +8,11 @@ interface MagneticHeroProps {
 
 export default function MagneticHero({ children }: MagneticHeroProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [mounted, setMounted] = useState(false)
   const rafRef = useRef<number>(0)
   const targetRef = useRef({ x: 0, y: 0 })
   const currentRef = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
-    setMounted(true)
-
     const isReduced = () => document.documentElement.classList.contains('reduce-motion')
     const hasPointer = window.matchMedia('(pointer: fine)').matches
     let running = false
@@ -86,7 +83,7 @@ export default function MagneticHero({ children }: MagneticHeroProps) {
       window.removeEventListener('sit:motionchange', sync)
       stop()
     }
-  }, [mounted])
+  }, [])
 
   return (
     <div

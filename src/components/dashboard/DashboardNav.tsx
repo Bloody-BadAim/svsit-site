@@ -94,6 +94,12 @@ export default function DashboardNav() {
             <p className="text-[10px] uppercase tracking-[0.2em] mt-1 ml-0.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
               Leden Portaal
             </p>
+            <span
+              className="hidden sm:inline-block text-[9px] uppercase tracking-[0.16em] mt-1 ml-0.5"
+              style={{ color: 'var(--hboict-cyan)', fontFamily: 'var(--font-mono)', opacity: 0.7 }}
+            >
+              van HBO-ICT
+            </span>
           </Link>
           <button
             onClick={() => setOpen(false)}
