@@ -74,11 +74,6 @@ export default function CircuitBackground() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
       document.documentElement.classList.contains("reduce-motion");
 
-    // Op klein scherm (mobiel) de continue canvas-animatie NIET draaien: te zwaar
-    // voor de main-thread (TBT/LCP). We tonen 1 statisch frame (bord + chip).
-    const smallScreen = () => window.matchMedia("(max-width: 767px)").matches;
-    const staticOnly = () => isReduced() || smallScreen();
-
     const C = {
       gold: "#F29E18",
       blue: "#3B82F6",
@@ -380,8 +375,9 @@ export default function CircuitBackground() {
     const FRAME_MS = 1000 / 30;
     let last = 0;
     function frame(time: number) {
-      // Static toggle / OS-setting / klein scherm: 1 statisch frame, dan idle.
-      if (staticOnly()) {
+      // Honor the site toggle / OS setting live: draw one static frame and go
+      // idle (no further rAF scheduled) so "static" truly stops the animation.
+      if (isReduced()) {
         paintOnce();
         raf = 0;
         return;
@@ -435,7 +431,7 @@ export default function CircuitBackground() {
     }
 
     function startLoop() {
-      if (staticOnly() || document.hidden) return;
+      if (isReduced() || document.hidden) return;
       if (raf) return;
       last = 0;
       raf = requestAnimationFrame(frame);
@@ -504,7 +500,7 @@ export default function CircuitBackground() {
         <span className="notch" />
         <div ref={pinsRef} className="pins" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="chip-logo" src="/circuit-chip-logo.png" alt="" width={256} height={256} fetchPriority="high" />
+        <img className="chip-logo" src="/circuit-chip-logo.png" alt="" width={256} height={256} fetchPriority="high" decoding="async" />
         <div className="chip-label">SIT CORE</div>
       </div>
     </div>

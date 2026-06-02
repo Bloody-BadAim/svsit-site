@@ -108,8 +108,7 @@
   position: relative;
   z-index: 1;
   filter: drop-shadow(0 0 calc(10px * var(--chip-glow, 1)) color-mix(in srgb, var(--chip-accent, #f29e18) 45%, transparent));
-  /* Geen animatie op de LCP-img: dat maakt er een aparte composite-laag van die
-     op throttled mobile later schildert -> hogere LCP. Pulse weggelaten (subtiel). */
+  animation: chipPulse 3.4s ease-in-out infinite;
 }
 
 .circuit-bg-layer .sit-chip .chip-label {
