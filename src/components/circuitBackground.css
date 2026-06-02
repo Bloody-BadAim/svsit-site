@@ -18,6 +18,20 @@
   display: block;
 }
 
+/* Lichtgewicht statische circuit-grid (CSS only, geen rAF). Draagt de board-look
+   op mobiel waar de canvas-animatie niet draait. Goedkoop: 1 gradient-paar. */
+.circuit-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 42%, #000 30%, transparent 100%);
+  mask-image: radial-gradient(120% 90% at 50% 42%, #000 30%, transparent 100%);
+  pointer-events: none;
+}
+
 /* vignette so content text stays readable over the board */
 .circuit-bg-veil {
   position: absolute;

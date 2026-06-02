@@ -70,6 +70,10 @@ export default function CircuitBackground() {
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
+    // Mobiel: GEEN zware canvas + rAF (laggy op telefoon). Toont alleen de
+    // lichtgewicht CSS-grid + chip (circuit-bg-grid). Geen JS-animatie.
+    if (window.matchMedia("(max-width: 767px)").matches) return;
+
     const isReduced = () =>
       window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
       document.documentElement.classList.contains("reduce-motion");
@@ -494,6 +498,9 @@ export default function CircuitBackground() {
 
   return (
     <div ref={layerRef} className="circuit-bg-layer" aria-hidden="true">
+      {/* Lichtgewicht statische grid (CSS). Op mobiel het enige bg-element
+          (canvas-rAF draait daar niet). Op desktop ligt de canvas erover. */}
+      <div className="circuit-bg-grid" />
       <canvas ref={canvasRef} className="circuit-bg-canvas" />
       <div className="circuit-bg-veil" />
       <div ref={chipRef} className="sit-chip">
