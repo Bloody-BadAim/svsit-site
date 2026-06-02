@@ -166,10 +166,10 @@ export default function FemItSection() {
 
             {/* Intro: korte zinnen, geen streepjes, weinig komma's */}
             <p className="max-w-lg text-sm md:text-base text-[var(--color-text-muted)] leading-relaxed">
-              In ICT is ruim 9 op de 10 studenten man. FemIT brengt de bijna 500
-              vrouwen van HBO-ICT samen zodat ze elkaar vinden steunen en
-              inspireren. Opgericht door Lisa van der Plas en bekroond met de
-              HvAll Inclusive Award. Wij staan er trots naast.
+              FemIT is dé community voor vrouwen in HBO-ICT. Hier vind je elkaar
+              groei je samen en voel je je thuis in tech. Denk aan workshops
+              inspiratie en gewoon lekker chillen met je mensen. Bekroond met de
+              HvAll Inclusive Award. SIT werkt er met trots mee samen.
             </p>
 
             {/* Activiteiten als chips */}
