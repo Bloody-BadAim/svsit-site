@@ -1,40 +1,35 @@
-# Handoff — SIT Website (svsit-site) — 2026-06-01
+# Handoff — SIT Website (svsit-site) — 2026-06-02
 
 ## Doel
-SIT studievereniging website. Events, members, sponsors, ticketing. Live op svsit.nl.
+SIT studievereniging website, live svsit.nl. Recent: HBO-ICT + FemIT co-branding, perf/anti-lag, tests.
 
 ## Status
-- Fase: 9 Launch (live, onderhoud/fixes)
-- Taak: Gratis-badge fix + SITE_CONFIG-refactor (beide klaar, gedeployed)
-- Gate: merged to main 26 mei, in productie
+- Fase 9 Launch, productie. Laatste deploy `28787cc` (canvas-uit + scroll-fix). Lag op telefoon WEG (user bevestigd).
+- BEZIG: #418 hydration-mismatch op homepage onderzoeken (user: "fix #418"). NIET afgerond.
 
-## Gewijzigde files (deze sessie)
-- `src/lib/constants.ts` — nieuw `SITE_CONFIG` (email/socials/address/stats/membership/introweek)
-- `src/app/events/page.tsx` + `events/[id]/page.tsx` — Gratis-badge weg (PriceBadge return null)
-- 26 files totaal refereren SITE_CONFIG i.p.v. hardcoded contact/socials/prijs/stats/datum
+## Gewijzigde files (deze sessie, recent)
+- `CircuitBackground.tsx` + `circuitBackground.css` — canvas-rAF UIT (mobiel+desktop), lichte `.circuit-bg-grid` + chip ipv canvas (anti-lag).
+- `SmoothScroll.tsx` — lenis NIET meer aan // static toggle gekoppeld (mid-sessie destroy brak scroll). Mount-only.
+- `layout.tsx` — Big Shoulders font-preload eruit.
+- `.env.local` AANGEMAAKT met FAKE waarden (geen echte secrets) voor lokale dev #418-debug. **MOET OPGERUIMD** (gitignored, maar verwijder). Dev-server draait mogelijk nog (`npm run dev`, poort 3000/3001) — KILLEN.
 
 ## Wat werkt
-- Build clean (npm run build), tsc clean
-- Commit `0d8fae5` (Gratis-badge) + `566c4ee` (SITE_CONFIG) gepusht main, beide live via vercel --prod
-- 0 hardcoded urls/invite-codes/emails over (git grep geverifieerd)
-- FAQ-bug 8→7 commissies gefixt (COMMISSIES.length)
+- Anti-lag: geen rAF-canvas meer, mobiel+desktop smooth (prod-geverifieerd). Static-toggle: scroll+clicks werken weer. 10 key-pages HTTP 200, content ok. Co-branding HBO-ICT+FemIT live. 182 tests.
 
-## Wat niet werkte / geleerde lessen
-- Bulk-refactor gedelegeerd aan general-purpose agent: deed alleen wat in expliciete lijst stond. Miste invite-codes RegisterFlow + email-templates (member/ticket/weeklyDigest) + EmailComposer — zelf afgemaakt. Les: email-templates apart benoemen bij contact-refactors.
-- Countdown homepage was 10:00, introweek-pagina 13:00 (drift). Geünificeerd naar 13:00 via SITE_CONFIG.introweek.startIso.
+## Wat niet werkte / lessen
+- #418 homepage: NIET lokaal te reproduceren met fake/lege data (dev = 0 hydration-errors) -> data-driven OF prod-build-only. Footer `new Date().getFullYear()` zit op ALLE pages dus niet de homepage-only oorzaak (/faq etc gaven err:0). Homepage-only componenten = verdachte (Hero/IntroOverlay/CodeCompile/ScrollMorphNumbers/CommunityLog/co-brand secties). CommunityLog is al #418-guarded (effect-deferral). Niet-fataal (React herstelt, page werkt).
+- Lenis mid-sessie destroyen breekt ScrollTrigger-scroller -> scroll/clicks dood.
 
 ## Blokkades
-- Geen
+- #418 niet lokaal reproduceerbaar zonder ECHTE Supabase-data (env-pull eerder geweigerd door auto-mode). Nodig: prod-data lokaal OF React DevTools op live svsit.nl om mismatchend element te zien.
 
 ## Volgende stappen
-1. P3: FAQ-content nog 2x (`faq/page.tsx` JSON-LD + `FaqContent.tsx` UI) — contact/prijs nu via config, maar tekst-arrays dupliceren. Overweeg 1 source.
-2. Lidprijs €9,99 in SITE_CONFIG moet matchen met Stripe-prijs (los systeem) bij wijziging.
-3. Foto's Thijmen/Yusuf/Liam (photo:null in moederbord.ts)
-4. NOTION_API_KEY weg uit Vercel-dashboard (niet in code, puur dashboard-actie)
+1. #418: pak prod-component-stack (laatste Playwright-run `bon0ryy8s` capturede console+stack op svsit.nl mobiel) OF laat user React DevTools draaien. Anders: niet-fataal, evt laten.
+2. OPRUIMEN: `rm .env.local` + kill dev-server (lsof -ti:3000/3001 | xargs kill -9).
+3. Backlog: bestuur-foto's Thijmen/Yusuf/Liam (photo:null, files nodig).
 
-## Key context (voor nieuwe sessie)
-- `SITE_CONFIG` in `src/lib/constants.ts` = single source contact/socials/stats/prijs/introweek-datum. Importeer overal, niet hardcoden. Veilig in server+client+email-templates (constants importeert alleen types).
-- Display-handles (`@sv.sit` marketing-copy, Navbar-tekst, Footer ariaLabel) bewust gelaten — roteren nooit.
-- Events Gratis-badge = data-gedreven (events.is_paid via Supabase). Admin EventFormModal:305 kiest ticket-mode per event.
-- Codebase strip diacritics (écht -> echt); anti-slop: geen em/en dashes in UI.
-- Vercel deploy: `vercel --prod --yes` vanuit repo root, aliased naar svsit.nl.
+## Key context (nieuwe sessie)
+- Homepage rendert geen DB-data server-side (Events = client-fetch). Dus #418 is subtiel/prod-only.
+- Lokale `next start`/`dev` zonder ECHTE Supabase-env: met FAKE env boot 't + homepage rendert (queries falen -> leeg, afgehandeld). Zonder env = error.tsx.
+- Deploy: `vercel --prod --yes`. Prod-verificatie: Playwright tegen svsit.nl (mobiel devices['iPhone 12'] of isMobile viewport). Static-test: addInitScript localStorage sit-reduced-motion=true + .reduce-motion class.
+- Schrijfstijl: geen streepjes/em-dashes, weinig komma's, studententoon (auto-memory feedback-schrijfstijl).
