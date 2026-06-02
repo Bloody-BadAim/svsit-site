@@ -74,6 +74,11 @@ export default function CircuitBackground() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
       document.documentElement.classList.contains("reduce-motion");
 
+    // Op klein scherm (mobiel) de continue canvas-animatie NIET draaien: te zwaar
+    // voor de main-thread (TBT/LCP). We tonen 1 statisch frame (bord + chip).
+    const smallScreen = () => window.matchMedia("(max-width: 767px)").matches;
+    const staticOnly = () => isReduced() || smallScreen();
+
     const C = {
       gold: "#F29E18",
       blue: "#3B82F6",
@@ -375,9 +380,8 @@ export default function CircuitBackground() {
     const FRAME_MS = 1000 / 30;
     let last = 0;
     function frame(time: number) {
-      // Honor the site toggle / OS setting live: draw one static frame and go
-      // idle (no further rAF scheduled) so "static" truly stops the animation.
-      if (isReduced()) {
+      // Static toggle / OS-setting / klein scherm: 1 statisch frame, dan idle.
+      if (staticOnly()) {
         paintOnce();
         raf = 0;
         return;
@@ -431,7 +435,7 @@ export default function CircuitBackground() {
     }
 
     function startLoop() {
-      if (isReduced() || document.hidden) return;
+      if (staticOnly() || document.hidden) return;
       if (raf) return;
       last = 0;
       raf = requestAnimationFrame(frame);
