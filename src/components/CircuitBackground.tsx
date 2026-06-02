@@ -498,10 +498,11 @@ export default function CircuitBackground() {
 
   return (
     <div ref={layerRef} className="circuit-bg-layer" aria-hidden="true">
-      {/* Lichtgewicht statische grid (CSS). Geen canvas-rAF meer (anti-lag,
-          mobiel + desktop). De canvas-engine is uitgeschakeld: het effect bailt
-          omdat er geen canvas-element is. Grid + chip dragen de board-look. */}
+      {/* Statische CSS-grid: op mobiel het enige bg-element (canvas-rAF draait
+          daar niet, anti-lag). Op desktop ligt de animerende canvas erover met
+          de pulserende lichten. */}
       <div className="circuit-bg-grid" />
+      <canvas ref={canvasRef} className="circuit-bg-canvas" />
       <div className="circuit-bg-veil" />
       <div ref={chipRef} className="sit-chip">
         <span className="notch" />
