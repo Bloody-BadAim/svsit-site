@@ -10,14 +10,14 @@ export interface Person {
   photo: string | null;
 }
 
-// Foto's van Liam, Thijmen, Jamiro en Yusuf komen later, tot dan tonen we initialen.
+// Foto van Liam komt later, tot dan tonen we initialen.
 export const PEOPLE: Record<string, Person> = {
   matin: { name: "Matin", initials: "MA", photo: "/bestuur/matin.jpeg" },
   idil: { name: "Idil", initials: "ID", photo: "/bestuur/idil.jpeg" },
   wesley: { name: "Wesley", initials: "WE", photo: "/bestuur/wesley.jpeg" },
   mats: { name: "Mats", initials: "MS", photo: "/bestuur/mats.jpeg" },
-  thijmen: { name: "Thijmen", initials: "TH", photo: null },
-  yusuf: { name: "Yusuf", initials: "YU", photo: null },
+  thijmen: { name: "Thijmen", initials: "TH", photo: "/bestuur/thijmen.jpeg" },
+  yusuf: { name: "Yusuf", initials: "YU", photo: "/bestuur/yusuf.jpeg" },
   jamiro: { name: "Jamiro", initials: "JA", photo: "/bestuur/jamiro.jpeg" },
   nick: { name: "Nick", initials: "NI", photo: "/bestuur/nick.jpeg" },
   riley: { name: "Riley", initials: "RI", photo: "/bestuur/riley.jpg" },
@@ -137,7 +137,7 @@ export const COMMISSIES: Commissie[] = [
     name: "SIT Community",
     code: "CMM",
     color: "#06B6D4",
-    voorzitter: null,
+    voorzitter: "yusuf",
     status: "zoekt-leden",
     tagline: "De stem van de leden - online en offline.",
     beschrijving:
@@ -151,7 +151,7 @@ export const COMMISSIES: Commissie[] = [
       "Leden activeren en feedback ophalen",
       "Semester-enquetes",
     ],
-    leden: ["Shreyah", "Shakira", "mats"],
+    leden: ["yusuf", "Shreyah", "Shakira", "mats"],
   },
   {
     id: "educo",
