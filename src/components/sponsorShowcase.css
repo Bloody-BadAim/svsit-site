@@ -1,0 +1,635 @@
+/* ════════ SPONSOR-BUS — scoped under .sbus ════════ */
+/* Homepage partners teaser: chip-cards "soldered" onto a horizontal PCB data
+   bus with animated current. Sibling of partnersNetwork.css (do NOT edit that
+   file). All classes are prefixed .sbus to avoid global / .pnet clashes. */
+
+.sbus {
+  position: relative;
+  isolation: isolate;
+}
+
+/* ════════ FAINT PCB SUBSTRATE (depth behind the bus) ════════ */
+.sbus .sbus-pcb {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.sbus .sbus-pcb svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.sbus .sbus-pcb-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(1100px, 92vw);
+  aspect-ratio: 3 / 1;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--color-accent-gold) 9%, transparent),
+    transparent 72%
+  );
+  filter: blur(10px);
+  opacity: 0.55;
+}
+
+/* live PCB traces feeding the bus */
+.sbus .sbus-live-trace {
+  stroke-dasharray: 80 560;
+  stroke-dashoffset: 640;
+  animation: sbusFlow 5s linear infinite;
+}
+@keyframes sbusFlow {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ════════ THE BUS — AUTO-SCROLLING MARQUEE ════════ */
+/* The track holds a static lit bus line + a marquee of chips that ride the bus
+   left→right on a seamless loop, so every sponsor cycles into view and the
+   strategisch tier is never permanently clipped. Two layers of motion:
+   the travelling current pulse on the line + the chip stream. */
+.sbus .sbus-track {
+  position: relative;
+  /* full-bleed: the header/CTA stay padded, the bus breathes edge-to-edge */
+  margin-top: clamp(2.2rem, 5vw, 3.4rem);
+}
+
+/* viewport: clips the stream horizontally + fades both edges, but lets the
+   chip lift/glow bleed vertically (clip x, visible y). */
+.sbus .sbus-marquee {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  /* horizontal-only clipping so hover lift + glow aren't cut top/bottom */
+  overflow-x: clip;
+  overflow-y: visible;
+  /* fade the edges so the bus "continues" off-screen */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 7%,
+    #000 93%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 7%,
+    #000 93%,
+    transparent 100%
+  );
+}
+
+/* the moving track: two identical sequences laid side by side; translate by
+   -50% loops seamlessly. Speed is driven by --sbus-dur so hover can slow it. */
+.sbus .sbus-stream {
+  display: flex;
+  width: max-content;
+  --sbus-dur: 60s;
+  /* vertical breathing room so the hover lift + glow aren't clipped by the
+     marquee's edge mask (mask clips to the border box) */
+  padding-block: 3.4rem;
+  /* reveal: fade the whole stream in when the section enters view */
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+  animation: sbusScroll var(--sbus-dur) linear infinite;
+  will-change: transform;
+}
+.sbus .sbus-marquee.in .sbus-stream {
+  opacity: 1;
+}
+@keyframes sbusScroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* one chip sequence (real copy + aria-hidden clone share these rules) */
+.sbus .sbus-seq {
+  display: flex;
+  align-items: center;
+  gap: clamp(2.4rem, 4vw, 3.6rem);
+  /* match the gap on the seam so the loop join is invisible */
+  padding-inline: clamp(1.2rem, 2vw, 1.8rem);
+}
+
+/* hover anywhere on the bus slows it a lot so chips are easy to click;
+   the hovered chip itself lights up via the .sbus-chip:hover rules below. */
+.sbus .sbus-marquee:hover .sbus-stream,
+.sbus .sbus-marquee:focus-within .sbus-stream {
+  --sbus-dur: 240s;
+}
+
+/* the bus line itself — a soldered copper trace gold→blue, runs behind chips */
+.sbus .sbus-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0,
+    color-mix(in srgb, var(--color-accent-gold) 70%, transparent) 8%,
+    color-mix(in srgb, var(--color-accent-gold) 55%, transparent) 38%,
+    color-mix(in srgb, var(--color-accent-blue) 55%, transparent) 70%,
+    color-mix(in srgb, var(--color-accent-green) 45%, transparent) 92%,
+    transparent 100%
+  );
+  box-shadow: 0 0 14px -2px color-mix(in srgb, var(--color-accent-gold) 45%, transparent);
+}
+/* soft underglow for the line */
+.sbus .sbus-line::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 8px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-accent-gold) 22%, transparent) 30%,
+    color-mix(in srgb, var(--color-accent-blue) 20%, transparent) 70%,
+    transparent
+  );
+  filter: blur(3px);
+  opacity: 0.7;
+}
+/* travelling current pulse — GPU friendly (transform + opacity only) */
+.sbus .sbus-line::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 90px;
+  height: 4px;
+  border-radius: 4px;
+  transform: translate(-120px, -50%);
+  background: radial-gradient(
+    closest-side,
+    #fff,
+    color-mix(in srgb, var(--color-accent-gold) 85%, transparent) 35%,
+    transparent
+  );
+  filter: blur(0.5px);
+  animation: sbusCurrent 5.5s linear infinite;
+}
+@keyframes sbusCurrent {
+  0% {
+    transform: translate(-120px, -50%);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(100vw + 120px), -50%);
+    opacity: 0;
+  }
+}
+
+/* ════════ CHIP CARD ════════ */
+.sbus .sbus-chip {
+  --c: var(--color-accent-gold);
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  width: 230px;
+  min-height: 196px;
+  padding: 1.25rem 1.2rem 1.1rem;
+  border: 1px solid #27272a;
+  border-radius: 13px;
+  background: linear-gradient(180deg, #18181b, #111113);
+  text-decoration: none;
+  color: inherit;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s,
+    box-shadow 0.45s;
+}
+
+/* tier sizing — sponsors paid different amounts, so hierarchy is visible */
+.sbus .sbus-chip.t-strategisch,
+.sbus .sbus-chip.t-hoofdsponsor {
+  width: 270px;
+  min-height: 236px;
+  border-color: color-mix(in srgb, var(--c) 30%, #27272a);
+}
+.sbus .sbus-chip.t-sponsor {
+  width: 240px;
+  min-height: 210px;
+}
+.sbus .sbus-chip.t-partner {
+  width: 214px;
+  min-height: 186px;
+}
+
+/* solder pad / via that mounts the chip onto the bus line (left + right) */
+.sbus .sbus-chip .sbus-via {
+  position: absolute;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  transform: translateY(-50%) rotate(45deg);
+  background: #18181b;
+  border: 1.5px solid color-mix(in srgb, var(--c) 45%, #27272a);
+  box-shadow: 0 0 0 3px var(--color-bg);
+  z-index: 2;
+  transition: border-color 0.35s, box-shadow 0.35s, background 0.35s;
+}
+.sbus .sbus-chip .sbus-via.l {
+  left: 0;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.sbus .sbus-chip .sbus-via.r {
+  right: 0;
+  transform: translate(50%, -50%) rotate(45deg);
+}
+.sbus .sbus-chip:hover .sbus-via {
+  background: color-mix(in srgb, var(--c) 25%, #18181b);
+  border-color: var(--c);
+  box-shadow:
+    0 0 0 3px var(--color-bg),
+    0 0 12px color-mix(in srgb, var(--c) 80%, transparent);
+}
+
+/* the short solder trace dropping from the bus into the chip top */
+.sbus .sbus-chip .sbus-solder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 0;
+  transform: translateX(-50%);
+  background: color-mix(in srgb, var(--c) 50%, transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* corner ticks — only the bigger (paid) tiers get them, like .pnet .cnr */
+.sbus .sbus-chip .sbus-cnr {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid color-mix(in srgb, var(--c) 45%, transparent);
+  transition: border-color 0.4s;
+  pointer-events: none;
+}
+.sbus .sbus-chip .sbus-cnr.tl { top: 8px; left: 8px; border-right: 0; border-bottom: 0; }
+.sbus .sbus-chip .sbus-cnr.tr { top: 8px; right: 8px; border-left: 0; border-bottom: 0; }
+.sbus .sbus-chip .sbus-cnr.bl { bottom: 8px; left: 8px; border-right: 0; border-top: 0; }
+.sbus .sbus-chip .sbus-cnr.br { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }
+.sbus .sbus-chip:hover .sbus-cnr { border-color: var(--c); }
+
+/* cursor spotlight (pointer-driven --mx/--my, no rAF) */
+.sbus .sbus-chip .sbus-spot {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  background: radial-gradient(
+    200px 200px at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--c) 16%, transparent),
+    transparent 60%
+  );
+}
+.sbus .sbus-chip:hover .sbus-spot {
+  opacity: 1;
+}
+
+/* hover lift + tier glow */
+.sbus .sbus-chip:hover {
+  border-color: color-mix(in srgb, var(--c) 70%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--c) 30%, transparent),
+    0 18px 48px -18px color-mix(in srgb, var(--c) 55%, transparent),
+    0 0 56px -20px color-mix(in srgb, var(--c) 50%, transparent);
+}
+
+/* paid tiers carry a permanent faint glow so the hierarchy reads at rest */
+.sbus .sbus-chip.t-strategisch,
+.sbus .sbus-chip.t-hoofdsponsor {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--c) 18%, transparent),
+    0 0 40px -22px color-mix(in srgb, var(--c) 60%, transparent);
+}
+.sbus .sbus-chip.t-strategisch:hover,
+.sbus .sbus-chip.t-hoofdsponsor:hover {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--c) 32%, transparent),
+    0 20px 54px -16px color-mix(in srgb, var(--c) 60%, transparent),
+    0 0 64px -18px color-mix(in srgb, var(--c) 55%, transparent);
+}
+
+/* ── chip internals ── */
+.sbus .sbus-chip-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+.sbus .sbus-badge {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.56rem;
+  letter-spacing: 0.16em;
+  padding: 0.26rem 0.5rem;
+  border-radius: 5px;
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 11%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 26%, transparent);
+  white-space: nowrap;
+}
+.sbus .sbus-onl {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--c);
+  box-shadow: 0 0 9px var(--c);
+  animation: sbusBlink 1.6s ease-in-out infinite;
+}
+@keyframes sbusBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+.sbus .sbus-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.98;
+  color: var(--color-text);
+  margin: 0.9rem 0 0.45rem;
+  position: relative;
+  z-index: 2;
+  font-size: clamp(1.25rem, 1.7vw, 1.55rem);
+  /* clamp the wordmark to 2 lines so long names (CoE Applied AI) stay tidy */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sbus .sbus-chip.t-strategisch .sbus-name,
+.sbus .sbus-chip.t-hoofdsponsor .sbus-name {
+  font-size: clamp(1.5rem, 2.1vw, 1.95rem);
+}
+
+.sbus .sbus-tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+  position: relative;
+  z-index: 2;
+  margin-bottom: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sbus .sbus-foot {
+  margin-top: 0.95rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+.sbus .sbus-addr {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.02em;
+  color: #71717a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sbus .sbus-addr b {
+  color: color-mix(in srgb, var(--c) 85%, var(--color-text));
+  font-weight: 500;
+}
+.sbus .sbus-go {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--c);
+  flex: none;
+  transform: translateX(-4px);
+  opacity: 0;
+  transition: 0.3s;
+}
+.sbus .sbus-chip:hover .sbus-go {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* ════════ OPEN SLOT chip ════════ */
+.sbus .sbus-chip.sbus-slot {
+  --c: var(--color-accent-gold);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  border-style: dashed;
+  border-color: #2f2f33;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent,
+    transparent 11px,
+    rgba(255, 255, 255, 0.012) 11px,
+    rgba(255, 255, 255, 0.012) 12px
+  );
+}
+.sbus .sbus-chip.sbus-slot:hover {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--c) 60%, transparent);
+}
+.sbus .sbus-slot-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  color: #71717a;
+  border: 1px dashed #3a3a3f;
+  transition: 0.3s;
+}
+.sbus .sbus-chip.sbus-slot:hover .sbus-slot-icon {
+  color: var(--c);
+  border-color: color-mix(in srgb, var(--c) 55%, transparent);
+  transform: rotate(90deg);
+}
+.sbus .sbus-slot-cmd {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--color-text);
+}
+.sbus .sbus-slot-cmd .g {
+  color: var(--color-accent-green);
+}
+.sbus .sbus-slot-cmd .cur {
+  display: inline-block;
+  width: 7px;
+  height: 1.02em;
+  background: var(--color-accent-gold);
+  vertical-align: -2px;
+  margin-left: 2px;
+  animation: sbusCursor 1.1s steps(1) infinite;
+}
+@keyframes sbusCursor {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.sbus .sbus-slot-sub {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  color: #71717a;
+}
+.sbus .sbus-chip.sbus-slot:hover .sbus-slot-sub {
+  color: var(--color-accent-gold);
+}
+
+/* ════════ LEGEND row under the bus ════════ */
+.sbus .sbus-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #71717a;
+}
+.sbus .sbus-legend .g {
+  color: var(--color-accent-green);
+}
+.sbus .sbus-legend .tier {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.sbus .sbus-legend .tier i {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+/* ════════ REDUCED MOTION ════════ */
+/* When motion is reduced we STOP the auto-scroll and render the chips
+   START-aligned in a manually-scrollable rail, so HBO-ICT / CERN (strategisch)
+   are visible first instead of mid-loop. The duplicate clone sequence is
+   hidden so the scrollable content isn't doubled. The bus stays statically lit
+   (no travelling pulse). Shared by the OS media query + in-site toggle. */
+@media (prefers-reduced-motion: reduce) {
+  .sbus .sbus-marquee {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sbus .sbus-marquee::-webkit-scrollbar { display: none; }
+  .sbus .sbus-stream {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    width: max-content;
+    justify-content: flex-start;
+  }
+  .sbus .sbus-stream .sbus-seq[aria-hidden="true"] { display: none !important; }
+  .sbus .sbus-line::after,
+  .sbus .sbus-live-trace,
+  .sbus .sbus-onl,
+  .sbus .sbus-slot-cmd .cur {
+    animation: none !important;
+  }
+  .sbus .sbus-line::after { opacity: 0 !important; }
+}
+/* in-site "// static" toggle (.reduce-motion on <html>), mirrors partnersNetwork */
+.reduce-motion .sbus .sbus-marquee {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.reduce-motion .sbus .sbus-marquee::-webkit-scrollbar { display: none; }
+.reduce-motion .sbus .sbus-stream {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  width: max-content;
+  justify-content: flex-start;
+}
+.reduce-motion .sbus .sbus-stream .sbus-seq[aria-hidden="true"] { display: none !important; }
+.reduce-motion .sbus .sbus-line::after,
+.reduce-motion .sbus .sbus-live-trace,
+.reduce-motion .sbus .sbus-onl,
+.reduce-motion .sbus .sbus-slot-cmd .cur {
+  animation: none !important;
+}
+.reduce-motion .sbus .sbus-line::after { opacity: 0 !important; }
+
+/* ════════ RESPONSIVE ════════ */
+@media (max-width: 640px) {
+  .sbus .sbus-stream {
+    --sbus-dur: 48s;
+    padding-block: 2.2rem;
+  }
+  .sbus .sbus-seq {
+    gap: 1.5rem;
+  }
+  /* slow factor on touch: tap-to-pause via :active so a tap freezes the bus */
+  .sbus .sbus-marquee:active .sbus-stream {
+    --sbus-dur: 240s;
+  }
+  /* shrink the paid-tier delta a touch on phones so cards fit nicely */
+  .sbus .sbus-chip {
+    width: 210px;
+    min-height: 188px;
+  }
+  .sbus .sbus-chip.t-strategisch,
+  .sbus .sbus-chip.t-hoofdsponsor {
+    width: 238px;
+    min-height: 214px;
+  }
+  .sbus .sbus-chip.t-sponsor {
+    width: 220px;
+    min-height: 198px;
+  }
+  .sbus .sbus-chip.t-partner {
+    width: 200px;
+    min-height: 182px;
+  }
+}

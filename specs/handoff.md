@@ -1,39 +1,40 @@
-# Handoff — SIT Website (svsit-site) — 2026-06-02
+# Handoff — SIT Website (svsit-site) — 2026-06-04
 
 ## Doel
-SIT studievereniging website, live op svsit.nl. Studievereniging van HBO-ICT (HvA).
+SIT website, live op svsit.nl. Homepage partner-sectie premium maken (sponsoren betalen ervoor) + recap-foto showcase toevoegen bij events.
 
 ## Status
-- Fase 9 Launch, productie. ALLES van deze sessie AF + gedeployed + prod-geverifieerd.
-- HEAD `f5a9164` = origin/main. Git clean. Takenlijst leeg.
+- Fase 9 Launch, productie. HEAD `886c307` = origin/main (bestuursfoto's Thijmen/Yusuf gepusht, Yusuf vz Community).
+- Homepage-werk deze sessie = NOG NIET GECOMMIT (working tree dirty). Build groen (60/60), prod-build (`next start`) visueel geverifieerd via Playwright. Wacht op go voor commit + deploy.
 
-## Gewijzigde files (deze sessie, hoofdlijnen)
-- Security: `api/members/route.ts` (privesc+takeover), `api/events/[id]/tickets/route.ts` (auth-afgeleid + rate-limit), `tickets/export` (CSV-injectie), `api/password/forgot` (rate-limit).
-- Gamify: `lib/inventoryEngine.ts` (lazy level-unlock), `components/stickerIcons.tsx` (SVG ipv emoji), `CardEditor.tsx`.
-- Co-brand: `HboIctSection/HboIctVormtaal/FemItSection.tsx`, Navbar/Footer/over-ons/IntroweekClient, `lib/partners.ts`, `public/hbo-ict-wit.png` + `femit-logo.png`, globals `--hboict-*` tokens.
-- Perf/anti-lag: `CircuitBackground.tsx` (canvas mobiel uit, desktop pulse), `circuitBackground.css` (.circuit-bg-grid), `SmoothScroll.tsx` (lenis los van toggle), `lib/motion.ts`.
-- Fix: `CommunityLog.tsx` (#418 hydration, &nbsp;-span). `SITE_CONFIG` in `lib/constants.ts`. Tests in `lib/__tests__/` (182) + `e2e/`.
+## Gewijzigde files (deze sessie, nog niet gecommit)
+- `src/components/SponsorShowcase.tsx` + `sponsorShowcase.css` — NIEUW concept "Sponsor-bus": chips op PCB-databus, auto-scroll marquee, tier-sizing + glow, stromende current. Nummer 06.
+- `src/components/EventRecap.tsx` + `eventRecap.css` — NIEUW: recap filmstrip-marquee (sectie 04), trekt foto's uit nieuwe API, elke frame linkt naar /events#terugblik.
+- `src/app/api/events/recaps/route.ts` — NIEUW: platte recap-foto feed (status=completed + recap_published, limit 8 events / 16 foto's, envelope {data,error,meta}).
+- `src/app/events/page.tsx` — `id="terugblik"` + `scroll-mt-28` op recap-blok (deep-link target).
+- `src/app/page.tsx` — `<EventRecap />` gewired na `<Events />` + divider.
+- `src/components/Testimonials.tsx` 04→05, `src/components/JoinCta.tsx` 06→07 (spine hernummerd).
 
-## Wat werkt (prod-geverifieerd)
-- Security-gaten dicht. Gamify unlock + SVG-stickers. HBO-ICT + FemIT co-branding. Desktop pulse-canvas, mobiel licht (geen lag). Static-toggle scroll werkt. #418 weg (0/4 prod). 182 tests groen. Desktop Lighthouse 100, mobiel ~81.
+## Wat werkt (prod-build geverifieerd: next build + next start + Playwright)
+- Sponsor-bus desktop: marquee scrollt (translateX bewogen -284→-408px), alle 9 sponsors cyclen, niks permanent geclipt. Reduced-motion = start-aligned (HBO-ICT/CERN strategisch eerst). Mobiel = swipe-marquee. Premium PCB-look, on-brand met /partners.
+- Recap filmstrip: empty-state correct (lokaal geen Supabase). Sectie rendert ALTIJD zodat spine 01-07 intact blijft.
+- Spine uniek: 01 About,02 WhyJoin,03 Events,04 Recap,05 Testimonials,06 Sponsors,07 JoinCta. HboIct+FemIt = numberless interstitials (`>`-eyebrows).
 
 ## Wat niet werkte / lessen
-- Data-driven prod-hydration (#418): repro vereist ECHTE Supabase-data (fake env = lege render = geen error). dev-HMR serveert stale SSR -> `rm -rf .next` + fresh build om te verifieren. JSX bare-tekst naast element+entity = whitespace-mismatch -> wrap in span met &nbsp;/&amp;.
-- Lenis NOOIT mid-sessie destroyen (breekt ScrollTrigger-scroller -> scroll/clicks dood).
-- Lokale WSL-Lighthouse onbetrouwbare TBT bij host-contentie; meet warm of via pagespeed.web.dev.
+- `next dev` hot-reloadde agent-CSS-edits NIET → stale screenshots (oude statische bus). Oplossing: `next build` + `next start` + Playwright tegen prod-build (dev-server niet vertrouwen voor agent-edits).
+- recaps API type-error: `event.category` is `string|null`, kan niet als index → normaliseer naar `''`.
+- Lokaal geen Supabase-env → recap-API leeg → empty-state. Echte foto's + #terugblik pas op prod.
 
 ## Blokkades
-- Geen code-blokkades. Open punten hieronder hebben input van Matin nodig.
+- Geen code-blokkade. Recap toont pas echte foto's als events met `recap_published=true` + `recap_photos` in DB staan.
 
-## Volgende stappen (geparkeerd, geen code-blocker)
-1. Bestuur-foto's Thijmen/Yusuf/Liam (photo:null in `lib/moederbord.ts`) — bestanden nodig.
-2. NOTION_API_KEY uit Vercel-dashboard verwijderen — puur dashboard-actie.
-3. SEPA recurring — bewust niet aangezet (Stripe-dashboard + mandaat-beslissing).
-4. Mobile-LCP ~3.x s — acceptabel (chip-image LCP, geen bug).
+## Volgende stappen
+1. Go/no-go: `git add` homepage-files + commit + push.
+2. DEPLOY: per oude conventie `vercel --prod --yes` vanuit repo root (NIET zeker of git-push auto-deployt). LET OP: ook de eerdere `886c307` moederbord-push is misschien nog niet live zonder vercel deploy — checken.
+3. Na deploy: `/events#terugblik` scroll + recap-filmstrip met echte foto's op prod checken.
 
 ## Key context (nieuwe sessie)
-- Deploy: `vercel --prod --yes` vanuit repo root, aliased svsit.nl.
-- Prod-verificatie: Playwright tegen svsit.nl (mobiel devices['iPhone 12']). Static-test: localStorage sit-reduced-motion=true + .reduce-motion class.
-- Lokale dev/build van DB-pagina's: zonder echte env = error.tsx; met (fake of echte) env booten ze. Echte env: `vercel env pull .env.local` (bevat secrets -> erna verwijderen).
-- CircuitBackground = fixed canvas, alleen desktop animeert (mobiel `<=767px` bailt). Chip-logo = mobile LCP-element (SSR + preload).
+- Homepage heeft GENUMMERDE spine-conventie (01-07 via `SectionLabel`); HboIctSection + FemItSection zijn BEWUST numberless interstitials. Respecteer bij nieuwe secties.
+- `SponsorShowcase` zet nummer INLINE (niet via `SectionLabel`).
+- Recap-data uit `/api/events/recaps` (flatten van `recap_photos`), niet static.
 - Schrijfstijl: geen streepjes/em-dashes/`_` in prose, weinig komma's, studententoon.

@@ -212,7 +212,7 @@ export default function Testimonials() {
       />
 
       <div className="relative max-w-[1400px] mx-auto">
-        <SectionLabel number="04" label="wat zeggen leden" />
+        <SectionLabel number="05" label="wat zeggen leden" />
 
         <div className="mb-8 md:mb-12">
           <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tight leading-[1.1]">

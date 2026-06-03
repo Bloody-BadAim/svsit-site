@@ -376,7 +376,7 @@ export default async function EventsPage() {
 
         {/* Past events with recaps */}
         {recapList.length > 0 && (
-          <div className="mt-16">
+          <div id="terugblik" className="mt-16 scroll-mt-28">
             <div className="flex items-center gap-3 mb-6">
               <span className="font-mono text-xs tracking-[0.15em]" style={{ color: '#71717A' }}>
                 // terugblik
