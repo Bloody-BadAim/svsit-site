@@ -122,11 +122,14 @@
   padding-inline: clamp(1.2rem, 2vw, 1.8rem);
 }
 
-/* hover anywhere on the bus slows it a lot so chips are easy to click;
-   the hovered chip itself lights up via the .sbus-chip:hover rules below. */
+/* hover anywhere on the bus PAUSES it so chips are easy to read + click;
+   the hovered chip itself lights up via the .sbus-chip:hover rules below.
+   We freeze with animation-play-state (NOT a duration swap): changing
+   --sbus-dur on a running animation recomputes its phase and makes the
+   track JUMP. Pausing holds the exact position; mouse-leave resumes it. */
 .sbus .sbus-marquee:hover .sbus-stream,
 .sbus .sbus-marquee:focus-within .sbus-stream {
-  --sbus-dur: 240s;
+  animation-play-state: paused;
 }
 
 /* the bus line itself — a soldered copper trace gold→blue, runs behind chips */
@@ -610,9 +613,10 @@
   .sbus .sbus-seq {
     gap: 1.5rem;
   }
-  /* slow factor on touch: tap-to-pause via :active so a tap freezes the bus */
+  /* tap-to-pause on touch: freeze in place (play-state) instead of swapping
+     duration, which would jump the marquee like the old hover bug did */
   .sbus .sbus-marquee:active .sbus-stream {
-    --sbus-dur: 240s;
+    animation-play-state: paused;
   }
   /* shrink the paid-tier delta a touch on phones so cards fit nicely */
   .sbus .sbus-chip {

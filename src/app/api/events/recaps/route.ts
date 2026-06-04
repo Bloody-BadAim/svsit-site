@@ -7,6 +7,15 @@ import { createServiceClient } from '@/lib/supabase'
 // flat list of { url, eventId, ... } so the client can render one frame per
 // photo. Mirrors the events page recap query (status=completed,
 // recap_published=true, date desc). Returns the standard API envelope.
+//
+// "Newest 16, rolling": this route runs per request (force-dynamic) and the CDN
+// only holds the result for ~60s (revalidate + s-maxage). So a newly published
+// recap photo enters the strip within ~60s and anything beyond the newest 16
+// drops off automatically. The live query IS the rolling mechanism. There is
+// no cron or persisted window. The MAX_PHOTOS = 16 cap is the true limiter.
+// MAX_EVENTS is just a generous safety bound so the query never truncates newer
+// photos because several events exist. Ordering is deterministic newest-first
+// (date desc, then created_at desc) so a tie on `date` still rolls correctly.
 // ---------------------------------------------------------------------------
 
 // Force dynamic - needs Supabase service client at runtime.
@@ -32,9 +41,13 @@ const CATEGORY_COLOR: Record<string, string> = {
 
 const FALLBACK_COLOR = '#F29E18'
 
-// Hard cap on how many frames we hand to the marquee.
+// Hard cap on how many frames we hand to the marquee. This is the TRUE limiter:
+// the strip is always the newest 16 recap photos across all published recaps.
 const MAX_PHOTOS = 16
-const MAX_EVENTS = 8
+// Generous safety bound on rows fetched. Kept well above the photo cap so the
+// query never cuts off newer photos just because there are several events.
+// MAX_PHOTOS, not the event count, decides where the window ends.
+const MAX_EVENTS = 30
 
 export async function GET() {
   try {
@@ -42,10 +55,14 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from('events')
-      .select('id, title, date, category, recap_description, recap_photos, recap_published, status')
+      .select('id, title, date, category, recap_description, recap_photos, recap_published, status, created_at')
       .eq('status', 'completed')
       .eq('recap_published', true)
+      // Deterministic newest-first: tiebreak on created_at so events sharing a
+      // `date` (e.g. AI020 vs Kroegentocht) always order the same way, keeping
+      // the rolling "newest 16" window stable across requests.
       .order('date', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(MAX_EVENTS)
 
     if (error) throw error
