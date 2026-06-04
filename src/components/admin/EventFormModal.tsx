@@ -42,7 +42,7 @@ interface EventFormData {
   end_date: string
   location: string
   category: 'code' | 'social' | 'career' | 'game'
-  status: 'upcoming' | 'active' | 'completed'
+  status: 'upcoming' | 'active' | 'completed' | 'cancelled'
   is_paid: boolean
   price_members: string
   price_nonmembers: string
@@ -100,7 +100,7 @@ function eventToForm(event: DbEvent): EventFormData {
     end_date: event.end_date ? toLocalDatetime(event.end_date) : '',
     location: event.location || '',
     category: event.category,
-    status: event.status === 'cancelled' ? 'upcoming' : event.status,
+    status: event.status,
     is_paid: event.is_paid,
     price_members: event.price_members ? centsEuro(event.price_members) : '',
     price_nonmembers: event.price_nonmembers ? centsEuro(event.price_nonmembers) : '',
@@ -214,7 +214,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
         body: JSON.stringify(body),
       })
       const { error: apiError } = await res.json()
-      if (apiError) throw new Error(apiError)
+      if (!res.ok || apiError) throw new Error(apiError || `Fout ${res.status} bij opslaan`)
       setSuccess(true)
       onSaved()
       setTimeout(() => onClose(), 600)
@@ -365,6 +365,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
                 <option value="upcoming">Upcoming</option>
                 <option value="active">Active</option>
                 <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
               </select>
             </div>
 

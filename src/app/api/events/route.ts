@@ -5,7 +5,11 @@ import { parseFormFields } from '@/lib/eventForm'
 import type { Json } from '@/lib/database.types'
 import type { StatCategory } from '@/types/database'
 
-// GET - Alle events ophalen (publiek)
+// Admin-beheerlijst: nooit edge-cachen, anders toont het panel verouderde
+// status direct na een wijziging (tot s-maxage verloopt).
+export const dynamic = 'force-dynamic'
+
+// GET - Alle events ophalen (admin-beheerlijst + scanner)
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
@@ -25,7 +29,7 @@ export async function GET(req: NextRequest) {
 
     if (error) throw error
     const res = NextResponse.json({ data, error: null, meta: { count } })
-    res.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=120')
+    res.headers.set('Cache-Control', 'no-store')
     return res
   } catch (err) {
     return handleError(err)

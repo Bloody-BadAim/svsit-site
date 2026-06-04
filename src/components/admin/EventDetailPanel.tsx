@@ -1,12 +1,11 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { X, Pencil } from 'lucide-react'
+import { X, Pencil, Download } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { inputStyle, labelStyle } from '@/components/admin/adminStyles'
 import { CornerDecorations } from '@/components/ui/CornerDecorations'
 import { useScannerStore } from '@/stores/useScannerStore'
-import { Download } from 'lucide-react'
 import { parseFormFields, displayValue, type FormField, type CustomData } from '@/lib/eventForm'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -152,7 +151,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
     try {
       const res = await fetch(`/api/admin/events/${event.id}/checkin-code`, { method: 'POST' })
       const { data, error } = await res.json()
-      if (error) throw new Error(error)
+      if (!res.ok || error) throw new Error(error || `Fout ${res.status}`)
       setCheckinCode(data?.checkin_code ?? null)
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Code genereren mislukt')
@@ -183,7 +182,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
         }),
       })
       const { error } = await res.json()
-      if (error) throw new Error(error)
+      if (!res.ok || error) throw new Error(error || `Fout ${res.status}`)
       onRefresh()
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Recap opslaan mislukt')
@@ -204,7 +203,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
         body: form,
       })
       const { data, error } = await res.json()
-      if (error) throw new Error(error)
+      if (!res.ok || error) throw new Error(error || `Fout ${res.status}`)
       const urls: string[] = data?.urls || []
       setRecapPhotos((prev) => {
         const existing = prev.split('\n').map((u) => u.trim()).filter(Boolean)

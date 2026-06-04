@@ -76,19 +76,20 @@ export default function EventsPage() {
   const [showModal, setShowModal] = useState(false)
   const [editingEvent, setEditingEvent] = useState<DbEvent | null>(null)
 
-  // ── Fetch
-  const fetchEvents = useCallback(async () => {
-    setLoading(true)
+  // ── Fetch. silent = ververs zonder de lijst naar skeleton te laten flitsen
+  // (gebruikt na een actie, zodat de UI niet wegklapt).
+  const fetchEvents = useCallback(async ({ silent = false }: { silent?: boolean } = {}) => {
+    if (!silent) setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/events')
-      const { data, error: apiError } = await res.json()
-      if (apiError) throw new Error(apiError)
-      setEvents(data || [])
+      const res = await fetch('/api/events', { cache: 'no-store' })
+      const body = await res.json()
+      if (!res.ok || body.error) throw new Error(body.error || `Fout ${res.status} bij laden events`)
+      setEvents(body.data || [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Fout bij laden events')
     } finally {
-      setLoading(false)
+      if (!silent) setLoading(false)
     }
   }, [])
 
@@ -127,9 +128,15 @@ export default function EventsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'cancelled' }),
       })
-      const { error: apiError } = await res.json()
-      if (apiError) throw new Error(apiError)
-      fetchEvents()
+      const body = await res.json()
+      if (!res.ok || body.error) throw new Error(body.error || `Fout ${res.status} bij annuleren`)
+      // Optimistisch: werk de ene rij bij uit de teruggegeven event-data
+      // (PATCH geeft de bijgewerkte rij terug) i.p.v. alles opnieuw te laden.
+      if (body.data) {
+        setEvents((prev) => prev.map((e) => (e.id === eventId ? { ...e, ...body.data } : e)))
+      } else {
+        fetchEvents({ silent: true })
+      }
       if (actiefEvent === eventId) setActiefEvent(null, null)
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Fout bij annuleren')
@@ -347,7 +354,7 @@ export default function EventsPage() {
                     event={event}
                     onEdit={() => handleOpenEdit(event)}
                     onCancel={() => handleCancel(event.id)}
-                    onRefresh={fetchEvents}
+                    onRefresh={() => fetchEvents({ silent: true })}
                   />
                 )}
               </div>
@@ -361,7 +368,7 @@ export default function EventsPage() {
         <EventFormModal
           event={editingEvent}
           onClose={() => { setShowModal(false); setEditingEvent(null) }}
-          onSaved={fetchEvents}
+          onSaved={() => fetchEvents({ silent: true })}
         />
       )}
     </div>

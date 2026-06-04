@@ -106,6 +106,12 @@ export async function PATCH(
       updateData.form_fields = parseFormFields(body.form_fields) as unknown as Json
     }
 
+    // Bij wisselen naar gratis/extern de gekoppelde Stripe-prijs loslaten,
+    // anders blijft een verouderde stripe_price_id hangen.
+    if ('is_paid' in body && body.is_paid === false) {
+      (updateData as Record<string, unknown>).stripe_price_id = null
+    }
+
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json({ data: null, error: 'Geen geldige velden om bij te werken', meta: null }, { status: 400 })
     }
@@ -115,7 +121,7 @@ export async function PATCH(
       .from('events')
       .update(updateData)
       .eq('id', id)
-      .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, external_ticket_url, form_fields, created_by, created_at')
+      .select('id, title, description, date, end_date, location, category, tags, status, is_paid, price_members, price_nonmembers, capacity, stripe_price_id, external_ticket_url, recap_description, recap_photos, recap_published, form_fields, created_by, created_at')
       .single()
 
     if (error) {
