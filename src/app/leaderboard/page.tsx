@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { unstable_cache } from 'next/cache'
@@ -9,9 +10,12 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import LeaderboardContent from './LeaderboardContent'
 
-export const metadata: Metadata = {
-  title: 'Leaderboard - {SIT}',
-  description: 'De meest actieve SIT leden. Wie staat bovenaan?',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pageLeaderboard')
+  return {
+    title: t('metaTitle'),
+    description: t('metaDescription'),
+  }
 }
 
 // ─── Types (shared) ───────────────────────────────────────────────────────────

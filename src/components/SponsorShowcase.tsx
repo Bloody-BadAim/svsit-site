@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import { useTranslations } from "next-intl";
 import { Plus, ArrowRight } from "lucide-react";
 import { PARTNERS, TIER_META, TIER_ORDER } from "@/lib/partners";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -55,6 +56,7 @@ function PartnerChip({
   inView: boolean;
   decorative?: boolean;
 }) {
+  const t = useTranslations("sponsorShowcase");
   const meta = TIER_META[tier];
   const isHboIct = slug === "hbo-ict";
   const isBig = tier === "strategisch" || tier === "hoofdsponsor";
@@ -70,7 +72,7 @@ function PartnerChip({
       <div className="sbus-spot" aria-hidden="true" />
 
       <div className="sbus-chip-head">
-        <span className="sbus-badge">{isHboIct ? "THUISBASIS" : meta.label}</span>
+        <span className="sbus-badge">{isHboIct ? t("homebase") : meta.label}</span>
         <span className="sbus-onl" aria-hidden="true" />
       </div>
 
@@ -92,7 +94,7 @@ function PartnerChip({
         </span>
         {url && (
           <span className="sbus-go" aria-hidden="true">
-            connect →
+            {t("connect")}
           </span>
         )}
       </div>
@@ -126,6 +128,7 @@ function PartnerChip({
 }
 
 function SlotChip({ decorative }: { decorative?: boolean }) {
+  const t = useTranslations("sponsorShowcase");
   const href = `mailto:${SITE_CONFIG.sponsoringEmail}?subject=Partner%20worden%20bij%20SIT`;
   const inner = (
     <>
@@ -137,10 +140,10 @@ function SlotChip({ decorative }: { decorative?: boolean }) {
         <Plus size={20} strokeWidth={2} />
       </span>
       <span className="sbus-slot-cmd">
-        <span className="g">$</span> word partner
+        <span className="g">$</span> {t("slotCmd")}
         <span className="cur" aria-hidden="true" />
       </span>
-      <span className="sbus-slot-sub">jouw logo op de bus</span>
+      <span className="sbus-slot-sub">{t("slotSub")}</span>
     </>
   );
   if (decorative) {
@@ -158,6 +161,7 @@ function SlotChip({ decorative }: { decorative?: boolean }) {
 }
 
 export default function SponsorShowcase() {
+  const t = useTranslations("sponsorShowcase");
   const ref = useRef<HTMLElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
@@ -319,7 +323,7 @@ export default function SponsorShowcase() {
               speed={0.03}
               characterSet="#{}/<>[]!@$%^&*"
             >
-              Partners
+              {t("heading")}
             </TextScramble>
           </div>
 
@@ -329,12 +333,11 @@ export default function SponsorShowcase() {
             style={{ color: "var(--color-text-muted)" }}
           >
             <span style={{ color: "var(--color-accent-green)" }}>{"// "}</span>
-            powered by
+            {t("subPre")}
             <span className="text-[#52525B]"> · </span>
-            <span style={{ color: "var(--color-text)" }}>{connected}</span> partners
-            verbonden
+            <span style={{ color: "var(--color-text)" }}>{connected}</span> {t("subConnected")}
             <span className="text-[#52525B]"> · </span>
-            100+ ICT-studenten
+            {t("subStudents")}
           </div>
         </div>
 
@@ -357,7 +360,7 @@ export default function SponsorShowcase() {
         {/* ── Legend + CTA (padded) ── */}
         <div className="px-6 md:px-12 lg:px-24 mt-9 md:mt-11 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="sbus-legend">
-            <span className="g">{"// tiers"}</span>
+            <span className="g">{t("legend")}</span>
             {TIER_ORDER.filter((t) => t !== "hoofdsponsor").map((t) => (
               <span className="tier" key={t}>
                 <i style={{ background: TIER_META[t].color }} aria-hidden="true" />
@@ -372,7 +375,7 @@ export default function SponsorShowcase() {
             className="group inline-flex items-center gap-2 font-mono text-sm text-[var(--color-accent-gold)] hover:text-[var(--color-text)] transition-colors duration-300 self-start md:self-auto"
           >
             <span style={{ color: "var(--color-accent-green)" }}>$</span>
-            <span>bekijk partnernetwerk</span>
+            <span>{t("cta")}</span>
             <ArrowRight
               size={15}
               className="transition-transform duration-300 group-hover:translate-x-1"

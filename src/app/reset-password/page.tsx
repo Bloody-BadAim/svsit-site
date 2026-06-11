@@ -1,12 +1,18 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
+import { getTranslations } from 'next-intl/server'
 import ResetPasswordForm from '@/components/auth/ResetPasswordForm'
 
-export const metadata = {
-  title: 'Wachtwoord instellen - {SIT}',
-  description: 'Stel een nieuw wachtwoord in voor je SIT account.',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pageResetPassword')
+  return {
+    title: t('meta.title'),
+    description: t('meta.description'),
+  }
 }
 
-export default function ResetPasswordPage() {
+export default async function ResetPasswordPage() {
+  const t = await getTranslations('pageResetPassword')
   return (
     <main
       className="min-h-screen relative flex flex-col items-center justify-center px-6"
@@ -39,15 +45,15 @@ export default function ResetPasswordPage() {
               fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
             }}
           >
-            Wachtwoord instellen
+            {t('heading')}
           </h1>
 
           <p className="font-mono text-sm mt-3" style={{ color: 'var(--color-text-muted)' }}>
-            {'>'} auth.setPassword()
+            {t('terminal')}
           </p>
         </div>
 
-        <Suspense fallback={<div className="font-mono text-sm" style={{ color: 'var(--color-text-muted)' }}>Laden...</div>}>
+        <Suspense fallback={<div className="font-mono text-sm" style={{ color: 'var(--color-text-muted)' }}>{t('loading')}</div>}>
           <ResetPasswordForm />
         </Suspense>
 

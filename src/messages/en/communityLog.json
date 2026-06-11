@@ -1,0 +1,18 @@
+{
+  "command": "what is happening now",
+  "members": "members & growing",
+  "introweekPre": "intro week in",
+  "introweekPost": "days",
+  "feed": {
+    "idil": "pushed a new pub crawl",
+    "gameit": "merged D&D night #14",
+    "ai4hva": "deployed AI Marathon 2026",
+    "hugo": "scheduled tech talk: Clean Code",
+    "matin": "signed sponsor - ChipSoft",
+    "community": "onboarded 12 new members",
+    "servco": "shipped svsit.nl v11",
+    "thijmen": "booked Thuishaven party",
+    "wesley": "won the CTF challenge",
+    "rosa": "organized LAN party"
+  }
+}

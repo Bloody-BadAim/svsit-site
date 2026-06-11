@@ -1,0 +1,43 @@
+{
+  "head": {
+    "title1": "HET",
+    "title2": "MOEDERBORD",
+    "ledePre": "SIT draait als één board. Het bestuur vormt de kern; elke commissie is een module die je kunt aansluiten. ",
+    "ledeHover": "Hover",
+    "ledeMid": " over een baan, ",
+    "ledeClick": "klik",
+    "ledePost": " een module - en sluit jezelf aan."
+  },
+  "module": {
+    "vacant": "Vacant",
+    "chair": "Voorzitter",
+    "seekingChair": "Zoekt voorzitter",
+    "open": "open module"
+  },
+  "sheet": {
+    "close": "Sluiten",
+    "inspectCommissie": "commissie",
+    "inspectBestuur": "bestuur",
+    "chairWith": "Voorzitter · {name}",
+    "seekingChair": "Zoekt voorzitter",
+    "roleBoard": "{role} · Bestuur XII",
+    "labelTagline": "tagline",
+    "labelOver": "over",
+    "labelMissie": "missie",
+    "labelActiviteiten": "activiteiten",
+    "labelTeam": "team",
+    "noMembers": "Nog geen leden - meld je aan!",
+    "joinActive": "WORD ACTIEF LID",
+    "noExperience": "Geen ervaring nodig - alleen motivatie.",
+    "labelChairOf": "voorzitter van",
+    "labelReachVia": "bereikbaar via",
+    "labelSocials": "socials"
+  },
+  "foot": {
+    "termComment": "# word geen toeschouwer, word een node",
+    "echoQuote": "Geen ervaring nodig, alleen motivatie",
+    "joinChoice": "<jouw keuze>",
+    "joinCta": "MELD JE AAN",
+    "mailPre": "Of mail naar "
+  }
+}

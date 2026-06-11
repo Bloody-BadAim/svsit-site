@@ -1,0 +1,14 @@
+{
+  "label": "Events",
+  "placeholder": {
+    "title": "More events get announced soon",
+    "subtitle": "Follow @sv.sit on Instagram for updates"
+  },
+  "upcoming": "COMING UP",
+  "doneToggle": {
+    "hide": "Hide",
+    "show": "Show",
+    "label": "past events ({count})"
+  },
+  "tba": "More events get announced soon..."
+}

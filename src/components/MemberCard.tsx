@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import { Star, Check, X } from "lucide-react";
 import { ROLLEN } from "@/lib/constants";
 import { getLevelForXp, getLevelProgress, getBadgeSlotCount } from "@/lib/levelEngine";
@@ -307,8 +308,9 @@ export default function MemberCard({
   data?: MemberCardData;
   equipment?: MemberCardEquipment;
 }) {
+  const t = useTranslations("memberCard");
   // Placeholder or real data
-  const name = data?.name || "Jouw Naam";
+  const name = data?.name || t("placeholderName");
   const role = data?.role || "member";
   const commissie = data?.commissie;
   const points = data?.total_xp ?? 0;

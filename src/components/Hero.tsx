@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import CommunityLog from "@/components/CommunityLog";
 import { isReducedMotion, onMotionChange } from "@/lib/motion";
@@ -16,11 +17,11 @@ const MagneticHero = lazy(
 
 /* ── Stat counter data ── */
 const STATS = [
-  { value: 100, suffix: "+", label: "leden" },
-  { value: 20, suffix: "+", label: "events" },
-  { value: 7, suffix: "", label: "commissies" },
-  { value: 12, suffix: "", label: "besturen" },
-];
+  { value: 100, suffix: "+", labelKey: "leden" },
+  { value: 20, suffix: "+", labelKey: "events" },
+  { value: 7, suffix: "", labelKey: "commissies" },
+  { value: 12, suffix: "", labelKey: "besturen" },
+] as const;
 
 /* ── Animated counter hook (counts up on mount, CSS fallback shows final value) ── */
 function useCounter(target: number, duration = 1800, delay = 1200) {
@@ -76,6 +77,7 @@ function StatCounter({ value, suffix, label, index }: { value: number; suffix: s
 }
 
 export default function Hero() {
+  const t = useTranslations("hero");
   const fullText = "{SIT}";
   const [typedText, setTypedText] = useState(fullText);
   const showCursor = true; // cursor blink handled by CSS animation
@@ -213,8 +215,8 @@ export default function Hero() {
               <span className="text-[var(--color-accent-green)]">$</span>
               <span className="text-[var(--color-accent-blue)]">{" ~/hva/hbo-ict"}</span>
               <span className="text-[var(--color-text-muted)]">{" > "}</span>
-              <span className="text-[var(--color-accent-gold)]">init</span>
-              <span className="text-[var(--color-text-muted)]"> studievereniging</span>
+              <span className="text-[var(--color-accent-gold)]">{t("promptInit")}</span>
+              <span className="text-[var(--color-text-muted)]">{t("promptInitSuffix")}</span>
             </p>
 
             {/* Main logo -- LCP element */}
@@ -227,21 +229,21 @@ export default function Hero() {
               className={`font-mono text-sm md:text-base mb-3 ${intro("animate-[fadeIn_0.6s_ease_0.2s_forwards]")}`}
             >
               <span className="text-[var(--color-accent-green)]">{">"}</span>
-              <span className="text-[var(--color-text-muted)]"> Studievereniging ICT</span>
+              <span className="text-[var(--color-text-muted)]">{t("subtitleAssociation")}</span>
               <span className="text-[var(--color-text-muted)] opacity-40"> // </span>
-              <span className="text-[var(--color-accent-blue)]">Hogeschool van Amsterdam</span>
+              <span className="text-[var(--color-accent-blue)]">{t("subtitleUniversity")}</span>
             </div>
 
             {/* Tagline -- bigger, bolder */}
             <p
               className={`font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight leading-[1.1] max-w-2xl mb-8 ${intro("animate-[fadeIn_0.6s_ease_0.4s_forwards]")}`}
             >
-              <span className="text-[var(--color-accent-blue)]">Door</span>{" "}
-              <span className="text-[var(--color-text)]">studenten.</span>{" "}
-              <span className="text-[var(--color-accent-green)]">Voor</span>{" "}
-              <span className="text-[var(--color-text)]">studenten.</span>
+              <span className="text-[var(--color-accent-blue)]">{t("taglineBy")}</span>{" "}
+              <span className="text-[var(--color-text)]">{t("taglineStudents")}</span>{" "}
+              <span className="text-[var(--color-accent-green)]">{t("taglineFor")}</span>{" "}
+              <span className="text-[var(--color-text)]">{t("taglineStudents")}</span>
               <br className="hidden sm:block" />
-              <span className="text-[var(--color-accent-red)]"> In tech.</span>
+              <span className="text-[var(--color-accent-red)]">{t("taglineInTech")}</span>
             </p>
 
             {/* CTAs -- game-lobby style */}
@@ -268,7 +270,7 @@ export default function Hero() {
                 <span className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[var(--color-bg)]/30" />
                 <span className="relative z-10 flex items-center gap-2">
                   <span className="text-[var(--color-bg)]/50 text-xs">{"["}</span>
-                  WORD LID
+                  {t("ctaJoin")}
                   <span className="text-[var(--color-bg)]/50 text-xs">{"]"}</span>
                 </span>
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
@@ -286,7 +288,7 @@ export default function Hero() {
                 <span className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[var(--color-accent-gold)]/30 transition-all duration-300 group-hover/events:w-3 group-hover/events:h-3 group-hover/events:border-[var(--color-accent-gold)]/60" />
                 <div className="absolute inset-0 bg-[var(--color-accent-gold)]/5 translate-x-[-101%] group-hover/events:translate-x-0 transition-transform duration-400" />
                 <span className="relative z-10 flex items-center gap-2">
-                  BEKIJK EVENTS
+                  {t("ctaEvents")}
                   <span className="inline-block transition-transform duration-300 group-hover/events:translate-x-2">
                     {">"}
                   </span>
@@ -299,7 +301,13 @@ export default function Hero() {
               className={`flex items-center gap-6 sm:gap-8 md:gap-10 mt-10 ${intro("animate-[fadeIn_0.6s_ease_1s_forwards]")}`}
             >
               {STATS.map((stat, i) => (
-                <StatCounter key={stat.label} {...stat} index={i} />
+                <StatCounter
+                  key={stat.labelKey}
+                  value={stat.value}
+                  suffix={stat.suffix}
+                  label={t(`stats.${stat.labelKey}`)}
+                  index={i}
+                />
               ))}
             </div>
 
@@ -328,7 +336,7 @@ export default function Hero() {
         className={`absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 ${intro("animate-[fadeIn_0.6s_ease_1.5s_forwards]")}`}
       >
         <span className="font-mono text-xs text-[var(--color-text-muted)] tracking-wider opacity-70">
-          scroll down
+          {t("scrollDown")}
         </span>
         <div className="flex flex-col items-center gap-1">
           <div className="w-px h-6 bg-gradient-to-b from-[var(--color-accent-gold)]/60 to-transparent" />

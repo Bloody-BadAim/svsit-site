@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
@@ -10,6 +11,7 @@ import { SITE_CONFIG } from "@/lib/constants";
 import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 export default function JoinCta() {
+  const t = useTranslations("joinCta");
   const sectionRef = useRef<HTMLElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -166,7 +168,7 @@ export default function JoinCta() {
 
       {/* Content */}
       <div className="relative z-10 max-w-[1400px] mx-auto w-full">
-        <SectionLabel number="07" label="word lid" />
+        <SectionLabel number="07" label={t("label")} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center mt-8">
           {/* Left: pitch */}
@@ -177,22 +179,22 @@ export default function JoinCta() {
                 style={{ animation: "statusPulse 1.5s ease-in-out infinite" }}
               />
               <span className="font-mono text-xs text-[var(--color-text-muted)]">
-                SIT is actief - Bestuur XII
+                {t("status")}
               </span>
             </div>
 
             <div data-animate>
               <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight uppercase">
-                Jouw Community
+                {t("headingLine1")}
                 <br />
-                <span className="text-[var(--color-accent-gold)]">Wacht</span>
+                <span className="text-[var(--color-accent-gold)]">{t("headingLine2")}</span>
               </h2>
             </div>
 
             <p data-animate className="font-mono text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed mt-6 max-w-lg">
-              Events, borrels, hackathons, workshops en een netwerk van{" "}
-              <span className="text-[var(--color-text)]">HBO-ICT studenten</span>{" "}
-              die dezelfde opleiding doorlopen. Van Software Engineering tot Game Dev, iedereen zit hier.
+              {t("pitchPre")}{" "}
+              <span className="text-[var(--color-text)]">{t("pitchHbo")}</span>{" "}
+              {t("pitchPost")}
             </p>
 
             <div data-animate className="mt-10">
@@ -201,17 +203,17 @@ export default function JoinCta() {
                   {SITE_CONFIG.membership.priceLabel}
                 </span>
                 <span className="font-mono text-sm text-[var(--color-text-muted)]">
-                  per jaar - geen verborgen kosten
+                  {t("priceSuffix")}
                 </span>
               </div>
             </div>
 
             <ul data-animate className="mt-8 flex flex-col gap-2.5">
               {[
-                "Toegang tot alle events & borrels",
-                "Meedraaien in elke commissie",
-                `Netwerk van ${SITE_CONFIG.stats.members} studenten, alumni & bedrijven`,
-                "Dev-tools, AI Labs & de SIT-server",
+                t("perks.events"),
+                t("perks.committees"),
+                t("perks.network", { members: SITE_CONFIG.stats.members }),
+                t("perks.tools"),
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 font-mono text-sm text-[var(--color-text-muted)]">
                   <span className="text-[var(--color-accent-green)] mt-0.5 shrink-0">&#10003;</span>
@@ -226,7 +228,7 @@ export default function JoinCta() {
             <MemberCard
               className="w-full max-w-[400px]"
               data={{
-                name: 'JOUW NAAM',
+                name: t("cardName"),
                 role: 'member',
                 commissie: null,
                 total_xp: 0,
@@ -242,13 +244,13 @@ export default function JoinCta() {
             >
               <HoldToJoinButton href="/lid-worden" />
               <p className="font-mono text-[11px] text-[var(--color-text-muted)] opacity-40 mt-3 text-center">
-                {SITE_CONFIG.stats.members} studenten gingen je voor
+                {t("social", { members: SITE_CONFIG.stats.members })}
               </p>
               <p className="font-mono text-[11px] text-[var(--color-text-muted)] mt-2 text-center">
-                Al lid?{" "}
-                <a href="/login" className="text-[var(--color-accent-blue)] hover:underline">Log in</a>
+                {t("alreadyMember")}{" "}
+                <a href="/login" className="text-[var(--color-accent-blue)] hover:underline">{t("login")}</a>
                 {" · "}
-                <a href="/over-ons" className="text-[var(--color-accent-gold)] hover:underline">Bekijk commissies</a>
+                <a href="/over-ons" className="text-[var(--color-accent-gold)] hover:underline">{t("viewCommittees")}</a>
               </p>
             </MemberCard>
           </div>

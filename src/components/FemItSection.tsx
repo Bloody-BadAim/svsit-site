@@ -11,6 +11,7 @@ import {
   Coffee,
   UtensilsCrossed,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 // ---------------------------------------------------------------------------
@@ -33,6 +34,7 @@ const ACTIVITEITEN = [
 ];
 
 export default function FemItSection() {
+  const t = useTranslations("femItSection");
   const ref = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
   const [reduced, setReduced] = useState(true);
@@ -121,7 +123,7 @@ export default function FemItSection() {
               />
               <Image
                 src="/femit-logo.png"
-                alt="FemIT - vrouwennetwerk van HBO-ICT"
+                alt={t("logoAlt")}
                 width={200}
                 height={200}
                 className="h-auto w-[140px] md:w-[170px]"
@@ -143,7 +145,7 @@ export default function FemItSection() {
                 className="font-mono text-xs uppercase tracking-[0.3em]"
                 style={{ color: FEMIT_PURPLE_SOFT }}
               >
-                {"> partner.netwerk"}
+                {t("eyebrow")}
               </span>
               <span
                 className="h-px w-10"
@@ -155,25 +157,22 @@ export default function FemItSection() {
               id="femit-heading"
               className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--color-text)] tracking-tight uppercase leading-[0.92]"
             >
-              FemIT
+              {t("heading")}
               <span
                 className="block text-base md:text-lg font-bold tracking-tight normal-case mt-2"
                 style={{ color: FEMIT_PURPLE_SOFT }}
               >
-                Het vrouwennetwerk van HBO-ICT
+                {t("subheading")}
               </span>
             </h2>
 
             {/* Intro: korte zinnen, geen streepjes, weinig komma's */}
             <p className="max-w-lg text-sm md:text-base text-[var(--color-text-muted)] leading-relaxed">
-              FemIT is dé community voor vrouwen in HBO-ICT. Hier vind je elkaar
-              groei je samen en voel je je thuis in tech. Denk aan workshops
-              inspiratie en gewoon lekker chillen met je mensen. Bekroond met de
-              HvAll Inclusive Award. SIT werkt er met trots mee samen.
+              {t("body")}
             </p>
 
             {/* Activiteiten als chips */}
-            <ul className="flex flex-wrap gap-2" aria-label="FemIT activiteiten">
+            <ul className="flex flex-wrap gap-2" aria-label={t("activitiesLabel")}>
               {ACTIVITEITEN.map(({ label, Icon }) => (
                 <li
                   key={label}
@@ -205,7 +204,7 @@ export default function FemItSection() {
                   backgroundColor: "rgba(91,43,214,0.12)",
                 }}
               >
-                Ontdek FemIT
+                {t("cta")}
                 <ArrowUpRight
                   className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                   style={{ color: FEMIT_PURPLE_SOFT }}

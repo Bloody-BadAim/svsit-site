@@ -1,11 +1,17 @@
+import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm'
 
-export const metadata = {
-  title: 'Wachtwoord vergeten - {SIT}',
-  description: 'Vraag een wachtwoord reset link aan voor je SIT account.',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pageForgotPassword')
+  return {
+    title: t('meta.title'),
+    description: t('meta.description'),
+  }
 }
 
-export default function ForgotPasswordPage() {
+export default async function ForgotPasswordPage() {
+  const t = await getTranslations('pageForgotPassword')
   return (
     <main
       className="min-h-screen relative flex flex-col items-center justify-center px-6"
@@ -40,11 +46,11 @@ export default function ForgotPasswordPage() {
               fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
             }}
           >
-            Wachtwoord vergeten
+            {t('heading')}
           </h1>
 
           <p className="font-mono text-sm mt-3" style={{ color: 'var(--color-text-muted)' }}>
-            {'>'} auth.resetPassword()
+            {t('terminal')}
           </p>
         </div>
 

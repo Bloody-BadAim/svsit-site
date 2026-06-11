@@ -1,0 +1,16 @@
+{
+  "metaTitle": "Events - '{'SIT'}'",
+  "metaDescription": "Bekijk alle aankomende events van SIT, de studievereniging voor HBO-ICT aan de HvA.",
+  "ogDescription": "Borrels, hackathons, tech talks, game nights en meer. Bekijk het SIT event programma.",
+  "twitterDescription": "Borrels, hackathons, tech talks, game nights en meer bij SIT.",
+  "heading": "Events",
+  "consoleHint": "> events.list(status: \"upcoming\")",
+  "priceFrom": "Vanaf €{price}",
+  "spots": "{count} plekken",
+  "viewMore": "Bekijk →",
+  "emptyTitle": "Er zijn momenteel geen aankomende events",
+  "emptySubtitle": "Volg @sv.sit op Instagram voor updates",
+  "recapHeading": "// terugblik",
+  "recapBadge": "RECAP",
+  "photoAlt": "{title} foto {number}"
+}

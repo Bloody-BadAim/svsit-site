@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 export default function ForgotPasswordForm() {
+  const t = useTranslations('authForgotPassword')
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
@@ -22,12 +24,12 @@ export default function ForgotPasswordForm() {
 
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Er ging iets mis')
+        throw new Error(data.error || t('errorGeneric'))
       }
 
       setSent(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Er ging iets mis')
+      setError(err instanceof Error ? err.message : t('errorGeneric'))
     } finally {
       setLoading(false)
     }
@@ -44,10 +46,10 @@ export default function ForgotPasswordForm() {
           }}
         >
           <p className="font-mono text-sm" style={{ color: 'var(--color-accent-green)' }}>
-            Als dit emailadres bij ons bekend is, ontvang je een link om je wachtwoord in te stellen.
+            {t('successTitle')}
           </p>
           <p className="font-mono text-xs mt-3" style={{ color: 'var(--color-text-muted)' }}>
-            Check ook je spam folder. De link is 7 dagen geldig.
+            {t('successHint')}
           </p>
         </div>
 
@@ -56,7 +58,7 @@ export default function ForgotPasswordForm() {
           className="block text-center font-mono text-sm transition-colors hover:text-[var(--color-text)]"
           style={{ color: 'var(--color-accent-gold)' }}
         >
-          &larr; Terug naar login
+          {t('backToLogin')}
         </a>
       </div>
     )
@@ -70,7 +72,7 @@ export default function ForgotPasswordForm() {
             htmlFor="reset-email"
             className="block font-mono text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider mb-2"
           >
-            email
+            {t('emailLabel')}
           </label>
           <input
             id="reset-email"
@@ -78,7 +80,7 @@ export default function ForgotPasswordForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            placeholder="je@email.nl"
+            placeholder={t('emailPlaceholder')}
             className="w-full py-3 px-4 rounded-md text-sm font-mono outline-none transition-all duration-200 placeholder:text-[var(--color-text-muted)]/30 focus:border-[var(--color-accent-gold)]"
             style={{
               backgroundColor: 'rgba(255,255,255,0.05)',
@@ -103,18 +105,18 @@ export default function ForgotPasswordForm() {
             color: '#000000',
           }}
         >
-          {loading ? 'Bezig...' : 'Verstuur reset link'}
+          {loading ? t('loading') : t('submit')}
         </button>
       </form>
 
       <p className="mt-8 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-        Weet je je wachtwoord nog?{' '}
+        {t('rememberPassword')}{' '}
         <a
           href="/login"
           className="font-mono transition-colors hover:text-[var(--color-text)]"
           style={{ color: 'var(--color-accent-gold)' }}
         >
-          Log in
+          {t('loginLink')}
         </a>
       </p>
     </div>

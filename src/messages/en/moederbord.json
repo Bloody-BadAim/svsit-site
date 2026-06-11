@@ -1,0 +1,43 @@
+{
+  "head": {
+    "title1": "THE",
+    "title2": "MOTHERBOARD",
+    "ledePre": "SIT runs as one board. The board is the core; every committee is a module you can plug in. ",
+    "ledeHover": "Hover",
+    "ledeMid": " over a trace, ",
+    "ledeClick": "click",
+    "ledePost": " a module and plug yourself in."
+  },
+  "module": {
+    "vacant": "Vacant",
+    "chair": "Chair",
+    "seekingChair": "Looking for a chair",
+    "open": "open module"
+  },
+  "sheet": {
+    "close": "Close",
+    "inspectCommissie": "committee",
+    "inspectBestuur": "board",
+    "chairWith": "Chair · {name}",
+    "seekingChair": "Looking for a chair",
+    "roleBoard": "{role} · Board XII",
+    "labelTagline": "tagline",
+    "labelOver": "about",
+    "labelMissie": "mission",
+    "labelActiviteiten": "activities",
+    "labelTeam": "team",
+    "noMembers": "No members yet, sign up!",
+    "joinActive": "BECOME AN ACTIVE MEMBER",
+    "noExperience": "No experience needed, just motivation.",
+    "labelChairOf": "chair of",
+    "labelReachVia": "reachable via",
+    "labelSocials": "socials"
+  },
+  "foot": {
+    "termComment": "# don't be a spectator, become a node",
+    "echoQuote": "No experience needed, just motivation",
+    "joinChoice": "<your pick>",
+    "joinCta": "SIGN UP",
+    "mailPre": "Or email "
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "label": "join",
+  "status": "SIT is active - Board XII",
+  "headingLine1": "Your Community",
+  "headingLine2": "Awaits",
+  "pitchPre": "Events, socials, hackathons, workshops and a network of",
+  "pitchHbo": "HBO-ICT students",
+  "pitchPost": "who walk the same program. From Software Engineering to Game Dev, everyone is here.",
+  "priceSuffix": "per year - no hidden costs",
+  "perks": {
+    "events": "Access to all events & socials",
+    "committees": "Join any committee",
+    "network": "Network of {members} students, alumni & companies",
+    "tools": "Dev tools, AI Labs & the SIT server"
+  },
+  "cardName": "YOUR NAME",
+  "social": "{members} students went before you",
+  "alreadyMember": "Already a member?",
+  "login": "Log in",
+  "viewCommittees": "View committees"
+}

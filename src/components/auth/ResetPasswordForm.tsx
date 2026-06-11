@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 export default function ResetPasswordForm() {
+  const t = useTranslations('authResetPassword')
   const searchParams = useSearchParams()
   const router = useRouter()
   const token = searchParams.get('token')
@@ -18,14 +20,14 @@ export default function ResetPasswordForm() {
     return (
       <div className="space-y-4">
         <p className="font-mono text-sm" style={{ color: 'var(--color-accent-red)' }}>
-          Geen geldige reset link. Vraag een nieuwe aan.
+          {t('noTokenError')}
         </p>
         <a
           href="/forgot-password"
           className="inline-block font-mono text-sm transition-colors hover:text-[var(--color-text)]"
           style={{ color: 'var(--color-accent-gold)' }}
         >
-          Nieuw wachtwoord aanvragen &rarr;
+          {t('noTokenLink')}
         </a>
       </div>
     )
@@ -36,12 +38,12 @@ export default function ResetPasswordForm() {
     setError('')
 
     if (password.length < 8) {
-      setError('Wachtwoord moet minimaal 8 tekens zijn')
+      setError(t('errorTooShort'))
       return
     }
 
     if (password !== confirm) {
-      setError('Wachtwoorden komen niet overeen')
+      setError(t('errorMismatch'))
       return
     }
 
@@ -57,13 +59,13 @@ export default function ResetPasswordForm() {
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.error || 'Er ging iets mis')
+        throw new Error(data.error || t('errorGeneric'))
       }
 
       setSuccess(true)
       setTimeout(() => router.push('/login'), 3000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Er ging iets mis')
+      setError(err instanceof Error ? err.message : t('errorGeneric'))
     } finally {
       setLoading(false)
     }
@@ -80,7 +82,7 @@ export default function ResetPasswordForm() {
           }}
         >
           <p className="font-mono text-sm" style={{ color: 'var(--color-accent-green)' }}>
-            Wachtwoord ingesteld! Je wordt doorgestuurd naar de login pagina...
+            {t('successMessage')}
           </p>
         </div>
         <a
@@ -88,7 +90,7 @@ export default function ResetPasswordForm() {
           className="block text-center font-mono text-sm transition-colors hover:text-[var(--color-text)]"
           style={{ color: 'var(--color-accent-gold)' }}
         >
-          Direct inloggen &rarr;
+          {t('successLink')}
         </a>
       </div>
     )
@@ -102,7 +104,7 @@ export default function ResetPasswordForm() {
             htmlFor="new-password"
             className="block font-mono text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider mb-2"
           >
-            nieuw wachtwoord
+            {t('passwordLabel')}
           </label>
           <input
             id="new-password"
@@ -111,7 +113,7 @@ export default function ResetPasswordForm() {
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={8}
-            placeholder="Minimaal 8 tekens"
+            placeholder={t('passwordPlaceholder')}
             className="w-full py-3 px-4 rounded-md text-sm font-mono outline-none transition-all duration-200 placeholder:text-[var(--color-text-muted)]/30 focus:border-[var(--color-accent-gold)]"
             style={{
               backgroundColor: 'rgba(255,255,255,0.05)',
@@ -126,7 +128,7 @@ export default function ResetPasswordForm() {
             htmlFor="confirm-password"
             className="block font-mono text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider mb-2"
           >
-            bevestig wachtwoord
+            {t('confirmLabel')}
           </label>
           <input
             id="confirm-password"
@@ -135,7 +137,7 @@ export default function ResetPasswordForm() {
             onChange={(e) => setConfirm(e.target.value)}
             required
             minLength={8}
-            placeholder="Herhaal je wachtwoord"
+            placeholder={t('confirmPlaceholder')}
             className="w-full py-3 px-4 rounded-md text-sm font-mono outline-none transition-all duration-200 placeholder:text-[var(--color-text-muted)]/30 focus:border-[var(--color-accent-gold)]"
             style={{
               backgroundColor: 'rgba(255,255,255,0.05)',
@@ -160,18 +162,18 @@ export default function ResetPasswordForm() {
             color: '#000000',
           }}
         >
-          {loading ? 'Bezig...' : 'Wachtwoord instellen'}
+          {loading ? t('loading') : t('submit')}
         </button>
       </form>
 
       <p className="mt-6 font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
-        Link verlopen?{' '}
+        {t('linkExpired')}{' '}
         <a
           href="/forgot-password"
           className="transition-colors hover:text-[var(--color-text)]"
           style={{ color: 'var(--color-accent-gold)' }}
         >
-          Vraag een nieuwe aan
+          {t('requestNew')}
         </a>
       </p>
     </div>

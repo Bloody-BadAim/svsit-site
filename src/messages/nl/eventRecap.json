@@ -1,0 +1,12 @@
+{
+  "label": "terugblik",
+  "subheader": "momenten uit afgelopen events",
+  "cta": "bekijk alle recaps",
+  "frameAria": "{title} - bekijk recap",
+  "photoAlt": "{title} recap foto",
+  "empty": {
+    "lead": "nog geen terugblikken",
+    "follow": "volg",
+    "tail": "voor de eerste"
+  }
+}

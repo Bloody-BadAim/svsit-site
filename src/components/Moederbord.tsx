@@ -8,6 +8,7 @@ import {
   type CSSProperties,
 } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Instagram, Linkedin } from "lucide-react";
 import {
   PEOPLE,
@@ -220,6 +221,7 @@ function ModuleCard({
   onHover: (h: HoverState) => void;
   onClick: (s: Selected) => void;
 }) {
+  const t = useTranslations("moederbord");
   const vz = c.voorzitter ? PEOPLE[c.voorzitter] : null;
   const statusColor =
     c.status === "actief"
@@ -253,13 +255,13 @@ function ModuleCard({
       <span className="mod-vz">
         <Avatar personKey={c.voorzitter} color={c.color} size={44} />
         <span className="mod-vz-txt">
-          <b>{vz ? vz.name : "Vacant"}</b>
-          <i>{vz ? "Voorzitter" : "Zoekt voorzitter"}</i>
+          <b>{vz ? vz.name : t("module.vacant")}</b>
+          <i>{vz ? t("module.chair") : t("module.seekingChair")}</i>
         </span>
       </span>
       <span className="mod-tag">{c.tagline}</span>
       <span className="mod-cta">
-        open module <span aria-hidden="true">→</span>
+        {t("module.open")} <span aria-hidden="true">→</span>
       </span>
     </button>
   );
@@ -273,6 +275,7 @@ function DetailSheet({
   selected: Selected;
   onClose: () => void;
 }) {
+  const t = useTranslations("moederbord");
   useEffect(() => {
     if (!selected) return;
     const onKey = (e: KeyboardEvent) => {
@@ -322,10 +325,11 @@ function DetailSheet({
         <div className="sheet-rail" />
         <div className="sheet-bar">
           <span className="sheet-prompt">
-            <b style={{ color }}>{">"}</b> {isComm ? "commissie" : "bestuur"}
+            <b style={{ color }}>{">"}</b>{" "}
+            {isComm ? t("sheet.inspectCommissie") : t("sheet.inspectBestuur")}
             .inspect(<em style={{ color }}>&quot;{tag}&quot;</em>)
           </span>
-          <button className="sheet-x" onClick={onClose} aria-label="Sluiten">
+          <button className="sheet-x" onClick={onClose} aria-label={t("sheet.close")}>
             [esc]
           </button>
         </div>
@@ -345,14 +349,16 @@ function DetailSheet({
                     {c!.sub && <em> /{c!.sub}</em>}
                   </h2>
                   <p className="sheet-sub" style={{ color }}>
-                    {person ? `Voorzitter · ${person.name}` : "Zoekt voorzitter"}
+                    {person
+                      ? t("sheet.chairWith", { name: person.name })
+                      : t("sheet.seekingChair")}
                   </p>
                 </>
               ) : (
                 <>
                   <h2 className="sheet-title">{person!.name}</h2>
                   <p className="sheet-sub" style={{ color }}>
-                    {b!.role} · Bestuur XII
+                    {t("sheet.roleBoard", { role: b!.role })}
                   </p>
                 </>
               )}
@@ -367,7 +373,7 @@ function DetailSheet({
             <>
               <div className="sheet-block">
                 <p className="sheet-label" style={{ color }}>
-                  {">"} tagline
+                  {">"} {t("sheet.labelTagline")}
                 </p>
                 <p className="sheet-quote" style={{ borderColor: color }}>
                   {c!.tagline}
@@ -375,13 +381,13 @@ function DetailSheet({
               </div>
               <div className="sheet-block">
                 <p className="sheet-label" style={{ color }}>
-                  {">"} over
+                  {">"} {t("sheet.labelOver")}
                 </p>
                 <p className="sheet-text">{c!.beschrijving}</p>
               </div>
               <div className="sheet-block">
                 <p className="sheet-label" style={{ color }}>
-                  {">"} missie
+                  {">"} {t("sheet.labelMissie")}
                 </p>
                 <p className="sheet-quote" style={{ borderColor: color }}>
                   &quot;{c!.missie}&quot;
@@ -389,7 +395,7 @@ function DetailSheet({
               </div>
               <div className="sheet-block">
                 <p className="sheet-label" style={{ color }}>
-                  {">"} activiteiten
+                  {">"} {t("sheet.labelActiviteiten")}
                 </p>
                 <ul className="sheet-list">
                   {c!.activiteiten.map((a) => (
@@ -402,7 +408,7 @@ function DetailSheet({
               </div>
               <div className="sheet-block">
                 <p className="sheet-label" style={{ color }}>
-                  {">"} team
+                  {">"} {t("sheet.labelTeam")}
                 </p>
                 <div className="sheet-chips">
                   {c!.leden.length > 0 ? (
@@ -414,7 +420,7 @@ function DetailSheet({
                     ))
                   ) : (
                     <span className="sheet-text">
-                      Nog geen leden - meld je aan!
+                      {t("sheet.noMembers")}
                     </span>
                   )}
                 </div>
@@ -427,10 +433,10 @@ function DetailSheet({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  WORD ACTIEF LID
+                  {t("sheet.joinActive")}
                 </a>
                 <p className="sheet-fine">
-                  Geen ervaring nodig - alleen motivatie.
+                  {t("sheet.noExperience")}
                 </p>
               </div>
             </>
@@ -449,7 +455,7 @@ function DetailSheet({
               {chairs.length > 0 && (
                 <div className="sheet-block">
                   <p className="sheet-label" style={{ color }}>
-                    {">"} voorzitter van
+                    {">"} {t("sheet.labelChairOf")}
                   </p>
                   <div className="sheet-chips">
                     {chairs.map((x) => (
@@ -466,14 +472,14 @@ function DetailSheet({
               )}
               <div className="sheet-block">
                 <p className="sheet-label" style={{ color }}>
-                  {">"} bereikbaar via
+                  {">"} {t("sheet.labelReachVia")}
                 </p>
                 <p className="sheet-text">{SITE_CONFIG.email}</p>
               </div>
               {b!.socials && (b!.socials.instagram || b!.socials.linkedin) && (
                 <div className="sheet-block">
                   <p className="sheet-label" style={{ color }}>
-                    {">"} socials
+                    {">"} {t("sheet.labelSocials")}
                   </p>
                   <div className="sheet-chips">
                     {b!.socials.instagram && (
@@ -513,6 +519,7 @@ function DetailSheet({
 
 // ── Main ──
 export default function Moederbord() {
+  const t = useTranslations("moederbord");
   const stageRef = useRef<HTMLDivElement>(null);
   const boardRef = useRef<HTMLDivElement>(null);
   const modRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -596,12 +603,14 @@ export default function Moederbord() {
           <span>// bestuur_xii - system map</span>
         </div>
         <h1 className="cb-title">
-          HET <span>MOEDERBORD</span>
+          {t("head.title1")} <span>{t("head.title2")}</span>
         </h1>
         <p className="cb-lede">
-          SIT draait als één board. Het bestuur vormt de kern; elke commissie is
-          een module die je kunt aansluiten. <b>Hover</b> over een baan,{" "}
-          <b>klik</b> een module - en sluit jezelf aan.
+          {t("head.ledePre")}
+          <b>{t("head.ledeHover")}</b>
+          {t("head.ledeMid")}
+          <b>{t("head.ledeClick")}</b>
+          {t("head.ledePost")}
         </p>
       </div>
 
@@ -706,17 +715,17 @@ export default function Moederbord() {
           </div>
           <div className="term-body">
             <p>
-              <span className="c-mut"># word geen toeschouwer, word een node</span>
+              <span className="c-mut">{t("foot.termComment")}</span>
             </p>
             <p>
               <span className="c-grn">echo</span>{" "}
               <span className="c-gld">
-                &quot;Geen ervaring nodig, alleen motivatie&quot;
+                &quot;{t("foot.echoQuote")}&quot;
               </span>
             </p>
             <p>
               <span className="c-grn">sudo</span> join --commissie{" "}
-              <span className="c-blu">&lt;jouw keuze&gt;</span>
+              <span className="c-blu">{t("foot.joinChoice")}</span>
               <span className="cur" />
             </p>
           </div>
@@ -727,10 +736,10 @@ export default function Moederbord() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          MELD JE AAN
+          {t("foot.joinCta")}
         </a>
         <p className="cb-mail">
-          Of mail naar <a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a>
+          {t("foot.mailPre")}<a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a>
         </p>
       </div>
 

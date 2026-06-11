@@ -1,0 +1,34 @@
+{
+  "label": "what members say",
+  "headingLine1": "From our",
+  "headingLine2": "community",
+  "items": {
+    "matin": {
+      "quote": "I came in as a first year who knew no one. Now I am in two committees, I won a hackathon and I know half the program. SIT makes your studies.",
+      "highlight": "two committees",
+      "role": "Chair"
+    },
+    "idil": {
+      "quote": "At the Events committee I set up socials for 100+ people. That goes on your CV and in your friend group. Way more useful than it sounds.",
+      "highlight": "CV and in your friend group",
+      "role": "Secretary"
+    },
+    "hugo": {
+      "quote": "Giving workshops through EduCo gave me the nerve to stand in front of a room. Best skill I picked up here.",
+      "highlight": "Best skill",
+      "role": "Board member"
+    },
+    "riley": {
+      "quote": "Game Night became my fixed Friday. The D&D campaign has been running for a whole year.",
+      "highlight": "D&D campaign",
+      "role": "Chair GameIT"
+    }
+  },
+  "discord": {
+    "channel": "#general",
+    "server": "SIT Discord",
+    "msg1": "should I join SIT?",
+    "msg2": "it is literally {price} for a whole year",
+    "msg3": "say less, I am already in"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "heading": "projects",
+  "subtitle": "Built by SIT members - hackathon winners, community tools, games and more",
+  "filters": {
+    "all": "All",
+    "hackathon": "Hackathons",
+    "community": "Community",
+    "game": "Games",
+    "tool": "Tools"
+  },
+  "loadError": "Could not load projects",
+  "retry": "Try again",
+  "empty": "No projects in this category yet",
+  "by": "by {creators}",
+  "repo": "Repo",
+  "demo": "Demo"
+}

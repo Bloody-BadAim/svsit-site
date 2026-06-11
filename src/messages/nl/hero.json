@@ -1,0 +1,19 @@
+{
+  "promptInit": "init",
+  "promptInitSuffix": " studievereniging",
+  "subtitleAssociation": " Studievereniging ICT",
+  "subtitleUniversity": "Hogeschool van Amsterdam",
+  "taglineBy": "Door",
+  "taglineFor": "Voor",
+  "taglineStudents": "studenten.",
+  "taglineInTech": " In tech.",
+  "ctaJoin": "WORD LID",
+  "ctaEvents": "BEKIJK EVENTS",
+  "scrollDown": "scroll down",
+  "stats": {
+    "leden": "leden",
+    "events": "events",
+    "commissies": "commissies",
+    "besturen": "besturen"
+  }
+}

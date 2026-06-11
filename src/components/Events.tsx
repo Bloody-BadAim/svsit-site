@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { motion, useReducedMotion, AnimatePresence } from "motion/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -17,6 +18,7 @@ gsap.registerPlugin(ScrollTrigger);
 // ─── NoEventsPlaceholder ──────────────────────────────────────────────────────
 
 function NoEventsPlaceholder() {
+  const t = useTranslations("homeEvents");
   return (
     <div
       className="py-10 px-6 rounded-xl text-center font-mono text-sm text-muted"
@@ -25,8 +27,8 @@ function NoEventsPlaceholder() {
         background: "rgba(255,255,255,0.01)",
       }}
     >
-      <p className="mb-1">Meer events worden binnenkort aangekondigd</p>
-      <p className="text-xs opacity-60">Volg @sv.sit op Instagram voor updates</p>
+      <p className="mb-1">{t("placeholder.title")}</p>
+      <p className="text-xs opacity-60">{t("placeholder.subtitle")}</p>
     </div>
   );
 }
@@ -34,6 +36,7 @@ function NoEventsPlaceholder() {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function Events() {
+  const t = useTranslations("homeEvents");
   const [events, setEvents] = useState<SitEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
@@ -160,7 +163,7 @@ export default function Events() {
       <div className="absolute inset-0 bg-[var(--color-bg)]/70 pointer-events-none" />
 
       <div className="relative z-[1]">
-      <SectionLabel number="03" label="Events" />
+      <SectionLabel number="03" label={t("label")} />
 
       {/* ── Filter pills ── */}
       <div className="flex flex-wrap gap-2 mb-10">
@@ -251,7 +254,7 @@ export default function Events() {
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
               <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--color-text-muted)]">
-                BINNENKORT
+                {t("upcoming")}
               </span>
               <span
                 className="flex-1 h-px"
@@ -294,7 +297,8 @@ export default function Events() {
                 className="transition-transform duration-200"
                 style={{ transform: showDone ? "rotate(180deg)" : "rotate(0deg)" }}
               />
-              {showDone ? "Verberg" : "Toon"} afgeronde events ({doneList.length})
+              {showDone ? t("doneToggle.hide") : t("doneToggle.show")}{" "}
+              {t("doneToggle.label", { count: doneList.length })}
             </button>
 
             <AnimatePresence>
@@ -341,7 +345,7 @@ export default function Events() {
             }}
           />
           <p className="font-mono text-xs text-[var(--color-text-muted)] opacity-40 italic">
-            Meer events worden aangekondigd...
+            {t("tba")}
           </p>
         </div>
       </div>

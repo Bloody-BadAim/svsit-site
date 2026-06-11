@@ -1,30 +1,35 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import { getTranslations } from 'next-intl/server'
 import RegisterFlow from '@/components/auth/RegisterFlow'
 import HboIctVormtaal from '@/components/HboIctVormtaal'
 import { SessionProvider } from 'next-auth/react'
 import { SITE_CONFIG } from '@/lib/constants'
 
-export const metadata: Metadata = {
-  title: 'Word lid - {SIT}',
-  description:
-    `Word lid van SIT voor ${SITE_CONFIG.membership.pricePerYear}. Events, workshops, dev tools, en een community van HBO-ICT studenten aan de HvA.`,
-  openGraph: {
-    title: 'Word lid - {SIT}',
-    description: `Word lid van SIT voor ${SITE_CONFIG.membership.pricePerYear}. Events, workshops, dev tools en meer.`,
-    siteName: '{SIT}',
-    locale: 'nl_NL',
-    type: 'website',
-    url: 'https://svsit.nl/lid-worden',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Word lid - {SIT}',
-    description: `Word lid van SIT voor ${SITE_CONFIG.membership.pricePerYear}. Events, workshops, dev tools en meer.`,
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pageLidWorden')
+  const price = SITE_CONFIG.membership.pricePerYear
+  return {
+    title: t('meta.title'),
+    description: t('meta.description', { price }),
+    openGraph: {
+      title: t('meta.ogTitle'),
+      description: t('meta.ogDescription', { price }),
+      siteName: '{SIT}',
+      locale: 'nl_NL',
+      type: 'website',
+      url: 'https://svsit.nl/lid-worden',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t('meta.twitterTitle'),
+      description: t('meta.twitterDescription', { price }),
+    },
+  }
 }
 
-export default function LidWordenPage() {
+export default async function LidWordenPage() {
+  const t = await getTranslations('pageLidWorden')
   return (
     <main
       className="min-h-screen flex flex-col items-center justify-center px-6 py-16"
@@ -41,7 +46,7 @@ export default function LidWordenPage() {
             className="text-[11px] uppercase tracking-[0.18em]"
             style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}
           >
-            Word lid van dé studievereniging van
+            {t('cobrandEyebrow')}
           </span>
           <Image
             src="/hbo-ict-wit.png"

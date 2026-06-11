@@ -1,0 +1,20 @@
+{
+  "eyebrow": "// powered by",
+  "titlePre": "Partner",
+  "titlePost": "netwerk",
+  "statusConnected": "verbonden",
+  "statusSlotsLabel": "slots",
+  "statusSlotsValue": "open",
+  "statusCommand": "trace --partners",
+  "coreOnline": "core",
+  "coreTitle": "CORE",
+  "coreTagPre": "De hub - elke partner sluit hier aan op",
+  "coreTagPost": "ICT-studenten.",
+  "coreStatusLabel": "status",
+  "coreStatusValue": "online",
+  "nodeOnline": "online",
+  "badgeHome": "THUISBASIS",
+  "nodeConnect": "connect →",
+  "slotSub": "jouw logo hier",
+  "legendLabel": "// tiers"
+}

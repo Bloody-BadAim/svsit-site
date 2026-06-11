@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTranslations } from "next-intl";
 import SectionLabel from "@/components/SectionLabel";
 import { CardSpotlight } from "@/components/ui/CardSpotlight";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -10,38 +11,34 @@ import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 const achievements = [
   {
-    title: "Events & Activiteiten",
-    desc: "Van borrels en kroegentochten tot hackathons, game nights, CTF challenges en tech talks. Of je nu wil netwerken of gewoon een biertje drinken.",
+    key: "events",
     stat: "20+",
-    statLabel: "per jaar",
+    statLabelKey: "perJaar",
     color: "#F29E18",
     rgb: [242, 158, 24] as number[],
   },
   {
-    title: "Netwerk Opbouwen",
-    desc: "Leer studenten uit alle richtingen kennen: Software Engineering, Cyber Security, Game Dev, Business IT en Technische Informatica. Plus alumni en bedrijven.",
+    key: "network",
     stat: "5",
-    statLabel: "specialisaties",
+    statLabelKey: "specialisaties",
     color: "#3B82F6",
     rgb: [59, 130, 246] as number[],
   },
   {
-    title: "Skills Ontwikkelen",
-    desc: "Win een CTF, bouw een AI project, pitch je startup idee, of organiseer een event. Dingen die op je CV knallen.",
+    key: "skills",
     stat: "∞",
-    statLabel: "mogelijkheden",
+    statLabelKey: "mogelijkheden",
     color: "#EF4444",
     rgb: [239, 68, 68] as number[],
   },
   {
-    title: "Nog geen tientje",
-    desc: `Eenmalig ${SITE_CONFIG.membership.priceLabel} per jaar. Geen verborgen kosten. Inclusief toegang tot alle events, dev tools en de volledige SIT community.`,
+    key: "price",
     stat: SITE_CONFIG.membership.priceLabel,
-    statLabel: "per jaar",
+    statLabelKey: "perJaar",
     color: "#22C55E",
     rgb: [34, 197, 94] as number[],
   },
-];
+] as const;
 
 function AchievementRing({
   number,
@@ -95,6 +92,7 @@ function AchievementRing({
 }
 
 export default function WhyJoin() {
+  const t = useTranslations("whyJoin");
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
@@ -290,16 +288,16 @@ export default function WhyJoin() {
       />
 
       <div className="relative max-w-[1400px] mx-auto">
-        <SectionLabel number="02" label="waarom lid worden" />
+        <SectionLabel number="02" label={t("sectionLabel")} />
 
         <div className="mb-8 md:mb-12">
           <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tight leading-[1.1]">
-            Wat je
+            {t("headingLine1")}
             <br />
-            <span className="text-[var(--color-accent-gold)]">krijgt</span>
+            <span className="text-[var(--color-accent-gold)]">{t("headingLine2")}</span>
           </h2>
           <p className="font-mono text-sm text-[var(--color-text-muted)] mt-4">
-            Alles inbegrepen bij je lidmaatschap.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -309,7 +307,7 @@ export default function WhyJoin() {
           className="grid grid-cols-1 md:grid-cols-2 gap-5"
         >
           {achievements.map((a, i) => (
-            <div key={i} className="achievement-card">
+            <div key={a.key} className="achievement-card">
               <CardSpotlight
                 color={`${a.color}18`}
                 radius={300}
@@ -328,19 +326,19 @@ export default function WhyJoin() {
                       {a.stat}
                     </span>
                     <span className="font-mono text-[10px] text-[var(--color-text-muted)] mt-1 uppercase tracking-wider">
-                      {a.statLabel}
+                      {t(`statLabels.${a.statLabelKey}`)}
                     </span>
                   </div>
                 </div>
 
                 {/* Title */}
                 <h3 className="relative z-20 font-display text-xl md:text-2xl font-bold uppercase tracking-tight leading-tight mb-3">
-                  {a.title}
+                  {t(`cards.${a.key}.title`)}
                 </h3>
 
                 {/* Description */}
                 <p className="relative z-20 font-mono text-sm leading-relaxed text-[var(--color-text-muted)]">
-                  {a.desc}
+                  {t(`cards.${a.key}.desc`, { price: SITE_CONFIG.membership.priceLabel })}
                 </p>
 
                 {/* Bottom accent line */}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { COMMISSIES } from '@/lib/constants'
 import { Lightbulb, Check, UserRound } from 'lucide-react'
 
@@ -22,6 +23,7 @@ export default function ClassSelector({
   onDocent,
 }: ClassSelectorProps) {
   const [showEigenIdee, setShowEigenIdee] = useState(false)
+  const t = useTranslations('authClassSelector')
 
   return (
     <div className="space-y-6">
@@ -47,11 +49,11 @@ export default function ClassSelector({
               className="font-semibold"
               style={{ color: selected === null && !isDocent ? 'var(--color-accent-gold)' : 'var(--color-text)' }}
             >
-              Nog geen voorkeur
+              {t('noPreferenceTitle')}
             </span>
           </div>
           <p className="text-sm ml-8" style={{ color: 'var(--color-text-muted)' }}>
-            Word gewoon lid. Een commissie kiezen kan altijd later.
+            {t('noPreferenceDesc')}
           </p>
         </button>
 
@@ -106,11 +108,11 @@ export default function ClassSelector({
               className="font-semibold"
               style={{ color: selected === 'eigen-idee' ? 'var(--color-accent-gold)' : 'var(--color-text)' }}
             >
-              Eigen idee
+              {t('ownIdeaTitle')}
             </span>
           </div>
           <p className="text-sm ml-8" style={{ color: 'var(--color-text-muted)' }}>
-            Heb je een idee voor een nieuwe commissie?
+            {t('ownIdeaDesc')}
           </p>
         </button>
       </div>
@@ -120,7 +122,7 @@ export default function ClassSelector({
           type="text"
           value={eigenIdee}
           onChange={(e) => onEigenIdee(e.target.value)}
-          placeholder="Beschrijf je commissie idee..."
+          placeholder={t('ownIdeaPlaceholder')}
           className="w-full py-3 px-4 rounded-lg text-base outline-none"
           style={{
             backgroundColor: 'var(--color-surface)',
@@ -158,10 +160,10 @@ export default function ClassSelector({
         </div>
         <div>
           <span className="font-semibold" style={{ color: 'var(--color-text)' }}>
-            Ik ben docent / begeleider
+            {t('docentTitle')}
           </span>
           <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-            Word mentor bij SIT
+            {t('docentDesc')}
           </p>
         </div>
       </label>

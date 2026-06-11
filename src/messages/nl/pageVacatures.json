@@ -1,0 +1,17 @@
+{
+  "heading": "vacatures",
+  "subtitle": "Stages, werkplekken en bijbanen bij onze sponsoren en partners",
+  "filters": {
+    "all": "Alles",
+    "stage": "Stage",
+    "werkplek": "Werkplek",
+    "bijbaan": "Bijbaan",
+    "afstuderen": "Afstuderen"
+  },
+  "loadError": "Kon vacatures niet laden",
+  "retry": "Probeer opnieuw",
+  "empty": "Nog geen vacatures beschikbaar",
+  "deadline": "Deadline:",
+  "expired": " (verlopen)",
+  "view": "Bekijk"
+}

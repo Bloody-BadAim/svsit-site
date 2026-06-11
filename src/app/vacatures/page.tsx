@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 import { MapPin, Clock, ExternalLink, Briefcase } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 
@@ -21,12 +22,12 @@ interface Vacature {
 }
 
 const TYPE_FILTERS = [
-  { key: 'all', label: 'Alles' },
-  { key: 'stage', label: 'Stage' },
-  { key: 'werkplek', label: 'Werkplek' },
-  { key: 'bijbaan', label: 'Bijbaan' },
-  { key: 'afstuderen', label: 'Afstuderen' },
-]
+  { key: 'all' },
+  { key: 'stage' },
+  { key: 'werkplek' },
+  { key: 'bijbaan' },
+  { key: 'afstuderen' },
+] as const
 
 const TYPE_COLORS: Record<string, string> = {
   stage: 'var(--color-accent-blue)',
@@ -36,6 +37,8 @@ const TYPE_COLORS: Record<string, string> = {
 }
 
 export default function VacaturesPage() {
+  const t = useTranslations('pageVacatures')
+  const locale = useLocale()
   const [vacatures, setVacatures] = useState<Vacature[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -51,9 +54,9 @@ export default function VacaturesPage() {
           setVacatures(res.data || [])
         }
       })
-      .catch(() => setError('Kon vacatures niet laden'))
+      .catch(() => setError(t('loadError')))
       .finally(() => setLoading(false))
-  }, [])
+  }, [t])
 
   const filtered = filter === 'all' ? vacatures : vacatures.filter((v) => v.type === filter)
 
@@ -67,10 +70,10 @@ export default function VacaturesPage() {
           className="font-mono text-2xl md:text-3xl font-bold mb-3"
           style={{ color: 'var(--color-text)' }}
         >
-          {'>'} vacatures
+          {'>'} {t('heading')}
         </h1>
         <p className="font-mono text-sm" style={{ color: 'var(--color-text-muted)' }}>
-          Stages, werkplekken en bijbanen bij onze sponsoren en partners
+          {t('subtitle')}
         </p>
       </div>
 
@@ -89,7 +92,7 @@ export default function VacaturesPage() {
                 border: active ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid var(--color-border)',
               }}
             >
-              {f.label}
+              {t(`filters.${f.key}`)}
             </button>
           )
         })}
@@ -106,11 +109,11 @@ export default function VacaturesPage() {
               {error}
             </p>
             <button
-              onClick={() => { setError(null); setLoading(true); fetch('/api/vacatures').then(r => r.json()).then(res => { if (res.error) setError(res.error); else setVacatures(res.data || []); }).catch(() => setError('Kon vacatures niet laden')).finally(() => setLoading(false)); }}
+              onClick={() => { setError(null); setLoading(true); fetch('/api/vacatures').then(r => r.json()).then(res => { if (res.error) setError(res.error); else setVacatures(res.data || []); }).catch(() => setError(t('loadError'))).finally(() => setLoading(false)); }}
               className="font-mono text-xs px-4 py-2 rounded-md"
               style={{ color: 'var(--color-text-muted)', border: '1px solid var(--color-border)' }}
             >
-              Probeer opnieuw
+              {t('retry')}
             </button>
           </div>
         ) : loading ? (
@@ -124,7 +127,7 @@ export default function VacaturesPage() {
             className="py-16 text-center font-mono text-sm rounded-lg"
             style={{ color: 'var(--color-text-muted)', border: '1px dashed var(--color-border)' }}
           >
-            Nog geen vacatures beschikbaar
+            {t('empty')}
           </div>
         ) : (
           <div className="space-y-3">
@@ -185,8 +188,8 @@ export default function VacaturesPage() {
                       {vacature.deadline && (
                         <span className="flex items-center gap-1">
                           <Clock size={10} />
-                          Deadline: {new Date(vacature.deadline).toLocaleDateString('nl-NL')}
-                          {isExpired && ' (verlopen)'}
+                          {t('deadline')} {new Date(vacature.deadline).toLocaleDateString(locale === 'en' ? 'en-GB' : 'nl-NL')}
+                          {isExpired && t('expired')}
                         </span>
                       )}
                     </div>
@@ -204,7 +207,7 @@ export default function VacaturesPage() {
                         border: '1px solid var(--color-accent-green)',
                       }}
                     >
-                      <ExternalLink size={12} /> Bekijk
+                      <ExternalLink size={12} /> {t('view')}
                     </a>
                   )}
                 </div>

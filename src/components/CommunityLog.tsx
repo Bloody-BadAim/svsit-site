@@ -1,20 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { SITE_CONFIG } from "@/lib/constants";
 import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 const FEED_DATA = [
-  { who: "Idil", act: "pushte een nieuwe Kroegentocht", tag: "events", color: "var(--color-accent-gold)" },
-  { who: "GameIT", act: "merged D&D-avond #14", tag: "gameit", color: "var(--color-accent-red)" },
-  { who: "AI4HvA", act: "deployde AI Marathon 2026", tag: "ai", color: "var(--color-accent-blue)" },
-  { who: "Hugo", act: "scheduled tech talk: Clean Code", tag: "educo", color: "var(--color-accent-green)" },
-  { who: "Matin", act: "signed sponsor - ChipSoft", tag: "sponsoring", color: "var(--color-accent-gold)" },
-  { who: "Community", act: "onboardde 12 nieuwe leden", tag: "community", color: "var(--color-accent-blue)" },
-  { who: "ServCo", act: "shipped svsit.nl v11", tag: "servco", color: "var(--color-accent-blue)" },
-  { who: "Thijmen", act: "boekte Thuishaven feest", tag: "events", color: "var(--color-accent-gold)" },
-  { who: "Wesley", act: "won de CTF challenge", tag: "ctf", color: "var(--color-accent-green)" },
-  { who: "Rosa", act: "organiseerde LAN party", tag: "gameit", color: "var(--color-accent-red)" },
+  { who: "Idil", actKey: "idil", tag: "events", color: "var(--color-accent-gold)" },
+  { who: "GameIT", actKey: "gameit", tag: "gameit", color: "var(--color-accent-red)" },
+  { who: "AI4HvA", actKey: "ai4hva", tag: "ai", color: "var(--color-accent-blue)" },
+  { who: "Hugo", actKey: "hugo", tag: "educo", color: "var(--color-accent-green)" },
+  { who: "Matin", actKey: "matin", tag: "sponsoring", color: "var(--color-accent-gold)" },
+  { who: "Community", actKey: "community", tag: "community", color: "var(--color-accent-blue)" },
+  { who: "ServCo", actKey: "servco", tag: "servco", color: "var(--color-accent-blue)" },
+  { who: "Thijmen", actKey: "thijmen", tag: "events", color: "var(--color-accent-gold)" },
+  { who: "Wesley", actKey: "wesley", tag: "ctf", color: "var(--color-accent-green)" },
+  { who: "Rosa", actKey: "rosa", tag: "gameit", color: "var(--color-accent-red)" },
 ];
 
 const MAX_ROWS = 5;
@@ -23,7 +24,7 @@ interface FeedRow {
   id: number;
   hash: string;
   who: string;
-  act: string;
+  actKey: string;
   tag: string;
   color: string;
 }
@@ -38,6 +39,7 @@ function daysUntilIntroweek(): number {
 }
 
 export default function CommunityLog() {
+  const t = useTranslations("communityLog");
   const [rows, setRows] = useState<FeedRow[]>([]);
   const [days, setDays] = useState<number | null>(null);
   const indexRef = useRef(0);
@@ -123,7 +125,7 @@ export default function CommunityLog() {
       <div className="px-4 pt-3 pb-1 font-mono text-[11px]">
         <span className="text-[var(--color-accent-green)]">$</span>{" "}
         <span className="text-[var(--color-text)]">sit --watch</span>{" "}
-        <span className="text-[var(--color-text-muted)] opacity-50">// wat er nu gebeurt</span>
+        <span className="text-[var(--color-text-muted)] opacity-50">// {t("command")}</span>
       </div>
 
       {/* Feed rows */}
@@ -140,7 +142,7 @@ export default function CommunityLog() {
               {row.who}
             </span>
             <span className="text-[var(--color-text-muted)] truncate">
-              {row.act}
+              {t(`feed.${row.actKey}`)}
             </span>
             <span
               className="ml-auto shrink-0 px-1.5 py-0.5 text-[9px] uppercase tracking-wider rounded-sm border"
@@ -161,15 +163,15 @@ export default function CommunityLog() {
           <span className="text-[var(--color-accent-green)]">●</span>
           <span>
             <strong className="text-[var(--color-text)]">100+</strong>
-            <span>&nbsp;leden &amp; groeit</span>
+            <span>&nbsp;{t("members")}</span>
           </span>
         </span>
         <span>
-          introweek in{" "}
+          {t("introweekPre")}{" "}
           <strong className="text-[var(--color-accent-gold)]">
             {days ?? "-"}
           </strong>{" "}
-          dagen
+          {t("introweekPost")}
         </span>
       </div>
     </div>

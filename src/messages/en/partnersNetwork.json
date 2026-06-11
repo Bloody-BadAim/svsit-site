@@ -1,0 +1,20 @@
+{
+  "eyebrow": "// powered by",
+  "titlePre": "Partner",
+  "titlePost": "network",
+  "statusConnected": "connected",
+  "statusSlotsLabel": "slots",
+  "statusSlotsValue": "open",
+  "statusCommand": "trace --partners",
+  "coreOnline": "core",
+  "coreTitle": "CORE",
+  "coreTagPre": "The hub. Every partner connects here to",
+  "coreTagPost": "ICT students.",
+  "coreStatusLabel": "status",
+  "coreStatusValue": "online",
+  "nodeOnline": "online",
+  "badgeHome": "HOME BASE",
+  "nodeConnect": "connect →",
+  "slotSub": "your logo here",
+  "legendLabel": "// tiers"
+}

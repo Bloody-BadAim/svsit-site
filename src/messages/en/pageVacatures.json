@@ -1,0 +1,17 @@
+{
+  "heading": "jobs",
+  "subtitle": "Internships, work spots and side jobs at our sponsors and partners",
+  "filters": {
+    "all": "All",
+    "stage": "Internship",
+    "werkplek": "Work spot",
+    "bijbaan": "Side job",
+    "afstuderen": "Graduation"
+  },
+  "loadError": "Could not load jobs",
+  "retry": "Try again",
+  "empty": "No jobs available yet",
+  "deadline": "Deadline:",
+  "expired": " (expired)",
+  "view": "View"
+}

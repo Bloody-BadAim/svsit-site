@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "title": "Het Moederbord - Bestuur & Commissies - {SIT}",
+    "description": "Het Moederbord: bestuur en commissies van SIT in één organigram. Bestuur XII is de kern, elke commissie een module die je kunt aansluiten. Sluit jezelf aan.",
+    "ogTitle": "Het Moederbord - Bestuur & Commissies - {SIT}",
+    "ogDescription": "Bestuur XII vormt de kern, elke commissie is een module. Ontdek de organisatie van SIT en sluit je aan.",
+    "twitterTitle": "Het Moederbord - Bestuur & Commissies - {SIT}",
+    "twitterDescription": "Bestuur XII en de commissies van SIT als één moederbord. Sluit je aan."
+  },
+  "strip": {
+    "eyebrow": "// onderdeel_van",
+    "heading": "Het Moederbord van SIT. Dé officiële studievereniging van HBO-ICT"
+  }
+}

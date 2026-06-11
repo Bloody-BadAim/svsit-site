@@ -1,0 +1,29 @@
+{
+  "sectionLabel": "waarom lid worden",
+  "headingLine1": "Wat je",
+  "headingLine2": "krijgt",
+  "subtitle": "Alles inbegrepen bij je lidmaatschap.",
+  "cards": {
+    "events": {
+      "title": "Events & Activiteiten",
+      "desc": "Van borrels en kroegentochten tot hackathons, game nights, CTF challenges en tech talks. Of je nu wil netwerken of gewoon een biertje drinken."
+    },
+    "network": {
+      "title": "Netwerk Opbouwen",
+      "desc": "Leer studenten uit alle richtingen kennen: Software Engineering, Cyber Security, Game Dev, Business IT en Technische Informatica. Plus alumni en bedrijven."
+    },
+    "skills": {
+      "title": "Skills Ontwikkelen",
+      "desc": "Win een CTF, bouw een AI project, pitch je startup idee, of organiseer een event. Dingen die op je CV knallen."
+    },
+    "price": {
+      "title": "Nog geen tientje",
+      "desc": "Eenmalig {price} per jaar. Geen verborgen kosten. Inclusief toegang tot alle events, dev tools en de volledige SIT community."
+    }
+  },
+  "statLabels": {
+    "perJaar": "per jaar",
+    "specialisaties": "specialisaties",
+    "mogelijkheden": "mogelijkheden"
+  }
+}

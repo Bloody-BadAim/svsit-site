@@ -1,0 +1,29 @@
+{
+  "sectionLabel": "why join",
+  "headingLine1": "What you",
+  "headingLine2": "get",
+  "subtitle": "All included with your membership.",
+  "cards": {
+    "events": {
+      "title": "Events & Activities",
+      "desc": "From drinks and bar crawls to hackathons, game nights, CTF challenges and tech talks. Whether you want to network or just grab a beer."
+    },
+    "network": {
+      "title": "Build Your Network",
+      "desc": "Meet students from every track: Software Engineering, Cyber Security, Game Dev, Business IT and Technical Computing. Plus alumni and companies."
+    },
+    "skills": {
+      "title": "Develop Skills",
+      "desc": "Win a CTF, build an AI project, pitch your startup idea, or organise an event. Stuff that pops on your CV."
+    },
+    "price": {
+      "title": "Less than a tenner",
+      "desc": "Just {price} a year. No hidden costs. Includes access to all events, dev tools and the full SIT community."
+    }
+  },
+  "statLabels": {
+    "perJaar": "per year",
+    "specialisaties": "specialisations",
+    "mogelijkheden": "possibilities"
+  }
+}

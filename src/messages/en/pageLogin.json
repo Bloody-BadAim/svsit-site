@@ -1,0 +1,8 @@
+{
+  "meta": {
+    "title": "Login - SIT",
+    "description": "Log in to SIT, the student association for HBO-ICT at the HvA."
+  },
+  "heading": "Log in to your account",
+  "terminal": "> auth.login()"
+}

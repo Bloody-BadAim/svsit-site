@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import ClassSelector from './ClassSelector'
 import { COMMISSIES, ROLLEN, SITE_CONFIG } from '@/lib/constants'
 import type { Role } from '@/types/database'
@@ -11,6 +12,7 @@ import { Check, ArrowRight, User, GraduationCap } from 'lucide-react'
 type Step = 1 | 2
 
 export default function RegisterFlow() {
+  const t = useTranslations('authRegister')
   const { data: session } = useSession()
   const router = useRouter()
   const isMicrosoft = !!session?.user?.email
@@ -85,7 +87,7 @@ export default function RegisterFlow() {
 
     if (!res.ok) {
       const data = await res.json()
-      throw new Error(data.error || 'Registratie mislukt')
+      throw new Error(data.error || t('errorRegisterFailed'))
     }
 
     return res.json()
@@ -105,7 +107,7 @@ export default function RegisterFlow() {
           password,
           redirect: false,
         })
-        if (result?.error) throw new Error('Inloggen na registratie mislukt')
+        if (result?.error) throw new Error(t('errorLoginAfterRegister'))
       }
 
       // Start Stripe checkout
@@ -115,7 +117,7 @@ export default function RegisterFlow() {
         body: JSON.stringify({ email }),
       })
 
-      if (!checkoutRes.ok) throw new Error('Betaling starten mislukt')
+      if (!checkoutRes.ok) throw new Error(t('errorCheckoutFailed'))
 
       const { url } = await checkoutRes.json()
       if (url) {
@@ -123,7 +125,7 @@ export default function RegisterFlow() {
         window.location.href = url
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Er ging iets mis')
+      setError(err instanceof Error ? err.message : t('errorGeneric'))
       setLoading(false)
     }
   }
@@ -147,7 +149,7 @@ export default function RegisterFlow() {
 
       router.push('/dashboard?welcome=true')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Er ging iets mis')
+      setError(err instanceof Error ? err.message : t('errorGeneric'))
       setLoading(false)
     }
   }
@@ -155,8 +157,8 @@ export default function RegisterFlow() {
   const SOCIALS = [
     { href: SITE_CONFIG.socials.instagram.url, label: SITE_CONFIG.socials.instagram.handle, platform: 'Instagram', color: '#F29E18' },
     { href: SITE_CONFIG.socials.tiktok.url, label: SITE_CONFIG.socials.tiktok.handle, platform: 'TikTok', color: '#EF4444' },
-    { href: SITE_CONFIG.socials.whatsapp.url, label: 'WhatsApp groep', platform: 'WhatsApp', color: '#25D366' },
-    { href: SITE_CONFIG.socials.discord.url, label: 'Discord server', platform: 'Discord', color: '#5865F2' },
+    { href: SITE_CONFIG.socials.whatsapp.url, label: t('whatsappLabel'), platform: 'WhatsApp', color: '#25D366' },
+    { href: SITE_CONFIG.socials.discord.url, label: t('discordLabel'), platform: 'Discord', color: '#5865F2' },
   ]
 
   return (
@@ -195,13 +197,13 @@ export default function RegisterFlow() {
               className="text-2xl sm:text-3xl font-bold"
               style={{ color: 'var(--color-text)' }}
             >
-              Word lid van{' '}
+              {t('step1.title')}{' '}
               <span style={{ color: 'var(--color-accent-gold)', fontFamily: 'var(--font-mono)' }}>
                 {'{'}<span style={{ color: 'var(--color-text)' }}>SIT</span>{'}'}
               </span>
             </h2>
             <p className="mt-2 font-mono text-sm" style={{ color: 'var(--color-text-muted)' }}>
-              Maak je account aan in 2 stappen
+              {t('step1.subtitle')}
             </p>
           </div>
 
@@ -209,13 +211,13 @@ export default function RegisterFlow() {
             {/* Naam */}
             <div>
               <label className="block text-sm mb-1.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-                naam <span className="opacity-40">(optioneel)</span>
+                {t('step1.nameLabel')} <span className="opacity-40">{t('step1.nameOptional')}</span>
               </label>
               <input
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="Hoe wil je dat we je noemen?"
+                placeholder={t('step1.namePlaceholder')}
                 className="w-full py-3 px-4 rounded-md text-sm outline-none font-mono transition-colors focus:border-[var(--color-accent-gold)]"
                 style={{
                   backgroundColor: 'var(--color-surface)',
@@ -228,7 +230,7 @@ export default function RegisterFlow() {
             {/* Email */}
             <div>
               <label className="block text-sm mb-1.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-                email
+                {t('step1.emailLabel')}
               </label>
               <input
                 type="email"
@@ -236,7 +238,7 @@ export default function RegisterFlow() {
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isMicrosoft}
                 required
-                placeholder="je@email.nl"
+                placeholder={t('step1.emailPlaceholder')}
                 className="w-full py-3 px-4 rounded-md text-sm outline-none font-mono disabled:opacity-60 transition-colors focus:border-[var(--color-accent-gold)]"
                 style={{
                   backgroundColor: 'var(--color-surface)',
@@ -250,7 +252,7 @@ export default function RegisterFlow() {
             {!isMicrosoft && (
               <div>
                 <label className="block text-sm mb-1.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-                  wachtwoord <span className="opacity-40">(min. 8 tekens)</span>
+                  {t('step1.passwordLabel')} <span className="opacity-40">{t('step1.passwordHint')}</span>
                 </label>
                 <input
                   type="password"
@@ -258,7 +260,7 @@ export default function RegisterFlow() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={8}
-                  placeholder="Kies een wachtwoord"
+                  placeholder={t('step1.passwordPlaceholder')}
                   className="w-full py-3 px-4 rounded-md text-sm outline-none font-mono transition-colors focus:border-[var(--color-accent-gold)]"
                   style={{
                     backgroundColor: 'var(--color-surface)',
@@ -289,7 +291,7 @@ export default function RegisterFlow() {
                   }}
                 >
                   <GraduationCap size={14} />
-                  Student
+                  {t('step1.student')}
                 </button>
                 <button
                   type="button"
@@ -302,7 +304,7 @@ export default function RegisterFlow() {
                   }}
                 >
                   <User size={14} />
-                  Geen student
+                  {t('step1.notStudent')}
                 </button>
               </div>
 
@@ -310,14 +312,14 @@ export default function RegisterFlow() {
                 <div className="space-y-3">
                   <div>
                     <label className="block text-xs mb-1.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-                      studentnummer
+                      {t('step1.studentNumberLabel')}
                     </label>
                     <input
                       type="text"
                       value={studentNumber}
                       onChange={(e) => setStudentNumber(e.target.value)}
                       required
-                      placeholder="bijv. 500123456"
+                      placeholder={t('step1.studentNumberPlaceholder')}
                       className="w-full py-2.5 px-3 rounded-md text-sm outline-none font-mono transition-colors focus:border-[var(--color-accent-gold)]"
                       style={{
                         backgroundColor: 'var(--color-bg)',
@@ -328,13 +330,13 @@ export default function RegisterFlow() {
                   </div>
                   <div>
                     <label className="block text-xs mb-1.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-                      HvA email <span className="opacity-40">(optioneel)</span>
+                      {t('step1.hvaEmailLabel')} <span className="opacity-40">{t('step1.hvaEmailOptional')}</span>
                     </label>
                     <input
                       type="email"
                       value={hvaEmail}
                       onChange={(e) => setHvaEmail(e.target.value)}
-                      placeholder="voornaam.achternaam@hva.nl"
+                      placeholder={t('step1.hvaEmailPlaceholder')}
                       className="w-full py-2.5 px-3 rounded-md text-sm outline-none font-mono transition-colors focus:border-[var(--color-accent-gold)]"
                       style={{
                         backgroundColor: 'var(--color-bg)',
@@ -348,7 +350,7 @@ export default function RegisterFlow() {
 
               {!isStudent && (
                 <p className="font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
-                  Docent, alumnus of extern? Iedereen is welkom bij SIT.
+                  {t('step1.notStudentNote')}
                 </p>
               )}
             </div>
@@ -366,7 +368,7 @@ export default function RegisterFlow() {
               color: 'var(--color-bg)',
             }}
           >
-            Volgende
+            {t('step1.next')}
             <ArrowRight size={14} />
           </button>
         </div>
@@ -380,10 +382,10 @@ export default function RegisterFlow() {
               className="text-2xl sm:text-3xl font-bold"
               style={{ color: 'var(--color-text)' }}
             >
-              Kies je rol
+              {t('step2.title')}
             </h2>
             <p className="mt-2 font-mono text-sm" style={{ color: 'var(--color-text-muted)' }}>
-              Wil je actief meebouwen? Kies een commissie. Of skip en ontdek later.
+              {t('step2.subtitle')}
             </p>
           </div>
 
@@ -408,14 +410,14 @@ export default function RegisterFlow() {
             }}
           >
             <div className="flex justify-between items-center">
-              <span style={{ color: 'var(--color-text-muted)' }}>Rol</span>
+              <span style={{ color: 'var(--color-text-muted)' }}>{t('step2.roleLabel')}</span>
               <span className="font-semibold" style={{ color: 'var(--color-accent-gold)' }}>
                 {ROLLEN[role].naam}
               </span>
             </div>
             {commissieNaam && (
               <div className="flex justify-between items-center mt-1">
-                <span style={{ color: 'var(--color-text-muted)' }}>Commissie</span>
+                <span style={{ color: 'var(--color-text-muted)' }}>{t('step2.commissieLabel')}</span>
                 <span style={{ color: 'var(--color-text)' }}>{commissieNaam}</span>
               </div>
             )}
@@ -439,7 +441,7 @@ export default function RegisterFlow() {
               {akkoord && <Check className="w-3 h-3" style={{ color: 'var(--color-bg)' }} />}
             </div>
             <span className="text-xs font-mono" style={{ color: 'var(--color-text-muted)' }}>
-              Ik ga akkoord met de voorwaarden en machtig SIT om jaarlijks af te schrijven via automatische incasso.
+              {t('step2.agreement')}
             </span>
           </label>
 
@@ -458,7 +460,7 @@ export default function RegisterFlow() {
                 color: 'var(--color-bg)',
               }}
             >
-              {loading ? 'Bezig...' : `Word lid - ${SITE_CONFIG.membership.pricePerYear}`}
+              {loading ? t('step2.loading') : t('step2.joinPaid', { price: SITE_CONFIG.membership.pricePerYear })}
               {!loading && <ArrowRight size={14} />}
             </button>
 
@@ -472,7 +474,7 @@ export default function RegisterFlow() {
                 border: '1px solid var(--color-border)',
               }}
             >
-              Eerst rondkijken (betaal later)
+              {t('step2.skipPayment')}
             </button>
           </div>
 
@@ -481,7 +483,7 @@ export default function RegisterFlow() {
             className="w-full text-center font-mono text-xs"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            &larr; Terug
+            {t('step2.back')}
           </button>
         </div>
       )}
@@ -493,7 +495,7 @@ export default function RegisterFlow() {
       >
         <p className="font-mono text-xs text-center mb-4" style={{ color: 'var(--color-text-muted)' }}>
           <span style={{ color: 'var(--color-accent-green)' }}>{'// '}</span>
-          volg ons - mis niks
+          {t('socialsLabel')}
         </p>
         <div className="flex flex-wrap justify-center gap-2">
           {SOCIALS.map((s) => (

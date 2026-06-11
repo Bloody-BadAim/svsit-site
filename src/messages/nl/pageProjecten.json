@@ -1,0 +1,17 @@
+{
+  "heading": "projecten",
+  "subtitle": "Gebouwd door SIT leden - hackathon winnaars, community tools, games en meer",
+  "filters": {
+    "all": "Alles",
+    "hackathon": "Hackathons",
+    "community": "Community",
+    "game": "Games",
+    "tool": "Tools"
+  },
+  "loadError": "Kon projecten niet laden",
+  "retry": "Probeer opnieuw",
+  "empty": "Nog geen projecten in deze categorie",
+  "by": "door {creators}",
+  "repo": "Repo",
+  "demo": "Demo"
+}

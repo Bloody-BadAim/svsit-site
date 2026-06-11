@@ -4,6 +4,7 @@ import type { SitEvent } from '@/types/database'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Calendar, MapPin, Users, Camera } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 import Navbar from '@/components/Navbar'
 
 // Dynamisch renderen: de query draait op de service-client (geen build-time env)
@@ -40,22 +41,26 @@ const getEvents = unstable_cache(
   { revalidate: 60 }
 )
 
-export const metadata: Metadata = {
-  title: 'Events - {SIT}',
-  description: 'Bekijk alle aankomende events van SIT, de studievereniging voor HBO-ICT aan de HvA.',
-  openGraph: {
-    title: 'Events - {SIT}',
-    description: 'Borrels, hackathons, tech talks, game nights en meer. Bekijk het SIT event programma.',
-    siteName: '{SIT}',
-    locale: 'nl_NL',
-    type: 'website',
-    url: 'https://svsit.nl/events',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Events - {SIT}',
-    description: 'Borrels, hackathons, tech talks, game nights en meer bij SIT.',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pageEvents')
+  const title = t('metaTitle')
+  return {
+    title,
+    description: t('metaDescription'),
+    openGraph: {
+      title,
+      description: t('ogDescription'),
+      siteName: '{SIT}',
+      locale: 'nl_NL',
+      type: 'website',
+      url: 'https://svsit.nl/events',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: t('twitterDescription'),
+    },
+  }
 }
 
 // ── Category display config ─────────────────────────────────────────────────
@@ -89,13 +94,10 @@ function formatTime(dateStr: string): string {
 
 // ── Price display ───────────────────────────────────────────────────────────
 
-function PriceBadge({ event }: { event: SitEvent }) {
+function PriceBadge({ event, label }: { event: SitEvent; label: string }) {
   if (!event.is_paid) {
     return null
   }
-
-  const lowestPrice = Math.min(event.price_members, event.price_nonmembers)
-  const displayPrice = (lowestPrice / 100).toFixed(0)
 
   return (
     <span
@@ -106,14 +108,15 @@ function PriceBadge({ event }: { event: SitEvent }) {
         background: 'rgba(245, 158, 11, 0.08)',
       }}
     >
-      Vanaf &euro;{displayPrice}
+      {label}
     </span>
   )
 }
 
 // ── Event Card ──────────────────────────────────────────────────────────────
 
-function EventCard({ event }: { event: SitEvent }) {
+async function EventCard({ event }: { event: SitEvent }) {
+  const t = await getTranslations('pageEvents')
   const cat = getCategoryDisplay(event.category)
   const dateObj = new Date(event.date)
   const day = dateObj.getDate()
@@ -190,7 +193,7 @@ function EventCard({ event }: { event: SitEvent }) {
           {event.capacity !== null && (
             <span className="flex items-center gap-1.5">
               <Users size={12} style={{ color: cat.color }} />
-              {event.capacity} plekken
+              {t('spots', { count: event.capacity })}
             </span>
           )}
         </div>
@@ -204,13 +207,18 @@ function EventCard({ event }: { event: SitEvent }) {
 
         {/* Price + CTA row */}
         <div className="flex items-center justify-between">
-          <PriceBadge event={event} />
+          <PriceBadge
+            event={event}
+            label={t('priceFrom', {
+              price: (Math.min(event.price_members, event.price_nonmembers) / 100).toFixed(0),
+            })}
+          />
 
           <span
             className="font-mono text-xs tracking-wider uppercase transition-colors group-hover:text-[var(--color-text)]"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            Bekijk &rarr;
+            {t('viewMore')}
           </span>
         </div>
       </div>
@@ -220,7 +228,8 @@ function EventCard({ event }: { event: SitEvent }) {
 
 // ── Recap Card ──────────────────────────────────────────────────────────────
 
-function RecapCard({ event }: { event: SitEvent }) {
+async function RecapCard({ event }: { event: SitEvent }) {
+  const t = await getTranslations('pageEvents')
   const cat = getCategoryDisplay(event.category)
   const dateObj = new Date(event.date)
   const day = dateObj.getDate()
@@ -267,7 +276,7 @@ function RecapCard({ event }: { event: SitEvent }) {
             }}
           >
             <Camera size={10} />
-            RECAP
+            {t('recapBadge')}
           </span>
         </div>
 
@@ -297,7 +306,7 @@ function RecapCard({ event }: { event: SitEvent }) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={url}
-                  alt={`${event.title} foto ${i + 1}`}
+                  alt={t('photoAlt', { title: event.title, number: i + 1 })}
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
@@ -314,6 +323,7 @@ function RecapCard({ event }: { event: SitEvent }) {
 
 export default async function EventsPage() {
   const { eventList, recapList } = await getEvents()
+  const t = await getTranslations('pageEvents')
 
   return (
     <>
@@ -345,11 +355,11 @@ export default async function EventsPage() {
               fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
             }}
           >
-            Events
+            {t('heading')}
           </h1>
 
           <p className="font-mono text-sm mt-3" style={{ color: 'var(--color-text-muted)' }}>
-            {'>'} events.list(status: &quot;upcoming&quot;)
+            {t('consoleHint')}
           </p>
         </div>
 
@@ -360,10 +370,10 @@ export default async function EventsPage() {
             style={{ border: '1px dashed var(--color-border)' }}
           >
             <p className="font-mono text-sm text-[var(--color-text-muted)] mb-2">
-              Er zijn momenteel geen aankomende events
+              {t('emptyTitle')}
             </p>
             <p className="font-mono text-xs text-[var(--color-text-muted)] opacity-60">
-              Volg @sv.sit op Instagram voor updates
+              {t('emptySubtitle')}
             </p>
           </div>
         ) : (
@@ -379,7 +389,7 @@ export default async function EventsPage() {
           <div id="terugblik" className="mt-16 scroll-mt-28">
             <div className="flex items-center gap-3 mb-6">
               <span className="font-mono text-xs tracking-[0.15em]" style={{ color: '#71717A' }}>
-                // terugblik
+                {t('recapHeading')}
               </span>
               <span className="flex-1 h-px" style={{ backgroundColor: '#27272A' }} />
             </div>

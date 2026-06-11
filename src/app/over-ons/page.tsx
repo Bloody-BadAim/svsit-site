@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { Cpu } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -7,34 +8,35 @@ import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
 import HboIctVormtaal from "@/components/HboIctVormtaal";
 
-export const metadata: Metadata = {
-  title: "Het Moederbord - Bestuur & Commissies - {SIT}",
-  description:
-    "Het Moederbord: bestuur en commissies van SIT in één organigram. Bestuur XII is de kern, elke commissie een module die je kunt aansluiten. Sluit jezelf aan.",
-  openGraph: {
-    title: "Het Moederbord - Bestuur & Commissies - {SIT}",
-    description:
-      "Bestuur XII vormt de kern, elke commissie is een module. Ontdek de organisatie van SIT en sluit je aan.",
-    siteName: "{SIT}",
-    locale: "nl_NL",
-    type: "website",
-    url: "https://svsit.nl/over-ons",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Het Moederbord - Bestuur & Commissies - {SIT}",
-    description:
-      "Bestuur XII en de commissies van SIT als één moederbord. Sluit je aan.",
-  },
-  alternates: { canonical: "https://svsit.nl/over-ons" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("pageOverOns");
+  return {
+    title: t("meta.title"),
+    description: t("meta.description"),
+    openGraph: {
+      title: t("meta.ogTitle"),
+      description: t("meta.ogDescription"),
+      siteName: "{SIT}",
+      locale: "nl_NL",
+      type: "website",
+      url: "https://svsit.nl/over-ons",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("meta.twitterTitle"),
+      description: t("meta.twitterDescription"),
+    },
+    alternates: { canonical: "https://svsit.nl/over-ons" },
+  };
+}
 
 // Slanke HBO-ICT co-brand band tussen navbar en het organigram. pt-28/pt-32
 // duwt de band ONDER de fixed navbar (zelfde offset-conventie als .cb-head in
 // moederbord.css, padding-top clamp 88-128px). Compact en bold: wit HBO-ICT
 // lockup links, gouden eyebrow + korte regel rechts, vormtaal als bold rand.
 // Statisch -> eindstaat altijd zichtbaar, geen JS nodig.
-function HboIctCoBrandStrip() {
+async function HboIctCoBrandStrip() {
+  const t = await getTranslations("pageOverOns");
   return (
     <section
       className="relative pt-28 md:pt-32 px-6 md:px-12 lg:px-24"
@@ -75,14 +77,14 @@ function HboIctCoBrandStrip() {
               aria-hidden="true"
             />
             <span className="font-mono text-xs uppercase tracking-[0.3em] text-[var(--color-accent-gold)]">
-              {"// onderdeel_van"}
+              {t("strip.eyebrow")}
             </span>
           </div>
           <p
             id="overons-cobrand-heading"
             className="font-display text-base md:text-xl font-bold uppercase tracking-tight leading-[1.1] text-[var(--color-text)]"
           >
-            Het Moederbord van SIT. Dé officiële studievereniging van HBO-ICT
+            {t("strip.heading")}
           </p>
         </div>
 

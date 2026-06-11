@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DocumentenContent from "./DocumentenContent";
 
-export const metadata: Metadata = {
-  title: "Documenten - {SIT}",
-  description:
-    "Officiele documenten van Studievereniging Innovatie en Technologie (SIT): statuten, huishoudelijk reglement en jaarverslagen.",
-  openGraph: {
-    title: "Documenten - {SIT}",
-    description: "Statuten, reglementen en verantwoording van SIT.",
-    siteName: "{SIT}",
-    locale: "nl_NL",
-    type: "website",
-    url: "https://svsit.nl/documenten",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("pageDocumenten");
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+    openGraph: {
+      title: t("ogTitle"),
+      description: t("ogDescription"),
+      siteName: "{SIT}",
+      type: "website",
+      url: "https://svsit.nl/documenten",
+    },
+  };
+}
 
 export default function DocumentenPage() {
   return (

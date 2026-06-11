@@ -1,0 +1,34 @@
+{
+  "label": "wat zeggen leden",
+  "headingLine1": "Van onze",
+  "headingLine2": "community",
+  "items": {
+    "matin": {
+      "quote": "Ik kwam binnen als eerstejaars die niemand kende. Nu zit ik in twee commissies, heb ik een hackathon gewonnen en ken ik de helft van de opleiding. SIT maakt je studie.",
+      "highlight": "twee commissies",
+      "role": "Voorzitter"
+    },
+    "idil": {
+      "quote": "Bij de Evenementencommissie regel ik borrels voor 100+ mensen. Dat zet je op je CV en in je vriendengroep. Veel leerzamer dan het klinkt.",
+      "highlight": "CV en in je vriendengroep",
+      "role": "Secretaris"
+    },
+    "hugo": {
+      "quote": "Workshops geven via EduCo gaf me het lef om voor een zaal te staan. Beste skill die ik hier opdeed.",
+      "highlight": "Beste skill",
+      "role": "Bestuurslid"
+    },
+    "riley": {
+      "quote": "Game Night is mijn vaste vrijdag geworden. D&D campaign loopt al een heel jaar door.",
+      "highlight": "D&D campaign",
+      "role": "Voorzitter GameIT"
+    }
+  },
+  "discord": {
+    "channel": "#algemeen",
+    "server": "SIT Discord",
+    "msg1": "zou ik lid worden van SIT?",
+    "msg2": "het is letterlijk {price} voor een heel jaar",
+    "msg3": "say less, ik zit er al in"
+  }
+}

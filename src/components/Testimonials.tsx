@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import gsap from "gsap";
 import SectionLabel from "@/components/SectionLabel";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -8,29 +9,20 @@ import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 const TESTIMONIALS = [
   {
-    quote:
-      "Ik kwam binnen als eerstejaars die niemand kende. Nu zit ik in twee commissies, heb ik een hackathon gewonnen en ken ik de helft van de opleiding. SIT maakt je studie.",
-    highlight: "twee commissies",
+    key: "matin",
     name: "Matin",
-    role: "Voorzitter",
     color: "var(--color-accent-gold)",
     span: "col-span-1 md:col-span-6",
   },
   {
-    quote:
-      "Bij de Evenementencommissie regel ik borrels voor 100+ mensen. Dat zet je op je CV en in je vriendengroep. Veel leerzamer dan het klinkt.",
-    highlight: "CV en in je vriendengroep",
+    key: "idil",
     name: "Idil",
-    role: "Secretaris",
     color: "var(--color-accent-red)",
     span: "col-span-1 md:col-span-6",
   },
   {
-    quote:
-      "Workshops geven via EduCo gaf me het lef om voor een zaal te staan. Beste skill die ik hier opdeed.",
-    highlight: "Beste skill",
+    key: "hugo",
     name: "Hugo",
-    role: "Bestuurslid",
     color: "var(--color-accent-green)",
     span: "col-span-1 md:col-span-4",
   },
@@ -39,11 +31,8 @@ const TESTIMONIALS = [
     span: "col-span-1 md:col-span-4",
   },
   {
-    quote:
-      "Game Night is mijn vaste vrijdag geworden. D&D campaign loopt al een heel jaar door.",
-    highlight: "D&D campaign",
+    key: "riley",
     name: "Riley",
-    role: "Voorzitter GameIT",
     color: "var(--color-accent-red)",
     span: "col-span-1 md:col-span-4",
   },
@@ -62,6 +51,7 @@ function highlightText(text: string, highlight: string) {
 }
 
 function DiscordCard() {
+  const t = useTranslations("testimonials");
   return (
     <div className="h-full border border-[var(--color-border)] bg-[var(--color-surface)] p-5 flex flex-col">
       {/* Header */}
@@ -71,23 +61,23 @@ function DiscordCard() {
           <span className="w-2 h-2 rounded-full bg-[var(--color-accent-gold)] opacity-60" />
           <span className="w-2 h-2 rounded-full bg-[var(--color-accent-green)] opacity-60" />
         </div>
-        <span className="font-mono text-xs text-[var(--color-text)] ml-1">#algemeen</span>
-        <span className="font-mono text-[10px] text-[var(--color-text-muted)] ml-auto">SIT Discord</span>
+        <span className="font-mono text-xs text-[var(--color-text)] ml-1">{t("discord.channel")}</span>
+        <span className="font-mono text-[10px] text-[var(--color-text-muted)] ml-auto">{t("discord.server")}</span>
       </div>
 
       {/* Chat bubbles */}
       <div className="flex flex-col gap-2.5 flex-1">
         <div>
           <span className="font-mono text-[11px] text-[var(--color-accent-blue)]">wesley_dev</span>
-          <p className="font-mono text-xs text-[var(--color-text-muted)] mt-0.5">zou ik lid worden van SIT?</p>
+          <p className="font-mono text-xs text-[var(--color-text-muted)] mt-0.5">{t("discord.msg1")}</p>
         </div>
         <div>
           <span className="font-mono text-[11px] text-[var(--color-accent-green)]">rosa</span>
-          <p className="font-mono text-xs text-[var(--color-text-muted)] mt-0.5">het is letterlijk {SITE_CONFIG.membership.price} voor een heel jaar</p>
+          <p className="font-mono text-xs text-[var(--color-text-muted)] mt-0.5">{t("discord.msg2", { price: SITE_CONFIG.membership.price })}</p>
         </div>
         <div>
           <span className="font-mono text-[11px] text-[var(--color-accent-blue)]">wesley_dev</span>
-          <p className="font-mono text-xs text-[var(--color-text-muted)] mt-0.5">say less, ik zit er al in</p>
+          <p className="font-mono text-xs text-[var(--color-text-muted)] mt-0.5">{t("discord.msg3")}</p>
         </div>
       </div>
 
@@ -102,6 +92,7 @@ function DiscordCard() {
 }
 
 export default function Testimonials() {
+  const t = useTranslations("testimonials");
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
@@ -212,13 +203,13 @@ export default function Testimonials() {
       />
 
       <div className="relative max-w-[1400px] mx-auto">
-        <SectionLabel number="05" label="wat zeggen leden" />
+        <SectionLabel number="05" label={t("label")} />
 
         <div className="mb-8 md:mb-12">
           <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tight leading-[1.1]">
-            Van onze
+            {t("headingLine1")}
             <br />
-            <span className="text-[var(--color-accent-gold)]">community</span>
+            <span className="text-[var(--color-accent-gold)]">{t("headingLine2")}</span>
           </h2>
         </div>
 
@@ -226,16 +217,19 @@ export default function Testimonials() {
           ref={cardsRef}
           className="grid grid-cols-1 md:grid-cols-12 gap-4"
         >
-          {TESTIMONIALS.map((t, i) => {
-            if ("type" in t && t.type === "discord") {
+          {TESTIMONIALS.map((item, i) => {
+            if ("type" in item && item.type === "discord") {
               return (
-                <div key={i} className={`testi-card ${t.span}`}>
+                <div key={i} className={`testi-card ${item.span}`}>
                   <DiscordCard />
                 </div>
               );
             }
 
-            const testi = t as typeof TESTIMONIALS[0] & { quote: string; name: string; role: string; color: string; highlight: string; isDocent?: boolean };
+            const testi = item as { key: string; name: string; color: string; span: string };
+            const quote = t(`items.${testi.key}.quote`);
+            const highlight = t(`items.${testi.key}.highlight`);
+            const role = t(`items.${testi.key}.role`);
 
             return (
               <div key={i} className={`testi-card ${testi.span}`}>
@@ -249,25 +243,16 @@ export default function Testimonials() {
                     &ldquo;
                   </span>
                   <p className="font-mono text-sm leading-relaxed text-[var(--color-text-muted)] flex-1">
-                    {highlightText(testi.quote, testi.highlight)}
+                    {highlightText(quote, highlight)}
                   </p>
                   <div className="flex items-center gap-3 mt-5 pt-4 border-t border-[var(--color-border)]">
-                    {testi.isDocent ? (
-                      <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center font-mono text-[10px] font-bold"
-                        style={{ background: `${testi.color}20`, color: testi.color }}
-                      >
-                        DK
-                      </div>
-                    ) : (
-                      <div
-                        className="w-2 h-2 rounded-full"
-                        style={{ background: testi.color }}
-                      />
-                    )}
+                    <div
+                      className="w-2 h-2 rounded-full"
+                      style={{ background: testi.color }}
+                    />
                     <div>
                       <span className="font-mono text-xs text-[var(--color-text)]">{testi.name}</span>
-                      <span className="font-mono text-[10px] text-[var(--color-text-muted)] ml-2">{testi.role}</span>
+                      <span className="font-mono text-[10px] text-[var(--color-text-muted)] ml-2">{role}</span>
                     </div>
                   </div>
                 </div>

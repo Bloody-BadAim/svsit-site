@@ -1,31 +1,33 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
+import { getTranslations } from "next-intl/server";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import PageScrollProgress from "@/components/PageScrollProgress";
 import SectionDivider from "@/components/SectionDivider";
 import { SITE_CONFIG } from "@/lib/constants";
 
-export const metadata: Metadata = {
-  title: "{SIT} - Studievereniging ICT | HvA Amsterdam",
-  description:
-    `De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Events, workshops, hackathons, community en gratis dev tools. Word lid voor ${SITE_CONFIG.membership.pricePerYear}.`,
-  openGraph: {
-    title: "{SIT} - Studievereniging ICT",
-    description:
-      `Events, workshops, hackathons, community en gratis dev tools voor HBO-ICT studenten aan de HvA. Word lid voor ${SITE_CONFIG.membership.pricePerYear}.`,
-    siteName: "{SIT}",
-    locale: "nl_NL",
-    type: "website",
-    url: "https://svsit.nl",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "{SIT} - Studievereniging ICT",
-    description:
-      "Events, workshops, hackathons en community voor HBO-ICT studenten aan de HvA.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("homeMeta");
+  const price = SITE_CONFIG.membership.pricePerYear;
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription", { price }),
+    openGraph: {
+      title: t("ogTitle"),
+      description: t("ogDescription", { price }),
+      siteName: "{SIT}",
+      locale: "nl_NL",
+      type: "website",
+      url: "https://svsit.nl",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("ogTitle"),
+      description: t("twitterDescription"),
+    },
+  };
+}
 
 // Defer heavy client components that are not needed for initial paint (LCP)
 const SmoothScroll = dynamic(() => import("@/components/SmoothScroll"));

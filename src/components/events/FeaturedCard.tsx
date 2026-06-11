@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { Clock, MapPin, ExternalLink } from "lucide-react";
 import { TextScramble } from "@/components/ui/TextScramble";
 import type { SitEvent } from "./types";
@@ -10,6 +11,7 @@ import DateStub from "./DateStub";
 import AddToCalendarDropdown from "./AddToCalendarDropdown";
 
 export default function FeaturedCard({ event, inView }: { event: SitEvent; inView: boolean }) {
+  const t = useTranslations("eventFeaturedCard");
   const ticket = ticketLabel(event);
 
   return (
@@ -95,7 +97,7 @@ export default function FeaturedCard({ event, inView }: { event: SitEvent; inVie
               className="font-mono text-[11px] tracking-[0.2em] uppercase font-medium"
               style={{ color: BRAND.green }}
             >
-              Volgende event
+              {t("nextEvent")}
             </span>
           </div>
 

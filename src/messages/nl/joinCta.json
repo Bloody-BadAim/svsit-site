@@ -1,0 +1,21 @@
+{
+  "label": "word lid",
+  "status": "SIT is actief - Bestuur XII",
+  "headingLine1": "Jouw Community",
+  "headingLine2": "Wacht",
+  "pitchPre": "Events, borrels, hackathons, workshops en een netwerk van",
+  "pitchHbo": "HBO-ICT studenten",
+  "pitchPost": "die dezelfde opleiding doorlopen. Van Software Engineering tot Game Dev, iedereen zit hier.",
+  "priceSuffix": "per jaar - geen verborgen kosten",
+  "perks": {
+    "events": "Toegang tot alle events & borrels",
+    "committees": "Meedraaien in elke commissie",
+    "network": "Netwerk van {members} studenten, alumni & bedrijven",
+    "tools": "Dev-tools, AI Labs & de SIT-server"
+  },
+  "cardName": "JOUW NAAM",
+  "social": "{members} studenten gingen je voor",
+  "alreadyMember": "Al lid?",
+  "login": "Log in",
+  "viewCommittees": "Bekijk commissies"
+}

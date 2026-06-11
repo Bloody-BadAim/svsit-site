@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { Calendar, ChevronDown } from "lucide-react";
 import type { SitEvent } from "./types";
 import { downloadIcs, googleCalendarUrl, outlookCalendarUrl } from "./calendarHelpers";
@@ -13,6 +14,7 @@ export default function AddToCalendarDropdown({
   event: SitEvent;
   size?: "sm" | "lg";
 }) {
+  const t = useTranslations("eventCalendar");
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +55,7 @@ export default function AddToCalendarDropdown({
         aria-haspopup="true"
       >
         <Calendar size={isLg ? 11 : 9} />
-        + Agenda
+        {t("addToCalendar")}
         <ChevronDown
           size={isLg ? 10 : 8}
           className="transition-transform duration-200"
@@ -124,7 +126,7 @@ export default function AddToCalendarDropdown({
                 <path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
-              Download .ics
+              {t("downloadIcs")}
             </button>
           </motion.div>
         )}

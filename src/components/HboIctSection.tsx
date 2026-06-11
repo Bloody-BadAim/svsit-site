@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { isReducedMotion, onMotionChange } from "@/lib/motion";
 import HboIctVormtaal from "@/components/HboIctVormtaal";
 
@@ -15,6 +16,7 @@ import HboIctVormtaal from "@/components/HboIctVormtaal";
 // ---------------------------------------------------------------------------
 
 export default function HboIctSection() {
+  const t = useTranslations("hboIctSection");
   const ref = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
   const [reduced, setReduced] = useState(true);
@@ -67,7 +69,7 @@ export default function HboIctSection() {
             {/* Mono eyebrow in goud */}
             <div className="flex items-center gap-3">
               <span className="font-mono text-xs text-[var(--color-accent-gold)] tracking-[0.3em] uppercase">
-                {"> officieel.partner"}
+                {t("eyebrow")}
               </span>
               <span className="h-px w-10 bg-[var(--color-accent-gold)]" />
             </div>
@@ -77,12 +79,12 @@ export default function HboIctSection() {
               id="hboict-heading"
               className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--color-text)] tracking-tight uppercase leading-[0.92]"
             >
-              Dé studievereniging van HBO-ICT
+              {t("heading")}
             </h2>
 
             {/* Eén korte punchy regel (studententoon, geen dashes/komma's) */}
             <p className="max-w-md text-sm md:text-base text-[var(--color-text-muted)] leading-snug">
-              Door studenten voor studenten. Wij zijn jouw plek binnen de opleiding.
+              {t("body")}
             </p>
 
             {/* Payoff in mono caps, HBO-ICT cyaan accent */}
@@ -96,7 +98,7 @@ export default function HboIctSection() {
                 className="font-mono text-xs md:text-sm uppercase tracking-[0.4em]"
                 style={{ color: "var(--hboict-cyan)" }}
               >
-                Creating Tomorrow
+                {t("payoff")}
               </span>
               <ArrowUpRight
                 className="h-4 w-4"
@@ -157,7 +159,7 @@ export default function HboIctSection() {
               />
               <Image
                 src="/hbo-ict-wit.png"
-                alt="HBO-ICT - Hogeschool van Amsterdam"
+                alt={t("logoAlt")}
                 width={240}
                 height={41}
                 className="h-auto w-[150px] md:w-[180px]"

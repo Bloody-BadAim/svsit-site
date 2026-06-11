@@ -1,0 +1,16 @@
+{
+  "metaTitle": "Events - '{'SIT'}'",
+  "metaDescription": "Check out all upcoming events from SIT, the study association for HBO-ICT at the HvA.",
+  "ogDescription": "Drinks, hackathons, tech talks, game nights and more. Check out the SIT event program.",
+  "twitterDescription": "Drinks, hackathons, tech talks, game nights and more at SIT.",
+  "heading": "Events",
+  "consoleHint": "> events.list(status: \"upcoming\")",
+  "priceFrom": "From €{price}",
+  "spots": "{count} spots",
+  "viewMore": "View →",
+  "emptyTitle": "There are no upcoming events right now",
+  "emptySubtitle": "Follow @sv.sit on Instagram for updates",
+  "recapHeading": "// recap",
+  "recapBadge": "RECAP",
+  "photoAlt": "{title} photo {number}"
+}

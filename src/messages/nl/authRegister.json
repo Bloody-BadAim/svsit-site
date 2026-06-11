@@ -1,0 +1,41 @@
+{
+  "whatsappLabel": "WhatsApp groep",
+  "discordLabel": "Discord server",
+  "errorRegisterFailed": "Registratie mislukt",
+  "errorLoginAfterRegister": "Inloggen na registratie mislukt",
+  "errorCheckoutFailed": "Betaling starten mislukt",
+  "errorGeneric": "Er ging iets mis",
+  "step1": {
+    "title": "Word lid van",
+    "subtitle": "Maak je account aan in 2 stappen",
+    "nameLabel": "naam",
+    "nameOptional": "(optioneel)",
+    "namePlaceholder": "Hoe wil je dat we je noemen?",
+    "emailLabel": "email",
+    "emailPlaceholder": "je@email.nl",
+    "passwordLabel": "wachtwoord",
+    "passwordHint": "(min. 8 tekens)",
+    "passwordPlaceholder": "Kies een wachtwoord",
+    "student": "Student",
+    "notStudent": "Geen student",
+    "studentNumberLabel": "studentnummer",
+    "studentNumberPlaceholder": "bijv. 500123456",
+    "hvaEmailLabel": "HvA email",
+    "hvaEmailOptional": "(optioneel)",
+    "hvaEmailPlaceholder": "voornaam.achternaam@hva.nl",
+    "notStudentNote": "Docent, alumnus of extern? Iedereen is welkom bij SIT.",
+    "next": "Volgende"
+  },
+  "step2": {
+    "title": "Kies je rol",
+    "subtitle": "Wil je actief meebouwen? Kies een commissie. Of skip en ontdek later.",
+    "roleLabel": "Rol",
+    "commissieLabel": "Commissie",
+    "agreement": "Ik ga akkoord met de voorwaarden en machtig SIT om jaarlijks af te schrijven via automatische incasso.",
+    "loading": "Bezig...",
+    "joinPaid": "Word lid - {price}",
+    "skipPayment": "Eerst rondkijken (betaal later)",
+    "back": "← Terug"
+  },
+  "socialsLabel": "volg ons - mis niks"
+}

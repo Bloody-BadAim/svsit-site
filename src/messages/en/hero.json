@@ -1,0 +1,19 @@
+{
+  "promptInit": "init",
+  "promptInitSuffix": " student association",
+  "subtitleAssociation": " Studievereniging ICT",
+  "subtitleUniversity": "Amsterdam University of Applied Sciences",
+  "taglineBy": "By",
+  "taglineFor": "For",
+  "taglineStudents": "students.",
+  "taglineInTech": " In tech.",
+  "ctaJoin": "JOIN NOW",
+  "ctaEvents": "VIEW EVENTS",
+  "scrollDown": "scroll down",
+  "stats": {
+    "leden": "members",
+    "events": "events",
+    "commissies": "committees",
+    "besturen": "boards"
+  }
+}

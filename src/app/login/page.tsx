@@ -1,11 +1,17 @@
+import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import LoginForm from '@/components/auth/LoginForm'
 
-export const metadata = {
-  title: 'Login - SIT',
-  description: 'Log in bij SIT, de studievereniging voor HBO-ICT aan de HvA.',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pageLogin')
+  return {
+    title: t('meta.title'),
+    description: t('meta.description'),
+  }
 }
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const t = await getTranslations('pageLogin')
   return (
     <main
       className="min-h-screen relative flex flex-col items-center justify-center px-6"
@@ -55,11 +61,11 @@ export default function LoginPage() {
               fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
             }}
           >
-            Log in op je account
+            {t('heading')}
           </h1>
 
           <p className="font-mono text-sm mt-3" style={{ color: 'var(--color-text-muted)' }}>
-            {'>'} auth.login()
+            {t('terminal')}
           </p>
         </div>
 

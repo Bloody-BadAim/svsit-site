@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useReducedMotion } from "motion/react";
 import { Film, ArrowRight } from "lucide-react";
@@ -22,6 +23,7 @@ const RECAP_ANCHOR = "/events#terugblik";
 type FetchState = "loading" | "ready";
 
 export default function EventRecap() {
+  const t = useTranslations("eventRecap");
   const ref = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
   const [photos, setPhotos] = useState<RecapPhoto[]>([]);
@@ -77,7 +79,7 @@ export default function EventRecap() {
       <div className="relative z-[1]">
         {/* Header block (padded) */}
         <div className="px-6 md:px-12 lg:px-24">
-          <SectionLabel number="04" label="terugblik" />
+          <SectionLabel number="04" label={t("label")} />
 
           {/* Code-style subheader */}
           <div
@@ -85,7 +87,7 @@ export default function EventRecap() {
             style={{ color: "var(--color-text-muted)" }}
           >
             <span style={{ color: "var(--color-accent-green)" }}>{"// "}</span>
-            momenten uit afgelopen events
+            {t("subheader")}
           </div>
         </div>
 
@@ -151,7 +153,7 @@ export default function EventRecap() {
               className="text-[var(--color-accent-gold)] group-hover:text-[var(--color-text)] transition-colors duration-300"
               aria-hidden="true"
             />
-            <span>bekijk alle recaps</span>
+            <span>{t("cta")}</span>
             <ArrowRight
               size={14}
               className="transition-transform duration-300 group-hover:translate-x-1"
@@ -167,18 +169,19 @@ export default function EventRecap() {
 // ─── A single film frame (one recap photo) ──────────────────────────────────
 
 function FilmFrame({ photo, index }: { photo: RecapPhoto; index: number }) {
+  const t = useTranslations("eventRecap");
   const frameNo = String(index + 1).padStart(2, "0");
   return (
     <Link
       href="/events#terugblik"
       className="frecap-frame h-40 w-60 md:h-56 md:w-80 shrink-0"
       style={{ ["--frecap-accent" as string]: photo.color }}
-      aria-label={`${photo.title} - bekijk recap`}
+      aria-label={t("frameAria", { title: photo.title })}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={photo.url}
-        alt={`${photo.title} recap foto`}
+        alt={t("photoAlt", { title: photo.title })}
         loading="lazy"
         className="frecap-photo"
       />
@@ -220,12 +223,13 @@ function StripSkeleton() {
 // ─── Empty state: film-strip-styled placeholder frame ───────────────────────
 
 function EmptyStrip() {
+  const t = useTranslations("eventRecap");
   return (
     <div className="flex w-full items-center justify-center px-6">
       <div className="frecap-empty h-40 w-full max-w-xl md:h-56 px-6">
         <p className="font-mono text-xs md:text-sm text-[var(--color-text-muted)]">
           <span style={{ color: "var(--color-accent-green)" }}>{"// "}</span>
-          nog geen terugblikken &mdash; volg{" "}
+          {t("empty.lead")} &mdash; {t("empty.follow")}{" "}
           <a
             href="https://instagram.com/sv.sit"
             target="_blank"
@@ -234,7 +238,7 @@ function EmptyStrip() {
           >
             @sv.sit
           </a>{" "}
-          voor de eerste
+          {t("empty.tail")}
         </p>
       </div>
     </div>

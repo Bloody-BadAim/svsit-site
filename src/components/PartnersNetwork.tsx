@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { PARTNERS, TIER_META, TIER_ORDER } from "@/lib/partners";
 import { SITE_CONFIG } from "@/lib/constants";
 import { TextScramble } from "@/components/ui/TextScramble";
@@ -27,6 +28,7 @@ function Corners() {
 }
 
 export default function PartnersNetwork() {
+  const t = useTranslations("partnersNetwork");
   const gridRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
 
@@ -126,18 +128,18 @@ export default function PartnersNetwork() {
 
       <div className="wrap">
         <div className="p-head">
-          <span className="eyebrow">// powered by</span>
+          <span className="eyebrow">{t("eyebrow")}</span>
           <h1 className="p-title">
-            Partner<span className="b">·</span>netwerk
+            {t("titlePre")}<span className="b">·</span>{t("titlePost")}
           </h1>
           <p className="p-status">
             <span className="live"><i />root@sit:~/network</span>
             <span className="sep">$</span>
-            <span>trace --partners</span>
+            <span>{t("statusCommand")}</span>
             <span className="sep">·</span>
-            <span><b>{connected}</b> verbonden</span>
+            <span><b>{connected}</b> {t("statusConnected")}</span>
             <span className="sep">·</span>
-            <span>slots <b>open</b></span>
+            <span>{t("statusSlotsLabel")} <b>{t("statusSlotsValue")}</b></span>
           </p>
         </div>
 
@@ -155,14 +157,14 @@ export default function PartnersNetwork() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/circuit-chip-logo.png" alt="SIT" width={24} height={24} />
                 </span>
-                <span className="onl"><i />core</span>
+                <span className="onl"><i />{t("coreOnline")}</span>
               </div>
-              <h3 className="node-logo"><span className="b">{"{"}</span>SIT<span className="b">{"}"}</span> CORE</h3>
+              <h3 className="node-logo"><span className="b">{"{"}</span>SIT<span className="b">{"}"}</span> {t("coreTitle")}</h3>
               <p className="node-tag">
-                De hub - elke partner sluit hier aan op{" "}
-                <b style={{ color: "var(--color-text)", fontWeight: 500 }}>100+</b> ICT-studenten.
+                {t("coreTagPre")}{" "}
+                <b style={{ color: "var(--color-text)", fontWeight: 500 }}>100+</b> {t("coreTagPost")}
               </p>
-              <div className="node-foot"><span className="addr">status · <b>online</b></span></div>
+              <div className="node-foot"><span className="addr">{t("coreStatusLabel")} · <b>{t("coreStatusValue")}</b></span></div>
             </article>
 
             {/* Partners */}
@@ -195,8 +197,8 @@ export default function PartnersNetwork() {
                   <div className="spot" />
                   <div className="scan" />
                   <div className="node-head">
-                    <span className="badge">{isHboIct ? "THUISBASIS" : tier.label}</span>
-                    <span className="onl"><i />online</span>
+                    <span className="badge">{isHboIct ? t("badgeHome") : tier.label}</span>
+                    <span className="onl"><i />{t("nodeOnline")}</span>
                   </div>
                   {isHboIct ? (
                     <h3 className="node-logo hboict-logo">
@@ -243,7 +245,7 @@ export default function PartnersNetwork() {
                   <p className="node-tag">{p.tagline}</p>
                   <div className="node-foot">
                     <span className="addr">node://<b>{p.slug}</b></span>
-                    {p.url && <span className="go">connect →</span>}
+                    {p.url && <span className="go">{t("nodeConnect")}</span>}
                   </div>
                 </>
               );
@@ -274,13 +276,13 @@ export default function PartnersNetwork() {
               <p className="slot-cmd">
                 <span className="c-green">$</span> partner --add<span className="cur" />
               </p>
-              <p className="slot-sub">jouw logo hier · {SITE_CONFIG.sponsoringEmail}</p>
+              <p className="slot-sub">{t("slotSub")} · {SITE_CONFIG.sponsoringEmail}</p>
             </a>
           </div>
         </div>
 
         <div className="legend">
-          <span className="c-green">// tiers</span>
+          <span className="c-green">{t("legendLabel")}</span>
           {TIER_ORDER.map((t) => (
             <span className="tier" key={t}>
               <i style={{ background: TIER_META[t].color }} />

@@ -3,8 +3,10 @@
 import { signIn } from 'next-auth/react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 export default function LoginForm() {
+  const t = useTranslations('authLogin')
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -24,9 +26,9 @@ export default function LoginForm() {
 
     if (result?.error) {
       if (result.code === 'rate_limited') {
-        setError('Te veel inlogpogingen. Probeer het over een paar minuten opnieuw.')
+        setError(t('errorRateLimited'))
       } else {
-        setError('Onjuist email of wachtwoord')
+        setError(t('errorInvalid'))
       }
       setLoading(false)
     } else {
@@ -43,7 +45,7 @@ export default function LoginForm() {
             htmlFor="email"
             className="block font-mono text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider mb-2"
           >
-            email
+            {t('emailLabel')}
           </label>
           <input
             id="email"
@@ -51,7 +53,7 @@ export default function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            placeholder="je@email.nl"
+            placeholder={t('emailPlaceholder')}
             className="w-full py-3 px-4 rounded-md text-sm font-mono outline-none transition-all duration-200 placeholder:text-[var(--color-text-muted)]/30 focus:border-[var(--color-accent-gold)]"
             style={{
               backgroundColor: 'rgba(255,255,255,0.05)',
@@ -66,7 +68,7 @@ export default function LoginForm() {
             htmlFor="password"
             className="block font-mono text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider mb-2"
           >
-            wachtwoord
+            {t('passwordLabel')}
           </label>
           <input
             id="password"
@@ -91,7 +93,7 @@ export default function LoginForm() {
             className="font-mono text-xs transition-colors hover:text-[var(--color-text)]"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            Wachtwoord vergeten?
+            {t('forgotPassword')}
           </a>
         </div>
 
@@ -111,18 +113,18 @@ export default function LoginForm() {
             color: '#000000',
           }}
         >
-          {loading ? 'Bezig...' : 'Inloggen'}
+          {loading ? t('loading') : t('submit')}
         </button>
       </form>
 
       <p className="mt-8 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-        Nog geen lid?{' '}
+        {t('noAccount')}{' '}
         <a
           href="/lid-worden"
           className="font-mono transition-colors hover:text-[var(--color-text)]"
           style={{ color: 'var(--color-accent-gold)' }}
         >
-          Word lid van SIT
+          {t('joinLink')}
         </a>
       </p>
     </div>

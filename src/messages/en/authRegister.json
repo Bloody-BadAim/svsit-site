@@ -1,0 +1,41 @@
+{
+  "whatsappLabel": "WhatsApp group",
+  "discordLabel": "Discord server",
+  "errorRegisterFailed": "Registration failed",
+  "errorLoginAfterRegister": "Login after registration failed",
+  "errorCheckoutFailed": "Could not start payment",
+  "errorGeneric": "Something went wrong",
+  "step1": {
+    "title": "Join",
+    "subtitle": "Create your account in 2 steps",
+    "nameLabel": "name",
+    "nameOptional": "(optional)",
+    "namePlaceholder": "What should we call you?",
+    "emailLabel": "email",
+    "emailPlaceholder": "you@email.com",
+    "passwordLabel": "password",
+    "passwordHint": "(min. 8 characters)",
+    "passwordPlaceholder": "Pick a password",
+    "student": "Student",
+    "notStudent": "Not a student",
+    "studentNumberLabel": "student number",
+    "studentNumberPlaceholder": "e.g. 500123456",
+    "hvaEmailLabel": "HvA email",
+    "hvaEmailOptional": "(optional)",
+    "hvaEmailPlaceholder": "firstname.lastname@hva.nl",
+    "notStudentNote": "Teacher, alumnus or external? Everyone is welcome at SIT.",
+    "next": "Next"
+  },
+  "step2": {
+    "title": "Pick your role",
+    "subtitle": "Want to help build? Pick a committee. Or skip and explore later.",
+    "roleLabel": "Role",
+    "commissieLabel": "Committee",
+    "agreement": "I agree to the terms and authorise SIT to charge me yearly via direct debit.",
+    "loading": "Loading...",
+    "joinPaid": "Join - {price}",
+    "skipPayment": "Look around first (pay later)",
+    "back": "← Back"
+  },
+  "socialsLabel": "follow us - miss nothing"
+}

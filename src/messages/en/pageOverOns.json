@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "title": "Het Moederbord - Board & Committees - {SIT}",
+    "description": "Het Moederbord: the board and committees of SIT in one org chart. Board XII is the core, every committee a module you can plug in. Plug yourself in.",
+    "ogTitle": "Het Moederbord - Board & Committees - {SIT}",
+    "ogDescription": "Board XII is the core, every committee a module. Discover how SIT is organised and join in.",
+    "twitterTitle": "Het Moederbord - Board & Committees - {SIT}",
+    "twitterDescription": "Board XII and the committees of SIT as one motherboard. Join in."
+  },
+  "strip": {
+    "eyebrow": "// part_of",
+    "heading": "The Motherboard of SIT. The official student association of HBO-ICT"
+  }
+}

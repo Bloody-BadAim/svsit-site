@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { useTranslations } from "next-intl";
 import SectionLabel from "@/components/SectionLabel";
 import { BorderTrail } from "@/components/ui/BorderTrail";
 import { isReducedMotion, onMotionChange } from "@/lib/motion";
@@ -30,10 +31,6 @@ function colorize(line: string) {
     .replace(RE_NUMBER, '<span style="color: var(--color-accent-red)">$1</span>');
 }
 
-const HEADING_WORDS_1 = ["DE studievereniging voor"];
-const HEADING_GOLD = "ICT studenten";
-const HEADING_WORDS_2_POST = "aan de HvA";
-
 interface FloatingFragment {
   text: string;
   top?: string;
@@ -52,6 +49,8 @@ const FLOATING_FRAGMENTS: FloatingFragment[] = [
 ];
 
 export default function About() {
+  const t = useTranslations("about");
+  const headingPreWords = t("headingPre").split(" ");
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
@@ -169,7 +168,7 @@ export default function About() {
               {
                 textShadow: "0 0 20px rgba(245, 158, 11, 0.4)",
                 duration: 0.5,
-                delay: HEADING_WORDS_1.length * 0.06 + 0.3,
+                delay: headingPreWords.length * 0.06 + 0.3,
                 scrollTrigger: {
                   trigger: headingRef.current,
                   start: "top 85%",
@@ -345,13 +344,13 @@ export default function About() {
       />
 
       <div className="relative max-w-[1400px] mx-auto">
-        <SectionLabel number="01" label="over sit" />
+        <SectionLabel number="01" label={t("sectionLabel")} />
 
         {/* Heading - word-by-word reveal */}
         <div ref={headingRef} className="mb-8 md:mb-12" style={{ perspective: "600px" }}>
           <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight uppercase">
             <span className="block">
-              {HEADING_WORDS_1.map((word, i) => (
+              {headingPreWords.map((word, i) => (
                 <span
                   key={i}
                   className="heading-word inline-block mr-[0.3em]"
@@ -366,13 +365,13 @@ export default function About() {
                 className="heading-word heading-gold inline-block mr-[0.3em] text-[var(--color-accent-gold)]"
                 style={{ transformOrigin: "bottom center" }}
               >
-                {HEADING_GOLD}
+                {t("headingGold")}
               </span>
               <span
                 className="heading-word inline-block"
                 style={{ transformOrigin: "bottom center" }}
               >
-                {HEADING_WORDS_2_POST}
+                {t("headingPost")}
               </span>
             </span>
           </h2>
@@ -383,8 +382,7 @@ export default function About() {
           {/* Left: body text with clip-path reveal */}
           <div ref={textRef}>
             <p className="font-mono text-base md:text-lg leading-relaxed text-[var(--color-text-muted)]">
-              We organiseren <span className="text-[var(--color-accent-blue)]">events</span>, bouwen een <span className="text-[var(--color-accent-green)]">community</span>, en maken je studietijd
-              beter. Of je nu <span className="text-[var(--color-accent-blue)]">codeert</span>, <span className="text-[var(--color-accent-red)]">hackt</span>, gamet, of onderneemt.
+              {t("bodyStart")}<span className="text-[var(--color-accent-blue)]">{t("bodyEvents")}</span>{t("bodyMid1")}<span className="text-[var(--color-accent-green)]">{t("bodyCommunity")}</span>{t("bodyMid2")}<span className="text-[var(--color-accent-blue)]">{t("bodyCode")}</span>{t("bodyMid3")}<span className="text-[var(--color-accent-red)]">{t("bodyHack")}</span>{t("bodyEnd")}
             </p>
           </div>
 

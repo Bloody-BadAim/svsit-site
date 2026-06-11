@@ -1,0 +1,12 @@
+{
+  "label": "recap",
+  "subheader": "moments from past events",
+  "cta": "view all recaps",
+  "frameAria": "{title} - view recap",
+  "photoAlt": "{title} recap photo",
+  "empty": {
+    "lead": "no recaps yet",
+    "follow": "follow",
+    "tail": "for the first one"
+  }
+}

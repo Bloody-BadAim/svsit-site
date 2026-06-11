@@ -1,0 +1,14 @@
+{
+  "label": "Events",
+  "placeholder": {
+    "title": "Meer events worden binnenkort aangekondigd",
+    "subtitle": "Volg @sv.sit op Instagram voor updates"
+  },
+  "upcoming": "BINNENKORT",
+  "doneToggle": {
+    "hide": "Verberg",
+    "show": "Toon",
+    "label": "afgeronde events ({count})"
+  },
+  "tba": "Meer events worden aangekondigd..."
+}

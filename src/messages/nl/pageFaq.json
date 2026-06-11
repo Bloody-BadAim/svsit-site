@@ -1,0 +1,25 @@
+{
+  "metaTitle": "FAQ - {SIT}",
+  "metaDescription": "Veelgestelde vragen over SIT, de studievereniging voor HBO-ICT aan de HvA. Wat kost het, wat krijg je, en hoe word je lid.",
+  "ogDescription": "Alles wat je wilt weten over lid worden van SIT.",
+  "structuredData": {
+    "q1": "Wat is SIT?",
+    "a1": "SIT is de studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. We organiseren events, workshops, hackathons, game avonden en meer. Met {members} leden en {commissies} commissies is er altijd iets te doen.",
+    "q2": "Wat kost het lidmaatschap?",
+    "a2": "Het lidmaatschap kost eenmalig {price} per jaar. Geen verborgen kosten, geen maandelijkse abonnementen. Je kunt betalen via iDEAL of creditcard.",
+    "q3": "Wat krijg ik als lid?",
+    "a3": "Toegang tot alle SIT events (de meeste gratis), gratis dev tools via het GitHub Student Pack, een persoonlijke ledenpas, commissie deelname, project mogelijkheden, en een community van mede-ICT studenten.",
+    "q4": "Moet ik student zijn om lid te worden?",
+    "a4": "Nee. SIT staat open voor iedereen: studenten, docenten, alumni en externen.",
+    "q5": "Zijn events gratis?",
+    "a5": "De meeste events zijn gratis voor leden. Sommige events (zoals feesten of externe locaties) hebben een kleine bijdrage. De prijs staat altijd bij het event vermeld.",
+    "q6": "Wat zijn commissies?",
+    "a6": "Commissies zijn teams van leden die specifieke taken op zich nemen: events organiseren, socials beheren, educatie content maken, games organiseren, en meer.",
+    "q7": "Hoe werkt het XP / leaderboard systeem?",
+    "a7": "Door events te bezoeken, badges te verdienen en actief te zijn verdien je XP. Hiermee stijg je in level en kun je op het leaderboard komen. Het is volledig optioneel.",
+    "q8": "Kan ik later betalen?",
+    "a8": "Ja. Bij registratie kun je kiezen voor 'Eerst rondkijken'. Je account wordt dan aangemaakt zonder betaling.",
+    "q9": "Hoe bereik ik het bestuur?",
+    "a9": "Stuur een mail naar {email}, DM ons op Instagram ({instagram}) of TikTok ({tiktok}), of join onze WhatsApp groep of Discord server."
+  }
+}

@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth'
 import type { SitEvent } from '@/types/database'
 import { parseFormFields } from '@/lib/eventForm'
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
 const getEvent = unstable_cache(
@@ -47,9 +48,10 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { id } = await params
   const event = await getEvent(id)
+  const t = await getTranslations('pageEventDetail')
 
   if (!event) {
-    return { title: 'Event niet gevonden - {SIT}' }
+    return { title: t('metaTitleNotFound') }
   }
 
   const dateStr = new Date(event.date as string).toLocaleDateString('nl-NL', {
@@ -58,13 +60,20 @@ export async function generateMetadata(
     year: 'numeric',
   })
 
-  const desc = event.description ?? `${event.title} op ${dateStr} bij ${event.location ?? 'SIT'}`
+  const desc =
+    event.description ??
+    t('metaFallbackDescription', {
+      title: event.title,
+      date: dateStr,
+      location: event.location ?? t('fallbackLocation'),
+    })
+  const title = t('metaTitle', { title: event.title })
 
   return {
-    title: `${event.title} - {SIT}`,
+    title,
     description: desc,
     openGraph: {
-      title: `${event.title} - {SIT}`,
+      title,
       description: desc,
       siteName: '{SIT}',
       locale: 'nl_NL',
@@ -73,7 +82,7 @@ export async function generateMetadata(
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${event.title} - {SIT}`,
+      title,
       description: desc,
     },
   }
@@ -103,6 +112,7 @@ export default async function EventDetailPage(
 ) {
   const { id } = await params
   const supabase = createServiceClient()
+  const t = await getTranslations('pageEventDetail')
 
   const typedEvent = await getEvent(id)
   if (!typedEvent) {
@@ -217,7 +227,7 @@ export default async function EventDetailPage(
           href="/events"
           className="inline-flex items-center gap-2 font-mono text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors mb-8"
         >
-          &larr; Alle events
+          {t('backToEvents')}
         </Link>
 
         {/* Event header card */}
@@ -259,7 +269,7 @@ export default async function EventDetailPage(
                     background: 'rgba(239, 68, 68, 0.08)',
                   }}
                 >
-                  Uitverkocht
+                  {t('soldOut')}
                 </span>
               )}
             </div>
@@ -287,7 +297,7 @@ export default async function EventDetailPage(
                 </div>
                 <div>
                   <p className="font-mono text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-0.5">
-                    Datum
+                    {t('labelDate')}
                   </p>
                   <p className="text-sm text-[var(--color-text)]">
                     {formatFullDate(typedEvent.date)}
@@ -305,7 +315,7 @@ export default async function EventDetailPage(
                 </div>
                 <div>
                   <p className="font-mono text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-0.5">
-                    Tijd
+                    {t('labelTime')}
                   </p>
                   <p className="text-sm text-[var(--color-text)]">
                     {formatTime(typedEvent.date)}
@@ -325,7 +335,7 @@ export default async function EventDetailPage(
                   </div>
                   <div>
                     <p className="font-mono text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-0.5">
-                      Locatie
+                      {t('labelLocation')}
                     </p>
                     <p className="text-sm text-[var(--color-text)]">
                       {typedEvent.location}
@@ -345,12 +355,12 @@ export default async function EventDetailPage(
                   </div>
                   <div>
                     <p className="font-mono text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-0.5">
-                      Beschikbaar
+                      {t('labelAvailable')}
                     </p>
                     <p className="text-sm text-[var(--color-text)]">
                       {isSoldOut
-                        ? 'Uitverkocht'
-                        : `${spotsLeft} van ${typedEvent.capacity} plekken`}
+                        ? t('soldOut')
+                        : t('spotsLeft', { spotsLeft: spotsLeft ?? 0, capacity: typedEvent.capacity })}
                     </p>
                   </div>
                 </div>
@@ -364,7 +374,7 @@ export default async function EventDetailPage(
                 style={{ borderTop: '1px solid var(--color-border)' }}
               >
                 <p className="font-mono text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-3">
-                  Over dit event
+                  {t('aboutEvent')}
                 </p>
                 <div className="text-sm text-[var(--color-text)] leading-relaxed whitespace-pre-line">
                   {typedEvent.description}
@@ -384,7 +394,7 @@ export default async function EventDetailPage(
             }}
           >
             <p className="font-mono text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-4">
-              Prijzen
+              {t('prices')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <div
@@ -395,7 +405,7 @@ export default async function EventDetailPage(
                 }}
               >
                 <p className="font-mono text-[10px] text-[var(--color-accent-gold)] uppercase tracking-widest mb-1">
-                  SIT leden
+                  {t('priceMembers')}
                 </p>
                 <p className="text-xl font-bold text-[var(--color-text)]">
                   &euro;{(typedEvent.price_members / 100).toFixed(2).replace('.00', ',-')}
@@ -409,7 +419,7 @@ export default async function EventDetailPage(
                 }}
               >
                 <p className="font-mono text-[10px] text-[var(--color-text-muted)] uppercase tracking-widest mb-1">
-                  Niet-leden
+                  {t('priceNonmembers')}
                 </p>
                 <p className="text-xl font-bold text-[var(--color-text)]">
                   &euro;{(typedEvent.price_nonmembers / 100).toFixed(2).replace('.00', ',-')}
@@ -429,11 +439,11 @@ export default async function EventDetailPage(
               style={{ background: '#18181B', border: '1px solid #27272A' }}
             >
               <p className="font-mono text-sm" style={{ color: '#A1A1AA' }}>
-                {isCancelled ? 'Dit event is afgelast.' : 'Dit event is geweest.'}
+                {isCancelled ? t('eventCancelled') : t('eventPast')}
               </p>
               {!isCancelled && (
                 <p className="font-mono text-xs mt-2" style={{ color: '#71717A' }}>
-                  De terugblik volgt binnenkort.
+                  {t('recapSoon')}
                 </p>
               )}
             </div>
@@ -458,7 +468,7 @@ export default async function EventDetailPage(
                 textDecoration: 'none',
               }}
             >
-              {'>'} {typedEvent.is_paid ? 'Tickets kopen (extern)' : 'Aanmelden (extern)'}
+              {typedEvent.is_paid ? t('buyTicketsExternal') : t('signupExternal')}
             </a>
           </div>
         ) : (
@@ -493,7 +503,7 @@ export default async function EventDetailPage(
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#22C55E' }} />
               </div>
               <span className="font-mono text-[10px] tracking-[0.15em]" style={{ color: '#71717A' }}>
-                // recap
+                {t('recap')}
               </span>
             </div>
 
@@ -507,7 +517,7 @@ export default async function EventDetailPage(
                     color: '#FAFAFA',
                   }}
                 >
-                  Terugblik
+                  {t('recapHeading')}
                 </h2>
               </div>
 
@@ -525,7 +535,7 @@ export default async function EventDetailPage(
                     className="font-mono text-[10px] tracking-[0.2em] uppercase mb-3"
                     style={{ color: cat.color }}
                   >
-                    {'>'} foto&apos;s
+                    {t('photos')}
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {typedEvent.recap_photos.map((url, i) => (
@@ -544,7 +554,7 @@ export default async function EventDetailPage(
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={url}
-                          alt={`${typedEvent.title} foto ${i + 1}`}
+                          alt={t('photoAlt', { title: typedEvent.title, number: i + 1 })}
                           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                         <div

@@ -1,0 +1,25 @@
+{
+  "metaTitle": "FAQ - {SIT}",
+  "metaDescription": "Frequently asked questions about SIT, the student association for HBO-ICT at the HvA. What it costs, what you get, and how to join.",
+  "ogDescription": "Everything you want to know about joining SIT.",
+  "structuredData": {
+    "q1": "What is SIT?",
+    "a1": "SIT is the student association for HBO-ICT students at the Amsterdam University of Applied Sciences. We organize events, workshops, hackathons, game nights and more. With {members} members and {commissies} committees there is always something to do.",
+    "q2": "What does membership cost?",
+    "a2": "Membership is a one time fee of {price} per year. No hidden costs, no monthly subscriptions. You can pay with iDEAL or credit card.",
+    "q3": "What do I get as a member?",
+    "a3": "Access to all SIT events (most are free), free dev tools through the GitHub Student Pack, a personal member card, committee participation, project opportunities, and a community of fellow ICT students.",
+    "q4": "Do I have to be a student to join?",
+    "a4": "No. SIT is open to everyone: students, teachers, alumni and externals.",
+    "q5": "Are events free?",
+    "a5": "Most events are free for members. Some events (like parties or external venues) have a small fee. The price is always listed with the event.",
+    "q6": "What are committees?",
+    "a6": "Committees are teams of members who take on specific tasks: organizing events, running the socials, making educational content, organizing games, and more.",
+    "q7": "How does the XP / leaderboard system work?",
+    "a7": "You earn XP by attending events, collecting badges and staying active. This levels you up and gets you on the leaderboard. It is completely optional.",
+    "q8": "Can I pay later?",
+    "a8": "Yes. When you register you can pick 'Look around first'. Your account is then created without payment.",
+    "q9": "How do I reach the board?",
+    "a9": "Send a mail to {email}, DM us on Instagram ({instagram}) or TikTok ({tiktok}), or join our WhatsApp group or Discord server."
+  }
+}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { ExternalLink, Github, Star } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 
@@ -19,14 +20,15 @@ interface Project {
 }
 
 const CATEGORY_FILTERS = [
-  { key: 'all', label: 'Alles' },
-  { key: 'hackathon', label: 'Hackathons' },
-  { key: 'community', label: 'Community' },
-  { key: 'game', label: 'Games' },
-  { key: 'tool', label: 'Tools' },
-]
+  { key: 'all' },
+  { key: 'hackathon' },
+  { key: 'community' },
+  { key: 'game' },
+  { key: 'tool' },
+] as const
 
 export default function ProjectenPage() {
+  const t = useTranslations('pageProjecten')
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -42,9 +44,9 @@ export default function ProjectenPage() {
           setProjects(res.data || [])
         }
       })
-      .catch(() => setError('Kon projecten niet laden'))
+      .catch(() => setError(t('loadError')))
       .finally(() => setLoading(false))
-  }, [])
+  }, [t])
 
   const filtered = filter === 'all' ? projects : projects.filter((p) => p.category === filter)
 
@@ -58,10 +60,10 @@ export default function ProjectenPage() {
           className="font-mono text-2xl md:text-3xl font-bold mb-3"
           style={{ color: 'var(--color-text)' }}
         >
-          {'>'} projecten
+          {'>'} {t('heading')}
         </h1>
         <p className="font-mono text-sm" style={{ color: 'var(--color-text-muted)' }}>
-          Gebouwd door SIT leden - hackathon winnaars, community tools, games en meer
+          {t('subtitle')}
         </p>
       </div>
 
@@ -80,7 +82,7 @@ export default function ProjectenPage() {
                 border: active ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid var(--color-border)',
               }}
             >
-              {f.label}
+              {t(`filters.${f.key}`)}
             </button>
           )
         })}
@@ -97,11 +99,11 @@ export default function ProjectenPage() {
               {error}
             </p>
             <button
-              onClick={() => { setError(null); setLoading(true); fetch('/api/projecten').then(r => r.json()).then(res => { if (res.error) setError(res.error); else setProjects(res.data || []); }).catch(() => setError('Kon projecten niet laden')).finally(() => setLoading(false)); }}
+              onClick={() => { setError(null); setLoading(true); fetch('/api/projecten').then(r => r.json()).then(res => { if (res.error) setError(res.error); else setProjects(res.data || []); }).catch(() => setError(t('loadError'))).finally(() => setLoading(false)); }}
               className="font-mono text-xs px-4 py-2 rounded-md"
               style={{ color: 'var(--color-text-muted)', border: '1px solid var(--color-border)' }}
             >
-              Probeer opnieuw
+              {t('retry')}
             </button>
           </div>
         ) : loading ? (
@@ -115,7 +117,7 @@ export default function ProjectenPage() {
             className="py-16 text-center font-mono text-sm rounded-lg"
             style={{ color: 'var(--color-text-muted)', border: '1px dashed var(--color-border)' }}
           >
-            Nog geen projecten in deze categorie
+            {t('empty')}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -168,7 +170,7 @@ export default function ProjectenPage() {
                 {/* Creators */}
                 {project.creators.length > 0 && (
                   <p className="text-[11px] font-mono mb-3" style={{ color: 'var(--color-text-muted)' }}>
-                    door {project.creators.join(', ')}
+                    {t('by', { creators: project.creators.join(', ') })}
                   </p>
                 )}
 
@@ -182,7 +184,7 @@ export default function ProjectenPage() {
                       className="flex items-center gap-1.5 font-mono text-[11px] transition-colors"
                       style={{ color: 'var(--color-text-muted)' }}
                     >
-                      <Github size={12} /> Repo
+                      <Github size={12} /> {t('repo')}
                     </a>
                   )}
                   {project.demo_url && (
@@ -193,7 +195,7 @@ export default function ProjectenPage() {
                       className="flex items-center gap-1.5 font-mono text-[11px] transition-colors"
                       style={{ color: 'var(--color-accent-green)' }}
                     >
-                      <ExternalLink size={12} /> Demo
+                      <ExternalLink size={12} /> {t('demo')}
                     </a>
                   )}
                 </div>

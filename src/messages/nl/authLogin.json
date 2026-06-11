@@ -1,0 +1,12 @@
+{
+  "emailLabel": "email",
+  "emailPlaceholder": "je@email.nl",
+  "passwordLabel": "wachtwoord",
+  "forgotPassword": "Wachtwoord vergeten?",
+  "errorRateLimited": "Te veel inlogpogingen. Probeer het over een paar minuten opnieuw.",
+  "errorInvalid": "Onjuist email of wachtwoord",
+  "loading": "Bezig...",
+  "submit": "Inloggen",
+  "noAccount": "Nog geen lid?",
+  "joinLink": "Word lid van SIT"
+}
