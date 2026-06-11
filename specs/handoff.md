@@ -1,40 +1,40 @@
-# Handoff — SIT Website (svsit-site) — 2026-06-04
+# Handoff — SIT Website (svsit-site) — 2026-06-12
 
 ## Doel
-SIT website, live op svsit.nl. Homepage partner-sectie premium maken (sponsoren betalen ervoor) + recap-foto showcase toevoegen bij events.
+Volledige Engelse versie van de site naast het Nederlands, met een NL/EN-toggleknop. Cookie-based, geen taal in de URL.
 
 ## Status
-- Fase 9 Launch, productie. HEAD `886c307` = origin/main (bestuursfoto's Thijmen/Yusuf gepusht, Yusuf vz Community).
-- Homepage-werk deze sessie = NOG NIET GECOMMIT (working tree dirty). Build groen (60/60), prod-build (`next start`) visueel geverifieerd via Playwright. Wacht op go voor commit + deploy.
+- Fase 9 Launch, productie. Branch `feat/i18n-en` gemerged naar `main` (FF), gepusht. HEAD `4da4404`.
+- Vercel productie-deploy gestart via `vercel --prod --yes` (loopt bij schrijven). Preview was groen (achter Vercel-auth).
+- Build groen, tsc 0 errors, 182 unit-tests groen.
 
-## Gewijzigde files (deze sessie, nog niet gecommit)
-- `src/components/SponsorShowcase.tsx` + `sponsorShowcase.css` — NIEUW concept "Sponsor-bus": chips op PCB-databus, auto-scroll marquee, tier-sizing + glow, stromende current. Nummer 06.
-- `src/components/EventRecap.tsx` + `eventRecap.css` — NIEUW: recap filmstrip-marquee (sectie 04), trekt foto's uit nieuwe API, elke frame linkt naar /events#terugblik.
-- `src/app/api/events/recaps/route.ts` — NIEUW: platte recap-foto feed (status=completed + recap_published, limit 8 events / 16 foto's, envelope {data,error,meta}).
-- `src/app/events/page.tsx` — `id="terugblik"` + `scroll-mt-28` op recap-blok (deep-link target).
-- `src/app/page.tsx` — `<EventRecap />` gewired na `<Events />` + divider.
-- `src/components/Testimonials.tsx` 04→05, `src/components/JoinCta.tsx` 06→07 (spine hernummerd).
+## Gewijzigde files (deze sessie) — kerngebieden
+- `src/i18n/{config,request,messages}.ts` — NIEUW: next-intl cookie-setup. `messages.ts` is GEGENEREERD uit `src/messages/` (zie key context).
+- `src/messages/{nl,en}/*.json` — 96 namespace-bestanden, NL/EN parity.
+- `src/components/LanguageSwitcher.tsx` — NIEUW: NL/EN-knop (zet NEXT_LOCALE-cookie + router.refresh).
+- `src/app/layout.tsx` — NextIntlClientProvider, dynamische `lang`, generateMetadata.
+- `next.config.ts` — createNextIntlPlugin gewired.
+- Vrijwel alle pages/components onder `src/app` en `src/components` + `src/emails/*` + `src/lib/*` consumers omgezet naar `t()`.
 
-## Wat werkt (prod-build geverifieerd: next build + next start + Playwright)
-- Sponsor-bus desktop: marquee scrollt (translateX bewogen -284→-408px), alle 9 sponsors cyclen, niks permanent geclipt. Reduced-motion = start-aligned (HBO-ICT/CERN strategisch eerst). Mobiel = swipe-marquee. Premium PCB-look, on-brand met /partners.
-- Recap filmstrip: empty-state correct (lokaal geen Supabase). Sectie rendert ALTIJD zodat spine 01-07 intact blijft.
-- Spine uniek: 01 About,02 WhyJoin,03 Events,04 Recap,05 Testimonials,06 Sponsors,07 JoinCta. HboIct+FemIt = numberless interstitials (`>`-eyebrows).
+## Wat werkt (geverifieerd: build + 182 tests + curl NL/EN)
+- Toggle wisselt hele site NL<->EN, cookie blijft hangen. Nieuwe bezoeker = NL (default).
+- Publieke site, auth, member-dashboard, admin-panel, error-paginas, en lib-data (Moederbord bestuur/commissie-bios, partner-taglines/tiers, badge-namen, commissie-beschrijvingen) tweetalig. 0 intl-errors.
 
-## Wat niet werkte / lessen
-- `next dev` hot-reloadde agent-CSS-edits NIET → stale screenshots (oude statische bus). Oplossing: `next build` + `next start` + Playwright tegen prod-build (dev-server niet vertrouwen voor agent-edits).
-- recaps API type-error: `event.category` is `string|null`, kan niet als index → normaliseer naar `''`.
-- Lokaal geen Supabase-env → recap-API leeg → empty-state. Echte foto's + #terugblik pas op prod.
+## Wat niet werkte / geleerde lessen
+- Co-located `*Content.tsx`/`*Client.tsx` in route-folders staan los van `src/components` — page-agents misten ze eerst (FaqContent, PrivacyContent, IntroweekClient etc.). Apart opgepakt in wave 2.
+- `calendarHelpers.ticketLabel()` gaf NL-strings terug: omgezet naar i18n-keys, alle aanroepers bijgewerkt.
+- `pkill -f "next start"` geeft exit 144 en breekt command-chains in deze shell. Kill via poort-PID (`ss -tlnp | grep :PORT`).
 
 ## Blokkades
-- Geen code-blokkade. Recap toont pas echte foto's als events met `recap_published=true` + `recap_photos` in DB staan.
+- Geen. Vercel preview-URL geeft 401 voor anonieme curl (Deployment Protection aan) — alleen ingelogd zichtbaar, geen bug.
 
 ## Volgende stappen
-1. Go/no-go: `git add` homepage-files + commit + push.
-2. DEPLOY: per oude conventie `vercel --prod --yes` vanuit repo root (NIET zeker of git-push auto-deployt). LET OP: ook de eerdere `886c307` moederbord-push is misschien nog niet live zonder vercel deploy — checken.
-3. Na deploy: `/events#terugblik` scroll + recap-filmstrip met echte foto's op prod checken.
+1. Verifieer svsit.nl na prod-deploy: toggle NL/EN op homepage + over-ons + dashboard.
+2. Optioneel intern restwerk: `ROLLEN`-beschrijvingen (constants, admin-tooltips) nog NL; `toLocaleString('nl-NL')` getalnotatie niet locale-aware; transactionele e-mails default NL.
+3. Optioneel: e-mails echt tweetalig zodra er een `locale`-kolom op `members` komt (prop staat al klaar).
 
-## Key context (nieuwe sessie)
-- Homepage heeft GENUMMERDE spine-conventie (01-07 via `SectionLabel`); HboIctSection + FemItSection zijn BEWUST numberless interstitials. Respecteer bij nieuwe secties.
-- `SponsorShowcase` zet nummer INLINE (niet via `SectionLabel`).
-- Recap-data uit `/api/events/recaps` (flatten van `recap_photos`), niet static.
-- Schrijfstijl: geen streepjes/em-dashes/`_` in prose, weinig komma's, studententoon.
+## Key context (voor nieuwe sessie)
+- i18n is **cookie-based** (NEXT_LOCALE), GEEN `[locale]` in de URL. Alle routes zijn nu dynamisch (f) omdat de layout `cookies()` leest.
+- `src/i18n/messages.ts` (de barrel) wordt GEGENEREERD: 1 namespace = `src/messages/{nl,en}/<ns>.json`. Nieuwe namespace toevoegen = json maken, dan barrel regenereren (bash-loop staat in de sessie-historie; leest de map en schrijft imports + nl/en maps). Handmatig bewerken mag ook maar regenereren is veiliger.
+- Vertaalpatroon voor lib-data: lib blijft de NL-bron, EN komt in message-JSON gekeyed op id, consumer resolvet via t() met de id.
+- E-mails gebruiken GEEN next-intl (geen request-context bij verzenden): eigen `locale`-prop + lokaal copy-object, default `nl`.
