@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import dynamic from "next/dynamic";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/next";
@@ -38,36 +40,47 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export const metadata: Metadata = {
-  title: "{SIT} - Studievereniging ICT",
-  metadataBase: "https://svsit.nl",
-  description:
-    "De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Door studenten. Voor studenten. In tech.",
-  openGraph: {
-    title: "{SIT} - Studievereniging ICT",
-    description:
-      "De studievereniging voor HBO-ICT studenten aan de HvA. Events, community, en alles wat je studietijd beter maakt.",
-    siteName: "{SIT}",
-    locale: "nl_NL",
-    type: "website",
-    url: "https://svsit.nl",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "{SIT} - Studievereniging ICT",
-    description:
-      "De studievereniging voor HBO-ICT studenten aan de HvA. Events, community, en alles wat je studietijd beter maakt.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const isEn = locale === "en";
+  const title = "{SIT} - Studievereniging ICT";
+  const description = isEn
+    ? "The student association for HBO-ICT students at Amsterdam University of Applied Sciences. By students. For students. In tech."
+    : "De studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Door studenten. Voor studenten. In tech.";
+  const ogDescription = isEn
+    ? "The student association for HBO-ICT students at the HvA. Events, community, and everything that makes your study time better."
+    : "De studievereniging voor HBO-ICT studenten aan de HvA. Events, community, en alles wat je studietijd beter maakt.";
+  return {
+    title,
+    metadataBase: new URL("https://svsit.nl"),
+    description,
+    openGraph: {
+      title,
+      description: ogDescription,
+      siteName: "{SIT}",
+      locale: isEn ? "en_US" : "nl_NL",
+      type: "website",
+      url: "https://svsit.nl",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: ogDescription,
+    },
+  };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+  const t = await getTranslations("common");
   return (
     <html
-      lang="nl"
+      lang={locale}
       className={cn("antialiased", geistSans.variable, jetbrainsMono.variable, bigShoulders.variable, "font-mono")}
       suppressHydrationWarning
     >
@@ -78,7 +91,7 @@ export default function RootLayout({
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--color-accent-gold)] focus:text-[var(--color-bg)] focus:font-bold focus:text-sm"
         >
-          Ga naar hoofdinhoud
+          {t("skipToContent")}
         </a>
         <script
           type="application/ld+json"
@@ -108,9 +121,11 @@ export default function RootLayout({
             }),
           }}
         />
-        <ToastProvider>
-          {children}
-        </ToastProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ToastProvider>
+            {children}
+          </ToastProvider>
+        </NextIntlClientProvider>
         <CustomCursor />
         <Analytics />
         <SpeedInsights />

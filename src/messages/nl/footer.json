@@ -1,0 +1,28 @@
+{
+  "tagline": "Studievereniging voor alle HBO-ICT studenten aan de HvA.",
+  "links": {
+    "overOns": "Over Ons",
+    "events": "Events",
+    "projecten": "Projecten",
+    "partners": "Partners",
+    "vacatures": "Vacatures",
+    "leaderboard": "Leaderboard",
+    "faq": "FAQ",
+    "privacy": "Privacy",
+    "documenten": "Documenten",
+    "wordLid": "Word Lid"
+  },
+  "pagesLabel": "src/paginas",
+  "socialsLabel": "~/socials",
+  "whatsapp": "WhatsApp groep",
+  "discord": "Discord server",
+  "contact": {
+    "email": "email",
+    "locatie": "locatie",
+    "postcode": "postcode"
+  },
+  "programs": "Technische Informatica",
+  "officialAssociation": "Officiele studievereniging van HBO-ICT",
+  "officialAssociationAria": "Officiele studievereniging van HBO-ICT, Hogeschool van Amsterdam",
+  "backToTop": "Terug naar boven"
+}

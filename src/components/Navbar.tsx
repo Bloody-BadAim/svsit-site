@@ -1,21 +1,24 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import SitLogo from "@/components/SitLogo";
 import MotionToggle from "@/components/MotionToggle";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { SITE_CONFIG } from "@/lib/constants";
 
 const navLinks = [
-  { href: "/introweek", label: "Introweek", highlight: true },
-  { href: "/over-ons", label: "Over Ons" },
-  { href: "/events", label: "Events" },
-  { href: "/projecten", label: "Projecten" },
-  { href: "/partners", label: "Partners" },
-  { href: "/vacatures", label: "Vacatures" },
-  { href: "/faq", label: "FAQ" },
-];
+  { href: "/introweek", key: "introweek", highlight: true },
+  { href: "/over-ons", key: "overOns" },
+  { href: "/events", key: "events" },
+  { href: "/projecten", key: "projecten" },
+  { href: "/partners", key: "partners" },
+  { href: "/vacatures", key: "vacatures" },
+  { href: "/faq", key: "faq" },
+] as const;
 
 export default function Navbar() {
+  const t = useTranslations("navbar");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -75,7 +78,7 @@ export default function Navbar() {
             </span>
             {/* <span className="inline-block w-[2px] h-[1em] bg-[var(--color-accent-gold)] ml-0.5 align-middle animate-pulse" /> */}
             <span className="hidden sm:inline-block font-mono text-[11px] font-normal text-[var(--color-text-muted)] tracking-tight border-l border-[var(--color-border)] pl-2.5 group-hover/logo:text-[var(--color-text)] transition-colors duration-300">
-              van HBO-ICT
+              {t("logoTag")}
             </span>
           </a>
 
@@ -87,9 +90,10 @@ export default function Navbar() {
                 href={link.href}
                 className={`relative hover:text-[var(--color-text)] hover:-translate-y-0.5 transition-all duration-300 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-[var(--color-accent-gold)] after:transition-all after:duration-300 hover:after:w-full ${'highlight' in link && link.highlight ? 'text-[var(--color-accent-gold)] font-semibold' : ''}`}
               >
-                {link.label}
+                {t(`links.${link.key}`)}
               </a>
             ))}
+            <LanguageSwitcher />
             <MotionToggle />
             <a
               href="/login"
@@ -110,7 +114,7 @@ export default function Navbar() {
           <button
             className="relative md:hidden flex flex-col justify-center items-center w-10 h-10 gap-[6px] cursor-pointer"
             onClick={() => setMenuOpen((prev) => !prev)}
-            aria-label={menuOpen ? "Menu sluiten" : "Menu openen"}
+            aria-label={menuOpen ? t("closeMenu") : t("openMenu")}
             aria-expanded={menuOpen}
           >
             <span
@@ -159,7 +163,7 @@ export default function Navbar() {
                   0{i + 1}
                 </span>
                 <span className="text-xl font-bold mt-1 group-hover/mlink:translate-x-2 transition-transform duration-300">
-                  {link.label}
+                  {t(`links.${link.key}`)}
                 </span>
               </a>
             ))}
@@ -203,12 +207,15 @@ export default function Navbar() {
               @sit_hva - TikTok
             </a>
             <a href={SITE_CONFIG.socials.whatsapp.url} target="_blank" rel="noopener noreferrer" className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300">
-              WhatsApp groep
+              {t("whatsapp")}
             </a>
             <a href={SITE_CONFIG.socials.discord.url} target="_blank" rel="noopener noreferrer" className="font-mono text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-gold)] transition-colors duration-300">
-              Discord server
+              {t("discord")}
             </a>
-            <MotionToggle />
+            <div className="flex items-center gap-3 pt-1">
+              <LanguageSwitcher />
+              <MotionToggle />
+            </div>
           </div>
         </div>
       </div>

@@ -1,0 +1,28 @@
+{
+  "tagline": "Student association for every HBO-ICT student at the HvA.",
+  "links": {
+    "overOns": "About",
+    "events": "Events",
+    "projecten": "Projects",
+    "partners": "Partners",
+    "vacatures": "Jobs",
+    "leaderboard": "Leaderboard",
+    "faq": "FAQ",
+    "privacy": "Privacy",
+    "documenten": "Documents",
+    "wordLid": "Join"
+  },
+  "pagesLabel": "src/pages",
+  "socialsLabel": "~/socials",
+  "whatsapp": "WhatsApp group",
+  "discord": "Discord server",
+  "contact": {
+    "email": "email",
+    "locatie": "location",
+    "postcode": "zipcode"
+  },
+  "programs": "Technical Informatics",
+  "officialAssociation": "Official student association of HBO-ICT",
+  "officialAssociationAria": "Official student association of HBO-ICT, Amsterdam University of Applied Sciences",
+  "backToTop": "Back to top"
+}

@@ -1,0 +1,18 @@
+{
+  "logoTag": "van HBO-ICT",
+  "links": {
+    "introweek": "Introweek",
+    "overOns": "Over Ons",
+    "events": "Events",
+    "projecten": "Projecten",
+    "partners": "Partners",
+    "vacatures": "Vacatures",
+    "faq": "FAQ"
+  },
+  "login": "$ login",
+  "join": "$ join --now",
+  "openMenu": "Menu openen",
+  "closeMenu": "Menu sluiten",
+  "whatsapp": "WhatsApp groep",
+  "discord": "Discord server"
+}

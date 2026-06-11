@@ -3,22 +3,23 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
+import { useTranslations } from "next-intl";
 import SitLogo from "@/components/SitLogo";
 import { SITE_CONFIG } from "@/lib/constants";
 import { isReducedMotion, onMotionChange } from "@/lib/motion";
 
 const NAV_LINKS = [
-  { href: "/over-ons", label: "Over Ons", type: "dir" },
-  { href: "/events", label: "Events", type: "dir" },
-  { href: "/projecten", label: "Projecten", type: "dir" },
-  { href: "/partners", label: "Partners", type: "dir" },
-  { href: "/vacatures", label: "Vacatures", type: "dir" },
-  { href: "/leaderboard", label: "Leaderboard", type: "dir" },
-  { href: "/faq", label: "FAQ", type: "file" },
-  { href: "/privacy", label: "Privacy", type: "file" },
-  { href: "/documenten", label: "Documenten", type: "dir" },
-  { href: "/login", label: "Word Lid", type: "file" },
-];
+  { href: "/over-ons", key: "overOns", type: "dir" },
+  { href: "/events", key: "events", type: "dir" },
+  { href: "/projecten", key: "projecten", type: "dir" },
+  { href: "/partners", key: "partners", type: "dir" },
+  { href: "/vacatures", key: "vacatures", type: "dir" },
+  { href: "/leaderboard", key: "leaderboard", type: "dir" },
+  { href: "/faq", key: "faq", type: "file" },
+  { href: "/privacy", key: "privacy", type: "file" },
+  { href: "/documenten", key: "documenten", type: "dir" },
+  { href: "/login", key: "wordLid", type: "file" },
+] as const;
 
 const SOCIALS = [
   {
@@ -50,6 +51,7 @@ const SOCIALS = [
   {
     href: SITE_CONFIG.socials.whatsapp.url,
     ariaLabel: "WhatsApp groep",
+    i18nKey: "whatsapp",
     command: "join",
     target: "whatsapp",
     hoverColor: "#25D366",
@@ -62,6 +64,7 @@ const SOCIALS = [
   {
     href: SITE_CONFIG.socials.discord.url,
     ariaLabel: "Discord server",
+    i18nKey: "discord",
     command: "join",
     target: "discord",
     hoverColor: "#5865F2",
@@ -101,6 +104,7 @@ const SOCIALS = [
 ];
 
 export default function Footer() {
+  const t = useTranslations("footer");
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -225,14 +229,14 @@ export default function Footer() {
               <span className="text-[#A1A1AA]">StudieverenigingInnovatieEnTechnologie</span>
             </div>
             <p className="font-mono text-sm text-[#A1A1AA] leading-relaxed">
-              Studievereniging voor alle HBO-ICT studenten aan de HvA.
+              {t("tagline")}
             </p>
           </div>
 
           {/* Right: Social links styled as terminal commands */}
           <div className="flex flex-col gap-2">
             <div className="font-mono text-[11px] text-[var(--color-accent-gold)] uppercase tracking-[0.2em] mb-2">
-              ~/socials
+              {t("socialsLabel")}
             </div>
             {SOCIALS.map((s) => (
               <a
@@ -240,7 +244,7 @@ export default function Footer() {
                 href={s.href}
                 target={s.href.startsWith("mailto:") ? undefined : "_blank"}
                 rel={s.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                aria-label={s.ariaLabel}
+                aria-label={"i18nKey" in s && s.i18nKey ? t(s.i18nKey) : s.ariaLabel}
                 className="group flex items-center gap-3 font-mono text-sm text-[#A1A1AA] hover:text-[var(--color-text)] transition-colors duration-200 w-fit"
                 onMouseEnter={(e) => {
                   const target = e.currentTarget.querySelector<HTMLElement>("[data-social-name]");
@@ -277,7 +281,7 @@ export default function Footer() {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60">
                 <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" />
               </svg>
-              src/paginas
+              {t("pagesLabel")}
             </div>
             <nav className="flex flex-col gap-0.5">
               {NAV_LINKS.map((link, i) => {
@@ -297,7 +301,7 @@ export default function Footer() {
                     <span className="text-[#71717A] mr-2 select-none text-xs" aria-hidden="true">{branch}</span>
                     <span className="mr-2 select-none" aria-hidden="true">{icon}</span>
                     <span className="group-hover:text-[var(--color-accent-gold)] transition-colors duration-200">
-                      {link.label}
+                      {t(`links.${link.key}`)}
                     </span>
                   </a>
                 );
@@ -328,13 +332,13 @@ export default function Footer() {
                 <span className="text-[#71717A]">,</span>
               </div>
               <div className="pl-4">
-                <span className="text-[var(--color-accent-blue)]">&quot;locatie&quot;</span>
+                <span className="text-[var(--color-accent-blue)]">&quot;{t("contact.locatie")}&quot;</span>
                 <span className="text-[#71717A]">: </span>
                 <span className="text-[#A1A1AA]">&quot;{SITE_CONFIG.address.venue}, {SITE_CONFIG.address.street}&quot;</span>
                 <span className="text-[#71717A]">,</span>
               </div>
               <div className="pl-4">
-                <span className="text-[var(--color-accent-blue)]">&quot;postcode&quot;</span>
+                <span className="text-[var(--color-accent-blue)]">&quot;{t("contact.postcode")}&quot;</span>
                 <span className="text-[#71717A]">: </span>
                 <span className="text-[#A1A1AA]">&quot;{SITE_CONFIG.address.postal}&quot;</span>
               </div>
@@ -365,7 +369,7 @@ export default function Footer() {
               <span className="text-[#52525B]">&middot;</span>
               <span>Business IT &amp; Management</span>
               <span className="text-[#52525B]">&middot;</span>
-              <span>Technische Informatica</span>
+              <span>{t("programs")}</span>
             </div>
           </div>
 
@@ -391,7 +395,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex flex-col gap-2.5 opacity-50 hover:opacity-80 transition-opacity duration-300 w-fit"
-              aria-label="Officiele studievereniging van HBO-ICT, Hogeschool van Amsterdam"
+              aria-label={t("officialAssociationAria")}
             >
               <Image
                 src="/hbo-ict-wit.png"
@@ -401,7 +405,7 @@ export default function Footer() {
                 className="h-auto w-[150px] md:w-[177px]"
               />
               <span className="font-mono text-[11px] text-[#71717A] leading-relaxed">
-                Officiele studievereniging van HBO-ICT
+                {t("officialAssociation")}
                 <span className="text-[#52525B]"> &middot; </span>
                 Hogeschool van Amsterdam
               </span>
@@ -426,7 +430,7 @@ export default function Footer() {
             {/* scroll.toTop() button */}
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              aria-label="Terug naar boven"
+              aria-label={t("backToTop")}
               className="group font-mono text-xs text-[#71717A] hover:text-[var(--color-accent-gold)] transition-colors cursor-pointer flex items-center gap-1.5"
             >
               <span className="text-[#52525B] group-hover:text-[var(--color-accent-green)] transition-colors">{">"}</span>
