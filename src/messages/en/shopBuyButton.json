@@ -1,0 +1,9 @@
+{
+  "owned": "OWNED",
+  "notEnough": "NOT ENOUGH COINS",
+  "priceTooltip": "Costs {price} coins",
+  "buy": "BUY",
+  "loading": "...",
+  "errorGeneric": "Purchase failed",
+  "errorNetwork": "Network error - try again"
+}

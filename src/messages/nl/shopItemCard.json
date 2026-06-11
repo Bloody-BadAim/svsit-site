@@ -1,0 +1,7 @@
+{
+  "featured": "FEATURED",
+  "new": "NIEUW",
+  "limited": "LIMITED",
+  "owned": "IN BEZIT",
+  "stockLeft": "Nog {count} over"
+}

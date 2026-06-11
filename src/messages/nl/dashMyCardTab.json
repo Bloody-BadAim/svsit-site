@@ -1,0 +1,22 @@
+{
+  "today": "vandaag",
+  "yesterday": "gisteren",
+  "xpSuffix": "+{n}xp",
+  "nextUnlock": "NEXT UNLOCK",
+  "level": "LVL {n}",
+  "xpToGo": "{n} XP te gaan",
+  "todayStat": "Vandaag",
+  "streak": "Streak",
+  "days": "dagen",
+  "edit": "EDIT",
+  "save": "SAVE",
+  "share": "SHARE",
+  "done": "DONE",
+  "shareTitle": "Mijn SIT Card",
+  "linkCopied": "Link gekopieerd naar klembord",
+  "cardGenerateFailed": "Kon kaart niet genereren",
+  "cardDownloaded": "Kaart gedownload",
+  "downloadFailed": "Download mislukt",
+  "recentActivity": "Recent Activity",
+  "awaitingScan": "awaiting first event scan..."
+}

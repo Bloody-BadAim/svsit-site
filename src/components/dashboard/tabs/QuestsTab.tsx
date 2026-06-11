@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 import { motion, useReducedMotion, AnimatePresence } from 'motion/react'
 import {
   Clock,
@@ -149,6 +150,7 @@ function QuestRow({
   memberId: string
 }) {
   const shouldReduceMotion = useReducedMotion()
+  const t = useTranslations('dashQuestsTab')
   const [expanded, setExpanded] = useState(false)
   const [proofUrl, setProofUrl] = useState('')
   const [proofText, setProofText] = useState('')
@@ -185,13 +187,13 @@ function QuestRow({
       })
       const json = await res.json()
       if (!res.ok) {
-        setSubmitError(json.error || 'Fout bij indienen')
+        setSubmitError(json.error || t('submitError'))
         return
       }
       setSubmitted(true)
       setExpanded(false)
     } catch {
-      setSubmitError('Netwerkfout')
+      setSubmitError(t('networkError'))
     } finally {
       setSubmitting(false)
     }
@@ -226,7 +228,11 @@ function QuestRow({
                 className="inline w-3 h-3 mr-1"
                 style={{ verticalAlign: 'text-bottom' }}
               />
-              {timeLeft.days > 0 && `${timeLeft.days}d `}{timeLeft.hours}h {timeLeft.minutes}m resterend
+              {t('timeLeft', {
+                days: timeLeft.days > 0 ? t('daysPrefix', { days: timeLeft.days }) : '',
+                hours: timeLeft.hours,
+                minutes: timeLeft.minutes,
+              })}
             </p>
           )}
         </div>
@@ -242,7 +248,7 @@ function QuestRow({
               className="font-mono text-[10px] px-2 py-0.5 inline-flex items-center gap-1"
               style={{ color: '#22C55E', border: '1px solid rgba(34,197,94,0.3)' }}
             >
-              <Check className="w-3 h-3" /> DONE
+              <Check className="w-3 h-3" /> {t('statusDone')}
             </span>
           )}
           {status === 'pending' && (
@@ -250,7 +256,7 @@ function QuestRow({
               className="font-mono text-[10px] px-2 py-0.5 inline-flex items-center gap-1"
               style={{ color: 'var(--color-accent-gold)', border: '1px solid rgba(242,158,24,0.3)' }}
             >
-              <Clock className="w-3 h-3" /> REVIEW
+              <Clock className="w-3 h-3" /> {t('statusReview')}
             </span>
           )}
           {status === 'rejected' && (
@@ -258,7 +264,7 @@ function QuestRow({
               className="font-mono text-[10px] px-2 py-0.5 inline-flex items-center gap-1"
               style={{ color: 'var(--color-accent-red)', border: '1px solid rgba(239,68,68,0.3)' }}
             >
-              <X className="w-3 h-3" /> REJECTED
+              <X className="w-3 h-3" /> {t('statusRejected')}
             </span>
           )}
           {status === 'submit' && (
@@ -271,7 +277,7 @@ function QuestRow({
                 opacity: expanded ? 0.75 : 1,
               }}
             >
-              {expanded ? 'SLUIT' : 'SUBMIT'}
+              {expanded ? t('close') : t('submit')}
             </button>
           )}
         </div>
@@ -299,7 +305,7 @@ function QuestRow({
                 className="font-mono text-[10px] uppercase tracking-[0.15em]"
                 style={{ color: 'var(--color-text-muted)' }}
               >
-                {'>'} bewijs indienen
+                {t('submitProof', { prompt: '>' })}
               </div>
 
               <div>
@@ -307,7 +313,7 @@ function QuestRow({
                   className="font-mono text-[10px] uppercase tracking-wider block mb-1"
                   style={{ color: 'var(--color-text-muted)' }}
                 >
-                  Link / URL
+                  {t('linkLabel')}
                 </label>
                 <input
                   type="url"
@@ -328,13 +334,13 @@ function QuestRow({
                   className="font-mono text-[10px] uppercase tracking-wider block mb-1"
                   style={{ color: 'var(--color-text-muted)' }}
                 >
-                  Toelichting
+                  {t('explanationLabel')}
                 </label>
                 <textarea
                   value={proofText}
                   onChange={(e) => setProofText(e.target.value)}
                   rows={3}
-                  placeholder="Beschrijf wat je hebt gedaan..."
+                  placeholder={t('explanationPlaceholder')}
                   className="w-full font-mono text-xs px-3 py-2 outline-none resize-none"
                   style={{
                     backgroundColor: 'rgba(255,255,255,0.03)',
@@ -356,7 +362,7 @@ function QuestRow({
                 className="font-mono text-[10px] uppercase tracking-wider px-4 py-2 cursor-pointer transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
                 style={{ backgroundColor: cat.color, color: 'var(--color-bg)' }}
               >
-                {submitting ? 'BEZIG...' : 'INDIENEN'}
+                {submitting ? t('busy') : t('send')}
               </button>
             </div>
           </motion.div>
@@ -379,6 +385,7 @@ function ActiveQuestsSection({
   submissions: SubmissionItem[]
   memberId: string
 }) {
+  const t = useTranslations('dashQuestsTab')
   const submissionMap = new Map<string, SubmissionItem>()
   for (const s of submissions) {
     submissionMap.set(s.challengeId, s)
@@ -416,7 +423,7 @@ function ActiveQuestsSection({
             className="font-mono text-[10px] uppercase tracking-[0.2em]"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            active challenges
+            {t('activeChallenges')}
           </span>
           <span
             className="font-mono text-[10px] px-1.5 py-0.5"
@@ -429,10 +436,10 @@ function ActiveQuestsSection({
         {sorted.length === 0 ? (
           <div className="px-5 py-8 text-center">
             <p className="font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
-              {'>'} geen actieve quests momenteel...
+              {t('noQuests', { prompt: '>' })}
             </p>
             <p className="font-mono text-xs mt-1" style={{ color: 'rgba(255,255,255,0.2)' }}>
-              check later voor nieuwe challenges
+              {t('checkLater')}
             </p>
           </div>
         ) : (
@@ -474,6 +481,7 @@ function TrackMilestoneRow({
   memberId: string
 }) {
   const shouldReduceMotion = useReducedMotion()
+  const t = useTranslations('dashQuestsTab')
   const [expanded, setExpanded] = useState(false)
   const [proofUrl, setProofUrl] = useState('')
   const [proofText, setProofText] = useState('')
@@ -501,13 +509,13 @@ function TrackMilestoneRow({
       })
       const json = await res.json()
       if (!res.ok) {
-        setSubmitError(json.error || 'Fout bij indienen')
+        setSubmitError(json.error || t('submitError'))
         return
       }
       setSubmitted(true)
       setExpanded(false)
     } catch {
-      setSubmitError('Netwerkfout')
+      setSubmitError(t('networkError'))
     } finally {
       setSubmitting(false)
     }
@@ -566,7 +574,7 @@ function TrackMilestoneRow({
               backgroundColor: `${trackColor}08`,
             }}
           >
-            {expanded ? 'SLUIT' : 'BEWIJS INDIENEN'}
+            {expanded ? t('close') : t('milestoneSubmit')}
           </button>
         )}
 
@@ -591,7 +599,7 @@ function TrackMilestoneRow({
                   type="url"
                   value={proofUrl}
                   onChange={(e) => setProofUrl(e.target.value)}
-                  placeholder="Link / URL bewijs..."
+                  placeholder={t('proofUrlPlaceholder')}
                   className="w-full font-mono text-xs px-2 py-1.5 outline-none"
                   style={{
                     backgroundColor: 'rgba(255,255,255,0.03)',
@@ -603,7 +611,7 @@ function TrackMilestoneRow({
                   value={proofText}
                   onChange={(e) => setProofText(e.target.value)}
                   rows={2}
-                  placeholder="Toelichting..."
+                  placeholder={t('explanationShort')}
                   className="w-full font-mono text-xs px-2 py-1.5 outline-none resize-none"
                   style={{
                     backgroundColor: 'rgba(255,255,255,0.03)',
@@ -622,7 +630,7 @@ function TrackMilestoneRow({
                   className="font-mono text-[10px] uppercase tracking-wider px-3 py-1.5 cursor-pointer transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{ backgroundColor: trackColor, color: 'var(--color-bg)' }}
                 >
-                  {submitting ? 'BEZIG...' : 'INDIENEN'}
+                  {submitting ? t('busy') : t('send')}
                 </button>
               </div>
             </motion.div>
@@ -634,6 +642,7 @@ function TrackMilestoneRow({
 }
 
 function TrackCard({ track, memberId }: { track: TrackItem; memberId: string }) {
+  const t = useTranslations('dashQuestsTab')
   const [open, setOpen] = useState(false)
   const meta = TRACK_META[track.trackId] ?? {
     naam: track.trackId,
@@ -703,7 +712,7 @@ function TrackCard({ track, memberId }: { track: TrackItem; memberId: string }) 
 
         {isComplete && (
           <div className="mt-1.5 font-mono text-[10px] flex items-center gap-1.5" style={{ color: meta.kleur }}>
-            <Star className="w-3 h-3 fill-current" /> TRACK VOLTOOID
+            <Star className="w-3 h-3 fill-current" /> {t('trackComplete')}
           </div>
         )}
       </button>
@@ -737,6 +746,7 @@ function TrackCard({ track, memberId }: { track: TrackItem; memberId: string }) 
 }
 
 function SkillTracksSection({ tracks, memberId }: { tracks: TrackItem[]; memberId: string }) {
+  const t = useTranslations('dashQuestsTab')
   const TRACK_ORDER = ['fullstack', 'ai_engineer', 'security', 'feestbeest', 'community']
   const sorted = [...tracks].sort(
     (a, b) => TRACK_ORDER.indexOf(a.trackId) - TRACK_ORDER.indexOf(b.trackId)
@@ -759,7 +769,7 @@ function SkillTracksSection({ tracks, memberId }: { tracks: TrackItem[]; memberI
       </div>
       {sorted.length === 0 && (
         <div className="py-8 text-center font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
-          {'>'} geen skill tracks beschikbaar...
+          {t('noTracks', { prompt: '>' })}
         </div>
       )}
     </div>
@@ -771,6 +781,8 @@ function SkillTracksSection({ tracks, memberId }: { tracks: TrackItem[]; memberI
 // ---------------------------------------------------------------------------
 
 function XpHistorySection({ xpHistory }: { xpHistory: XpHistoryItem[] }) {
+  const t = useTranslations('dashQuestsTab')
+  const locale = useLocale()
   const [limit, setLimit] = useState(15)
   const visible = xpHistory.slice(0, limit)
 
@@ -803,20 +815,20 @@ function XpHistorySection({ xpHistory }: { xpHistory: XpHistoryItem[] }) {
           style={{ borderBottom: '1px solid var(--color-border)' }}
         >
           <span className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--color-text-muted)' }}>
-            transacties
+            {t('transactions')}
           </span>
           <span className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
-            {xpHistory.length} totaal
+            {t('totalSuffix', { count: xpHistory.length })}
           </span>
         </div>
 
         {xpHistory.length === 0 ? (
           <div className="px-5 py-8 text-center">
             <p className="font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
-              {'>'} nog geen XP verdiend...
+              {t('noXp', { prompt: '>' })}
             </p>
             <p className="font-mono text-xs mt-1" style={{ color: 'rgba(255,255,255,0.2)' }}>
-              ga naar een event en scan je pas
+              {t('scanHint')}
             </p>
           </div>
         ) : (
@@ -867,7 +879,7 @@ function XpHistorySection({ xpHistory }: { xpHistory: XpHistoryItem[] }) {
 
                   {/* Date */}
                   <span className="shrink-0 font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
-                    {new Date(item.createdAt).toLocaleDateString('nl-NL', {
+                    {new Date(item.createdAt).toLocaleDateString(locale, {
                       day: 'numeric',
                       month: 'short',
                     })}
@@ -882,7 +894,7 @@ function XpHistorySection({ xpHistory }: { xpHistory: XpHistoryItem[] }) {
                 className="w-full font-mono text-[10px] uppercase tracking-wider py-3 cursor-pointer transition-opacity hover:opacity-80"
                 style={{ color: 'var(--color-text-muted)', borderTop: '1px solid var(--color-border)' }}
               >
-                laad meer ({xpHistory.length - limit} resterend)
+                {t('loadMore', { count: xpHistory.length - limit })}
               </button>
             )}
           </div>
@@ -897,6 +909,7 @@ function XpHistorySection({ xpHistory }: { xpHistory: XpHistoryItem[] }) {
 // ---------------------------------------------------------------------------
 
 function XpGuideSection() {
+  const t = useTranslations('dashQuestsTab')
   const [open, setOpen] = useState(false)
 
   return (
@@ -910,7 +923,7 @@ function XpGuideSection() {
           className="font-mono text-xs uppercase tracking-[0.15em] group-hover:opacity-80 transition-opacity"
           style={{ color: 'var(--color-text-muted)' }}
         >
-          hoe verdien ik xp?
+          {t('howToEarnXp')}
         </span>
         {open
           ? <ChevronUp className="w-3.5 h-3.5" style={{ color: 'var(--color-text-muted)' }} />
@@ -938,13 +951,13 @@ function XpGuideSection() {
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--color-border)' }}>
                     <th className="px-4 py-2.5 text-left font-mono text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>
-                      Actie
+                      {t('colAction')}
                     </th>
                     <th className="px-4 py-2.5 text-left font-mono text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>
-                      XP
+                      {t('colXp')}
                     </th>
                     <th className="px-4 py-2.5 text-left font-mono text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>
-                      Categorie
+                      {t('colCategory')}
                     </th>
                   </tr>
                 </thead>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface CheckInFormProps {
   eventId: string
@@ -8,6 +9,7 @@ interface CheckInFormProps {
 }
 
 export default function CheckInForm({ eventId, categoryColor }: CheckInFormProps) {
+  const t = useTranslations('eventCheckIn')
   const [code, setCode] = useState<string[]>(Array(6).fill(''))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -66,7 +68,7 @@ export default function CheckInForm({ eventId, categoryColor }: CheckInFormProps
 
     const fullCode = code.join('')
     if (fullCode.length !== 6) {
-      setError('Vul alle 6 karakters in')
+      setError(t('errorIncomplete'))
       return
     }
 
@@ -83,7 +85,7 @@ export default function CheckInForm({ eventId, categoryColor }: CheckInFormProps
       const json = await res.json()
 
       if (!res.ok) {
-        setError(json.error || 'Er ging iets mis')
+        setError(json.error || t('errorGeneric'))
         setLoading(false)
         return
       }
@@ -92,7 +94,7 @@ export default function CheckInForm({ eventId, categoryColor }: CheckInFormProps
       setSuccess(true)
       setLoading(false)
     } catch {
-      setError('Verbindingsfout. Probeer het opnieuw.')
+      setError(t('errorConnection'))
       setLoading(false)
     }
   }
@@ -123,11 +125,11 @@ export default function CheckInForm({ eventId, categoryColor }: CheckInFormProps
             fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
           }}
         >
-          Ingecheckt!
+          {t('successTitle')}
         </h3>
 
         <p className="text-sm text-[var(--color-text-muted)] mb-1">
-          Je bent succesvol ingecheckt voor dit event.
+          {t('successMessage')}
         </p>
         <p
           className="font-mono text-lg font-bold mt-3"
@@ -153,7 +155,7 @@ export default function CheckInForm({ eventId, categoryColor }: CheckInFormProps
         style={{ borderBottom: '1px solid var(--color-border)' }}
       >
         <h2 className="font-mono text-sm font-semibold text-[var(--color-text)] uppercase tracking-wider">
-          Event Check-in
+          {t('sectionTitle')}
         </h2>
         <p className="font-mono text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
           {'>'} checkin.verify()
@@ -162,7 +164,7 @@ export default function CheckInForm({ eventId, categoryColor }: CheckInFormProps
 
       <form onSubmit={handleSubmit} className="p-5 sm:p-6">
         <p className="text-sm text-[var(--color-text-muted)] mb-4">
-          Voer de 6-karakter code in die op het event wordt getoond.
+          {t('intro')}
         </p>
 
         {/* Code input boxes */}
@@ -177,7 +179,7 @@ export default function CheckInForm({ eventId, categoryColor }: CheckInFormProps
               value={char}
               onChange={(e) => handleInput(i, e.target.value)}
               onKeyDown={(e) => handleKeyDown(i, e)}
-              aria-label={`Code karakter ${i + 1}`}
+              aria-label={t('codeCharAria', { index: i + 1 })}
               className="w-11 h-14 sm:w-13 sm:h-16 text-center text-xl sm:text-2xl font-mono font-bold rounded-md outline-none transition-all duration-200 uppercase"
               style={{
                 backgroundColor: 'rgba(255,255,255,0.05)',
@@ -208,11 +210,11 @@ export default function CheckInForm({ eventId, categoryColor }: CheckInFormProps
             color: '#000000',
           }}
         >
-          {loading ? 'Bezig...' : 'Inchecken'}
+          {loading ? t('loading') : t('submit')}
         </button>
 
         <p className="font-mono text-[10px] text-center text-[var(--color-text-muted)] opacity-60 mt-3">
-          Je verdient XP voor het bijwonen van events
+          {t('xpHint')}
         </p>
       </form>
     </div>

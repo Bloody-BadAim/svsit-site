@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useCallback } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 import { motion, useReducedMotion, AnimatePresence } from 'motion/react'
 import { Lock, Check, X, Shield } from 'lucide-react'
 import { BADGE_DEFS } from '@/lib/badgeDefs'
@@ -48,6 +49,7 @@ function EquippedSlots({
   saving: boolean
 }) {
   const shouldReduceMotion = useReducedMotion()
+  const t = useTranslations('dashBadgesTab')
 
   return (
     <div
@@ -72,18 +74,18 @@ function EquippedSlots({
           className="font-mono text-[10px] uppercase tracking-[0.2em]"
           style={{ color: 'var(--color-text-muted)' }}
         >
-          equipped ({slottedBadges.filter(Boolean).length}/{maxSlots})
+          {t('equipped', { count: slottedBadges.filter(Boolean).length, max: maxSlots })}
         </span>
         <div className="flex items-center gap-2">
           <span
             className="font-mono text-[10px]"
             style={{ color: 'var(--color-text-muted)', border: '1px solid rgba(255,255,255,0.08)', padding: '1px 6px' }}
           >
-            {maxSlots} slots
+            {t('slots', { count: maxSlots })}
           </span>
           {saving && (
             <span className="font-mono text-[10px]" style={{ color: 'var(--color-accent-gold)', opacity: 0.7 }}>
-              saving...
+              {t('saving')}
             </span>
           )}
         </div>
@@ -107,7 +109,7 @@ function EquippedSlots({
                 {badge ? (
                   <div
                     className="relative cursor-pointer group"
-                    title={`Verwijder ${badge.name}`}
+                    title={t('removeTitle', { name: badge.name })}
                     onClick={() => onUnequip(badge.id)}
                   >
                     <BadgeIcon badgeId={badge.id} size={28} rarity={badge.rarity} />
@@ -128,7 +130,7 @@ function EquippedSlots({
                       border: '1px dashed rgba(255,255,255,0.1)',
                     }}
                     onClick={() => onSlotClick(i)}
-                    title="Klik om een badge te kiezen"
+                    title={t('chooseTitle')}
                   >
                     <span className="text-sm" style={{ color: 'rgba(255,255,255,0.12)' }}>+</span>
                   </button>
@@ -138,7 +140,7 @@ function EquippedSlots({
           })}
         </div>
         <p className="font-mono text-[10px] mt-3" style={{ color: 'rgba(255,255,255,0.2)' }}>
-          Klik een badge hieronder om te equippen of verwijderen
+          {t('slotsHint')}
         </p>
       </div>
     </div>
@@ -156,12 +158,13 @@ function RarityFilter({
   active: BadgeRarity | 'all'
   onChange: (r: BadgeRarity | 'all') => void
 }) {
+  const t = useTranslations('dashBadgesTab')
   return (
     <div className="flex flex-wrap gap-2">
       {RARITY_FILTERS.map((r) => {
         const isActive = r === active
         const color = r === 'all' ? 'rgba(255,255,255,0.5)' : RARITY_CONFIG[r].color
-        const label = r === 'all' ? 'All' : RARITY_CONFIG[r].label
+        const label = r === 'all' ? t('filterAll') : RARITY_CONFIG[r].label
 
         return (
           <button
@@ -214,6 +217,8 @@ function BadgeDetail({
   onUnequip: () => void
   onClose: () => void
 }) {
+  const t = useTranslations('dashBadgesTab')
+  const locale = useLocale()
   const badge = BADGE_DEFS.find((b) => b.id === badgeId)
   if (!badge) return null
 
@@ -283,7 +288,7 @@ function BadgeDetail({
           </p>
 
           <div className="mt-3 font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.25)' }}>
-            +{badge.xpBonus} XP bonus
+            {t('xpBonus', { xp: badge.xpBonus })}
           </div>
 
           {/* Earned / locked status */}
@@ -292,16 +297,16 @@ function BadgeDetail({
               <div className="flex items-center gap-1.5 font-mono text-[10px]" style={{ color: '#22C55E' }}>
                 <Check className="w-3 h-3" />
                 {earnedAt
-                  ? `Verdiend op ${new Date(earnedAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}`
-                  : 'Verdiend'
+                  ? t('earnedOn', { date: new Date(earnedAt).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' }) })
+                  : t('earned')
                 }
               </div>
             ) : (
               <div className="flex items-center gap-1.5 font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
                 <Lock className="w-3 h-3" />
-                Vergrendeld
+                {t('locked')}
                 {badge.autoGrantRule === null && (
-                  <span style={{ color: 'rgba(255,255,255,0.2)' }}> - automatisch toegekend door bestuur</span>
+                  <span style={{ color: 'rgba(255,255,255,0.2)' }}>{t('manualGrant')}</span>
                 )}
               </div>
             )}
@@ -319,7 +324,7 @@ function BadgeDetail({
                     color: 'var(--color-accent-red)',
                   }}
                 >
-                  <X className="w-3 h-3" /> Verwijderen
+                  <X className="w-3 h-3" /> {t('remove')}
                 </button>
               ) : canEquip ? (
                 <button
@@ -330,11 +335,11 @@ function BadgeDetail({
                     color: 'var(--color-bg)',
                   }}
                 >
-                  <Shield className="w-3 h-3" /> Equippen
+                  <Shield className="w-3 h-3" /> {t('equip')}
                 </button>
               ) : slotsFulled ? (
                 <span className="font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                  Alle slots vol
+                  {t('slotsFull')}
                 </span>
               ) : null}
             </div>
@@ -443,6 +448,7 @@ export default function BadgesTab({
   isAdmin,
 }: BadgesTabProps) {
   const shouldReduceMotion = useReducedMotion()
+  const t = useTranslations('dashBadgesTab')
   const collectionRef = useRef<HTMLDivElement>(null)
 
   const [rarityFilter, setRarityFilter] = useState<BadgeRarity | 'all'>('all')
@@ -633,7 +639,7 @@ export default function BadgesTab({
 
           {filteredBadges.length === 0 && (
             <div className="py-8 text-center font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
-              {'>'} geen badges voor dit filter...
+              {t('emptyFilter', { prompt: '>' })}
             </div>
           )}
         </div>

@@ -1,0 +1,8 @@
+{
+  "notFoundTitle": "Member niet gevonden - {SIT}",
+  "title": "{name} - Level {level} {levelTitle} | {SIT}",
+  "description": "{name} is een level {level} {levelTitle} bij {SIT} - Studievereniging ICT aan de HvA. {xp} XP verdiend.",
+  "ogTitle": "{name} - {SIT} Member",
+  "ogDescription": "Level {level} {levelTitle} | {xp} XP | Studievereniging ICT",
+  "twitterDescription": "Level {level} {levelTitle} | {xp} XP"
+}

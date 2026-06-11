@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslations } from "next-intl";
 import { MapPin, Clock, Calendar, ChevronDown, ExternalLink } from "lucide-react";
 import type { SitEvent } from "./types";
 import { BRAND, CATEGORY_LABELS, fDay, fMonth } from "./types";
@@ -10,6 +11,7 @@ import DateStub from "./DateStub";
 import AddToCalendarDropdown from "./AddToCalendarDropdown";
 
 export default function CompactItem({ event, index }: { event: SitEvent; index: number }) {
+  const th = useTranslations("eventHelpers");
   const [expanded, setExpanded] = useState(false);
   const ticket = ticketLabel(event);
   const isDone = event.status === "DONE";
@@ -126,7 +128,7 @@ export default function CompactItem({ event, index }: { event: SitEvent; index: 
                     }}
                   >
                     <ExternalLink size={10} />
-                    {ticket.text}
+                    {th(ticket.textKey)}
                   </a>
                 ) : (
                   <span
@@ -137,7 +139,7 @@ export default function CompactItem({ event, index }: { event: SitEvent; index: 
                       background: `${ticket.color}08`,
                     }}
                   >
-                    {ticket.text}
+                    {th(ticket.textKey)}
                   </span>
                 )}
 

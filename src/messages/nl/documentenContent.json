@@ -1,0 +1,28 @@
+{
+  "fileLabel": "~/documenten",
+  "titleLine1": "Officiele",
+  "titleLine2": "Documenten",
+  "subtitle": "// statuten, reglementen en verantwoording",
+  "documents": {
+    "statuten": {
+      "title": "Statuten",
+      "description": "De notariele oprichtingsakte van de vereniging. Vastgelegd op 26 november 2015 bij notaris mr. Paul Robert Schut te Amsterdam. Bevat naam, doel, regels rond leden, bestuur, Raad van Advies en de ALV."
+    },
+    "hhr": {
+      "title": "Huishoudelijk Reglement",
+      "description": "De praktische uitwerking van de statuten: regels rond commissies, lidmaatschap en de dagelijkse gang van zaken. Wordt door de Algemene Ledenvergadering bekrachtigd en gepubliceerd zodra definitief.",
+      "meta": "via ALV"
+    },
+    "jaarverslag": {
+      "title": "Jaarverslag",
+      "description": "Het bestuursverslag en de financiele verantwoording over het afgelopen verenigingsjaar (1 september tot en met 31 augustus). Wordt na goedkeuring door de ALV hier gedeeld.",
+      "meta": "per boekjaar"
+    }
+  },
+  "downloadPdf": "DOWNLOAD PDF",
+  "soon": "BINNENKORT",
+  "ctaFileLabel": "vraag_een_document_op.sh",
+  "ctaText": "Een ander document nodig of een vraag over onze statuten? Stuur ons een mail, we helpen je graag verder.",
+  "ctaMailUs": "MAIL ONS",
+  "ctaPrivacy": "PRIVACY"
+}

@@ -1,0 +1,162 @@
+{
+  "boot": {
+    "head": "first-day boot",
+    "lines": {
+      "booting": "SIT_OS v26.0, first-day kernel",
+      "mount": "/dev/student > OK",
+      "load": "introweek.module ... OK",
+      "net": "connecting to community ... 204 members online",
+      "auth": "guest pass granted",
+      "ready": "welcome. press start."
+    },
+    "start": "start intro week"
+  },
+  "hero": {
+    "eyebrow": "two intro weeks · september 2026 · HvA Amsterdam",
+    "cobrand": "the student association of HBO-ICT",
+    "kicker": "~/hva/hbo-ict > ./start --new-student",
+    "subPre": "Your first weeks at the HvA. Where your studies begin, and where you ",
+    "subBold": "find your people",
+    "subPost": ". Boot in. Fly into the SIT core.",
+    "countdownLabel": "estimated countdown to ",
+    "countdownTarget": "intro week",
+    "countdownLive": "it is happening, come by!",
+    "unitDays": "days",
+    "unitHours": "hrs",
+    "unitMinutes": "min",
+    "unitSeconds": "sec",
+    "ctaPlan": "PLAN YOUR WEEK",
+    "ctaJoin": "JOIN US",
+    "metaFreeBold": "free",
+    "metaFree": " for members",
+    "metaNoExp": "no experience needed",
+    "metaEveryone": "everyone welcome",
+    "scroll": "scroll"
+  },
+  "day": {
+    "soon": "soon",
+    "secret": "secret",
+    "dateMeta": "date · t.b.a.",
+    "timeMeta": "time & location · coming soon",
+    "vibe": "vibe",
+    "compiling": "compiling...",
+    "locked": "locked",
+    "decrypting": "decrypting..."
+  },
+  "week1": {
+    "01": {
+      "slug": "kickoff & meet up",
+      "desc": "Official opening and your first time meeting the board, the committees and your fellow first-years. Exact plan to follow.",
+      "tags": ["opening", "meet up"]
+    },
+    "02": {
+      "slug": "the city & your crew",
+      "desc": "Get to know the buildings, labs and coffee machines, and above all the people you will get through your year with.",
+      "tags": ["campus", "intro group"]
+    },
+    "03": {
+      "slug": "the first drinks",
+      "desc": "The first real SIT drinks. This is where intro groups turn into friend groups, and where your year really starts.",
+      "tags": ["drinks", "social"]
+    },
+    "04": {
+      "slug": "chill & connect",
+      "desc": "Easygoing time to chill, game or just chat. No pressure, no experience needed. Come as you are.",
+      "tags": ["chill", "everyone welcome"]
+    },
+    "05": {
+      "slug": "not revealed yet",
+      "scr": "something cool is planned, hold tight..."
+    }
+  },
+  "week2": {
+    "01": {
+      "slug": "tech & workshops",
+      "desc": "Get hands-on with the tech alongside AI4HvA and EduCo: workshops and a CTF taster where you hack your first flag. No prior knowledge needed.",
+      "tags": ["ai4hva", "ctf taster"]
+    },
+    "02": {
+      "slug": "game night & lan",
+      "desc": "A night of LAN, tournaments and couch co-op, hosted by GameIT. Bring your setup or play on ours.",
+      "tags": ["lan", "gameit"]
+    },
+    "03": {
+      "slug": "into the city & bar crawl",
+      "desc": "Out into Amsterdam with a city game that ends in a bar crawl. For a whole week the city becomes your campus.",
+      "tags": ["city game", "bar crawl"]
+    },
+    "04": {
+      "slug": "the big finale",
+      "desc": "The big finale of the intro period. Live music, the whole association on one floor and the official start of your year at SIT.",
+      "tags": ["party", "finale"]
+    },
+    "05": {
+      "slug": "not revealed yet",
+      "scr": "a surprise for the real die-hards..."
+    }
+  },
+  "kit": {
+    "01": {
+      "title": "A crew that sticks",
+      "body": "Your intro group becomes the group you roll through four years of the programme with."
+    },
+    "02": {
+      "title": "Free food & drinks",
+      "body": "Lunch, drinks and enough coffee to actually survive your first week."
+    },
+    "03": {
+      "title": "Plugged in right away",
+      "body": "Access to {commissies} committees, the Discord and our own SIT server, from day one."
+    },
+    "04": {
+      "title": "No experience needed",
+      "body": "Come as you are, coder, gamer, or no clue yet. We sort out the rest."
+    }
+  },
+  "program": {
+    "label": "// the programme",
+    "introPre": "This year there are ",
+    "introBold1": "two intro weeks",
+    "introMid": " in September. We are still planning the full programme. Below is the ",
+    "introBold2": "vibe",
+    "introPost": " you can expect. Exact days, times and locations are coming soon.",
+    "week1Btn": "Intro Week ",
+    "week2Btn": "Intro Week ",
+    "schemaTag": "// schedule compiling...",
+    "notePre": "The final schedule for both weeks is coming soon. ",
+    "noteLink": "join us",
+    "notePost": " and you get it in your inbox first."
+  },
+  "kitSection": {
+    "label": "// your intro survival kit",
+    "introPre": "What you take away from these weeks, ",
+    "introBold": "besides the headache",
+    "introPost": "."
+  },
+  "finale": {
+    "label": "// claim your spot",
+    "headLine1": "One click and",
+    "headLine2": "you are part of",
+    "headGold": "it",
+    "bodyPre": "Intro week is ",
+    "bodyBold": "free for members",
+    "bodyPost": ". Joining costs {price} euros for a whole year, and you get a full community, {events} events and a network of {students} HBO-ICT students on top.",
+    "list1": "Full intro week, every day",
+    "list2": "All events & drinks the whole year",
+    "list3": "Join in on every committee",
+    "list4": "Discord, AI Labs & the SIT server",
+    "ticketBoarding": "boarding pass",
+    "ticketClass": "intro week '26",
+    "ticketYou": "YOU",
+    "ticketYouSub": "first-year",
+    "ticketSit": "SIT",
+    "ticketSitSub": "the community",
+    "ticketGate": "gate",
+    "ticketSeat": "seat",
+    "ticketSeatVal": "1A · you",
+    "ticketPrice": "price",
+    "ticketPriceUnit": "/yr",
+    "ticketCta": "$ join us, check in",
+    "signoff": "the official student association of HBO-ICT"
+  }
+}

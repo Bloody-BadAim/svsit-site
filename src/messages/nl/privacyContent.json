@@ -1,0 +1,72 @@
+{
+  "fileLabel": "privacy.md",
+  "titleLine1": "Privacy",
+  "titleLine2": "Verklaring",
+  "subtitle": "// hoe we met jouw gegevens omgaan",
+  "lastUpdatedLabel": "laatst bijgewerkt: {date}",
+  "lastUpdated": "31 mei 2026",
+  "sections": {
+    "wie": {
+      "title": "Wie zijn wij",
+      "body": [
+        "Studievereniging Innovatie en Technologie (SIT) is de studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Wij verwerken jouw persoonsgegevens als je lid wordt of onze site gebruikt.",
+        "Verantwoordelijke: het bestuur van SIT. Bereikbaar via {email}, {venue}, {street}, {postal}."
+      ]
+    },
+    "gegevens": {
+      "title": "Welke gegevens we verwerken",
+      "body": ["Bij aanmelding en gebruik van je account verwerken we:"],
+      "list": [
+        "Naam en e-mailadres",
+        "Studentnummer (alleen als je student bent, optioneel)",
+        "Wachtwoord (versleuteld opgeslagen, nooit leesbaar)",
+        "Je commissievoorkeur en lidmaatschapsstatus",
+        "Deelname aan events en behaalde XP/badges"
+      ]
+    },
+    "doel": {
+      "title": "Waarvoor we ze gebruiken",
+      "body": [
+        "We gebruiken je gegevens alleen om je lidmaatschap te beheren, je toegang te geven tot events en het ledenportaal, en om met je te communiceren over SIT. We verkopen je gegevens nooit aan derden."
+      ]
+    },
+    "betaling": {
+      "title": "Betalingen",
+      "body": [
+        "Betalingen voor je lidmaatschap en tickets lopen via Stripe. Wij ontvangen geen volledige kaartgegevens; die worden veilig door Stripe verwerkt. We bewaren wel een betaalreferentie zodat we je lidmaatschap kunnen activeren."
+      ]
+    },
+    "verwerkers": {
+      "title": "Met wie we ze delen",
+      "body": ["We werken met een paar verwerkers die ons platform draaien:"],
+      "list": [
+        "Supabase - database en accountopslag",
+        "Stripe - betalingsverwerking",
+        "Resend - versturen van e-mails (zoals tickets)",
+        "Vercel - hosting van de website en cookieloze statistieken"
+      ]
+    },
+    "cookies": {
+      "title": "Cookies",
+      "body": [
+        "We gebruiken alleen strikt noodzakelijke, functionele cookies. Een sessiecookie houdt je ingelogd nadat je inlogt. Die is nodig om de site te laten werken en valt onder de uitzondering van de cookiewet, dus daar vragen we geen toestemming voor.",
+        "Onze statistieken (Vercel Analytics en Speed Insights) werken zonder cookies en zonder dat we je kunnen identificeren. We gebruiken geen tracking- of advertentiecookies."
+      ]
+    },
+    "bewaartermijn": {
+      "title": "Hoe lang we bewaren",
+      "body": [
+        "We bewaren je gegevens zolang je lid bent. Wil je dat we je account en gegevens verwijderen? Stuur een mail naar {email} en we regelen het."
+      ]
+    },
+    "rechten": {
+      "title": "Jouw rechten",
+      "body": [
+        "Onder de AVG heb je recht op inzage, correctie en verwijdering van je gegevens, en kun je bezwaar maken tegen verwerking. Mail {email} en we reageren zo snel mogelijk. Niet tevreden? Je kunt een klacht indienen bij de Autoriteit Persoonsgegevens."
+      ]
+    }
+  },
+  "ctaFileLabel": "vraag_over_privacy.sh",
+  "ctaMailUs": "MAIL ONS",
+  "ctaFaq": "FAQ"
+}

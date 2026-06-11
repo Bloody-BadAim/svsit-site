@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { SITE_CONFIG } from "@/lib/constants";
 import {
   FileText,
@@ -26,38 +27,34 @@ interface Document {
   status: "beschikbaar" | "binnenkort";
 }
 
-// ─── Documenten ───────────────────────────────────────────────────────────────
+// ─── Document presentation metadata (id, icon, color, href, status) ───────────
 
-const DOCUMENTS: Document[] = [
+const DOCUMENT_META: {
+  id: "statuten" | "hhr" | "jaarverslag";
+  icon: typeof FileText;
+  color: string;
+  href?: string;
+  metaStatic?: string;
+  status: "beschikbaar" | "binnenkort";
+}[] = [
   {
     id: "statuten",
-    title: "Statuten",
-    description:
-      "De notariele oprichtingsakte van de vereniging. Vastgelegd op 26 november 2015 bij notaris mr. Paul Robert Schut te Amsterdam. Bevat naam, doel, regels rond leden, bestuur, Raad van Advies en de ALV.",
     icon: ScrollText,
     color: "#F29E18",
     href: "/documenten/statuten-sit-2015.pdf",
-    meta: "PDF \u00b7 2015",
+    metaStatic: "PDF \u00b7 2015",
     status: "beschikbaar",
   },
   {
     id: "hhr",
-    title: "Huishoudelijk Reglement",
-    description:
-      "De praktische uitwerking van de statuten: regels rond commissies, lidmaatschap en de dagelijkse gang van zaken. Wordt door de Algemene Ledenvergadering bekrachtigd en gepubliceerd zodra definitief.",
     icon: BookOpen,
     color: "#3B82F6",
-    meta: "via ALV",
     status: "binnenkort",
   },
   {
     id: "jaarverslag",
-    title: "Jaarverslag",
-    description:
-      "Het bestuursverslag en de financiele verantwoording over het afgelopen verenigingsjaar (1 september tot en met 31 augustus). Wordt na goedkeuring door de ALV hier gedeeld.",
     icon: Receipt,
     color: "#22C55E",
-    meta: "per boekjaar",
     status: "binnenkort",
   },
 ];
@@ -77,6 +74,19 @@ function TerminalDots() {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function DocumentenContent() {
+  const t = useTranslations("documentenContent");
+
+  const DOCUMENTS: Document[] = DOCUMENT_META.map((meta) => ({
+    id: meta.id,
+    title: t("documents." + meta.id + ".title"),
+    description: t("documents." + meta.id + ".description"),
+    icon: meta.icon,
+    color: meta.color,
+    href: meta.href,
+    meta: meta.metaStatic ?? t("documents." + meta.id + ".meta"),
+    status: meta.status,
+  }));
+
   return (
     <section className="relative py-16 md:py-24 px-6 md:px-12 lg:px-24">
       {/* Grid background */}
@@ -95,18 +105,18 @@ export default function DocumentenContent() {
           <div className="flex items-center gap-3 mb-4">
             <TerminalDots />
             <span className="font-mono text-[10px] tracking-[0.2em] uppercase" style={{ color: "#71717A" }}>
-              ~/documenten
+              {t("fileLabel")}
             </span>
           </div>
 
           <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight leading-tight mb-3">
-            Officiele
+            {t("titleLine1")}
             <br />
-            <span style={{ color: "#F29E18" }}>Documenten</span>
+            <span style={{ color: "#F29E18" }}>{t("titleLine2")}</span>
           </h1>
 
           <p className="font-mono text-sm" style={{ color: "#71717A" }}>
-            // statuten, reglementen en verantwoording
+            {t("subtitle")}
           </p>
 
           {/* Gold separator */}
@@ -169,7 +179,7 @@ export default function DocumentenContent() {
                       }}
                     >
                       <Download size={12} />
-                      DOWNLOAD PDF
+                      {t("downloadPdf")}
                     </a>
                   ) : (
                     <span
@@ -177,7 +187,7 @@ export default function DocumentenContent() {
                       style={{ color: "#52525B", border: "1px solid #27272A" }}
                     >
                       <Clock size={12} />
-                      BINNENKORT
+                      {t("soon")}
                     </span>
                   )}
                 </div>
@@ -194,13 +204,12 @@ export default function DocumentenContent() {
           <div className="flex items-center gap-2 mb-3">
             <TerminalDots />
             <span className="font-mono text-[10px] tracking-wider" style={{ color: "#71717A" }}>
-              vraag_een_document_op.sh
+              {t("ctaFileLabel")}
             </span>
           </div>
 
           <p className="font-mono text-xs leading-relaxed mb-4" style={{ color: "#A1A1AA" }}>
-            Een ander document nodig of een vraag over onze statuten? Stuur ons een mail, we
-            helpen je graag verder.
+            {t("ctaText")}
           </p>
 
           <div className="font-mono text-xs leading-relaxed" style={{ color: "#A1A1AA" }}>
@@ -222,7 +231,7 @@ export default function DocumentenContent() {
               }}
             >
               <Mail size={12} />
-              MAIL ONS
+              {t("ctaMailUs")}
             </a>
             <Link
               href="/privacy"
@@ -232,7 +241,7 @@ export default function DocumentenContent() {
                 border: "1px solid #27272A",
               }}
             >
-              PRIVACY
+              {t("ctaPrivacy")}
               <ArrowRight size={12} />
             </Link>
           </div>

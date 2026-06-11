@@ -1,0 +1,22 @@
+{
+  "membershipInactiveTitle": "Membership not active",
+  "membershipInactiveDesc": "Activate your membership to get access to events, shop and more.",
+  "activateNow": "Activate now",
+  "upcomingEvents": "upcoming events",
+  "allEvents": "All events",
+  "noEvents": "No upcoming events. Check back later!",
+  "ticket": "TICKET",
+  "free": "FREE",
+  "commissie": "Committee",
+  "noCommissie": "Not chosen yet",
+  "viewCommissies": "View committees",
+  "membership": "Membership",
+  "active": "Active",
+  "inactive": "Not active",
+  "level": "Level",
+  "levelValue": "Level {n}",
+  "xp": "{n} XP",
+  "tickets": "Tickets",
+  "viewTickets": "View tickets",
+  "months": ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+}

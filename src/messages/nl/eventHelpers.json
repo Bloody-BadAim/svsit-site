@@ -1,0 +1,7 @@
+{
+  "ticketDone": "AFGEROND",
+  "ticketSignup": "AANMELDEN",
+  "ticketTicketsOpen": "TICKETS OPEN",
+  "ticketSoon": "BINNENKORT",
+  "calendarDetailsFallback": "Event van SIT - {title}"
+}

@@ -1,0 +1,13 @@
+{
+  "sectionTitle": "Event check-in",
+  "intro": "Enter the 6 character code shown at the event.",
+  "codeCharAria": "Code character {index}",
+  "errorIncomplete": "Fill in all 6 characters",
+  "errorGeneric": "Something went wrong",
+  "errorConnection": "Connection error. Please try again.",
+  "loading": "Working...",
+  "submit": "Check in",
+  "xpHint": "You earn XP for attending events",
+  "successTitle": "Checked in!",
+  "successMessage": "You are checked in for this event."
+}

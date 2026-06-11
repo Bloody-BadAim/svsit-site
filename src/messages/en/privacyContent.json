@@ -1,0 +1,72 @@
+{
+  "fileLabel": "privacy.md",
+  "titleLine1": "Privacy",
+  "titleLine2": "Statement",
+  "subtitle": "// how we handle your data",
+  "lastUpdatedLabel": "last updated: {date}",
+  "lastUpdated": "31 May 2026",
+  "sections": {
+    "wie": {
+      "title": "Who we are",
+      "body": [
+        "Studievereniging Innovatie en Technologie (SIT) is the student association for HBO-ICT students at the Amsterdam University of Applied Sciences. We process your personal data when you become a member or use our site.",
+        "Controller: the SIT board. Reachable at {email}, {venue}, {street}, {postal}."
+      ]
+    },
+    "gegevens": {
+      "title": "What data we process",
+      "body": ["When you sign up and use your account we process:"],
+      "list": [
+        "Name and email address",
+        "Student number (only if you are a student, optional)",
+        "Password (stored encrypted, never readable)",
+        "Your committee preference and membership status",
+        "Event attendance and earned XP/badges"
+      ]
+    },
+    "doel": {
+      "title": "What we use it for",
+      "body": [
+        "We use your data only to manage your membership, give you access to events and the member portal, and to communicate with you about SIT. We never sell your data to third parties."
+      ]
+    },
+    "betaling": {
+      "title": "Payments",
+      "body": [
+        "Payments for your membership and tickets run through Stripe. We do not receive full card details; those are processed securely by Stripe. We do keep a payment reference so we can activate your membership."
+      ]
+    },
+    "verwerkers": {
+      "title": "Who we share it with",
+      "body": ["We work with a few processors that run our platform:"],
+      "list": [
+        "Supabase - database and account storage",
+        "Stripe - payment processing",
+        "Resend - sending emails (such as tickets)",
+        "Vercel - hosting of the website and cookieless analytics"
+      ]
+    },
+    "cookies": {
+      "title": "Cookies",
+      "body": [
+        "We use only strictly necessary, functional cookies. A session cookie keeps you logged in after you sign in. It is needed to make the site work and falls under the exception of the cookie law, so we do not ask consent for it.",
+        "Our analytics (Vercel Analytics and Speed Insights) work without cookies and without being able to identify you. We do not use tracking or advertising cookies."
+      ]
+    },
+    "bewaartermijn": {
+      "title": "How long we keep it",
+      "body": [
+        "We keep your data as long as you are a member. Want us to delete your account and data? Send a mail to {email} and we sort it out."
+      ]
+    },
+    "rechten": {
+      "title": "Your rights",
+      "body": [
+        "Under the GDPR you have the right to access, correct and delete your data, and you can object to processing. Mail {email} and we respond as soon as possible. Not satisfied? You can file a complaint with the Dutch Data Protection Authority."
+      ]
+    }
+  },
+  "ctaFileLabel": "vraag_over_privacy.sh",
+  "ctaMailUs": "MAIL US",
+  "ctaFaq": "FAQ"
+}

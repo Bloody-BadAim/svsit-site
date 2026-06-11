@@ -1,0 +1,18 @@
+{
+  "equipped": "equipped ({count}/{max})",
+  "slots": "{count} slots",
+  "saving": "saving...",
+  "removeTitle": "Verwijder {name}",
+  "chooseTitle": "Klik om een badge te kiezen",
+  "slotsHint": "Klik een badge hieronder om te equippen of verwijderen",
+  "filterAll": "All",
+  "earnedOn": "Verdiend op {date}",
+  "earned": "Verdiend",
+  "locked": "Vergrendeld",
+  "manualGrant": " - automatisch toegekend door bestuur",
+  "xpBonus": "+{xp} XP bonus",
+  "remove": "Verwijderen",
+  "equip": "Equippen",
+  "slotsFull": "Alle slots vol",
+  "emptyFilter": "{prompt} geen badges voor dit filter..."
+}

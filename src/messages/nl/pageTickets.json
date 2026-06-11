@@ -1,0 +1,9 @@
+{
+  "meta": {
+    "title": "Tickets - SIT"
+  },
+  "subtitle": "tickets · {count} totaal",
+  "heading": "MIJN TICKETS",
+  "empty": "Je hebt nog geen tickets.",
+  "emptyCta": "Bekijk onze events"
+}

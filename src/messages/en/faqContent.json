@@ -1,0 +1,54 @@
+{
+  "fileLabel": "faq.md",
+  "titleLine1": "Frequently Asked",
+  "titleLine2": "Questions",
+  "subtitle": "// everything you want to know about SIT",
+  "items": [
+    {
+      "question": "What is SIT?",
+      "answer": "SIT is the student association for HBO-ICT students at the Amsterdam University of Applied Sciences. We run events, workshops, hackathons, game nights and more. With {members} members and {commissies} committees there is always something going on.",
+      "linkLabel": "About us"
+    },
+    {
+      "question": "What does membership cost?",
+      "answer": "Membership costs a one-off {price} per year. No hidden fees, no monthly subscriptions. You can pay with iDEAL or credit card. You can also look around first and pay later.",
+      "linkLabel": "Join"
+    },
+    {
+      "question": "What do I get as a member?",
+      "answer": "Access to all SIT events (most of them free), free dev tools through the GitHub Student Pack, a personal member pass, committee participation, project opportunities, and a community of fellow ICT students. Plus XP, badges and a spot on the leaderboard."
+    },
+    {
+      "question": "Do I have to be a student to join?",
+      "answer": "No. SIT is open to everyone: students, teachers, alumni and externals. When you sign up you say whether you are a student. Students fill in their student number, the rest do not need to.",
+      "linkLabel": "Sign up"
+    },
+    {
+      "question": "Are events free?",
+      "answer": "Most events are free for members. Some events (like parties or external venues) have a small fee. The price is always shown with the event. Non members sometimes pay a surcharge.",
+      "linkLabel": "View events"
+    },
+    {
+      "question": "What are committees?",
+      "answer": "Committees are teams of members that take on specific tasks: running events, managing socials, making education content, organising games, and more. You can sign up for a committee right away, or join later.",
+      "linkLabel": "View committees"
+    },
+    {
+      "question": "How does the XP / leaderboard system work?",
+      "answer": "By attending events, earning badges and staying active you earn XP. This lets you level up and climb the leaderboard. It is a fun way to see how involved you are, but fully optional. You do not have to do anything with it.",
+      "linkLabel": "Leaderboard"
+    },
+    {
+      "question": "Can I pay later?",
+      "answer": "Yes. When you register you can choose \"Look around first\". Your account is then created without payment. You can browse the dashboard, but for some features (events, shop) you need to activate your membership."
+    },
+    {
+      "question": "How do I reach the board?",
+      "answer": "Send a mail to {email}, DM us on Instagram ({instagram}) or TikTok ({tiktok}), or join our WhatsApp group or Discord server. You can also drop by the {venue} ({floor}) during one of our events or the SIT Hub."
+    }
+  ],
+  "ctaFileLabel": "nog_vragen.sh",
+  "ctaEcho": "Question not answered?",
+  "ctaMailUs": "MAIL US",
+  "ctaJoin": "JOIN"
+}

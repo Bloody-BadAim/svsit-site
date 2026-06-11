@@ -1,0 +1,14 @@
+{
+  "portalLabel": "Member Portal",
+  "fromHboIct": "from HBO-ICT",
+  "menu": "Menu",
+  "openMenu": "Open menu",
+  "closeMenu": "Close menu",
+  "logout": "Log out",
+  "links": {
+    "dashboard": "Dashboard",
+    "tickets": "Tickets",
+    "profiel": "Profile",
+    "admin": "Admin"
+  }
+}

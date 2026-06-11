@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import QRCode from 'react-qr-code'
+import { useTranslations } from 'next-intl'
 import { formatDate } from '@/lib/utils'
 import { MapPin, Calendar, Hash, Download, Loader2 } from 'lucide-react'
 
@@ -23,15 +24,18 @@ interface TicketCardProps {
   }
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  paid:       { label: 'BETAALD',    color: 'var(--color-accent-green)', bg: 'rgba(34,197,94,0.08)' },
-  checked_in: { label: 'INGECHECKT', color: 'var(--color-accent-blue)',  bg: 'rgba(59,130,246,0.08)' },
-  pending:    { label: 'IN AFWACHTING', color: 'var(--color-accent-gold)', bg: 'rgba(242,158,24,0.08)' },
-  cancelled:  { label: 'GEANNULEERD', color: 'var(--color-accent-red)',   bg: 'rgba(239,68,68,0.08)' },
+const STATUS_CONFIG: Record<string, { color: string; bg: string }> = {
+  paid:       { color: 'var(--color-accent-green)', bg: 'rgba(34,197,94,0.08)' },
+  checked_in: { color: 'var(--color-accent-blue)',  bg: 'rgba(59,130,246,0.08)' },
+  pending:    { color: 'var(--color-accent-gold)', bg: 'rgba(242,158,24,0.08)' },
+  cancelled:  { color: 'var(--color-accent-red)',   bg: 'rgba(239,68,68,0.08)' },
 }
 
 export function TicketCard({ ticket }: TicketCardProps) {
-  const status = STATUS_CONFIG[ticket.status] ?? STATUS_CONFIG.pending
+  const t = useTranslations('ticketCard')
+  const statusKey = STATUS_CONFIG[ticket.status] ? ticket.status : 'pending'
+  const status = STATUS_CONFIG[statusKey]
+  const statusLabel = t(`status.${statusKey}`)
   const qrData = JSON.stringify({ type: 'ticket', id: ticket.id })
   const [downloading, setDownloading] = useState(false)
 
@@ -39,7 +43,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
     setDownloading(true)
     try {
       const res = await fetch(`/api/tickets/${ticket.id}/pdf`)
-      if (!res.ok) throw new Error('Download mislukt')
+      if (!res.ok) throw new Error('Download failed')
       const blob = await res.blob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -48,7 +52,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
       a.click()
       URL.revokeObjectURL(url)
     } catch {
-      alert('PDF downloaden mislukt. Probeer het opnieuw.')
+      alert(t('downloadError'))
     } finally {
       setDownloading(false)
     }
@@ -106,7 +110,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
               border: `1px solid ${status.color}`,
             }}
           >
-            {status.label}
+            {statusLabel}
           </span>
         </div>
       </div>
@@ -141,7 +145,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
           className="font-mono text-[10px] uppercase tracking-[0.15em] mt-3 text-center"
           style={{ color: 'var(--color-text-muted)' }}
         >
-          Toon dit bij de ingang
+          {t('showAtEntrance')}
         </p>
         {(ticket.status === 'paid' || ticket.status === 'checked_in') && (
           <button
@@ -155,7 +159,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
             }}
           >
             {downloading ? <Loader2 size={12} className="animate-spin" /> : <Download size={12} />}
-            {downloading ? 'Downloaden...' : 'Download PDF'}
+            {downloading ? t('downloading') : t('downloadPdf')}
           </button>
         )}
       </div>

@@ -1,0 +1,7 @@
+{
+  "ticketDone": "DONE",
+  "ticketSignup": "SIGN UP",
+  "ticketTicketsOpen": "TICKETS OPEN",
+  "ticketSoon": "COMING SOON",
+  "calendarDetailsFallback": "SIT event - {title}"
+}

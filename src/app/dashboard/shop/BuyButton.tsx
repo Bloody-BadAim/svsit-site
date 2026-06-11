@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Check } from 'lucide-react'
 
 interface BuyButtonProps {
@@ -11,6 +12,7 @@ interface BuyButtonProps {
 }
 
 export default function BuyButton({ accessoryId, price, canAfford }: BuyButtonProps) {
+  const t = useTranslations('shopBuyButton')
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -30,14 +32,14 @@ export default function BuyButton({ accessoryId, price, canAfford }: BuyButtonPr
       const json = await res.json() as { success?: boolean; error?: string }
 
       if (!res.ok || !json.success) {
-        setError(json.error ?? 'Aankoop mislukt')
+        setError(json.error ?? t('errorGeneric'))
         return
       }
 
       setBought(true)
       router.refresh()
     } catch {
-      setError('Netwerkfout - probeer opnieuw')
+      setError(t('errorNetwork'))
     } finally {
       setLoading(false)
     }
@@ -49,7 +51,7 @@ export default function BuyButton({ accessoryId, price, canAfford }: BuyButtonPr
         className="font-mono text-xs px-3 py-1 inline-flex items-center gap-1"
         style={{ color: 'var(--color-accent-green)', border: '1px solid rgba(34,197,94,0.3)' }}
       >
-        <Check className="w-3 h-3" /> IN BEZIT
+        <Check className="w-3 h-3" /> {t('owned')}
       </span>
     )
   }
@@ -64,9 +66,9 @@ export default function BuyButton({ accessoryId, price, canAfford }: BuyButtonPr
           border: '1px solid rgba(255,255,255,0.06)',
           backgroundColor: 'transparent',
         }}
-        title={`Kost ${price} coins`}
+        title={t('priceTooltip', { price })}
       >
-        NIET GENOEG COINS
+        {t('notEnough')}
       </button>
     )
   }
@@ -84,7 +86,7 @@ export default function BuyButton({ accessoryId, price, canAfford }: BuyButtonPr
           cursor: loading ? 'wait' : 'pointer',
         }}
       >
-        {loading ? '...' : 'KOPEN'}
+        {loading ? t('loading') : t('buy')}
       </button>
       {error && (
         <span className="font-mono text-[10px]" style={{ color: 'var(--color-accent-red)' }}>

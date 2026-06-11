@@ -1,0 +1,12 @@
+{
+  "status": {
+    "paid": "PAID",
+    "checked_in": "CHECKED IN",
+    "pending": "PENDING",
+    "cancelled": "CANCELLED"
+  },
+  "showAtEntrance": "Show this at the entrance",
+  "downloadPdf": "Download PDF",
+  "downloading": "Downloading...",
+  "downloadError": "Could not download the PDF. Please try again."
+}

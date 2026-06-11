@@ -1,0 +1,16 @@
+{
+  "label": "// leaderboard",
+  "title": "Hall of Fame",
+  "subtitle": "The most active SIT members, ranked by XP.",
+  "empty": "No members on the leaderboard yet.",
+  "you": "you",
+  "yourPositionAria": "Your position on the leaderboard",
+  "yourPosition": "your position",
+  "levelLine": "LVL {level} - {title}",
+  "xpSuffix": "XP",
+  "hiddenPre": "Your XP is hidden. Turn it on in your",
+  "hiddenLink": "profile",
+  "hiddenPost": "to show your position.",
+  "loginLink": "Log in",
+  "loginPost": "to see your position."
+}

@@ -1,8 +1,15 @@
 import type { ComponentProps } from 'react'
+import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { createServiceClient } from '@/lib/supabase'
 import { CardEditor } from '@/components/dashboard/cardEditor/CardEditor'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pageCardEditor')
+  return { title: t('metaTitle') }
+}
 
 export default async function CardEditorPage() {
   const session = await auth()

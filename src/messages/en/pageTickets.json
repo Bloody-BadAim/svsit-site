@@ -1,0 +1,9 @@
+{
+  "meta": {
+    "title": "Tickets - SIT"
+  },
+  "subtitle": "tickets · {count} total",
+  "heading": "MY TICKETS",
+  "empty": "You do not have any tickets yet.",
+  "emptyCta": "Check out our events"
+}

@@ -1,0 +1,12 @@
+{
+  "status": {
+    "paid": "BETAALD",
+    "checked_in": "INGECHECKT",
+    "pending": "IN AFWACHTING",
+    "cancelled": "GEANNULEERD"
+  },
+  "showAtEntrance": "Toon dit bij de ingang",
+  "downloadPdf": "Download PDF",
+  "downloading": "Downloaden...",
+  "downloadError": "PDF downloaden mislukt. Probeer het opnieuw."
+}

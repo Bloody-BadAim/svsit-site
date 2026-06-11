@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
@@ -12,8 +14,11 @@ import type { MemberCardEquipment } from '@/components/MemberCard'
 import { derivePetId } from '@/components/pets'
 import DashboardClient from '@/components/dashboard/DashboardClient'
 
-export const metadata = {
-  title: 'Dashboard -- SIT',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pageDashboard')
+  return {
+    title: t('meta.title'),
+  }
 }
 
 export default async function DashboardPage({
@@ -21,6 +26,7 @@ export default async function DashboardPage({
 }: {
   searchParams: Promise<{ welcome?: string }>
 }) {
+  const t = await getTranslations('pageDashboard')
   const session = await auth()
   if (!session?.user) redirect('/login')
 
@@ -200,7 +206,7 @@ export default async function DashboardPage({
         id: s.id as string,
         type: 'challenge' as const,
         points: (challenge?.points as number) || 0,
-        reason: (challenge?.title as string) || 'Challenge voltooid',
+        reason: (challenge?.title as string) || t('challengeCompleted'),
         event_name: null,
         created_at: s.created_at as string,
         category: (challenge?.category as string) || null,

@@ -1,0 +1,28 @@
+{
+  "fileLabel": "~/documenten",
+  "titleLine1": "Official",
+  "titleLine2": "Documents",
+  "subtitle": "// articles, regulations and accountability",
+  "documents": {
+    "statuten": {
+      "title": "Articles of Association",
+      "description": "The notarial deed of incorporation of the association. Recorded on 26 November 2015 by notary mr. Paul Robert Schut in Amsterdam. Contains the name, purpose, rules around members, board, Advisory Council and the General Members Meeting."
+    },
+    "hhr": {
+      "title": "Internal Regulations",
+      "description": "The practical elaboration of the articles: rules around committees, membership and day to day matters. Ratified by the General Members Meeting and published once final.",
+      "meta": "via GMM"
+    },
+    "jaarverslag": {
+      "title": "Annual Report",
+      "description": "The board report and the financial accountability over the past association year (1 September up to and including 31 August). Shared here after approval by the General Members Meeting.",
+      "meta": "per financial year"
+    }
+  },
+  "downloadPdf": "DOWNLOAD PDF",
+  "soon": "SOON",
+  "ctaFileLabel": "vraag_een_document_op.sh",
+  "ctaText": "Need another document or have a question about our articles? Send us a mail, we are happy to help.",
+  "ctaMailUs": "MAIL US",
+  "ctaPrivacy": "PRIVACY"
+}

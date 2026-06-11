@@ -1,0 +1,17 @@
+{
+  "meta": {
+    "title": "Shop - SIT"
+  },
+  "subtitle": "shop · {title} · level {level} · {count, plural, =1 {# item} other {# items}}",
+  "heading": "SHOP",
+  "yourCoins": "jouw coins",
+  "coinsFormula": "Coins = XP × 1",
+  "coinsHint": "Verdien coins door events bij te wonen",
+  "categories": {
+    "alles": "ALLES",
+    "pets": "PETS",
+    "frames": "FRAMES",
+    "effects": "EFFECTS",
+    "stickers": "STICKERS"
+  }
+}

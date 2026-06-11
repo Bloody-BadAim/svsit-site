@@ -1,0 +1,18 @@
+{
+  "equipped": "equipped ({count}/{max})",
+  "slots": "{count} slots",
+  "saving": "saving...",
+  "removeTitle": "Remove {name}",
+  "chooseTitle": "Click to pick a badge",
+  "slotsHint": "Click a badge below to equip or remove it",
+  "filterAll": "All",
+  "earnedOn": "Earned on {date}",
+  "earned": "Earned",
+  "locked": "Locked",
+  "manualGrant": " - granted manually by the board",
+  "xpBonus": "+{xp} XP bonus",
+  "remove": "Remove",
+  "equip": "Equip",
+  "slotsFull": "All slots full",
+  "emptyFilter": "{prompt} no badges for this filter..."
+}

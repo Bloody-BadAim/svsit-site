@@ -1,0 +1,31 @@
+{
+  "unlock": {
+    "levelNeeded": "Level {level} needed",
+    "badgeNeeded": "Badge needed",
+    "eventReward": "Event reward",
+    "easterEgg": "Easter egg",
+    "coins": "{price} coins",
+    "locked": "Locked"
+  },
+  "flair": {
+    "heading": "Flair",
+    "title": "Title",
+    "accent": "Accent",
+    "levelTag": "LVL {level}",
+    "titlePlaceholder": "Your own title...",
+    "titleLocked": "Unlock at level 8",
+    "customSwatch": "Custom color",
+    "saved": "Flair saved",
+    "saveFailed": "Could not save",
+    "saving": "Saving...",
+    "savedShort": "Saved",
+    "save": "Save"
+  },
+  "livePreview": "Live Preview",
+  "saving": "saving...",
+  "none": "none",
+  "balance": "Balance",
+  "collection": "{category}.collection",
+  "emptyTitle": "No items available",
+  "emptyHint": "Unlock via events, level-ups or the shop"
+}

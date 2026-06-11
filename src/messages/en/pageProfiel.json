@@ -1,0 +1,52 @@
+{
+  "headerStatus": "character.settings · {title} · lvl {level}",
+  "identity": {
+    "namePlaceholder": "What should we call you?",
+    "studentIdPlaceholder": "Not filled in",
+    "guildEmpty": "// no committee assigned",
+    "guildHint": "// committees are assigned by the board"
+  },
+  "save": {
+    "saving": "// saving...",
+    "button": "> save.config()",
+    "success": "config.saved",
+    "error": "error: save_failed"
+  },
+  "status": {
+    "active": "ACTIVE",
+    "inactive": "INACTIVE",
+    "ongoing": "Ongoing",
+    "legacyImport": "legacy import"
+  },
+  "rank": {
+    "xpTotal": "{points} XP total",
+    "toNextLevel": "{current}/{max} to next level",
+    "maxLevel": "MAX LEVEL"
+  },
+  "visibility": {
+    "on": "// your XP is shown on the leaderboard and in the weekly mail",
+    "off": "// your XP is hidden on the leaderboard and in the weekly mail"
+  },
+  "security": {
+    "currentPasswordPlaceholder": "••••••••",
+    "noPasswordYet": "// no password set yet - set one below",
+    "newPasswordPlaceholder": "min. 8 characters",
+    "updating": "// updating...",
+    "updateButton": "> update.pass()",
+    "setButton": "> set.pass()",
+    "updated": "password.updated",
+    "errorMin8": "error: min_8_chars",
+    "errorUpdateFailed": "error: update_failed",
+    "hint": "// password must be ≥8 characters · never share your credentials"
+  },
+  "cancel": {
+    "warning": "// cancelling your membership means you lose access to member perks and events",
+    "trigger": "> cancel membership",
+    "confirmQuestion": "Are you sure?",
+    "busy": "// working...",
+    "confirmButton": "> confirm cancellation",
+    "cancelButton": "cancel",
+    "success": "Membership cancelled",
+    "error": "Could not cancel"
+  }
+}

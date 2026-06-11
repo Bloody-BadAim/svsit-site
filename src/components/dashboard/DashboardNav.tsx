@@ -4,15 +4,17 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { LayoutDashboard, User, Shield, LogOut, Menu, X, Ticket } from 'lucide-react'
 
 const NAV_ITEMS = [
-  { href: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
-  { href: '/dashboard/tickets', label: 'Tickets', Icon: Ticket },
-  { href: '/dashboard/profiel', label: 'Profiel', Icon: User },
+  { href: '/dashboard', labelKey: 'links.dashboard', Icon: LayoutDashboard },
+  { href: '/dashboard/tickets', labelKey: 'links.tickets', Icon: Ticket },
+  { href: '/dashboard/profiel', labelKey: 'links.profiel', Icon: User },
 ]
 
 export default function DashboardNav() {
+  const t = useTranslations('dashboardNav')
   const pathname = usePathname()
   const { data: session } = useSession()
   const isAdmin = session?.user?.isAdmin || session?.user?.role === 'bestuur'
@@ -35,7 +37,7 @@ export default function DashboardNav() {
   }, [open])
 
   const items = isAdmin
-    ? [...NAV_ITEMS, { href: '/admin', label: 'Admin', Icon: Shield }]
+    ? [...NAV_ITEMS, { href: '/admin', labelKey: 'links.admin', Icon: Shield }]
     : NAV_ITEMS
 
   return (
@@ -59,7 +61,7 @@ export default function DashboardNav() {
           onClick={() => setOpen(!open)}
           className="w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer"
           style={{ color: 'var(--color-text)' }}
-          aria-label={open ? 'Menu sluiten' : 'Menu openen'}
+          aria-label={open ? t('closeMenu') : t('openMenu')}
         >
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
@@ -92,13 +94,13 @@ export default function DashboardNav() {
               </span>
             </div>
             <p className="text-[10px] uppercase tracking-[0.2em] mt-1 ml-0.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-              Leden Portaal
+              {t('portalLabel')}
             </p>
             <span
               className="hidden sm:inline-block text-[9px] uppercase tracking-[0.16em] mt-1 ml-0.5"
               style={{ color: 'var(--hboict-cyan)', fontFamily: 'var(--font-mono)', opacity: 0.7 }}
             >
-              van HBO-ICT
+              {t('fromHboIct')}
             </span>
           </Link>
           <button
@@ -116,7 +118,7 @@ export default function DashboardNav() {
         {/* Nav items */}
         <div className="space-y-1 flex-1">
           <p className="text-[10px] uppercase tracking-[0.15em] px-3 mb-2" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-            Menu
+            {t('menu')}
           </p>
           {items.map((item) => {
             const active = item.href === '/dashboard'
@@ -146,7 +148,7 @@ export default function DashboardNav() {
                   />
                 )}
                 <item.Icon size={18} strokeWidth={active ? 2.2 : 1.5} />
-                <span>{item.label}</span>
+                <span>{t(item.labelKey)}</span>
               </Link>
             )
           })}
@@ -182,7 +184,7 @@ export default function DashboardNav() {
             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--color-text-muted)' }}
           >
             <LogOut size={14} />
-            Uitloggen
+            {t('logout')}
           </button>
         </div>
       </nav>
@@ -218,7 +220,7 @@ export default function DashboardNav() {
                 />
               )}
               <item.Icon size={20} strokeWidth={active ? 2.2 : 1.5} />
-              {item.label}
+              {t(item.labelKey)}
             </Link>
           )
         })}

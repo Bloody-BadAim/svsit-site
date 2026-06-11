@@ -1,28 +1,21 @@
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import { getLevelForXp, getEffectiveLevel } from '@/lib/levelEngine'
 import { getShopItems } from '@/lib/shopEngine'
 import { Coins } from 'lucide-react'
 import { ShopGrid } from './ShopGrid'
 
-export const metadata = {
-  title: 'Shop - SIT',
+export async function generateMetadata() {
+  const t = await getTranslations('pageShop')
+  return {
+    title: t('meta.title'),
+  }
 }
 
 const CATEGORIES = ['alles', 'pets', 'frames', 'effects', 'stickers'] as const
 type CategoryFilter = (typeof CATEGORIES)[number]
-
-function getCategoryLabel(cat: string): string {
-  const map: Record<string, string> = {
-    alles: 'ALLES',
-    pets: 'PETS',
-    frames: 'FRAMES',
-    effects: 'EFFECTS',
-    stickers: 'STICKERS',
-  }
-  return map[cat] ?? cat.toUpperCase()
-}
 
 export default async function ShopPage({
   searchParams,
@@ -32,6 +25,7 @@ export default async function ShopPage({
   const session = await auth()
   if (!session?.user) redirect('/login')
 
+  const t = await getTranslations('pageShop')
   const supabase = createServiceClient()
   const memberId = session.user.id
 
@@ -107,7 +101,7 @@ export default async function ShopPage({
             className="font-mono text-xs uppercase tracking-[0.15em]"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            shop &middot; {levelDef.title} &middot; level {levelDef.level} &middot; {allItems.length} items
+            {t('subtitle', { title: levelDef.title, level: levelDef.level, count: allItems.length })}
           </span>
         </div>
         <h1
@@ -131,7 +125,7 @@ export default async function ShopPage({
       >
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
-            jouw coins
+            {t('yourCoins')}
           </p>
           <p
             className="font-mono text-3xl font-bold mt-0.5"
@@ -144,10 +138,10 @@ export default async function ShopPage({
         </div>
         <div className="text-right hidden sm:block">
           <p className="font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
-            Coins = XP &times; 1
+            {t('coinsFormula')}
           </p>
           <p className="font-mono text-xs mt-1" style={{ color: 'rgba(255,255,255,0.2)' }}>
-            Verdien coins door events bij te wonen
+            {t('coinsHint')}
           </p>
         </div>
       </div>
@@ -177,7 +171,7 @@ export default async function ShopPage({
                 transition: 'color 0.15s ease, border-color 0.15s ease',
               }}
             >
-              {getCategoryLabel(cat)}
+              {t(`categories.${cat}`)}
               {count > 0 && (
                 <span
                   className="ml-1.5 font-mono text-[10px]"

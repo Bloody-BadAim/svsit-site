@@ -15,6 +15,8 @@ export default function AddToCalendarDropdown({
   size?: "sm" | "lg";
 }) {
   const t = useTranslations("eventCalendar");
+  const th = useTranslations("eventHelpers");
+  const calendarDetailsFallback = th("calendarDetailsFallback", { title: event.title });
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -79,7 +81,7 @@ export default function AddToCalendarDropdown({
             }}
           >
             <a
-              href={googleCalendarUrl(event)}
+              href={googleCalendarUrl(event, calendarDetailsFallback)}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
@@ -97,7 +99,7 @@ export default function AddToCalendarDropdown({
             <div className="h-px mx-2" style={{ background: "rgba(255,255,255,0.06)" }} />
 
             <a
-              href={outlookCalendarUrl(event)}
+              href={outlookCalendarUrl(event, calendarDetailsFallback)}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}

@@ -1,0 +1,162 @@
+{
+  "boot": {
+    "head": "first-day boot",
+    "lines": {
+      "booting": "SIT_OS v26.0, first-day kernel",
+      "mount": "/dev/student > OK",
+      "load": "introweek.module ... OK",
+      "net": "connecting to community ... 204 leden online",
+      "auth": "guest pass granted",
+      "ready": "welkom. druk op start."
+    },
+    "start": "start introweek"
+  },
+  "hero": {
+    "eyebrow": "twee introweken · september 2026 · HvA Amsterdam",
+    "cobrand": "de studievereniging van HBO-ICT",
+    "kicker": "~/hva/hbo-ict > ./start --new-student",
+    "subPre": "Je eerste weken aan de HvA. Waar je studie begint, en waar je ",
+    "subBold": "je mensen vindt",
+    "subPost": ". Boot in. Vlieg de SIT-core in.",
+    "countdownLabel": "geschat aftellen tot ",
+    "countdownTarget": "introweek",
+    "countdownLive": "het is zover, kom langs!",
+    "unitDays": "dagen",
+    "unitHours": "uur",
+    "unitMinutes": "min",
+    "unitSeconds": "sec",
+    "ctaPlan": "PLAN JE WEEK",
+    "ctaJoin": "WORD LID",
+    "metaFreeBold": "gratis",
+    "metaFree": " voor leden",
+    "metaNoExp": "geen ervaring nodig",
+    "metaEveryone": "iedereen welkom",
+    "scroll": "scroll"
+  },
+  "day": {
+    "soon": "binnenkort",
+    "secret": "geheim",
+    "dateMeta": "datum · t.b.a.",
+    "timeMeta": "tijd & locatie · volgt",
+    "vibe": "vibe",
+    "compiling": "compiling...",
+    "locked": "vergrendeld",
+    "decrypting": "decrypting..."
+  },
+  "week1": {
+    "01": {
+      "slug": "kickoff & kennismaking",
+      "desc": "Officiele opening en je eerste kennismaking met het bestuur, de commissies en je mede-eerstejaars. Exacte invulling volgt.",
+      "tags": ["opening", "kennismaking"]
+    },
+    "02": {
+      "slug": "de stad & je crew",
+      "desc": "Leer de gebouwen, labs en koffieautomaten kennen, en vooral de mensen waarmee je je jaar gaat doorkomen.",
+      "tags": ["campus", "intro-groep"]
+    },
+    "03": {
+      "slug": "de eerste borrel",
+      "desc": "De eerste echte SIT-borrel. Dit is waar intro-groepjes vriendengroepen worden, en waar je jaar pas echt begint.",
+      "tags": ["borrel", "social"]
+    },
+    "04": {
+      "slug": "chill & contact",
+      "desc": "Laagdrempelig samen chillen, gamen of gewoon kletsen. Geen druk, geen ervaring nodig. Kom zoals je bent.",
+      "tags": ["chill", "iedereen welkom"]
+    },
+    "05": {
+      "slug": "nog niet onthuld",
+      "scr": "er staat iets moois gepland, geduld..."
+    }
+  },
+  "week2": {
+    "01": {
+      "slug": "tech & workshops",
+      "desc": "Hands-on de tech in met AI4HvA en EduCo: workshops en een CTF-taster waar je je eerste flag hackt. Geen voorkennis nodig.",
+      "tags": ["ai4hva", "ctf taster"]
+    },
+    "02": {
+      "slug": "game night & lan",
+      "desc": "Een avond LAN, tournaments en couch co-op, georganiseerd door GameIT. Breng je setup of speel op de onze.",
+      "tags": ["lan", "gameit"]
+    },
+    "03": {
+      "slug": "stadsspel & kroegentocht",
+      "desc": "Amsterdam in met een stadsspel dat eindigt in een kroegentocht. Een week lang wordt de hele stad je campus.",
+      "tags": ["stadsspel", "kroegentocht"]
+    },
+    "04": {
+      "slug": "de grote afsluiter",
+      "desc": "De grote afsluiter van de introperiode. Live muziek, de hele vereniging op een vloer en het officiele begin van jouw jaar bij SIT.",
+      "tags": ["feest", "afsluiter"]
+    },
+    "05": {
+      "slug": "nog niet onthuld",
+      "scr": "een verrassing voor de echte die-hards..."
+    }
+  },
+  "kit": {
+    "01": {
+      "title": "Een crew die blijft",
+      "body": "Je intro-groepje wordt het groepje waarmee je vier jaar lang door de opleiding rolt."
+    },
+    "02": {
+      "title": "Gratis eten & drinken",
+      "body": "Lunch, borrels en genoeg koffie om je eerste week echt te overleven."
+    },
+    "03": {
+      "title": "Direct ingeplugd",
+      "body": "Toegang tot {commissies} commissies, de Discord en de eigen SIT-server, vanaf dag een."
+    },
+    "04": {
+      "title": "Geen ervaring nodig",
+      "body": "Kom zoals je bent, coder, gamer, of nog geen idee. Wij regelen de rest."
+    }
+  },
+  "program": {
+    "label": "// het programma",
+    "introPre": "Dit jaar zijn er ",
+    "introBold1": "twee introweken",
+    "introMid": " in september. We zijn het volledige programma nog aan het plannen. Hieronder de ",
+    "introBold2": "vibe",
+    "introPost": " die je kan verwachten. Exacte dagen, tijden en locaties volgen binnenkort.",
+    "week1Btn": "Intro Week ",
+    "week2Btn": "Intro Week ",
+    "schemaTag": "// schema compileert...",
+    "notePre": "Het definitieve schema voor beide weken volgt binnenkort. ",
+    "noteLink": "word lid",
+    "notePost": " en je krijgt het als eerste in je inbox."
+  },
+  "kitSection": {
+    "label": "// je intro-survival kit",
+    "introPre": "Wat je uit deze weken meeneemt, ",
+    "introBold": "los van de hoofdpijn",
+    "introPost": "."
+  },
+  "finale": {
+    "label": "// claim je plek",
+    "headLine1": "Een klik en",
+    "headLine2": "je hoort er",
+    "headGold": "bij",
+    "bodyPre": "Introweek is ",
+    "bodyBold": "gratis voor leden",
+    "bodyPost": ". Lid worden kost {price} euro voor een heel jaar, en je krijgt er een complete community, {events} events en een netwerk van {students} HBO-ICT studenten bij.",
+    "list1": "Volledige introweek, alle dagen",
+    "list2": "Alle events & borrels het hele jaar",
+    "list3": "Meedraaien in elke commissie",
+    "list4": "Discord, AI Labs & de SIT-server",
+    "ticketBoarding": "boarding pass",
+    "ticketClass": "introweek '26",
+    "ticketYou": "JIJ",
+    "ticketYouSub": "eerstejaars",
+    "ticketSit": "SIT",
+    "ticketSitSub": "de community",
+    "ticketGate": "gate",
+    "ticketSeat": "seat",
+    "ticketSeatVal": "1A · jij",
+    "ticketPrice": "prijs",
+    "ticketPriceUnit": "/jr",
+    "ticketCta": "$ word lid, check in",
+    "signoff": "de officiele studievereniging van HBO-ICT"
+  }
+}

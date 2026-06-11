@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Palette, Share2, Download, Lock, ChevronRight, Zap, Target, Check } from 'lucide-react'
 import { useToast } from '@/components/Toast'
 import MemberCard from '@/components/MemberCard'
@@ -43,6 +44,7 @@ export interface MyCardTabProps {
 // ---------------------------------------------------------------------------
 
 function ActivityRow({ item }: { item: ActivityItem }) {
+  const t = useTranslations('dashMyCardTab')
   const time = new Date(item.created_at)
   const timeStr = `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`
 
@@ -58,9 +60,10 @@ function ActivityRow({ item }: { item: ActivityItem }) {
     const isToday = time.toDateString() === now.toDateString()
     const isYesterday = time.toDateString() === yesterday.toDateString()
     setDateLabel(
-      isToday ? 'vandaag' : isYesterday ? 'gisteren' : time.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })
+      isToday ? t('today') : isYesterday ? t('yesterday') : time.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })
     )
-  }, [item.created_at])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item.created_at, t])
 
   const isBadge = item.type === 'badge'
   const isChallenge = item.type === 'challenge'
@@ -95,7 +98,7 @@ function ActivityRow({ item }: { item: ActivityItem }) {
         className="shrink-0 text-xs font-mono font-bold"
         style={{ color: isChallenge ? 'var(--color-accent-blue)' : 'var(--color-accent-gold)' }}
       >
-        +{item.points}xp
+        {t('xpSuffix', { n: item.points })}
       </span>
 
       {/* Time */}
@@ -111,6 +114,7 @@ function ActivityRow({ item }: { item: ActivityItem }) {
 // ---------------------------------------------------------------------------
 
 function NextUnlockTeaser({ unlock }: { unlock: NextUnlock }) {
+  const t = useTranslations('dashMyCardTab')
   return (
     <div
       className="relative overflow-hidden"
@@ -126,10 +130,10 @@ function NextUnlockTeaser({ unlock }: { unlock: NextUnlock }) {
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-green-500/60">
-            NEXT UNLOCK
+            {t('nextUnlock')}
           </span>
           <span className="text-[10px] font-mono text-green-400/80">
-            LVL {unlock.nextLevel}
+            {t('level', { n: unlock.nextLevel })}
           </span>
         </div>
 
@@ -149,7 +153,7 @@ function NextUnlockTeaser({ unlock }: { unlock: NextUnlock }) {
               {unlock.skinName}
             </p>
             <p className="text-[10px] font-mono text-green-400/70">
-              {unlock.xpToGo} XP te gaan
+              {t('xpToGo', { n: unlock.xpToGo })}
             </p>
           </div>
           <ChevronRight size={14} className="text-green-500/30 shrink-0" />
@@ -178,6 +182,7 @@ function NextUnlockTeaser({ unlock }: { unlock: NextUnlock }) {
 // ---------------------------------------------------------------------------
 
 function DailyStats({ xpToday, streak }: { xpToday: number; streak: number }) {
+  const t = useTranslations('dashMyCardTab')
   const xpColor = xpToday > 0 ? '#22C55E' : '#EF4444'
   const streakColor = streak > 0 ? '#EF4444' : 'rgba(255,255,255,0.2)'
 
@@ -194,7 +199,7 @@ function DailyStats({ xpToday, streak }: { xpToday: number; streak: number }) {
         <div className="flex items-center gap-1.5 mb-1">
           <Zap size={11} style={{ color: xpColor }} />
           <span className="text-[9px] font-mono uppercase tracking-[0.15em] text-gray-500">
-            Vandaag
+            {t('todayStat')}
           </span>
         </div>
         <p className="text-lg font-mono font-bold" style={{ color: xpColor }}>
@@ -213,11 +218,11 @@ function DailyStats({ xpToday, streak }: { xpToday: number; streak: number }) {
         <div className="flex items-center gap-1.5 mb-1">
           <Target size={11} style={{ color: streakColor }} />
           <span className="text-[9px] font-mono uppercase tracking-[0.15em] text-gray-500">
-            Streak
+            {t('streak')}
           </span>
         </div>
         <p className="text-lg font-mono font-bold" style={{ color: streakColor }}>
-          {streak} <span className="text-xs font-normal">dagen</span>
+          {streak} <span className="text-xs font-normal">{t('days')}</span>
         </p>
       </div>
     </div>
@@ -238,6 +243,7 @@ export default function MyCardTab({
   xpToday,
   streak,
 }: MyCardTabProps) {
+  const t = useTranslations('dashMyCardTab')
   const [shareStatus, setShareStatus] = useState<'idle' | 'done'>('idle')
   const cardRef = useRef<HTMLDivElement>(null)
   const { toast } = useToast()
@@ -256,10 +262,10 @@ export default function MyCardTab({
       const blob = await captureCard()
       if (blob && navigator.share) {
         const file = new File([blob], 'sit-card.png', { type: 'image/png' })
-        await navigator.share({ title: 'Mijn SIT Card', files: [file] })
+        await navigator.share({ title: t('shareTitle'), files: [file] })
       } else {
         await navigator.clipboard.writeText(`https://svsit.nl/member/${memberId}`)
-        toast('Link gekopieerd naar klembord', 'success')
+        toast(t('linkCopied'), 'success')
       }
       setShareStatus('done')
       setTimeout(() => setShareStatus('idle'), 2000)
@@ -272,7 +278,7 @@ export default function MyCardTab({
     try {
       const blob = await captureCard()
       if (!blob) {
-        toast('Kon kaart niet genereren', 'error')
+        toast(t('cardGenerateFailed'), 'error')
         return
       }
       const url = URL.createObjectURL(blob)
@@ -283,9 +289,9 @@ export default function MyCardTab({
       URL.revokeObjectURL(url)
       setShareStatus('done')
       setTimeout(() => setShareStatus('idle'), 2000)
-      toast('Kaart gedownload', 'success')
+      toast(t('cardDownloaded'), 'success')
     } catch {
-      toast('Download mislukt', 'error')
+      toast(t('downloadFailed'), 'error')
     }
   }
 
@@ -312,7 +318,7 @@ export default function MyCardTab({
             }}
           >
             <Palette size={16} />
-            <span className="text-[10px]">EDIT</span>
+            <span className="text-[10px]">{t('edit')}</span>
           </a>
 
           <button
@@ -325,7 +331,7 @@ export default function MyCardTab({
             }}
           >
             <Download size={16} />
-            <span className="text-[10px]">SAVE</span>
+            <span className="text-[10px]">{t('save')}</span>
           </button>
 
           <button
@@ -338,7 +344,7 @@ export default function MyCardTab({
             }}
           >
             {shareStatus === 'done' ? <Check size={16} /> : <Share2 size={16} />}
-            <span className="text-[10px]">{shareStatus === 'done' ? 'DONE' : 'SHARE'}</span>
+            <span className="text-[10px]">{shareStatus === 'done' ? t('done') : t('share')}</span>
           </button>
         </div>
       </div>
@@ -366,7 +372,7 @@ export default function MyCardTab({
             style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
           >
             <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-gray-500">
-              Recent Activity
+              {t('recentActivity')}
             </span>
             <span
               className="text-[10px] font-mono px-1.5 py-0.5"
@@ -383,7 +389,7 @@ export default function MyCardTab({
             <div className="px-4 py-8 text-center">
               <Zap size={20} className="mx-auto mb-2 text-gray-600" />
               <p className="text-xs font-mono text-gray-600">
-                {'>'} awaiting first event scan...
+                {'>'} {t('awaitingScan')}
               </p>
             </div>
           ) : (

@@ -1,0 +1,52 @@
+{
+  "headerStatus": "character.settings · {title} · lvl {level}",
+  "identity": {
+    "namePlaceholder": "Hoe wil je dat we je noemen?",
+    "studentIdPlaceholder": "Niet ingevuld",
+    "guildEmpty": "// geen commissie toegewezen",
+    "guildHint": "// commissies worden toegewezen door het bestuur"
+  },
+  "save": {
+    "saving": "// saving...",
+    "button": "> save.config()",
+    "success": "config.saved",
+    "error": "error: save_failed"
+  },
+  "status": {
+    "active": "ACTIVE",
+    "inactive": "INACTIVE",
+    "ongoing": "Doorlopend",
+    "legacyImport": "legacy import"
+  },
+  "rank": {
+    "xpTotal": "{points} XP total",
+    "toNextLevel": "{current}/{max} to next level",
+    "maxLevel": "MAX LEVEL"
+  },
+  "visibility": {
+    "on": "// je XP is zichtbaar op het leaderboard en in de wekelijkse mail",
+    "off": "// je XP is verborgen op het leaderboard en in de wekelijkse mail"
+  },
+  "security": {
+    "currentPasswordPlaceholder": "••••••••",
+    "noPasswordYet": "// no password set yet - set one below",
+    "newPasswordPlaceholder": "min. 8 characters",
+    "updating": "// updating...",
+    "updateButton": "> update.pass()",
+    "setButton": "> set.pass()",
+    "updated": "password.updated",
+    "errorMin8": "error: min_8_chars",
+    "errorUpdateFailed": "error: update_failed",
+    "hint": "// password must be ≥8 characters · never share your credentials"
+  },
+  "cancel": {
+    "warning": "// je lidmaatschap opzeggen betekent dat je geen toegang meer hebt tot ledenvoordelen en events",
+    "trigger": "> lidmaatschap opzeggen",
+    "confirmQuestion": "Weet je het zeker?",
+    "busy": "// bezig...",
+    "confirmButton": "> bevestig opzeggen",
+    "cancelButton": "annuleren",
+    "success": "Lidmaatschap opgezegd",
+    "error": "Opzeggen mislukt"
+  }
+}

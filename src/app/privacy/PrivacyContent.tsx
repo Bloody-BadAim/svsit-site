@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { SITE_CONFIG } from "@/lib/constants";
 import {
   ShieldCheck,
@@ -25,94 +26,17 @@ interface Section {
   list?: string[];
 }
 
-// ─── Privacy content ──────────────────────────────────────────────────────────
+// ─── Section presentation metadata (id, icon, color) ──────────────────────────
 
-const LAST_UPDATED = "31 mei 2026";
-
-const SECTIONS: Section[] = [
-  {
-    id: "wie",
-    title: "Wie zijn wij",
-    icon: ShieldCheck,
-    color: "#F29E18",
-    body: [
-      "Studievereniging Innovatie en Technologie (SIT) is de studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. Wij verwerken jouw persoonsgegevens als je lid wordt of onze site gebruikt.",
-      `Verantwoordelijke: het bestuur van SIT. Bereikbaar via ${SITE_CONFIG.email}, ${SITE_CONFIG.address.venue}, ${SITE_CONFIG.address.street}, ${SITE_CONFIG.address.postal}.`,
-    ],
-  },
-  {
-    id: "gegevens",
-    title: "Welke gegevens we verwerken",
-    icon: Database,
-    color: "#3B82F6",
-    body: ["Bij aanmelding en gebruik van je account verwerken we:"],
-    list: [
-      "Naam en e-mailadres",
-      "Studentnummer (alleen als je student bent, optioneel)",
-      "Wachtwoord (versleuteld opgeslagen, nooit leesbaar)",
-      "Je commissievoorkeur en lidmaatschapsstatus",
-      "Deelname aan events en behaalde XP/badges",
-    ],
-  },
-  {
-    id: "doel",
-    title: "Waarvoor we ze gebruiken",
-    icon: UserCheck,
-    color: "#22C55E",
-    body: [
-      "We gebruiken je gegevens alleen om je lidmaatschap te beheren, je toegang te geven tot events en het ledenportaal, en om met je te communiceren over SIT. We verkopen je gegevens nooit aan derden.",
-    ],
-  },
-  {
-    id: "betaling",
-    title: "Betalingen",
-    icon: CreditCard,
-    color: "#22C55E",
-    body: [
-      "Betalingen voor je lidmaatschap en tickets lopen via Stripe. Wij ontvangen geen volledige kaartgegevens; die worden veilig door Stripe verwerkt. We bewaren wel een betaalreferentie zodat we je lidmaatschap kunnen activeren.",
-    ],
-  },
-  {
-    id: "verwerkers",
-    title: "Met wie we ze delen",
-    icon: Server,
-    color: "#A78BFA",
-    body: ["We werken met een paar verwerkers die ons platform draaien:"],
-    list: [
-      "Supabase - database en accountopslag",
-      "Stripe - betalingsverwerking",
-      "Resend - versturen van e-mails (zoals tickets)",
-      "Vercel - hosting van de website en cookieloze statistieken",
-    ],
-  },
-  {
-    id: "cookies",
-    title: "Cookies",
-    icon: Cookie,
-    color: "#F29E18",
-    body: [
-      "We gebruiken alleen strikt noodzakelijke, functionele cookies. Een sessiecookie houdt je ingelogd nadat je inlogt. Die is nodig om de site te laten werken en valt onder de uitzondering van de cookiewet, dus daar vragen we geen toestemming voor.",
-      "Onze statistieken (Vercel Analytics en Speed Insights) werken zonder cookies en zonder dat we je kunnen identificeren. We gebruiken geen tracking- of advertentiecookies.",
-    ],
-  },
-  {
-    id: "bewaartermijn",
-    title: "Hoe lang we bewaren",
-    icon: Clock,
-    color: "#3B82F6",
-    body: [
-      `We bewaren je gegevens zolang je lid bent. Wil je dat we je account en gegevens verwijderen? Stuur een mail naar ${SITE_CONFIG.email} en we regelen het.`,
-    ],
-  },
-  {
-    id: "rechten",
-    title: "Jouw rechten",
-    icon: UserCheck,
-    color: "#22C55E",
-    body: [
-      `Onder de AVG heb je recht op inzage, correctie en verwijdering van je gegevens, en kun je bezwaar maken tegen verwerking. Mail ${SITE_CONFIG.email} en we reageren zo snel mogelijk. Niet tevreden? Je kunt een klacht indienen bij de Autoriteit Persoonsgegevens.`,
-    ],
-  },
+const SECTION_META: { id: string; icon: typeof ShieldCheck; color: string }[] = [
+  { id: "wie", icon: ShieldCheck, color: "#F29E18" },
+  { id: "gegevens", icon: Database, color: "#3B82F6" },
+  { id: "doel", icon: UserCheck, color: "#22C55E" },
+  { id: "betaling", icon: CreditCard, color: "#22C55E" },
+  { id: "verwerkers", icon: Server, color: "#A78BFA" },
+  { id: "cookies", icon: Cookie, color: "#F29E18" },
+  { id: "bewaartermijn", icon: Clock, color: "#3B82F6" },
+  { id: "rechten", icon: UserCheck, color: "#22C55E" },
 ];
 
 // ─── Terminal dots helper ─────────────────────────────────────────────────────
@@ -129,7 +53,34 @@ function TerminalDots() {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
+interface RawSection {
+  title: string;
+  body: string[];
+  list?: string[];
+}
+
 export default function PrivacyContent() {
+  const t = useTranslations("privacyContent");
+
+  const interpolate = (text: string) =>
+    text
+      .replace("{email}", SITE_CONFIG.email)
+      .replace("{venue}", SITE_CONFIG.address.venue)
+      .replace("{street}", SITE_CONFIG.address.street)
+      .replace("{postal}", SITE_CONFIG.address.postal);
+
+  const SECTIONS: Section[] = SECTION_META.map((meta) => {
+    const raw = t.raw("sections." + meta.id) as RawSection;
+    return {
+      id: meta.id,
+      title: raw.title,
+      icon: meta.icon,
+      color: meta.color,
+      body: raw.body.map(interpolate),
+      list: raw.list,
+    };
+  });
+
   return (
     <section className="relative py-16 md:py-24 px-6 md:px-12 lg:px-24">
       {/* Grid background */}
@@ -148,22 +99,22 @@ export default function PrivacyContent() {
           <div className="flex items-center gap-3 mb-4">
             <TerminalDots />
             <span className="font-mono text-[10px] tracking-[0.2em] uppercase" style={{ color: "#71717A" }}>
-              privacy.md
+              {t("fileLabel")}
             </span>
           </div>
 
           <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight leading-tight mb-3">
-            Privacy
+            {t("titleLine1")}
             <br />
-            <span style={{ color: "#F29E18" }}>Verklaring</span>
+            <span style={{ color: "#F29E18" }}>{t("titleLine2")}</span>
           </h1>
 
           <p className="font-mono text-sm" style={{ color: "#71717A" }}>
-            // hoe we met jouw gegevens omgaan
+            {t("subtitle")}
           </p>
 
           <p className="font-mono text-xs mt-2" style={{ color: "#52525B" }}>
-            laatst bijgewerkt: {LAST_UPDATED}
+            {t("lastUpdatedLabel", { date: t("lastUpdated") })}
           </p>
 
           {/* Gold separator */}
@@ -232,7 +183,7 @@ export default function PrivacyContent() {
           <div className="flex items-center gap-2 mb-3">
             <TerminalDots />
             <span className="font-mono text-[10px] tracking-wider" style={{ color: "#71717A" }}>
-              vraag_over_privacy.sh
+              {t("ctaFileLabel")}
             </span>
           </div>
 
@@ -255,7 +206,7 @@ export default function PrivacyContent() {
               }}
             >
               <Mail size={12} />
-              MAIL ONS
+              {t("ctaMailUs")}
             </a>
             <Link
               href="/faq"
@@ -265,7 +216,7 @@ export default function PrivacyContent() {
                 border: "1px solid #27272A",
               }}
             >
-              FAQ
+              {t("ctaFaq")}
               <ArrowRight size={12} />
             </Link>
           </div>

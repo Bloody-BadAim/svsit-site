@@ -12,6 +12,7 @@ import AddToCalendarDropdown from "./AddToCalendarDropdown";
 
 export default function FeaturedCard({ event, inView }: { event: SitEvent; inView: boolean }) {
   const t = useTranslations("eventFeaturedCard");
+  const th = useTranslations("eventHelpers");
   const ticket = ticketLabel(event);
 
   return (
@@ -180,7 +181,7 @@ export default function FeaturedCard({ event, inView }: { event: SitEvent; inVie
                 }}
               >
                 <ExternalLink size={12} />
-                {ticket.text}
+                {th(ticket.textKey)}
               </a>
             ) : (
               <span
@@ -191,7 +192,7 @@ export default function FeaturedCard({ event, inView }: { event: SitEvent; inVie
                   background: `${ticket.color}08`,
                 }}
               >
-                {ticket.text}
+                {th(ticket.textKey)}
               </span>
             )}
 

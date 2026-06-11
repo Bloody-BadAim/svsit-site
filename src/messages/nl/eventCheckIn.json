@@ -1,0 +1,13 @@
+{
+  "sectionTitle": "Event Check-in",
+  "intro": "Voer de 6-karakter code in die op het event wordt getoond.",
+  "codeCharAria": "Code karakter {index}",
+  "errorIncomplete": "Vul alle 6 karakters in",
+  "errorGeneric": "Er ging iets mis",
+  "errorConnection": "Verbindingsfout. Probeer het opnieuw.",
+  "loading": "Bezig...",
+  "submit": "Inchecken",
+  "xpHint": "Je verdient XP voor het bijwonen van events",
+  "successTitle": "Ingecheckt!",
+  "successMessage": "Je bent succesvol ingecheckt voor dit event."
+}

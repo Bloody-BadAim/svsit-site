@@ -1,0 +1,10 @@
+{
+  "membershipActivated": "membership activated -- welcome to SIT",
+  "xpLabel": "{current}/{max} XP",
+  "tabs": {
+    "overview": "OVERVIEW",
+    "card": "MY CARD",
+    "quests": "QUESTS",
+    "badges": "BADGES"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "portalLabel": "Leden Portaal",
+  "fromHboIct": "van HBO-ICT",
+  "menu": "Menu",
+  "openMenu": "Menu openen",
+  "closeMenu": "Menu sluiten",
+  "logout": "Uitloggen",
+  "links": {
+    "dashboard": "Dashboard",
+    "tickets": "Tickets",
+    "profiel": "Profiel",
+    "admin": "Admin"
+  }
+}

@@ -1,11 +1,15 @@
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { TicketCard } from './TicketCard'
 
-export const metadata = {
-  title: 'Tickets - SIT',
+export async function generateMetadata() {
+  const t = await getTranslations('pageTickets')
+  return {
+    title: t('meta.title'),
+  }
 }
 
 interface TicketRow {
@@ -30,6 +34,7 @@ export default async function TicketsPage() {
   const session = await auth()
   if (!session?.user) redirect('/login')
 
+  const t = await getTranslations('pageTickets')
   const supabase = createServiceClient()
 
   const { data: tickets } = await supabase
@@ -56,7 +61,7 @@ export default async function TicketsPage() {
             className="font-mono text-xs uppercase tracking-[0.15em]"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            tickets &middot; {typedTickets.length} totaal
+            {t('subtitle', { count: typedTickets.length })}
           </span>
         </div>
         <h1
@@ -66,7 +71,7 @@ export default async function TicketsPage() {
             fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
           }}
         >
-          MIJN TICKETS
+          {t('heading')}
         </h1>
       </div>
 
@@ -83,14 +88,14 @@ export default async function TicketsPage() {
             className="font-mono text-sm mb-1"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            Je hebt nog geen tickets.
+            {t('empty')}
           </p>
           <Link
             href="/#events"
             className="font-mono text-sm underline underline-offset-4"
             style={{ color: 'var(--color-accent-gold)' }}
           >
-            Bekijk onze events
+            {t('emptyCta')}
           </Link>
         </div>
       ) : (

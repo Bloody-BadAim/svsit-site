@@ -1,0 +1,31 @@
+{
+  "unlock": {
+    "levelNeeded": "Level {level} nodig",
+    "badgeNeeded": "Badge nodig",
+    "eventReward": "Event reward",
+    "easterEgg": "Easter egg",
+    "coins": "{price} coins",
+    "locked": "Vergrendeld"
+  },
+  "flair": {
+    "heading": "Flair",
+    "title": "Title",
+    "accent": "Accent",
+    "levelTag": "LVL {level}",
+    "titlePlaceholder": "Jouw eigen titel...",
+    "titleLocked": "Unlock op level 8",
+    "customSwatch": "Eigen kleur",
+    "saved": "Flair opgeslagen",
+    "saveFailed": "Opslaan mislukt",
+    "saving": "Opslaan...",
+    "savedShort": "Opgeslagen",
+    "save": "Opslaan"
+  },
+  "livePreview": "Live Preview",
+  "saving": "saving...",
+  "none": "geen",
+  "balance": "Balance",
+  "collection": "{category}.collection",
+  "emptyTitle": "Geen items beschikbaar",
+  "emptyHint": "Unlock via events, level-ups of de shop"
+}

@@ -1,0 +1,16 @@
+{
+  "label": "// leaderboard",
+  "title": "Hall of Fame",
+  "subtitle": "De meest actieve SIT leden, gerangschikt op XP.",
+  "empty": "Nog geen leden op de leaderboard.",
+  "you": "jij",
+  "yourPositionAria": "Jouw positie op de leaderboard",
+  "yourPosition": "jouw positie",
+  "levelLine": "LVL {level} - {title}",
+  "xpSuffix": "XP",
+  "hiddenPre": "Je XP is verborgen. Zet het aan in je",
+  "hiddenLink": "profiel",
+  "hiddenPost": "om je positie te tonen.",
+  "loginLink": "Log in",
+  "loginPost": "om jouw positie te zien."
+}

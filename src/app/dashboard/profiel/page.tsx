@@ -2,6 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 import { motion } from 'motion/react'
 import { getLevelForXp, getLevelProgress } from '@/lib/levelEngine'
 import { CornerDecorations } from '@/components/ui/CornerDecorations'
@@ -70,6 +71,7 @@ function DarkInput({
 
 // ─── Level badge ───────────────────────────────────────────────────────────────
 function RankBadge({ points }: { points: number }) {
+  const t = useTranslations('pageProfiel')
   const levelDef = getLevelForXp(points)
   const levelProgress = getLevelProgress(points)
 
@@ -97,10 +99,10 @@ function RankBadge({ points }: { points: number }) {
       {/* XP bar */}
       <div>
         <div className="flex justify-between font-mono text-[10px] mb-1" style={{ color: 'var(--color-text-muted)' }}>
-          <span>{points} XP total</span>
+          <span>{t('rank.xpTotal', { points })}</span>
           {levelProgress.max > 0
-            ? <span>{levelProgress.current}/{levelProgress.max} to next level</span>
-            : <span>MAX LEVEL</span>
+            ? <span>{t('rank.toNextLevel', { current: levelProgress.current, max: levelProgress.max })}</span>
+            : <span>{t('rank.maxLevel')}</span>
           }
         </div>
         <div className="h-[4px] w-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}>
@@ -119,6 +121,8 @@ function RankBadge({ points }: { points: number }) {
 
 // ─── Main page ─────────────────────────────────────────────────────────────────
 export default function ProfielPage() {
+  const t = useTranslations('pageProfiel')
+  const locale = useLocale()
   const { data: session } = useSession()
   const [displayName, setDisplayName] = useState('')
   const [studentNumber, setStudentNumber] = useState('')
@@ -179,7 +183,7 @@ export default function ProfielPage() {
       }),
     })
 
-    setMessage(res.ok ? 'config.saved' : 'error: save_failed')
+    setMessage(res.ok ? t('save.success') : t('save.error'))
     setSaving(false)
     setTimeout(() => setMessage(''), 3000)
   }
@@ -203,7 +207,7 @@ export default function ProfielPage() {
   async function handlePasswordChange() {
     if (!session?.user?.id) return
     if (!newPassword || newPassword.length < 8) {
-      setPwMessage('error: min_8_chars')
+      setPwMessage(t('security.errorMin8'))
       return
     }
     setPwSaving(true)
@@ -220,12 +224,12 @@ export default function ProfielPage() {
 
     const { error } = await res.json()
     if (res.ok) {
-      setPwMessage('password.updated')
+      setPwMessage(t('security.updated'))
       setCurrentPassword('')
       setNewPassword('')
       setHasPassword(true)
     } else {
-      setPwMessage(error || 'error: update_failed')
+      setPwMessage(error || t('security.errorUpdateFailed'))
     }
     setPwSaving(false)
     setTimeout(() => setPwMessage(''), 4000)
@@ -241,12 +245,12 @@ export default function ProfielPage() {
     })
 
     if (res.ok) {
-      setCancelMessage('Lidmaatschap opgezegd')
+      setCancelMessage(t('cancel.success'))
       setMembershipActive(false)
       setCancelConfirm(false)
     } else {
       const { error } = await res.json()
-      setCancelMessage(error || 'Opzeggen mislukt')
+      setCancelMessage(error || t('cancel.error'))
     }
     setCancelling(false)
     setTimeout(() => setCancelMessage(''), 5000)
@@ -294,7 +298,7 @@ export default function ProfielPage() {
             }}
           />
           <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'var(--color-text-muted)' }}>
-            character.settings · {levelDef.title} · lvl {levelDef.level}
+            {t('headerStatus', { title: levelDef.title, level: levelDef.level })}
           </span>
         </div>
         <h1
@@ -328,7 +332,7 @@ export default function ProfielPage() {
               label="character.name"
               value={displayName}
               onChange={setDisplayName}
-              placeholder="Hoe wil je dat we je noemen?"
+              placeholder={t('identity.namePlaceholder')}
             />
 
             {/* Email display */}
@@ -343,7 +347,7 @@ export default function ProfielPage() {
               label="student.id"
               value={studentNumber}
               onChange={setStudentNumber}
-              placeholder="Niet ingevuld"
+              placeholder={t('identity.studentIdPlaceholder')}
             />
 
             {/* Guild / commissies (read-only, managed by admin) */}
@@ -363,10 +367,10 @@ export default function ProfielPage() {
                   fontFamily: 'var(--font-mono)',
                 }}
               >
-                {commissieNames.length > 0 ? commissieNames.join(', ') : '// geen commissie toegewezen'}
+                {commissieNames.length > 0 ? commissieNames.join(', ') : t('identity.guildEmpty')}
               </div>
               <p className="font-mono text-[10px] mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                // commissies worden toegewezen door het bestuur
+                {t('identity.guildHint')}
               </p>
             </div>
 
@@ -384,7 +388,7 @@ export default function ProfielPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                {saving ? '// saving...' : '> save.config()'}
+                {saving ? t('save.saving') : t('save.button')}
               </motion.button>
 
               {message && (
@@ -435,7 +439,7 @@ export default function ProfielPage() {
                   className="font-mono text-xs font-bold uppercase tracking-[0.1em]"
                   style={{ color: membershipActive ? 'var(--color-accent-green)' : 'var(--color-accent-red)' }}
                 >
-                  {membershipActive ? 'ACTIVE' : 'INACTIVE'}
+                  {membershipActive ? t('status.active') : t('status.inactive')}
                 </span>
               </div>
             </div>
@@ -447,7 +451,7 @@ export default function ProfielPage() {
                   member.since
                 </span>
                 <span className="font-mono text-[11px]" style={{ color: 'var(--color-text)' }}>
-                  {new Date(memberSince).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  {new Date(memberSince).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' })}
                 </span>
               </div>
             )}
@@ -459,8 +463,8 @@ export default function ProfielPage() {
               </span>
               <span className="font-mono text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
                 {expiresAt
-                  ? new Date(expiresAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })
-                  : 'Doorlopend'}
+                  ? new Date(expiresAt).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' })
+                  : t('status.ongoing')}
               </span>
             </div>
 
@@ -501,9 +505,7 @@ export default function ProfielPage() {
                 </button>
               </div>
               <p className="font-mono text-[10px] leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
-                {leaderboardVisible
-                  ? '// je XP is zichtbaar op het leaderboard en in de wekelijkse mail'
-                  : '// je XP is verborgen op het leaderboard en in de wekelijkse mail'}
+                {leaderboardVisible ? t('visibility.on') : t('visibility.off')}
               </p>
             </div>
 
@@ -514,7 +516,7 @@ export default function ProfielPage() {
                   account.created
                 </span>
                 <span className="font-mono text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
-                  legacy import
+                  {t('status.legacyImport')}
                 </span>
               </div>
             )}
@@ -545,12 +547,12 @@ export default function ProfielPage() {
                 type="password"
                 value={currentPassword}
                 onChange={setCurrentPassword}
-                placeholder="••••••••"
+                placeholder={t('security.currentPasswordPlaceholder')}
               />
             ) : (
               <div className="flex items-end pb-0.5">
                 <span className="font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
-                  // no password set yet - set one below
+                  {t('security.noPasswordYet')}
                 </span>
               </div>
             )}
@@ -561,7 +563,7 @@ export default function ProfielPage() {
               type="password"
               value={newPassword}
               onChange={setNewPassword}
-              placeholder="min. 8 characters"
+              placeholder={t('security.newPasswordPlaceholder')}
             />
 
             {/* Confirm button */}
@@ -578,7 +580,7 @@ export default function ProfielPage() {
                 whileHover={{ borderColor: 'var(--color-accent-red)', backgroundColor: 'rgba(239,68,68,0.06)' }}
                 whileTap={{ scale: 0.98 }}
               >
-                {pwSaving ? '// updating...' : hasPassword ? '> update.pass()' : '> set.pass()'}
+                {pwSaving ? t('security.updating') : hasPassword ? t('security.updateButton') : t('security.setButton')}
               </motion.button>
 
               {pwMessage && (
@@ -587,7 +589,7 @@ export default function ProfielPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   style={{
-                    color: pwMessage === 'password.updated'
+                    color: pwMessage === t('security.updated')
                       ? 'var(--color-accent-green)'
                       : 'var(--color-accent-red)',
                   }}
@@ -604,7 +606,7 @@ export default function ProfielPage() {
             style={{ color: 'var(--color-text-muted)', borderTop: '1px dashed rgba(255,255,255,0.04)', paddingTop: '12px' }}
           >
             <span style={{ color: 'rgba(239,68,68,0.5)' }}>▲</span>
-            <span>// password must be ≥8 characters · never share your credentials</span>
+            <span>{t('security.hint')}</span>
           </div>
         </div>
       </motion.div>
@@ -622,7 +624,7 @@ export default function ProfielPage() {
 
           <div className="p-5">
             <p className="font-mono text-[11px] mb-4" style={{ color: 'var(--color-text-muted)' }}>
-              // je lidmaatschap opzeggen betekent dat je geen toegang meer hebt tot ledenvoordelen en events
+              {t('cancel.warning')}
             </p>
 
             {!cancelConfirm ? (
@@ -636,12 +638,12 @@ export default function ProfielPage() {
                 }}
                 whileHover={{ borderColor: 'var(--color-accent-red)', color: 'var(--color-accent-red)' }}
               >
-                {'>'} lidmaatschap opzeggen
+                {t('cancel.trigger')}
               </motion.button>
             ) : (
               <div className="flex items-center gap-3">
                 <span className="font-mono text-[11px]" style={{ color: 'var(--color-accent-red)' }}>
-                  Weet je het zeker?
+                  {t('cancel.confirmQuestion')}
                 </span>
                 <motion.button
                   onClick={handleCancelMembership}
@@ -654,7 +656,7 @@ export default function ProfielPage() {
                   }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  {cancelling ? '// bezig...' : '> bevestig opzeggen'}
+                  {cancelling ? t('cancel.busy') : t('cancel.confirmButton')}
                 </motion.button>
                 <motion.button
                   onClick={() => setCancelConfirm(false)}
@@ -665,7 +667,7 @@ export default function ProfielPage() {
                     border: '1px solid var(--color-border)',
                   }}
                 >
-                  annuleren
+                  {t('cancel.cancelButton')}
                 </motion.button>
               </div>
             )}
@@ -676,7 +678,7 @@ export default function ProfielPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 style={{
-                  color: cancelMessage === 'Lidmaatschap opgezegd'
+                  color: cancelMessage === t('cancel.success')
                     ? 'var(--color-accent-green)'
                     : 'var(--color-accent-red)',
                 }}

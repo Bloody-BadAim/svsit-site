@@ -1,0 +1,9 @@
+{
+  "owned": "IN BEZIT",
+  "notEnough": "NIET GENOEG COINS",
+  "priceTooltip": "Kost {price} coins",
+  "buy": "KOPEN",
+  "loading": "...",
+  "errorGeneric": "Aankoop mislukt",
+  "errorNetwork": "Netwerkfout - probeer opnieuw"
+}

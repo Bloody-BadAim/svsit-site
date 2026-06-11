@@ -1,0 +1,54 @@
+{
+  "fileLabel": "faq.md",
+  "titleLine1": "Veelgestelde",
+  "titleLine2": "Vragen",
+  "subtitle": "// alles wat je wilt weten over SIT",
+  "items": [
+    {
+      "question": "Wat is SIT?",
+      "answer": "SIT is de studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. We organiseren events, workshops, hackathons, game avonden en meer. Met {members} leden en {commissies} commissies is er altijd iets te doen.",
+      "linkLabel": "Over ons"
+    },
+    {
+      "question": "Wat kost het lidmaatschap?",
+      "answer": "Het lidmaatschap kost eenmalig {price} per jaar. Geen verborgen kosten, geen maandelijkse abonnementen. Je kunt betalen via iDEAL of creditcard. Je kunt ook eerst rondkijken en later betalen.",
+      "linkLabel": "Word lid"
+    },
+    {
+      "question": "Wat krijg ik als lid?",
+      "answer": "Toegang tot alle SIT events (de meeste gratis), gratis dev tools via het GitHub Student Pack, een persoonlijke ledenpas, commissie deelname, project mogelijkheden, en een community van mede-ICT studenten. Plus XP, badges en een plek op het leaderboard."
+    },
+    {
+      "question": "Moet ik student zijn om lid te worden?",
+      "answer": "Nee. SIT staat open voor iedereen: studenten, docenten, alumni en externen. Bij aanmelding geef je aan of je student bent. Studenten vullen hun studentnummer in, voor de rest is dat niet nodig.",
+      "linkLabel": "Aanmelden"
+    },
+    {
+      "question": "Zijn events gratis?",
+      "answer": "De meeste events zijn gratis voor leden. Sommige events (zoals feesten of externe locaties) hebben een kleine bijdrage. De prijs staat altijd bij het event vermeld. Niet-leden betalen soms een toeslag.",
+      "linkLabel": "Bekijk events"
+    },
+    {
+      "question": "Wat zijn commissies?",
+      "answer": "Commissies zijn teams van leden die specifieke taken op zich nemen: events organiseren, socials beheren, educatie content maken, games organiseren, en meer. Je kunt je bij aanmelding al voor een commissie opgeven, of later instappen.",
+      "linkLabel": "Bekijk commissies"
+    },
+    {
+      "question": "Hoe werkt het XP / leaderboard systeem?",
+      "answer": "Door events te bezoeken, badges te verdienen en actief te zijn verdien je XP. Hiermee stijg je in level en kun je op het leaderboard komen. Het is een leuke manier om je betrokkenheid te zien, maar volledig optioneel - je hoeft er niks mee te doen.",
+      "linkLabel": "Leaderboard"
+    },
+    {
+      "question": "Kan ik later betalen?",
+      "answer": "Ja. Bij registratie kun je kiezen voor \"Eerst rondkijken\". Je account wordt dan aangemaakt zonder betaling. Je kunt het dashboard bekijken, maar voor sommige functies (events, shop) moet je je lidmaatschap activeren."
+    },
+    {
+      "question": "Hoe bereik ik het bestuur?",
+      "answer": "Stuur een mail naar {email}, DM ons op Instagram ({instagram}) of TikTok ({tiktok}), of join onze WhatsApp groep of Discord server. Je kunt ook langskomen op de {venue} ({floor}) tijdens een van onze events of de SIT Hub."
+    }
+  ],
+  "ctaFileLabel": "nog_vragen.sh",
+  "ctaEcho": "Vraag niet beantwoord?",
+  "ctaMailUs": "MAIL ONS",
+  "ctaJoin": "WORD LID"
+}

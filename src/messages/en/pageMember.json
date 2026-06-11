@@ -1,0 +1,8 @@
+{
+  "notFoundTitle": "Member not found - {SIT}",
+  "title": "{name} - Level {level} {levelTitle} | {SIT}",
+  "description": "{name} is a level {level} {levelTitle} at {SIT} - the ICT student association at the HvA. {xp} XP earned.",
+  "ogTitle": "{name} - {SIT} Member",
+  "ogDescription": "Level {level} {levelTitle} | {xp} XP | ICT student association",
+  "twitterDescription": "Level {level} {levelTitle} | {xp} XP"
+}

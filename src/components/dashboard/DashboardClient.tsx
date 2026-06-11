@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import OverviewTab from '@/components/dashboard/tabs/OverviewTab'
 import type { OverviewTabProps } from '@/components/dashboard/tabs/OverviewTab'
 import MyCardTab from '@/components/dashboard/tabs/MyCardTab'
@@ -55,11 +56,11 @@ export interface DashboardClientProps {
 // Tab config
 // ---------------------------------------------------------------------------
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'overview', label: 'OVERZICHT' },
-  { id: 'card', label: 'MY CARD' },
-  { id: 'quests', label: 'QUESTS' },
-  { id: 'badges', label: 'BADGES' },
+const TABS: { id: Tab; labelKey: string }[] = [
+  { id: 'overview', labelKey: 'tabs.overview' },
+  { id: 'card', labelKey: 'tabs.card' },
+  { id: 'quests', labelKey: 'tabs.quests' },
+  { id: 'badges', labelKey: 'tabs.badges' },
 ]
 
 // ---------------------------------------------------------------------------
@@ -67,6 +68,7 @@ const TABS: { id: Tab; label: string }[] = [
 // ---------------------------------------------------------------------------
 
 function DashboardContent(props: DashboardClientProps) {
+  const t = useTranslations('dashboardClient')
   const searchParams = useSearchParams()
   const router = useRouter()
   const initialTab = searchParams.get('tab') as Tab | null
@@ -99,7 +101,7 @@ function DashboardContent(props: DashboardClientProps) {
           }}
         >
           <span className="font-mono text-sm" style={{ color: 'var(--color-accent-gold)' }}>
-            membership activated -- welkom bij SIT
+            {t('membershipActivated')}
           </span>
         </div>
       )}
@@ -135,7 +137,7 @@ function DashboardContent(props: DashboardClientProps) {
             />
           </div>
           <span className="text-gray-600 text-[10px] font-mono">
-            {xpCurrent}/{xpMax} XP
+            {t('xpLabel', { current: xpCurrent, max: xpMax })}
           </span>
         </div>
       </div>
@@ -155,7 +157,7 @@ function DashboardContent(props: DashboardClientProps) {
               borderBottom: activeTab === tab.id ? '2px solid var(--color-accent-gold)' : '2px solid transparent',
             }}
           >
-            {tab.label}
+            {t(tab.labelKey)}
           </button>
         ))}
       </div>

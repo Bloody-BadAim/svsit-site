@@ -1,6 +1,7 @@
 import { notFound, redirect } from 'next/navigation'
 import { createServiceClient } from '@/lib/supabase'
 import { getLevelForXp } from '@/lib/levelEngine'
+import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
@@ -22,28 +23,35 @@ async function getMember(id: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const member = await getMember(id)
+  const t = await getTranslations('pageMember')
 
   if (!member) {
-    return { title: 'Member niet gevonden - {SIT}' }
+    return { title: t('notFoundTitle', { SIT: '{SIT}' }) }
   }
 
   const displayName = member.display_name || member.email.split('@')[0]
   const level = getLevelForXp(member.total_xp)
+  const vars = {
+    name: displayName,
+    level: level.level,
+    levelTitle: level.title,
+    xp: member.total_xp,
+    SIT: '{SIT}',
+  }
 
   return {
-    title: `${displayName} - Level ${level.level} ${level.title} | {SIT}`,
-    description: `${displayName} is een level ${level.level} ${level.title} bij {SIT} - Studievereniging ICT aan de HvA. ${member.total_xp} XP verdiend.`,
+    title: t('title', vars),
+    description: t('description', vars),
     openGraph: {
-      title: `${displayName} - {SIT} Member`,
-      description: `Level ${level.level} ${level.title} | ${member.total_xp} XP | Studievereniging ICT`,
+      title: t('ogTitle', vars),
+      description: t('ogDescription', vars),
       siteName: '{SIT}',
-      locale: 'nl_NL',
       type: 'profile',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${displayName} - {SIT} Member`,
-      description: `Level ${level.level} ${level.title} | ${member.total_xp} XP`,
+      title: t('ogTitle', vars),
+      description: t('twitterDescription', vars),
     },
   }
 }

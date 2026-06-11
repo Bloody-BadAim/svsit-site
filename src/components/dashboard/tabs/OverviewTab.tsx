@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { Calendar, MapPin, Ticket, Users, Zap, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react'
 import type { Role } from '@/types/database'
 import { ROLLEN } from '@/lib/constants'
@@ -58,6 +59,8 @@ export default function OverviewTab({
   totalXp,
   currentLevel,
 }: OverviewTabProps) {
+  const t = useTranslations('dashOverviewTab')
+  const months = t.raw('months') as string[]
   const ticketSet = new Set(myTicketEventIds)
 
   return (
@@ -74,17 +77,17 @@ export default function OverviewTab({
           <AlertCircle size={18} className="shrink-0 mt-0.5" style={{ color: '#F29E18' }} />
           <div>
             <p className="font-mono text-sm font-semibold" style={{ color: '#F29E18' }}>
-              Lidmaatschap niet actief
+              {t('membershipInactiveTitle')}
             </p>
             <p className="font-mono text-xs mt-1" style={{ color: '#A1A1AA' }}>
-              Activeer je lidmaatschap om toegang te krijgen tot events, shop en meer.
+              {t('membershipInactiveDesc')}
             </p>
             <Link
               href="/lid-worden"
               className="inline-flex items-center gap-1 font-mono text-xs font-semibold mt-2 transition-colors hover:underline"
               style={{ color: '#F29E18' }}
             >
-              Activeer nu <ArrowRight size={12} />
+              {t('activateNow')} <ArrowRight size={12} />
             </Link>
           </div>
         </div>
@@ -94,14 +97,14 @@ export default function OverviewTab({
       <section>
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-mono text-xs tracking-[0.15em] uppercase" style={{ color: '#F29E18' }}>
-            {'>'} aankomende events
+            {'>'} {t('upcomingEvents')}
           </h3>
           <Link
             href="/events"
             className="font-mono text-[10px] tracking-wider uppercase transition-colors hover:underline"
             style={{ color: '#71717A' }}
           >
-            Alle events
+            {t('allEvents')}
           </Link>
         </div>
 
@@ -111,7 +114,7 @@ export default function OverviewTab({
             style={{ border: '1px dashed #27272A' }}
           >
             <p className="font-mono text-xs" style={{ color: '#71717A' }}>
-              Geen aankomende events. Check later!
+              {t('noEvents')}
             </p>
           </div>
         ) : (
@@ -139,7 +142,7 @@ export default function OverviewTab({
                       {new Date(event.date).getDate()}
                     </div>
                     <div className="text-[9px] tracking-widest uppercase opacity-70">
-                      {['JAN','FEB','MRT','APR','MEI','JUN','JUL','AUG','SEP','OKT','NOV','DEC'][new Date(event.date).getMonth()]}
+                      {months[new Date(event.date).getMonth()]}
                     </div>
                   </div>
 
@@ -174,7 +177,7 @@ export default function OverviewTab({
                         }}
                       >
                         <Ticket size={10} />
-                        TICKET
+                        {t('ticket')}
                       </span>
                     ) : (
                       <span
@@ -185,7 +188,7 @@ export default function OverviewTab({
                           border: `1px solid ${event.isPaid ? 'rgba(242, 158, 24, 0.2)' : 'rgba(34, 197, 94, 0.2)'}`,
                         }}
                       >
-                        {event.isPaid ? `€${(event.priceMembers / 100).toFixed(0)}` : 'GRATIS'}
+                        {event.isPaid ? `€${(event.priceMembers / 100).toFixed(0)}` : t('free')}
                       </span>
                     )}
                   </div>
@@ -209,7 +212,7 @@ export default function OverviewTab({
           <div className="flex items-center gap-2 mb-2">
             <Users size={14} style={{ color: '#3B82F6' }} />
             <span className="font-mono text-[10px] tracking-[0.1em] uppercase" style={{ color: '#71717A' }}>
-              Commissie
+              {t('commissie')}
             </span>
           </div>
           {commissieNaam ? (
@@ -219,14 +222,14 @@ export default function OverviewTab({
           ) : (
             <div>
               <p className="font-mono text-xs" style={{ color: '#71717A' }}>
-                Nog niet gekozen
+                {t('noCommissie')}
               </p>
               <Link
                 href="/over-ons"
                 className="font-mono text-[10px] mt-1 inline-block transition-colors hover:underline"
                 style={{ color: '#3B82F6' }}
               >
-                Bekijk commissies
+                {t('viewCommissies')}
               </Link>
             </div>
           )}
@@ -247,14 +250,14 @@ export default function OverviewTab({
               <AlertCircle size={14} style={{ color: '#F29E18' }} />
             )}
             <span className="font-mono text-[10px] tracking-[0.1em] uppercase" style={{ color: '#71717A' }}>
-              Lidmaatschap
+              {t('membership')}
             </span>
           </div>
           <p className="font-mono text-sm font-semibold" style={{ color: '#FAFAFA' }}>
             {ROLLEN[memberRole].naam}
           </p>
           <p className="font-mono text-[10px] mt-0.5" style={{ color: membershipActive ? '#22C55E' : '#F29E18' }}>
-            {membershipActive ? 'Actief' : 'Niet actief'}
+            {membershipActive ? t('active') : t('inactive')}
           </p>
         </div>
 
@@ -269,14 +272,14 @@ export default function OverviewTab({
           <div className="flex items-center gap-2 mb-2">
             <Zap size={14} style={{ color: '#F29E18' }} />
             <span className="font-mono text-[10px] tracking-[0.1em] uppercase" style={{ color: '#71717A' }}>
-              Level
+              {t('level')}
             </span>
           </div>
           <p className="font-mono text-sm font-semibold" style={{ color: '#FAFAFA' }}>
-            Level {currentLevel}
+            {t('levelValue', { n: currentLevel })}
           </p>
           <p className="font-mono text-[10px] mt-0.5" style={{ color: '#71717A' }}>
-            {totalXp.toLocaleString('nl-NL')} XP
+            {t('xp', { n: totalXp.toLocaleString('nl-NL') })}
           </p>
         </div>
 
@@ -291,7 +294,7 @@ export default function OverviewTab({
           <div className="flex items-center gap-2 mb-2">
             <Ticket size={14} style={{ color: '#8B5CF6' }} />
             <span className="font-mono text-[10px] tracking-[0.1em] uppercase" style={{ color: '#71717A' }}>
-              Tickets
+              {t('tickets')}
             </span>
           </div>
           <p className="font-mono text-sm font-semibold" style={{ color: '#FAFAFA' }}>
@@ -302,7 +305,7 @@ export default function OverviewTab({
             className="font-mono text-[10px] mt-0.5 inline-block transition-colors hover:underline"
             style={{ color: '#8B5CF6' }}
           >
-            Bekijk tickets
+            {t('viewTickets')}
           </Link>
         </div>
       </div>

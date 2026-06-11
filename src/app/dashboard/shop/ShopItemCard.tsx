@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'motion/react'
+import { useTranslations } from 'next-intl'
 import { Star, Coins, Check, Square, Tag } from 'lucide-react'
 import BuyButton from './BuyButton'
 import type { ShopItem } from '@/lib/shopEngine'
@@ -256,6 +257,7 @@ interface ShopItemCardProps {
 }
 
 export function ShopItemCard({ item, owned, coinsBalance, index }: ShopItemCardProps) {
+  const t = useTranslations('shopItemCard')
   const rarityColor = RARITY_COLORS[item.rarity] ?? '#6B7280'
   const isNew = isNewItem(item.createdAt as string | null)
   const canAfford = coinsBalance >= item.shopPrice
@@ -320,7 +322,7 @@ export function ShopItemCard({ item, owned, coinsBalance, index }: ShopItemCardP
               animation: 'featuredPulse 2.5s ease-in-out infinite',
             }}
           >
-            <Star className="w-3 h-3 fill-current" /> FEATURED
+            <Star className="w-3 h-3 fill-current" /> {t('featured')}
           </span>
         ) : (
           <span />
@@ -336,7 +338,7 @@ export function ShopItemCard({ item, owned, coinsBalance, index }: ShopItemCardP
                 animation: 'newGlow 1.8s ease-in-out infinite',
               }}
             >
-              NIEUW
+              {t('new')}
             </span>
           )}
           {item.isLimitedTime && (
@@ -344,7 +346,7 @@ export function ShopItemCard({ item, owned, coinsBalance, index }: ShopItemCardP
               className="font-mono text-[10px] px-1.5 py-0.5"
               style={{ color: 'var(--color-accent-red)', border: '1px solid rgba(239,68,68,0.3)' }}
             >
-              LIMITED
+              {t('limited')}
             </span>
           )}
         </div>
@@ -411,7 +413,7 @@ export function ShopItemCard({ item, owned, coinsBalance, index }: ShopItemCardP
             className="font-mono text-xs px-2 py-0.5 inline-flex items-center gap-1"
             style={{ color: 'var(--color-accent-green)', border: '1px solid rgba(34,197,94,0.3)' }}
           >
-            <Check className="w-3 h-3" /> IN BEZIT
+            <Check className="w-3 h-3" /> {t('owned')}
           </span>
         ) : item.locked ? (
           <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>
@@ -428,7 +430,7 @@ export function ShopItemCard({ item, owned, coinsBalance, index }: ShopItemCardP
           className="px-3 pb-2 font-mono text-[10px]"
           style={{ color: 'var(--color-accent-red)' }}
         >
-          Nog {item.stock} over
+          {t('stockLeft', { count: item.stock as number })}
         </div>
       )}
 

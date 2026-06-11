@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import type { FormField, CustomData } from '@/lib/eventForm'
 
 interface TicketFormProps {
@@ -32,6 +33,7 @@ export default function TicketForm({
   categoryColor,
   formFields,
 }: TicketFormProps) {
+  const t = useTranslations('eventTicketForm')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [isMember, setIsMember] = useState(false)
@@ -56,7 +58,7 @@ export default function TicketForm({
       const v = customData[f.id]
       const empty = f.type === 'checkbox' ? v !== true : !String(v ?? '').trim()
       if (f.required && empty) {
-        setError(`"${f.label}" is verplicht`)
+        setError(t('fieldRequired', { label: f.label }))
         return
       }
     }
@@ -79,7 +81,7 @@ export default function TicketForm({
       const json = await res.json()
 
       if (!res.ok) {
-        setError(json.error || 'Er ging iets mis. Probeer het opnieuw.')
+        setError(json.error || t('errorGeneric'))
         setLoading(false)
         return
       }
@@ -99,10 +101,10 @@ export default function TicketForm({
         return
       }
 
-      setError('Geen betaallink ontvangen. Probeer het opnieuw.')
+      setError(t('errorNoCheckout'))
       setLoading(false)
     } catch {
-      setError('Verbindingsfout. Controleer je internet en probeer het opnieuw.')
+      setError(t('errorConnection'))
       setLoading(false)
     }
   }
@@ -133,14 +135,14 @@ export default function TicketForm({
             fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
           }}
         >
-          Je staat op de lijst!
+          {t('successTitle')}
         </h3>
 
         <p className="text-sm text-[var(--color-text-muted)] mb-1">
-          Check je email voor je ticket en QR code.
+          {t('successMessage')}
         </p>
         <p className="font-mono text-xs text-[var(--color-text-muted)] opacity-60">
-          Niet ontvangen? Check je spam folder.
+          {t('successSpam')}
         </p>
       </div>
     )
@@ -160,10 +162,10 @@ export default function TicketForm({
           className="font-mono text-sm uppercase tracking-wider"
           style={{ color: '#EF4444' }}
         >
-          Dit event is uitverkocht
+          {t('soldOutTitle')}
         </p>
         <p className="text-xs text-[var(--color-text-muted)] mt-2">
-          Volg @sv.sit op Instagram voor toekomstige events
+          {t('soldOutMessage')}
         </p>
       </div>
     )
@@ -183,7 +185,7 @@ export default function TicketForm({
         style={{ borderBottom: '1px solid var(--color-border)' }}
       >
         <h2 className="font-mono text-sm font-semibold text-[var(--color-text)] uppercase tracking-wider">
-          {isPaid ? 'Ticket kopen' : 'Aanmelden'}
+          {isPaid ? t('titlePaid') : t('titleFree')}
         </h2>
         <p className="font-mono text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
           {'>'} tickets.purchase()
@@ -197,7 +199,7 @@ export default function TicketForm({
             htmlFor="ticket-name"
             className="block font-mono text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider mb-2"
           >
-            naam *
+            {t('nameLabel')} *
           </label>
           <input
             id="ticket-name"
@@ -205,7 +207,7 @@ export default function TicketForm({
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="Je volledige naam"
+            placeholder={t('namePlaceholder')}
             className="w-full py-3 px-4 rounded-md text-sm font-mono outline-none transition-all duration-200 placeholder:text-[var(--color-text-muted)]/30 focus:border-[var(--color-accent-gold)]"
             style={{
               backgroundColor: 'rgba(255,255,255,0.05)',
@@ -221,7 +223,7 @@ export default function TicketForm({
             htmlFor="ticket-email"
             className="block font-mono text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider mb-2"
           >
-            email *
+            {t('emailLabel')} *
           </label>
           <input
             id="ticket-email"
@@ -229,7 +231,7 @@ export default function TicketForm({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            placeholder="je@email.nl"
+            placeholder={t('emailPlaceholder')}
             className="w-full py-3 px-4 rounded-md text-sm font-mono outline-none transition-all duration-200 placeholder:text-[var(--color-text-muted)]/30 focus:border-[var(--color-accent-gold)]"
             style={{
               backgroundColor: 'rgba(255,255,255,0.05)',
@@ -298,7 +300,7 @@ export default function TicketForm({
                   className={fieldInputClass}
                   style={fieldInputStyle}
                 >
-                  <option value="">Kies...</option>
+                  <option value="">{t('selectPlaceholder')}</option>
                   {(f.options ?? []).map((o) => (
                     <option key={o} value={o}>{o}</option>
                   ))}
@@ -342,10 +344,13 @@ export default function TicketForm({
             className="text-sm cursor-pointer select-none"
             style={{ color: 'var(--color-text)' }}
           >
-            Ik ben SIT lid
+            {t('memberLabel')}
             {isPaid && (
               <span className="block font-mono text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
-                Leden betalen minder: &euro;{(priceMembersCents / 100).toFixed(2).replace('.00', ',-')} i.p.v. &euro;{(priceNonmembersCents / 100).toFixed(2).replace('.00', ',-')}
+                {t('memberDiscount', {
+                  memberPrice: (priceMembersCents / 100).toFixed(2).replace('.00', ',-'),
+                  nonMemberPrice: (priceNonmembersCents / 100).toFixed(2).replace('.00', ',-'),
+                })}
               </span>
             )}
           </label>
@@ -361,7 +366,7 @@ export default function TicketForm({
             }}
           >
             <span className="font-mono text-xs text-[var(--color-text-muted)] uppercase tracking-wider">
-              Totaal
+              {t('totalLabel')}
             </span>
             <span className="font-mono text-lg font-bold" style={{ color: categoryColor }}>
               &euro;{displayPrice}
@@ -387,17 +392,17 @@ export default function TicketForm({
           }}
         >
           {loading
-            ? 'Bezig...'
+            ? t('loading')
             : isPaid
-              ? `Afrekenen - €${displayPrice}`
-              : 'Aanmelden'
+              ? t('submitPaid', { price: displayPrice })
+              : t('submitFree')
           }
         </button>
 
         {/* Payment methods hint */}
         {isPaid && (
           <p className="font-mono text-[10px] text-center text-[var(--color-text-muted)] opacity-60">
-            Betaal veilig via iDEAL of creditcard
+            {t('paymentHint')}
           </p>
         )}
       </form>

@@ -2,6 +2,7 @@
 
 import { motion, useAnimationFrame, useMotionValue, useTransform } from 'motion/react'
 import { useRef } from 'react'
+import { useTranslations } from 'next-intl'
 import type { LeaderEntry, BubbleEntry, BubbleData } from './page'
 
 // ─── Medal colors ─────────────────────────────────────────────────────────────
@@ -68,6 +69,7 @@ function Crown() {
 // ─── TopCard ──────────────────────────────────────────────────────────────────
 
 function TopCard({ entry }: { entry: LeaderEntry }) {
+  const t = useTranslations('leaderboardContent')
   const medal = MEDAL[entry.position]
   const initial = PODIUM_INITIAL[entry.position]
   const delay = PODIUM_DELAY[entry.position]
@@ -125,12 +127,12 @@ function TopCard({ entry }: { entry: LeaderEntry }) {
 
       {/* level title */}
       <p className="font-mono text-xs" style={{ color: entry.levelColor }}>
-        LVL {entry.currentLevel} - {entry.levelTitle}
+        {t('levelLine', { level: entry.currentLevel, title: entry.levelTitle })}
       </p>
 
       {/* xp */}
       <p className="font-mono text-sm" style={{ color: 'var(--color-text-muted)' }}>
-        {entry.totalXp.toLocaleString('nl-NL')} XP
+        {entry.totalXp.toLocaleString('nl-NL')} {t('xpSuffix')}
       </p>
     </motion.div>
   )
@@ -147,6 +149,7 @@ function RankRow({
   isYou?: boolean
   index?: number
 }) {
+  const t = useTranslations('leaderboardContent')
   const medal = MEDAL[entry.position]
 
   return (
@@ -217,12 +220,12 @@ function RankRow({
               className="ml-2 text-xs font-mono px-1.5 py-0.5 rounded"
               style={{ backgroundColor: 'rgba(242,158,24,0.2)', color: '#F29E18' }}
             >
-              jij
+              {t('you')}
             </span>
           )}
         </p>
         <p className="font-mono text-xs" style={{ color: entry.levelColor }}>
-          LVL {entry.currentLevel} - {entry.levelTitle}
+          {t('levelLine', { level: entry.currentLevel, title: entry.levelTitle })}
         </p>
       </div>
 
@@ -231,7 +234,7 @@ function RankRow({
         className="font-mono text-sm shrink-0"
         style={{ color: isYou ? '#F29E18' : 'var(--color-text-muted)' }}
       >
-        {entry.totalXp.toLocaleString('nl-NL')} XP
+        {entry.totalXp.toLocaleString('nl-NL')} {t('xpSuffix')}
       </span>
     </motion.div>
   )
@@ -240,6 +243,7 @@ function RankRow({
 // ─── BubbleSection ────────────────────────────────────────────────────────────
 
 function BubbleSection({ bubble }: { bubble: BubbleData }) {
+  const t = useTranslations('leaderboardContent')
   const meEntry: LeaderEntry = {
     position: bubble.position,
     id: bubble.me.id,
@@ -252,7 +256,7 @@ function BubbleSection({ bubble }: { bubble: BubbleData }) {
 
   return (
     <motion.section
-      aria-label="Jouw positie op de leaderboard"
+      aria-label={t('yourPositionAria')}
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1], delay: 0.3 }}
@@ -263,7 +267,7 @@ function BubbleSection({ bubble }: { bubble: BubbleData }) {
         style={{ color: 'var(--color-text-muted)' }}
       >
         <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border)' }} />
-        <span className="font-mono text-xs">jouw positie</span>
+        <span className="font-mono text-xs">{t('yourPosition')}</span>
         <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border)' }} />
       </div>
 
@@ -295,6 +299,7 @@ interface Props {
 }
 
 export default function LeaderboardContent({ top10, bubble, isLoggedIn, isHidden = false }: Props) {
+  const t = useTranslations('leaderboardContent')
   const podium = top10.slice(0, 3)
   const rest = top10.slice(3)
 
@@ -308,23 +313,23 @@ export default function LeaderboardContent({ top10, bubble, isLoggedIn, isHidden
         transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
       >
         <p className="font-mono text-xs mb-2" style={{ color: 'var(--color-accent-gold)' }}>
-          {'// leaderboard'}
+          {t('label')}
         </p>
         <h1
           className="font-mono text-3xl sm:text-4xl font-bold leading-tight"
           style={{ color: 'var(--color-text)' }}
         >
-          Hall of Fame
+          {t('title')}
         </h1>
         <p className="mt-2 font-mono text-sm" style={{ color: 'var(--color-text-muted)' }}>
-          De meest actieve SIT leden, gerangschikt op XP.
+          {t('subtitle')}
         </p>
       </motion.div>
 
       {/* ── Hall of Fame ── */}
       {top10.length === 0 ? (
         <p className="font-mono text-sm" style={{ color: 'var(--color-text-muted)' }}>
-          Nog geen leden op de leaderboard.
+          {t('empty')}
         </p>
       ) : (
         <>
@@ -361,15 +366,15 @@ export default function LeaderboardContent({ top10, bubble, isLoggedIn, isHidden
             color: 'var(--color-text-muted)',
           }}
         >
-          Je XP is verborgen. Zet het aan in je{' '}
+          {t('hiddenPre')}{' '}
           <a
             href="/dashboard/profiel"
             className="underline underline-offset-4"
             style={{ color: 'var(--color-accent-gold)' }}
           >
-            profiel
+            {t('hiddenLink')}
           </a>{' '}
-          om je positie te tonen.
+          {t('hiddenPost')}
         </motion.div>
       ) : bubble ? (
         <BubbleSection bubble={bubble} />
@@ -391,9 +396,9 @@ export default function LeaderboardContent({ top10, bubble, isLoggedIn, isHidden
               className="underline underline-offset-4"
               style={{ color: 'var(--color-accent-gold)' }}
             >
-              Log in
+              {t('loginLink')}
             </a>{' '}
-            om jouw positie te zien.
+            {t('loginPost')}
           </motion.div>
         )
       )}

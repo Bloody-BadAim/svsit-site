@@ -26,15 +26,24 @@ export function toSitEvent(e: EventResponse): SitEvent {
   };
 }
 
-export function ticketLabel(event: SitEvent): { text: string; color: string; clickable: boolean } {
+// i18n: deze helper is geen React component en kan geen hook gebruiken.
+// Daarom geeft hij een vertaal-KEY terug (namespace "eventHelpers"). De
+// aanroeper (FeaturedCard/CompactItem) vertaalt met t(textKey).
+export type TicketLabelKey =
+  | "ticketDone"
+  | "ticketSignup"
+  | "ticketTicketsOpen"
+  | "ticketSoon";
+
+export function ticketLabel(event: SitEvent): { textKey: TicketLabelKey; color: string; clickable: boolean } {
   if (event.status === "DONE") {
-    return { text: "AFGEROND", color: "rgba(255,255,255,0.2)", clickable: false };
+    return { textKey: "ticketDone", color: "rgba(255,255,255,0.2)", clickable: false };
   }
   if (event.link) {
-    const label = event.isPaid ? "TICKETS OPEN" : "AANMELDEN";
-    return { text: label, color: BRAND.green, clickable: true };
+    const textKey: TicketLabelKey = event.isPaid ? "ticketTicketsOpen" : "ticketSignup";
+    return { textKey, color: BRAND.green, clickable: true };
   }
-  return { text: "BINNENKORT", color: BRAND.gold, clickable: false };
+  return { textKey: "ticketSoon", color: BRAND.gold, clickable: false };
 }
 
 // ─── Calendar helpers ─────────────────────────────────────────────────────────
@@ -78,7 +87,10 @@ export function downloadIcs(e: SitEvent) {
   URL.revokeObjectURL(url);
 }
 
-export function googleCalendarUrl(e: SitEvent): string {
+// detailsFallback: al vertaalde tekst die de aanroeper meegeeft (namespace
+// "eventHelpers" -> calendarDetailsFallback). Wordt alleen gebruikt als het
+// event geen eigen beschrijving heeft. Optioneel zodat bestaande aanroep blijft werken.
+export function googleCalendarUrl(e: SitEvent, detailsFallback?: string): string {
   const start = fmtIcal(e.date);
   const end = fmtIcal(eventEndDate(e));
   const params = new URLSearchParams({
@@ -86,12 +98,12 @@ export function googleCalendarUrl(e: SitEvent): string {
     text: e.title,
     dates: `${start}/${end}`,
     location: e.location,
-    details: e.description ?? `Event van SIT - ${e.title}`,
+    details: e.description ?? detailsFallback ?? e.title,
   });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
-export function outlookCalendarUrl(e: SitEvent): string {
+export function outlookCalendarUrl(e: SitEvent, detailsFallback?: string): string {
   const startIso = e.date.toISOString();
   const endIso = eventEndDate(e).toISOString();
   const params = new URLSearchParams({
@@ -99,7 +111,7 @@ export function outlookCalendarUrl(e: SitEvent): string {
     startdt: startIso,
     enddt: endIso,
     location: e.location,
-    body: e.description ?? `Event van SIT - ${e.title}`,
+    body: e.description ?? detailsFallback ?? e.title,
     path: "/calendar/action/compose",
     rru: "addevent",
   });

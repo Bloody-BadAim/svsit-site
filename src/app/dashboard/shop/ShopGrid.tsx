@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import type { ShopItem } from '@/lib/shopEngine'
 import { ShopItemCard } from './ShopItemCard'
 
@@ -10,6 +11,7 @@ interface ShopGridProps {
 }
 
 export function ShopGrid({ items, ownedIds, coinsBalance }: ShopGridProps) {
+  const t = useTranslations('shopGrid')
   const ownedSet = new Set(ownedIds)
 
   if (items.length === 0) {
@@ -18,7 +20,7 @@ export function ShopGrid({ items, ownedIds, coinsBalance }: ShopGridProps) {
         className="py-16 text-center font-mono text-sm"
         style={{ color: 'var(--color-text-muted)' }}
       >
-        // geen items in deze categorie
+        {t('emptyCategory')}
       </div>
     )
   }

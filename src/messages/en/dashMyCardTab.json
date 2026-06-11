@@ -1,0 +1,22 @@
+{
+  "today": "today",
+  "yesterday": "yesterday",
+  "xpSuffix": "+{n}xp",
+  "nextUnlock": "NEXT UNLOCK",
+  "level": "LVL {n}",
+  "xpToGo": "{n} XP to go",
+  "todayStat": "Today",
+  "streak": "Streak",
+  "days": "days",
+  "edit": "EDIT",
+  "save": "SAVE",
+  "share": "SHARE",
+  "done": "DONE",
+  "shareTitle": "My SIT Card",
+  "linkCopied": "Link copied to clipboard",
+  "cardGenerateFailed": "Could not generate card",
+  "cardDownloaded": "Card downloaded",
+  "downloadFailed": "Download failed",
+  "recentActivity": "Recent Activity",
+  "awaitingScan": "awaiting first event scan..."
+}

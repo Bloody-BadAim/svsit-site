@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'motion/react'
 import { Lock, Save, ChevronRight, Eye, Coins } from 'lucide-react'
 import { RARITY_CONFIG } from '@/types/gamification'
@@ -86,15 +87,17 @@ function getRarityBorder(rarity: BadgeRarity): string {
   return RARITY_CONFIG[rarity].color
 }
 
-function unlockLabel(rule: UnlockRule | null, shopPrice: number | null): string {
+type UnlockTranslator = (key: string, values?: Record<string, string | number>) => string
+
+function unlockLabel(rule: UnlockRule | null, shopPrice: number | null, t: UnlockTranslator): string {
   if (rule) {
-    if (rule.type === 'level') return `Level ${rule.level} nodig`
-    if (rule.type === 'badge') return 'Badge nodig'
-    if (rule.type === 'event') return 'Event reward'
-    if (rule.type === 'easter_egg') return 'Easter egg'
+    if (rule.type === 'level') return t('unlock.levelNeeded', { level: rule.level })
+    if (rule.type === 'badge') return t('unlock.badgeNeeded')
+    if (rule.type === 'event') return t('unlock.eventReward')
+    if (rule.type === 'easter_egg') return t('unlock.easterEgg')
   }
-  if (shopPrice != null) return `${shopPrice} coins`
-  return 'Vergrendeld'
+  if (shopPrice != null) return t('unlock.coins', { price: shopPrice })
+  return t('unlock.locked')
 }
 
 // ---------------------------------------------------------------------------
@@ -311,6 +314,7 @@ interface GridItemProps {
 }
 
 function GridItem({ def, owned, levelMet, isEquipped, onEquip, onUnequip, onHoverStart, onHoverEnd, index }: GridItemProps) {
+  const t = useTranslations('cardEditor')
   // Level-gated items zijn beschikbaar zodra het level gehaald is, ook zonder
   // bestaande inventory-row (lazy grant gebeurt server-side bij equippen).
   const isLocked = !owned && !levelMet
@@ -369,7 +373,7 @@ function GridItem({ def, owned, levelMet, isEquipped, onEquip, onUnequip, onHove
             >
               <Lock size={12} style={{ color: 'rgba(255,255,255,0.2)' }} />
               <span className="font-mono text-[8px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
-                {unlockLabel(def.unlock_rule, def.shop_price)}
+                {unlockLabel(def.unlock_rule, def.shop_price, t)}
               </span>
             </div>
           )}
@@ -448,6 +452,7 @@ function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, onAcc
   const canCustomTitle = memberLevel >= 8
   const canAccentColor = memberLevel >= 6
   const { toast } = useToast()
+  const t = useTranslations('cardEditor')
 
   async function handleSave() {
     setSaving(true)
@@ -464,12 +469,12 @@ function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, onAcc
       })
       if (res.ok) {
         setSaved(true)
-        toast('Flair opgeslagen', 'success')
+        toast(t('flair.saved'), 'success')
       } else {
-        toast('Opslaan mislukt', 'error')
+        toast(t('flair.saveFailed'), 'error')
       }
     } catch {
-      toast('Opslaan mislukt', 'error')
+      toast(t('flair.saveFailed'), 'error')
     } finally {
       setSaving(false)
       setTimeout(() => setSaved(false), 2000)
@@ -492,7 +497,7 @@ function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, onAcc
       {/* Title row */}
       <div className="flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: 'rgba(255,255,255,0.35)' }}>
-          Flair
+          {t('flair.heading')}
         </span>
       </div>
 
@@ -500,11 +505,11 @@ function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, onAcc
       <div>
         <div className="flex items-center justify-between gap-2 mb-1.5">
           <span className="font-mono text-[10px] uppercase tracking-[0.12em]" style={{ color: 'rgba(255,255,255,0.3)' }}>
-            Title
+            {t('flair.title')}
           </span>
           {!canCustomTitle && (
             <span className="font-mono text-[8px] px-1.5 py-0.5 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.2)' }}>
-              LVL 8
+              {t('flair.levelTag', { level: 8 })}
             </span>
           )}
         </div>
@@ -513,7 +518,7 @@ function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, onAcc
           value={customTitle}
           onChange={(e) => setCustomTitle(e.target.value.slice(0, 30))}
           disabled={!canCustomTitle}
-          placeholder={canCustomTitle ? 'Jouw custom titel...' : 'Unlock op level 8'}
+          placeholder={canCustomTitle ? t('flair.titlePlaceholder') : t('flair.titleLocked')}
           maxLength={30}
           className="w-full font-mono text-xs px-3 py-2 rounded-lg outline-none transition-all"
           style={{
@@ -532,11 +537,11 @@ function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, onAcc
       <div>
         <div className="flex items-center justify-between gap-2 mb-1.5">
           <span className="font-mono text-[10px] uppercase tracking-[0.12em]" style={{ color: 'rgba(255,255,255,0.3)' }}>
-            Accent
+            {t('flair.accent')}
           </span>
           {!canAccentColor && (
             <span className="font-mono text-[8px] px-1.5 py-0.5 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.2)' }}>
-              LVL 6
+              {t('flair.levelTag', { level: 6 })}
             </span>
           )}
         </div>
@@ -556,7 +561,7 @@ function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, onAcc
               title={color}
             />
           ))}
-          <label className={`relative w-6 h-6 rounded-md overflow-hidden ${canAccentColor ? 'cursor-pointer' : 'cursor-not-allowed pointer-events-none'}`} title="Custom">
+          <label className={`relative w-6 h-6 rounded-md overflow-hidden ${canAccentColor ? 'cursor-pointer' : 'cursor-not-allowed pointer-events-none'}`} title={t('flair.customSwatch')}>
             <input
               type="color"
               value={accentColor}
@@ -591,7 +596,7 @@ function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, onAcc
         }}
       >
         <Save size={12} />
-        {saving ? 'Opslaan...' : saved ? 'Opgeslagen' : 'Opslaan'}
+        {saving ? t('flair.saving') : saved ? t('flair.savedShort') : t('flair.save')}
       </button>
     </div>
   )
@@ -602,6 +607,7 @@ function FlairPanel({ memberLevel, initialAccentColor, initialCustomTitle, onAcc
 // ---------------------------------------------------------------------------
 
 export function CardEditor({ inventory, equipped, allDefinitions, member, memberId, isAdmin = false }: CardEditorProps) {
+  const t = useTranslations('cardEditor')
   const [activeTab, setActiveTab] = useState<AccessoryCategory>('skin')
   const [saving, setSaving] = useState<string | null>(null)
   const [hoverPreview, setHoverPreview] = useState<AccessoryDefinition | null>(null)
@@ -838,7 +844,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: 'rgba(255,255,255,0.25)' }}>
-              Live Preview
+              {t('livePreview')}
             </span>
             {hoverPreview && (
               <motion.span
@@ -854,7 +860,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
           </div>
           {saving && (
             <span className="font-mono text-[10px]" style={{ color: 'var(--color-accent-gold)', opacity: 0.6 }}>
-              saving...
+              {t('saving')}
             </span>
           )}
         </div>
@@ -907,7 +913,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
                 </span>
                 <ChevronRight size={8} style={{ color: 'rgba(255,255,255,0.1)' }} />
                 <span style={{ color: row ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.1)' }}>
-                  {isHovered && hoverPreview ? hoverPreview.name : (row?.accessory_definitions?.name ?? 'none')}
+                  {isHovered && hoverPreview ? hoverPreview.name : (row?.accessory_definitions?.name ?? t('none'))}
                 </span>
               </div>
             )
@@ -926,7 +932,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
           >
             <span className="flex items-center gap-1.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
               <Coins size={12} />
-              Balance
+              {t('balance')}
             </span>
             <span style={{ color: 'var(--color-accent-gold)' }}>{member.coins_balance ?? 0}</span>
           </div>
@@ -993,7 +999,7 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
           style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
         >
           <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: 'rgba(255,255,255,0.2)' }}>
-            {activeTab}.collection
+            {t('collection', { category: activeTab })}
           </span>
           <div className="flex items-center gap-2 font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.15)' }}>
             <span>
@@ -1020,10 +1026,10 @@ export function CardEditor({ inventory, equipped, allDefinitions, member, member
                 <div className="flex flex-col items-center justify-center py-16 gap-3">
                   <div className="font-mono text-2xl" style={{ color: 'rgba(255,255,255,0.06)' }}>{'{ }'}</div>
                   <p className="font-mono text-xs text-center" style={{ color: 'rgba(255,255,255,0.2)' }}>
-                    Geen {activeTab}s beschikbaar
+                    {t('emptyTitle')}
                   </p>
                   <p className="font-mono text-[10px] text-center" style={{ color: 'rgba(255,255,255,0.1)' }}>
-                    Unlock via events, level-ups of de shop
+                    {t('emptyHint')}
                   </p>
                 </div>
               ) : (

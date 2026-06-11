@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { SITE_CONFIG } from "@/lib/constants";
 import {
   ChevronDown,
@@ -27,78 +28,18 @@ interface FaqItem {
   link?: { href: string; label: string };
 }
 
-// ─── FAQ data ─────────────────────────────────────────────────────────────────
+// ─── FAQ presentation metadata (icon, color, link target per item) ────────────
 
-const FAQ_ITEMS: FaqItem[] = [
-  {
-    question: "Wat is SIT?",
-    answer:
-      `SIT is de studievereniging voor HBO-ICT studenten aan de Hogeschool van Amsterdam. We organiseren events, workshops, hackathons, game avonden en meer. Met ${SITE_CONFIG.stats.members} leden en ${SITE_CONFIG.stats.commissies} commissies is er altijd iets te doen.`,
-    icon: Users,
-    color: "#F29E18",
-    link: { href: "/over-ons", label: "Over ons" },
-  },
-  {
-    question: "Wat kost het lidmaatschap?",
-    answer:
-      `Het lidmaatschap kost eenmalig ${SITE_CONFIG.membership.priceLabel} per jaar. Geen verborgen kosten, geen maandelijkse abonnementen. Je kunt betalen via iDEAL of creditcard. Je kunt ook eerst rondkijken en later betalen.`,
-    icon: CreditCard,
-    color: "#22C55E",
-    link: { href: "/lid-worden", label: "Word lid" },
-  },
-  {
-    question: "Wat krijg ik als lid?",
-    answer:
-      "Toegang tot alle SIT events (de meeste gratis), gratis dev tools via het GitHub Student Pack, een persoonlijke ledenpas, commissie deelname, project mogelijkheden, en een community van mede-ICT studenten. Plus XP, badges en een plek op het leaderboard.",
-    icon: Ticket,
-    color: "#F29E18",
-  },
-  {
-    question: "Moet ik student zijn om lid te worden?",
-    answer:
-      "Nee. SIT staat open voor iedereen: studenten, docenten, alumni en externen. Bij aanmelding geef je aan of je student bent. Studenten vullen hun studentnummer in, voor de rest is dat niet nodig.",
-    icon: GraduationCap,
-    color: "#3B82F6",
-    link: { href: "/lid-worden", label: "Aanmelden" },
-  },
-  {
-    question: "Zijn events gratis?",
-    answer:
-      "De meeste events zijn gratis voor leden. Sommige events (zoals feesten of externe locaties) hebben een kleine bijdrage. De prijs staat altijd bij het event vermeld. Niet-leden betalen soms een toeslag.",
-    icon: Calendar,
-    color: "#EF4444",
-    link: { href: "/events", label: "Bekijk events" },
-  },
-  {
-    question: "Wat zijn commissies?",
-    answer:
-      "Commissies zijn teams van leden die specifieke taken op zich nemen: events organiseren, socials beheren, educatie content maken, games organiseren, en meer. Je kunt je bij aanmelding al voor een commissie opgeven, of later instappen.",
-    icon: Users,
-    color: "#3B82F6",
-    link: { href: "/over-ons", label: "Bekijk commissies" },
-  },
-  {
-    question: "Hoe werkt het XP / leaderboard systeem?",
-    answer:
-      "Door events te bezoeken, badges te verdienen en actief te zijn verdien je XP. Hiermee stijg je in level en kun je op het leaderboard komen. Het is een leuke manier om je betrokkenheid te zien, maar volledig optioneel - je hoeft er niks mee te doen.",
-    icon: Trophy,
-    color: "#F29E18",
-    link: { href: "/leaderboard", label: "Leaderboard" },
-  },
-  {
-    question: "Kan ik later betalen?",
-    answer:
-      "Ja. Bij registratie kun je kiezen voor \"Eerst rondkijken\". Je account wordt dan aangemaakt zonder betaling. Je kunt het dashboard bekijken, maar voor sommige functies (events, shop) moet je je lidmaatschap activeren.",
-    icon: Zap,
-    color: "#22C55E",
-  },
-  {
-    question: "Hoe bereik ik het bestuur?",
-    answer:
-      `Stuur een mail naar ${SITE_CONFIG.email}, DM ons op Instagram (${SITE_CONFIG.socials.instagram.handle}) of TikTok (${SITE_CONFIG.socials.tiktok.handle}), of join onze WhatsApp groep of Discord server. Je kunt ook langskomen op de ${SITE_CONFIG.address.venue} (${SITE_CONFIG.address.floor}) tijdens een van onze events of de SIT Hub.`,
-    icon: Mail,
-    color: "#3B82F6",
-  },
+const FAQ_META: { icon: typeof HelpCircle; color: string; href?: string }[] = [
+  { icon: Users, color: "#F29E18", href: "/over-ons" },
+  { icon: CreditCard, color: "#22C55E", href: "/lid-worden" },
+  { icon: Ticket, color: "#F29E18" },
+  { icon: GraduationCap, color: "#3B82F6", href: "/lid-worden" },
+  { icon: Calendar, color: "#EF4444", href: "/events" },
+  { icon: Users, color: "#3B82F6", href: "/over-ons" },
+  { icon: Trophy, color: "#F29E18", href: "/leaderboard" },
+  { icon: Zap, color: "#22C55E" },
+  { icon: Mail, color: "#3B82F6" },
 ];
 
 // ─── Terminal dots helper ─────────────────────────────────────────────────────
@@ -213,8 +154,37 @@ function FaqAccordion({
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
+interface RawFaqItem {
+  question: string;
+  answer: string;
+  linkLabel?: string;
+}
+
 export default function FaqContent() {
+  const t = useTranslations("faqContent");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const raw = t.raw("items") as RawFaqItem[];
+  const FAQ_ITEMS: FaqItem[] = raw.map((item, i) => {
+    const meta = FAQ_META[i];
+    const answer = t("items." + i + ".answer", {
+      members: SITE_CONFIG.stats.members,
+      commissies: SITE_CONFIG.stats.commissies,
+      price: SITE_CONFIG.membership.priceLabel,
+      email: SITE_CONFIG.email,
+      instagram: SITE_CONFIG.socials.instagram.handle,
+      tiktok: SITE_CONFIG.socials.tiktok.handle,
+      venue: SITE_CONFIG.address.venue,
+      floor: SITE_CONFIG.address.floor,
+    });
+    return {
+      question: item.question,
+      answer,
+      icon: meta.icon,
+      color: meta.color,
+      link: meta.href && item.linkLabel ? { href: meta.href, label: item.linkLabel } : undefined,
+    };
+  });
 
   return (
     <section className="relative py-16 md:py-24 px-6 md:px-12 lg:px-24">
@@ -234,18 +204,18 @@ export default function FaqContent() {
           <div className="flex items-center gap-3 mb-4">
             <TerminalDots />
             <span className="font-mono text-[10px] tracking-[0.2em] uppercase" style={{ color: "#71717A" }}>
-              faq.md
+              {t("fileLabel")}
             </span>
           </div>
 
           <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight leading-tight mb-3">
-            Veelgestelde
+            {t("titleLine1")}
             <br />
-            <span style={{ color: "#F29E18" }}>Vragen</span>
+            <span style={{ color: "#F29E18" }}>{t("titleLine2")}</span>
           </h1>
 
           <p className="font-mono text-sm" style={{ color: "#71717A" }}>
-            // alles wat je wilt weten over SIT
+            {t("subtitle")}
           </p>
 
           {/* Gold separator */}
@@ -276,7 +246,7 @@ export default function FaqContent() {
           <div className="flex items-center gap-2 mb-3">
             <TerminalDots />
             <span className="font-mono text-[10px] tracking-wider" style={{ color: "#71717A" }}>
-              nog_vragen.sh
+              {t("ctaFileLabel")}
             </span>
           </div>
 
@@ -284,7 +254,7 @@ export default function FaqContent() {
             <div>
               <span style={{ color: "#22C55E" }}>$</span>{" "}
               <span style={{ color: "#FAFAFA" }}>echo</span>{" "}
-              <span style={{ color: "#F29E18" }}>&quot;Vraag niet beantwoord?&quot;</span>
+              <span style={{ color: "#F29E18" }}>&quot;{t("ctaEcho")}&quot;</span>
             </div>
             <div className="mt-1">
               <span style={{ color: "#22C55E" }}>$</span>{" "}
@@ -309,7 +279,7 @@ export default function FaqContent() {
               }}
             >
               <Mail size={12} />
-              MAIL ONS
+              {t("ctaMailUs")}
             </a>
             <Link
               href="/lid-worden"
@@ -319,7 +289,7 @@ export default function FaqContent() {
                 backgroundColor: "#F29E18",
               }}
             >
-              WORD LID
+              {t("ctaJoin")}
               <ArrowRight size={12} />
             </Link>
           </div>

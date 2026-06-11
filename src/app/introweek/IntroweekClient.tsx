@@ -2,180 +2,90 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 import { Lock, Check, Users, Coffee, Zap, Sparkles, Send, ChevronDown } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/constants'
 import HboIctVormtaal from '@/components/HboIctVormtaal'
 
 // ── Program data (two intro weeks) ───────────────────────────────────────────
+// Structural fields only (number, color, brand title, locked state). All
+// translatable copy (slug, desc, tags, scr) lives in the introweekClient
+// namespace, keyed by week + num. See src/messages/{nl,en}/introweekClient.json.
 
 type DayCard = {
   num: string
   color: string
   title: string
-  slug: string
-  desc?: string
-  tags?: string[]
+  weekKey: 'week1' | 'week2'
   locked?: boolean
-  scr?: string
   blocks?: string
 }
 
 const WEEK1: DayCard[] = [
-  {
-    num: '01',
-    color: 'var(--gold)',
-    title: 'Power On',
-    slug: 'kickoff & kennismaking',
-    desc: 'Officiele opening en je eerste kennismaking met het bestuur, de commissies en je mede-eerstejaars. Exacte invulling volgt.',
-    tags: ['opening', 'kennismaking'],
-  },
-  {
-    num: '02',
-    color: 'var(--blue)',
-    title: 'Campus Hunt',
-    slug: 'de stad & je crew',
-    desc: 'Leer de gebouwen, labs en koffieautomaten kennen, en vooral de mensen waarmee je je jaar gaat doorkomen.',
-    tags: ['campus', 'intro-groep'],
-  },
-  {
-    num: '03',
-    color: 'var(--green)',
-    title: 'First Borrel',
-    slug: 'de eerste borrel',
-    desc: 'De eerste echte SIT-borrel. Dit is waar intro-groepjes vriendengroepen worden, en waar je jaar pas echt begint.',
-    tags: ['borrel', 'social'],
-  },
-  {
-    num: '04',
-    color: 'var(--purple)',
-    title: 'Connect',
-    slug: 'chill & contact',
-    desc: 'Laagdrempelig samen chillen, gamen of gewoon kletsen. Geen druk, geen ervaring nodig. Kom zoals je bent.',
-    tags: ['chill', 'iedereen welkom'],
-  },
-  {
-    num: '05',
-    color: 'var(--cyan)',
-    title: '???',
-    slug: 'nog niet onthuld',
-    locked: true,
-    scr: 'er staat iets moois gepland, geduld...',
-    blocks: '████ ███ ██████ ████',
-  },
+  { num: '01', color: 'var(--gold)', title: 'Power On', weekKey: 'week1' },
+  { num: '02', color: 'var(--blue)', title: 'Campus Hunt', weekKey: 'week1' },
+  { num: '03', color: 'var(--green)', title: 'First Borrel', weekKey: 'week1' },
+  { num: '04', color: 'var(--purple)', title: 'Connect', weekKey: 'week1' },
+  { num: '05', color: 'var(--cyan)', title: '???', weekKey: 'week1', locked: true, blocks: '████ ███ ██████ ████' },
 ]
 
 const WEEK2: DayCard[] = [
-  {
-    num: '01',
-    color: 'var(--blue)',
-    title: 'Build Mode',
-    slug: 'tech & workshops',
-    desc: 'Hands-on de tech in met AI4HvA en EduCo: workshops en een CTF-taster waar je je eerste flag hackt. Geen voorkennis nodig.',
-    tags: ['ai4hva', 'ctf taster'],
-  },
-  {
-    num: '02',
-    color: 'var(--purple)',
-    title: 'Player 2',
-    slug: 'game night & lan',
-    desc: 'Een avond LAN, tournaments en couch co-op, georganiseerd door GameIT. Breng je setup of speel op de onze.',
-    tags: ['lan', 'gameit'],
-  },
-  {
-    num: '03',
-    color: 'var(--green)',
-    title: 'Stad In',
-    slug: 'stadsspel & kroegentocht',
-    desc: 'Amsterdam in met een stadsspel dat eindigt in een kroegentocht. Een week lang wordt de hele stad je campus.',
-    tags: ['stadsspel', 'kroegentocht'],
-  },
-  {
-    num: '04',
-    color: 'var(--red)',
-    title: 'Launch',
-    slug: 'de grote afsluiter',
-    desc: 'De grote afsluiter van de introperiode. Live muziek, de hele vereniging op een vloer en het officiele begin van jouw jaar bij SIT.',
-    tags: ['feest', 'afsluiter'],
-  },
-  {
-    num: '05',
-    color: 'var(--cyan)',
-    title: '???',
-    slug: 'nog niet onthuld',
-    locked: true,
-    scr: 'een verrassing voor de echte die-hards...',
-    blocks: '██ ████ ███████ ████',
-  },
+  { num: '01', color: 'var(--blue)', title: 'Build Mode', weekKey: 'week2' },
+  { num: '02', color: 'var(--purple)', title: 'Player 2', weekKey: 'week2' },
+  { num: '03', color: 'var(--green)', title: 'Stad In', weekKey: 'week2' },
+  { num: '04', color: 'var(--red)', title: 'Launch', weekKey: 'week2' },
+  { num: '05', color: 'var(--cyan)', title: '???', weekKey: 'week2', locked: true, blocks: '██ ████ ███████ ████' },
 ]
 
 const KIT = [
-  {
-    idx: '01',
-    color: 'var(--gold)',
-    Icon: Users,
-    title: 'Een crew die blijft',
-    body: 'Je intro-groepje wordt het groepje waarmee je vier jaar lang door de opleiding rolt.',
-  },
-  {
-    idx: '02',
-    color: 'var(--green)',
-    Icon: Coffee,
-    title: 'Gratis eten & drinken',
-    body: 'Lunch, borrels en genoeg koffie om je eerste week echt te overleven.',
-  },
-  {
-    idx: '03',
-    color: 'var(--blue)',
-    Icon: Zap,
-    title: 'Direct ingeplugd',
-    body: `Toegang tot ${SITE_CONFIG.stats.commissies} commissies, de Discord en de eigen SIT-server, vanaf dag een.`,
-  },
-  {
-    idx: '04',
-    color: 'var(--purple)',
-    Icon: Sparkles,
-    title: 'Geen ervaring nodig',
-    body: 'Kom zoals je bent, coder, gamer, of nog geen idee. Wij regelen de rest.',
-  },
+  { idx: '01', color: 'var(--gold)', Icon: Users },
+  { idx: '02', color: 'var(--green)', Icon: Coffee },
+  { idx: '03', color: 'var(--blue)', Icon: Zap },
+  { idx: '04', color: 'var(--purple)', Icon: Sparkles },
 ]
 
 // ── Day card ──────────────────────────────────────────────────────────────────
 
-function Day({ d }: { d: DayCard }) {
+type DayT = ReturnType<typeof useTranslations>
+
+function Day({ d, t }: { d: DayCard; t: DayT }) {
+  const base = `${d.weekKey}.${d.num}`
+  const slug = t(`${base}.slug`)
   if (d.locked) {
     return (
       <article className="day tilt soon locked-card reveal" style={{ '--c': d.color } as CSSProperties} tabIndex={0} role="button" aria-expanded={false}>
         <div className="tilt-inner">
           <span className="day-corner tl" /><span className="day-corner br" />
-          <div className="day-top"><span className="day-num">{d.num}</span><span className="day-soon"><span className="sd" />geheim</span></div>
+          <div className="day-top"><span className="day-num">{d.num}</span><span className="day-soon"><span className="sd" />{t('day.secret')}</span></div>
           <div className="day-body locked-body">
             <h3 className="day-title">??? <span className="lockico"><Lock size={16} /></span></h3>
-            <p className="day-slug mono">// <span className="c">{d.slug}</span></p>
-            <div className="scrambled mono" data-scr={d.scr}>{d.blocks}</div>
+            <p className="day-slug mono">// <span className="c">{slug}</span></p>
+            <div className="scrambled mono" data-scr={t(`${base}.scr`)}>{d.blocks}</div>
           </div>
-          <div className="day-foot"><span className="more c-muted">vergrendeld</span><span className="compiling">decrypting...</span></div>
+          <div className="day-foot"><span className="more c-muted">{t('day.locked')}</span><span className="compiling">{t('day.decrypting')}</span></div>
         </div>
       </article>
     )
   }
+  const tags = t.raw(`${base}.tags`) as string[]
   return (
     <article className="day tilt soon reveal" style={{ '--c': d.color } as CSSProperties} tabIndex={0} role="button" aria-expanded={false}>
       <div className="tilt-inner">
         <span className="day-corner tl" /><span className="day-corner br" />
-        <div className="day-top"><span className="day-num">{d.num}</span><span className="day-soon"><span className="sd" />binnenkort</span></div>
+        <div className="day-top"><span className="day-num">{d.num}</span><span className="day-soon"><span className="sd" />{t('day.soon')}</span></div>
         <div className="day-body">
           <h3 className="day-title">{d.title}</h3>
-          <p className="day-slug mono">// <span className="c">{d.slug}</span></p>
+          <p className="day-slug mono">// <span className="c">{slug}</span></p>
           <div className="day-meta locked">
-            <span><Lock size={13} />datum · t.b.a.</span>
-            <span><Lock size={13} />tijd & locatie · volgt</span>
+            <span><Lock size={13} />{t('day.dateMeta')}</span>
+            <span><Lock size={13} />{t('day.timeMeta')}</span>
           </div>
         </div>
         <div className="day-extra">
-          <p>{d.desc}</p>
-          <div className="day-tags">{d.tags?.map((t) => <span key={t} className="tg">{t}</span>)}</div>
+          <p>{t(`${base}.desc`)}</p>
+          <div className="day-tags">{tags.map((tag) => <span key={tag} className="tg">{tag}</span>)}</div>
         </div>
-        <div className="day-foot"><span className="more">vibe <span className="chev"><ChevronDown size={12} /></span></span><span className="compiling">compiling...</span></div>
+        <div className="day-foot"><span className="more">{t('day.vibe')} <span className="chev"><ChevronDown size={12} /></span></span><span className="compiling">{t('day.compiling')}</span></div>
       </div>
     </article>
   )
@@ -184,6 +94,7 @@ function Day({ d }: { d: DayCard }) {
 // ── Page ────────────────────────────────────────────────────────────────────
 
 export default function IntroweekClient() {
+  const t = useTranslations('introweekClient')
   const rootRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const bootLogRef = useRef<HTMLDivElement>(null)
@@ -199,12 +110,12 @@ export default function IntroweekClient() {
     if (!ov || !log) return
     const skip = sessionStorage.getItem('sit_intro_booted')
     const lines: [string, string][] = [
-      ['booting', 'SIT_OS v26.0, first-day kernel'],
-      ['mount', '/dev/student > OK'],
-      ['load', 'introweek.module ... OK'],
-      ['net', 'connecting to community ... 204 leden online'],
-      ['auth', 'guest pass granted'],
-      ['ready', 'welkom. druk op start.'],
+      ['booting', t('boot.lines.booting')],
+      ['mount', t('boot.lines.mount')],
+      ['load', t('boot.lines.load')],
+      ['net', t('boot.lines.net')],
+      ['auth', t('boot.lines.auth')],
+      ['ready', t('boot.lines.ready')],
     ]
     let removed = false
     const timers: ReturnType<typeof setTimeout>[] = []
@@ -248,7 +159,7 @@ export default function IntroweekClient() {
     }
     next()
     return () => { removed = true; timers.forEach(clearTimeout); document.body.style.overflow = '' }
-  }, [])
+  }, [t])
 
   // ── SCRAMBLE hero word ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -298,7 +209,7 @@ export default function IntroweekClient() {
       if (diff <= 0) {
         if (cells.d) cells.d.textContent = '00'
         const live = root!.querySelector('#cdLive') as HTMLElement
-        if (live) live.textContent = 'het is zover, kom langs!'
+        if (live) live.textContent = t('hero.countdownLive')
         return
       }
       const s = Math.floor(diff / 1000)
@@ -310,7 +221,7 @@ export default function IntroweekClient() {
     tick()
     const id = setInterval(tick, 1000)
     return () => clearInterval(id)
-  }, [])
+  }, [t])
 
   // ── 3D TILT + day expand + decrypt-on-hover ──────────────────────────────────
   useEffect(() => {
@@ -640,10 +551,10 @@ export default function IntroweekClient() {
           <div className="boot-head">
             <span className="tdots"><span style={{ background: 'var(--red)' }} /><span style={{ background: 'var(--gold)' }} /><span style={{ background: 'var(--green)' }} /></span>
             <span className="boot-logo"><span className="c-gold">{'{'}</span>SIT<span className="c-gold">{'}'}</span></span>
-            <span>· first-day boot</span>
+            <span>· {t('boot.head')}</span>
           </div>
           <div id="bootLog" ref={bootLogRef} />
-          <button id="bootStart" ref={bootStartRef}>start introweek</button>
+          <button id="bootStart" ref={bootStartRef}>{t('boot.start')}</button>
         </div>
       </div>
 
@@ -657,8 +568,8 @@ export default function IntroweekClient() {
       {/* HERO */}
       <header className="ihero" id="top">
         <div className="wrap">
-          <div className="ih-eyebrow"><span className="pdot" /> twee introweken · september 2026 · HvA Amsterdam</div>
-          <div className="ih-cobrand reveal"><span className="ih-cobrand-dot" aria-hidden="true" /><span className="mono">de studievereniging van HBO-ICT</span></div>
+          <div className="ih-eyebrow"><span className="pdot" /> {t('hero.eyebrow')}</div>
+          <div className="ih-cobrand reveal"><span className="ih-cobrand-dot" aria-hidden="true" /><span className="mono">{t('hero.cobrand')}</span></div>
           <p className="ih-kicker reveal in"><span className="c-muted">$</span> ~/hva/hbo-ict <span className="c-muted">&gt;</span> ./start --new-student</p>
           <h1 className="ih-title">
             <span className="brace">{'{'}</span>
@@ -668,35 +579,35 @@ export default function IntroweekClient() {
             </span>
             <span className="brace">{'}'}</span>
           </h1>
-          <p className="ih-sub">Je eerste weken aan de HvA. Waar je studie begint, en waar je <b>je mensen vindt</b>. Boot in. Vlieg de SIT-core in.</p>
+          <p className="ih-sub">{t('hero.subPre')}<b>{t('hero.subBold')}</b>{t('hero.subPost')}</p>
 
           <div className="countdown" id="countdown">
-            <div className="cd-label">geschat aftellen tot <b id="cdLive">introweek</b></div>
+            <div className="cd-label">{t('hero.countdownLabel')}<b id="cdLive">{t('hero.countdownTarget')}</b></div>
             <div className="cd-grid">
-              <div className="cd-cell"><span className="cd-num" data-cd="d">00</span><span className="cd-unit">dagen</span></div>
+              <div className="cd-cell"><span className="cd-num" data-cd="d">00</span><span className="cd-unit">{t('hero.unitDays')}</span></div>
               <span className="cd-colon">:</span>
-              <div className="cd-cell"><span className="cd-num" data-cd="h">00</span><span className="cd-unit">uur</span></div>
+              <div className="cd-cell"><span className="cd-num" data-cd="h">00</span><span className="cd-unit">{t('hero.unitHours')}</span></div>
               <span className="cd-colon">:</span>
-              <div className="cd-cell"><span className="cd-num" data-cd="m">00</span><span className="cd-unit">min</span></div>
+              <div className="cd-cell"><span className="cd-num" data-cd="m">00</span><span className="cd-unit">{t('hero.unitMinutes')}</span></div>
               <span className="cd-colon">:</span>
-              <div className="cd-cell"><span className="cd-num" data-cd="s">00</span><span className="cd-unit">sec</span></div>
+              <div className="cd-cell"><span className="cd-num" data-cd="s">00</span><span className="cd-unit">{t('hero.unitSeconds')}</span></div>
             </div>
           </div>
 
           <div className="ih-ctas">
             <a href="#program" className="btn btn-primary">
-              <span className="bkt">[</span>PLAN JE WEEK<span className="bkt">]</span>
+              <span className="bkt">[</span>{t('hero.ctaPlan')}<span className="bkt">]</span>
             </a>
-            <a href="#join" className="btn btn-ghost">WORD LID <span className="arrow">&gt;</span></a>
+            <a href="#join" className="btn btn-ghost">{t('hero.ctaJoin')} <span className="arrow">&gt;</span></a>
           </div>
 
           <div className="ih-meta">
-            <span><b>gratis</b> voor leden</span><span className="dot">×</span>
-            <span>geen ervaring nodig</span><span className="dot">×</span>
-            <span>iedereen welkom</span>
+            <span><b>{t('hero.metaFreeBold')}</b>{t('hero.metaFree')}</span><span className="dot">×</span>
+            <span>{t('hero.metaNoExp')}</span><span className="dot">×</span>
+            <span>{t('hero.metaEveryone')}</span>
           </div>
 
-          <div className="ih-scroll"><span>scroll</span><span className="v" /><span className="arr"><ChevronDown size={14} /></span></div>
+          <div className="ih-scroll"><span>{t('hero.scroll')}</span><span className="v" /><span className="arr"><ChevronDown size={14} /></span></div>
         </div>
       </header>
 
@@ -707,24 +618,24 @@ export default function IntroweekClient() {
           <div className="wrap">
             <div className="seclabel reveal">
               <div className="seclabel-top"><span className="seclabel-num">01</span><span className="seclabel-rule" /></div>
-              <h2 className="seclabel-title">// het programma</h2>
+              <h2 className="seclabel-title">{t('program.label')}</h2>
             </div>
-            <p className="sec-intro reveal">Dit jaar zijn er <b>twee introweken</b> in september. We zijn het volledige programma nog aan het plannen. Hieronder de <b>vibe</b> die je kan verwachten. Exacte dagen, tijden en locaties volgen binnenkort.</p>
+            <p className="sec-intro reveal">{t('program.introPre')}<b>{t('program.introBold1')}</b>{t('program.introMid')}<b>{t('program.introBold2')}</b>{t('program.introPost')}</p>
 
             <div className="weekseg reveal">
-              <button className={week === 'w1' ? 'active' : ''} onClick={() => setWeek('w1')}><span className="ws-dot" />Intro Week <b>01</b></button>
-              <button className={week === 'w2' ? 'active' : ''} onClick={() => setWeek('w2')}><span className="ws-dot" />Intro Week <b>02</b></button>
-              <span className="ws-tag mono">// schema compileert...</span>
+              <button className={week === 'w1' ? 'active' : ''} onClick={() => setWeek('w1')}><span className="ws-dot" />{t('program.week1Btn')}<b>01</b></button>
+              <button className={week === 'w2' ? 'active' : ''} onClick={() => setWeek('w2')}><span className="ws-dot" />{t('program.week2Btn')}<b>02</b></button>
+              <span className="ws-tag mono">{t('program.schemaTag')}</span>
             </div>
 
             <div className={`week-panel${week === 'w1' ? ' show' : ''}`} id="w1">
-              <div className="days">{WEEK1.map((d) => <Day key={'w1' + d.num} d={d} />)}</div>
+              <div className="days">{WEEK1.map((d) => <Day key={'w1' + d.num} d={d} t={t} />)}</div>
             </div>
             <div className={`week-panel${week === 'w2' ? ' show' : ''}`} id="w2">
-              <div className="days">{WEEK2.map((d) => <Day key={'w2' + d.num} d={d} />)}</div>
+              <div className="days">{WEEK2.map((d) => <Day key={'w2' + d.num} d={d} t={t} />)}</div>
             </div>
 
-            <p className="prog-note reveal">Het definitieve schema voor beide weken volgt binnenkort. <a href="#join">word lid</a> en je krijgt het als eerste in je inbox.</p>
+            <p className="prog-note reveal">{t('program.notePre')}<a href="#join">{t('program.noteLink')}</a>{t('program.notePost')}</p>
           </div>
         </section>
 
@@ -733,9 +644,9 @@ export default function IntroweekClient() {
           <div className="wrap">
             <div className="seclabel reveal">
               <div className="seclabel-top"><span className="seclabel-num">02</span><span className="seclabel-rule" /></div>
-              <h2 className="seclabel-title">// je intro-survival kit</h2>
+              <h2 className="seclabel-title">{t('kitSection.label')}</h2>
             </div>
-            <p className="sec-intro reveal">Wat je uit deze weken meeneemt, <b>los van de hoofdpijn</b>.</p>
+            <p className="sec-intro reveal">{t('kitSection.introPre')}<b>{t('kitSection.introBold')}</b>{t('kitSection.introPost')}</p>
             <div className="kit-grid">
               {KIT.map((k) => {
                 const Icon = k.Icon
@@ -743,8 +654,8 @@ export default function IntroweekClient() {
                   <div key={k.idx} className="kit reveal" style={{ '--c': k.color } as CSSProperties}>
                     <span className="idx">{k.idx}</span>
                     <div className="kit-ic"><Icon size={20} /></div>
-                    <h4>{k.title}</h4>
-                    <p>{k.body}</p>
+                    <h4>{t(`kit.${k.idx}.title`)}</h4>
+                    <p>{t(`kit.${k.idx}.body`, { commissies: SITE_CONFIG.stats.commissies })}</p>
                   </div>
                 )
               })}
@@ -760,15 +671,15 @@ export default function IntroweekClient() {
               <div>
                 <div className="seclabel reveal">
                   <div className="seclabel-top"><span className="seclabel-num">03</span><span className="seclabel-rule" /></div>
-                  <h2 className="seclabel-title">// claim je plek</h2>
+                  <h2 className="seclabel-title">{t('finale.label')}</h2>
                 </div>
-                <h2 className="reveal">Een klik en<br />je hoort er<br /><span className="c-gold">bij</span>.</h2>
-                <p className="finale-body reveal">Introweek is <b>gratis voor leden</b>. Lid worden kost {SITE_CONFIG.membership.price} euro voor een heel jaar, en je krijgt er een complete community, {SITE_CONFIG.stats.events} events en een netwerk van {SITE_CONFIG.stats.students} HBO-ICT studenten bij.</p>
+                <h2 className="reveal">{t('finale.headLine1')}<br />{t('finale.headLine2')}<br /><span className="c-gold">{t('finale.headGold')}</span>.</h2>
+                <p className="finale-body reveal">{t('finale.bodyPre')}<b>{t('finale.bodyBold')}</b>{t('finale.bodyPost', { price: SITE_CONFIG.membership.price, events: SITE_CONFIG.stats.events, students: SITE_CONFIG.stats.students })}</p>
                 <ul className="finale-list reveal">
-                  <li><span className="ck"><Check size={15} /></span> Volledige introweek, alle dagen</li>
-                  <li><span className="ck"><Check size={15} /></span> Alle events &amp; borrels het hele jaar</li>
-                  <li><span className="ck"><Check size={15} /></span> Meedraaien in elke commissie</li>
-                  <li><span className="ck"><Check size={15} /></span> Discord, AI Labs &amp; de SIT-server</li>
+                  <li><span className="ck"><Check size={15} /></span> {t('finale.list1')}</li>
+                  <li><span className="ck"><Check size={15} /></span> {t('finale.list2')}</li>
+                  <li><span className="ck"><Check size={15} /></span> {t('finale.list3')}</li>
+                  <li><span className="ck"><Check size={15} /></span> {t('finale.list4')}</li>
                 </ul>
               </div>
 
@@ -777,22 +688,22 @@ export default function IntroweekClient() {
                 <div className="ticket">
                   <span className="tk-notch l" /><span className="tk-notch r" />
                   <div className="tk-top">
-                    <span className="lg"><span className="c-gold">{'{'}</span>SIT<span className="c-gold">{'}'}</span> · boarding pass</span>
-                    <span className="cls">introweek &apos;26</span>
+                    <span className="lg"><span className="c-gold">{'{'}</span>SIT<span className="c-gold">{'}'}</span> · {t('finale.ticketBoarding')}</span>
+                    <span className="cls">{t('finale.ticketClass')}</span>
                   </div>
                   <div className="tk-body">
                     <div className="tk-route">
-                      <div className="tk-pt"><div className="big">JIJ</div><div className="sm">eerstejaars</div></div>
+                      <div className="tk-pt"><div className="big">{t('finale.ticketYou')}</div><div className="sm">{t('finale.ticketYouSub')}</div></div>
                       <div className="tk-path"><span className="pl"><Send size={18} /></span></div>
-                      <div className="tk-pt r"><div className="big">SIT</div><div className="sm">de community</div></div>
+                      <div className="tk-pt r"><div className="big">{t('finale.ticketSit')}</div><div className="sm">{t('finale.ticketSitSub')}</div></div>
                     </div>
                     <div className="tk-grid">
-                      <div><div className="k">gate</div><div className="v c-gold">31 AUG</div></div>
-                      <div><div className="k">seat</div><div className="v">1A · jij</div></div>
-                      <div><div className="k">prijs</div><div className="v c-green">{SITE_CONFIG.membership.price}/jr</div></div>
+                      <div><div className="k">{t('finale.ticketGate')}</div><div className="v c-gold">31 AUG</div></div>
+                      <div><div className="k">{t('finale.ticketSeat')}</div><div className="v">{t('finale.ticketSeatVal')}</div></div>
+                      <div><div className="k">{t('finale.ticketPrice')}</div><div className="v c-green">{SITE_CONFIG.membership.price}{t('finale.ticketPriceUnit')}</div></div>
                     </div>
                     <div className="tk-barcode" />
-                    <a href="/lid-worden" className="tk-cta">$ word lid, check in</a>
+                    <a href="/lid-worden" className="tk-cta">{t('finale.ticketCta')}</a>
                   </div>
                 </div>
               </div>
@@ -803,7 +714,7 @@ export default function IntroweekClient() {
               <div className="iw-signoff-vorm" aria-hidden="true"><HboIctVormtaal variant="bands" count={6} opacity={0.55} /></div>
               <div className="iw-signoff-row">
                 <Image src="/hbo-ict-wit.png" alt="HBO-ICT Hogeschool van Amsterdam" width={188} height={32} className="iw-signoff-logo" priority={false} />
-                <span className="iw-signoff-line mono"><span className="c-gold">{'//'}</span> de officiele studievereniging van HBO-ICT</span>
+                <span className="iw-signoff-line mono"><span className="c-gold">{'//'}</span> {t('finale.signoff')}</span>
               </div>
             </div>
           </div>
