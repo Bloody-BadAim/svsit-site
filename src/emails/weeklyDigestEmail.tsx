@@ -1,6 +1,7 @@
 import { Text, Link, Hr, Section, Row, Column } from "@react-email/components";
 import EmailLayout, { C } from "./components/EmailLayout";
 import { SITE_CONFIG } from "@/lib/constants";
+import type { Locale } from "./i18n";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -25,7 +26,47 @@ export interface WeeklyDigestEmailProps {
   leaderboard: LeaderboardEntry[];
   newMemberCount: number;
   funFact?: string;
+  locale?: Locale;
 }
+
+// ---------------------------------------------------------------------------
+// Copy (events, leaderboard and funFact are caller-supplied and stay as-is)
+// ---------------------------------------------------------------------------
+
+const copy = {
+  nl: {
+    preview: (count: number, hasEvents: boolean) =>
+      `Weekoverzicht SIT${hasEvents ? ` - ${count} event${count === 1 ? "" : "s"} deze week` : ""}`,
+    greeting: (name: string) => `Hoi ${name},`,
+    tag: "// weekoverzicht",
+    upcomingEvents: "Aankomende events",
+    at: "om",
+    noEvents: "Geen events deze week. Stay tuned!",
+    leaderboardTitle: "Top 5 leaderboard",
+    noLeaderboard: "Nog geen leaderboard data.",
+    xpLocale: "nl-NL",
+    newMembers: "Nieuwe leden deze week",
+    didYouKnow: "Wist je dat?",
+    cta: "Ga naar dashboard",
+    signOff: "Tot volgende week,",
+  },
+  en: {
+    preview: (count: number, hasEvents: boolean) =>
+      `SIT weekly digest${hasEvents ? ` - ${count} event${count === 1 ? "" : "s"} this week` : ""}`,
+    greeting: (name: string) => `Hi ${name},`,
+    tag: "// weekly digest",
+    upcomingEvents: "Upcoming events",
+    at: "at",
+    noEvents: "No events this week. Stay tuned!",
+    leaderboardTitle: "Top 5 leaderboard",
+    noLeaderboard: "No leaderboard data yet.",
+    xpLocale: "en-US",
+    newMembers: "New members this week",
+    didYouKnow: "Did you know?",
+    cta: "Go to dashboard",
+    signOff: "See you next week,",
+  },
+} as const;
 
 // ---------------------------------------------------------------------------
 // Main component
@@ -37,12 +78,14 @@ export default function WeeklyDigestEmail({
   leaderboard,
   newMemberCount,
   funFact,
+  locale = "nl",
 }: WeeklyDigestEmailProps) {
+  const t = copy[locale];
   const hasEvents = events.length > 0;
   const hasLeaderboard = leaderboard.length > 0;
 
   return (
-    <EmailLayout previewText={`Weekoverzicht SIT${hasEvents ? ` - ${events.length} event${events.length === 1 ? "" : "s"} deze week` : ""}`}>
+    <EmailLayout previewText={t.preview(events.length, hasEvents)} locale={locale}>
       {/* Greeting */}
       <Text
         style={{
@@ -54,7 +97,7 @@ export default function WeeklyDigestEmail({
           lineHeight: "1.5",
         }}
       >
-        Hoi {voornaam},
+        {t.greeting(voornaam)}
       </Text>
 
       <Text
@@ -67,7 +110,7 @@ export default function WeeklyDigestEmail({
           letterSpacing: "0.04em",
         }}
       >
-        // weekoverzicht
+        {t.tag}
       </Text>
 
       {/* ── Upcoming events ─────────────────────────────────────── */}
@@ -82,7 +125,7 @@ export default function WeeklyDigestEmail({
           margin: "0 0 12px 0",
         }}
       >
-        Aankomende events
+        {t.upcomingEvents}
       </Text>
 
       {hasEvents ? (
@@ -120,7 +163,7 @@ export default function WeeklyDigestEmail({
             >
               <span style={{ color: C.gold }}>{event.date}</span>
               {" "}
-              <span style={{ color: C.muted }}>om {event.time}</span>
+              <span style={{ color: C.muted }}>{t.at} {event.time}</span>
               {event.location ? (
                 <>
                   {" "}
@@ -140,7 +183,7 @@ export default function WeeklyDigestEmail({
             lineHeight: "1.6",
           }}
         >
-          Geen events deze week. Stay tuned!
+          {t.noEvents}
         </Text>
       )}
 
@@ -164,7 +207,7 @@ export default function WeeklyDigestEmail({
           margin: "0 0 12px 0",
         }}
       >
-        Top 5 leaderboard
+        {t.leaderboardTitle}
       </Text>
 
       {hasLeaderboard ? (
@@ -213,7 +256,7 @@ export default function WeeklyDigestEmail({
                     fontWeight: "600",
                   }}
                 >
-                  {entry.xp.toLocaleString("nl-NL")} XP
+                  {entry.xp.toLocaleString(t.xpLocale)} XP
                 </td>
               </tr>
             ))}
@@ -229,7 +272,7 @@ export default function WeeklyDigestEmail({
             lineHeight: "1.6",
           }}
         >
-          Nog geen leaderboard data.
+          {t.noLeaderboard}
         </Text>
       )}
 
@@ -262,7 +305,7 @@ export default function WeeklyDigestEmail({
                 lineHeight: "1.4",
               }}
             >
-              Nieuwe leden deze week
+              {t.newMembers}
             </Text>
           </Column>
           <Column style={{ textAlign: "right", verticalAlign: "middle" }}>
@@ -303,7 +346,7 @@ export default function WeeklyDigestEmail({
               margin: "0 0 8px 0",
             }}
           >
-            Wist je dat?
+            {t.didYouKnow}
           </Text>
           <Text
             style={{
@@ -355,7 +398,7 @@ export default function WeeklyDigestEmail({
                   letterSpacing: "0.04em",
                 }}
               >
-                Ga naar dashboard
+                {t.cta}
               </Link>
             </td>
           </tr>
@@ -380,7 +423,7 @@ export default function WeeklyDigestEmail({
           lineHeight: "1.4",
         }}
       >
-        Tot volgende week,
+        {t.signOff}
       </Text>
 
       <Text

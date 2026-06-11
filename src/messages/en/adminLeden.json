@@ -1,0 +1,16 @@
+{
+  "heading": "Member list",
+  "exportCsv": "Export CSV",
+  "csv": {
+    "name": "Name",
+    "email": "Email",
+    "studentNumber": "Student number",
+    "role": "Role",
+    "commissies": "Committees",
+    "xp": "XP",
+    "status": "Status",
+    "memberSince": "Member since",
+    "active": "Active",
+    "inactive": "Inactive"
+  }
+}

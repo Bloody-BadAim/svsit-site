@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import AdminNav from '@/components/admin/AdminNav'
@@ -8,6 +9,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
+  const t = await getTranslations('adminLayout')
   const session = await auth()
 
   if (!session?.user?.isAdmin && session?.user?.role !== 'bestuur') {
@@ -39,7 +41,7 @@ export default async function AdminLayout({
               color: 'var(--color-accent-red)',
             }}
           >
-            Admin
+            {t('badge')}
           </span>
         </div>
         <Link

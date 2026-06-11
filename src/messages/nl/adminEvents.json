@@ -1,0 +1,19 @@
+{
+  "title": "events.manage",
+  "subtitle": "{count} events in database",
+  "active": "actief: {name}",
+  "newEvent": "Nieuw event",
+  "filterAll": "Alle",
+  "filterUpcoming": "Upcoming",
+  "filterActive": "Actief",
+  "filterCompleted": "Afgelopen",
+  "filterCancelled": "Geannuleerd",
+  "emptyAll": "Geen events gevonden. Maak een event aan om te starten.",
+  "emptyFiltered": "Geen {filter} events.",
+  "free": "gratis",
+  "confirmCancel": "Event annuleren? Dit kan niet ongedaan worden.",
+  "errorLoad": "Fout bij laden events",
+  "errorLoadStatus": "Fout {status} bij laden events",
+  "errorCancel": "Fout bij annuleren",
+  "errorCancelStatus": "Fout {status} bij annuleren"
+}

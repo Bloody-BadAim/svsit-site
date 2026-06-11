@@ -7,6 +7,46 @@ import type { Locale } from "./config";
 
 import nlAbout from "@/messages/nl/about.json";
 import enAbout from "@/messages/en/about.json";
+import nlAdminChallengeManager from "@/messages/nl/adminChallengeManager.json";
+import enAdminChallengeManager from "@/messages/en/adminChallengeManager.json";
+import nlAdminChallengesPage from "@/messages/nl/adminChallengesPage.json";
+import enAdminChallengesPage from "@/messages/en/adminChallengesPage.json";
+import nlAdminDashboard from "@/messages/nl/adminDashboard.json";
+import enAdminDashboard from "@/messages/en/adminDashboard.json";
+import nlAdminEmailComposer from "@/messages/nl/adminEmailComposer.json";
+import enAdminEmailComposer from "@/messages/en/adminEmailComposer.json";
+import nlAdminEmailPage from "@/messages/nl/adminEmailPage.json";
+import enAdminEmailPage from "@/messages/en/adminEmailPage.json";
+import nlAdminError from "@/messages/nl/adminError.json";
+import enAdminError from "@/messages/en/adminError.json";
+import nlAdminEventDetail from "@/messages/nl/adminEventDetail.json";
+import enAdminEventDetail from "@/messages/en/adminEventDetail.json";
+import nlAdminEventForm from "@/messages/nl/adminEventForm.json";
+import enAdminEventForm from "@/messages/en/adminEventForm.json";
+import nlAdminEvents from "@/messages/nl/adminEvents.json";
+import enAdminEvents from "@/messages/en/adminEvents.json";
+import nlAdminLayout from "@/messages/nl/adminLayout.json";
+import enAdminLayout from "@/messages/en/adminLayout.json";
+import nlAdminLeden from "@/messages/nl/adminLeden.json";
+import enAdminLeden from "@/messages/en/adminLeden.json";
+import nlAdminMemberDetail from "@/messages/nl/adminMemberDetail.json";
+import enAdminMemberDetail from "@/messages/en/adminMemberDetail.json";
+import nlAdminMemberTable from "@/messages/nl/adminMemberTable.json";
+import enAdminMemberTable from "@/messages/en/adminMemberTable.json";
+import nlAdminNav from "@/messages/nl/adminNav.json";
+import enAdminNav from "@/messages/en/adminNav.json";
+import nlAdminProjecten from "@/messages/nl/adminProjecten.json";
+import enAdminProjecten from "@/messages/en/adminProjecten.json";
+import nlAdminQrScanner from "@/messages/nl/adminQrScanner.json";
+import enAdminQrScanner from "@/messages/en/adminQrScanner.json";
+import nlAdminScanner from "@/messages/nl/adminScanner.json";
+import enAdminScanner from "@/messages/en/adminScanner.json";
+import nlAdminStats from "@/messages/nl/adminStats.json";
+import enAdminStats from "@/messages/en/adminStats.json";
+import nlAdminSubmissionInbox from "@/messages/nl/adminSubmissionInbox.json";
+import enAdminSubmissionInbox from "@/messages/en/adminSubmissionInbox.json";
+import nlAdminVacatures from "@/messages/nl/adminVacatures.json";
+import enAdminVacatures from "@/messages/en/adminVacatures.json";
 import nlAuthClassSelector from "@/messages/nl/authClassSelector.json";
 import enAuthClassSelector from "@/messages/en/authClassSelector.json";
 import nlAuthForgotPassword from "@/messages/nl/authForgotPassword.json";
@@ -39,6 +79,8 @@ import nlDashboardNav from "@/messages/nl/dashboardNav.json";
 import enDashboardNav from "@/messages/en/dashboardNav.json";
 import nlDocumentenContent from "@/messages/nl/documentenContent.json";
 import enDocumentenContent from "@/messages/en/documentenContent.json";
+import nlErrorPage from "@/messages/nl/errorPage.json";
+import enErrorPage from "@/messages/en/errorPage.json";
 import nlEventCalendar from "@/messages/nl/eventCalendar.json";
 import enEventCalendar from "@/messages/en/eventCalendar.json";
 import nlEventCheckIn from "@/messages/nl/eventCheckIn.json";
@@ -71,14 +113,22 @@ import nlIntroweekClient from "@/messages/nl/introweekClient.json";
 import enIntroweekClient from "@/messages/en/introweekClient.json";
 import nlJoinCta from "@/messages/nl/joinCta.json";
 import enJoinCta from "@/messages/en/joinCta.json";
+import nlKonamiGame from "@/messages/nl/konamiGame.json";
+import enKonamiGame from "@/messages/en/konamiGame.json";
 import nlLeaderboardContent from "@/messages/nl/leaderboardContent.json";
 import enLeaderboardContent from "@/messages/en/leaderboardContent.json";
+import nlLidWordenWrap from "@/messages/nl/lidWordenWrap.json";
+import enLidWordenWrap from "@/messages/en/lidWordenWrap.json";
 import nlMemberCard from "@/messages/nl/memberCard.json";
 import enMemberCard from "@/messages/en/memberCard.json";
 import nlMoederbord from "@/messages/nl/moederbord.json";
 import enMoederbord from "@/messages/en/moederbord.json";
+import nlMotionToggle from "@/messages/nl/motionToggle.json";
+import enMotionToggle from "@/messages/en/motionToggle.json";
 import nlNavbar from "@/messages/nl/navbar.json";
 import enNavbar from "@/messages/en/navbar.json";
+import nlNotFound from "@/messages/nl/notFound.json";
+import enNotFound from "@/messages/en/notFound.json";
 import nlPageCardEditor from "@/messages/nl/pageCardEditor.json";
 import enPageCardEditor from "@/messages/en/pageCardEditor.json";
 import nlPageDashboard from "@/messages/nl/pageDashboard.json";
@@ -125,6 +175,8 @@ import nlPartnersNetwork from "@/messages/nl/partnersNetwork.json";
 import enPartnersNetwork from "@/messages/en/partnersNetwork.json";
 import nlPrivacyContent from "@/messages/nl/privacyContent.json";
 import enPrivacyContent from "@/messages/en/privacyContent.json";
+import nlScrollMorphNumbers from "@/messages/nl/scrollMorphNumbers.json";
+import enScrollMorphNumbers from "@/messages/en/scrollMorphNumbers.json";
 import nlShopBuyButton from "@/messages/nl/shopBuyButton.json";
 import enShopBuyButton from "@/messages/en/shopBuyButton.json";
 import nlShopGrid from "@/messages/nl/shopGrid.json";
@@ -142,6 +194,26 @@ import enWhyJoin from "@/messages/en/whyJoin.json";
 
 const nl = {
   about: nlAbout,
+  adminChallengeManager: nlAdminChallengeManager,
+  adminChallengesPage: nlAdminChallengesPage,
+  adminDashboard: nlAdminDashboard,
+  adminEmailComposer: nlAdminEmailComposer,
+  adminEmailPage: nlAdminEmailPage,
+  adminError: nlAdminError,
+  adminEventDetail: nlAdminEventDetail,
+  adminEventForm: nlAdminEventForm,
+  adminEvents: nlAdminEvents,
+  adminLayout: nlAdminLayout,
+  adminLeden: nlAdminLeden,
+  adminMemberDetail: nlAdminMemberDetail,
+  adminMemberTable: nlAdminMemberTable,
+  adminNav: nlAdminNav,
+  adminProjecten: nlAdminProjecten,
+  adminQrScanner: nlAdminQrScanner,
+  adminScanner: nlAdminScanner,
+  adminStats: nlAdminStats,
+  adminSubmissionInbox: nlAdminSubmissionInbox,
+  adminVacatures: nlAdminVacatures,
   authClassSelector: nlAuthClassSelector,
   authForgotPassword: nlAuthForgotPassword,
   authLogin: nlAuthLogin,
@@ -158,6 +230,7 @@ const nl = {
   dashboardError: nlDashboardError,
   dashboardNav: nlDashboardNav,
   documentenContent: nlDocumentenContent,
+  errorPage: nlErrorPage,
   eventCalendar: nlEventCalendar,
   eventCheckIn: nlEventCheckIn,
   eventFeaturedCard: nlEventFeaturedCard,
@@ -174,10 +247,14 @@ const nl = {
   homeMeta: nlHomeMeta,
   introweekClient: nlIntroweekClient,
   joinCta: nlJoinCta,
+  konamiGame: nlKonamiGame,
   leaderboardContent: nlLeaderboardContent,
+  lidWordenWrap: nlLidWordenWrap,
   memberCard: nlMemberCard,
   moederbord: nlMoederbord,
+  motionToggle: nlMotionToggle,
   navbar: nlNavbar,
+  notFound: nlNotFound,
   pageCardEditor: nlPageCardEditor,
   pageDashboard: nlPageDashboard,
   pageDocumenten: nlPageDocumenten,
@@ -201,6 +278,7 @@ const nl = {
   pageVacatures: nlPageVacatures,
   partnersNetwork: nlPartnersNetwork,
   privacyContent: nlPrivacyContent,
+  scrollMorphNumbers: nlScrollMorphNumbers,
   shopBuyButton: nlShopBuyButton,
   shopGrid: nlShopGrid,
   shopItemCard: nlShopItemCard,
@@ -212,6 +290,26 @@ const nl = {
 
 const en = {
   about: enAbout,
+  adminChallengeManager: enAdminChallengeManager,
+  adminChallengesPage: enAdminChallengesPage,
+  adminDashboard: enAdminDashboard,
+  adminEmailComposer: enAdminEmailComposer,
+  adminEmailPage: enAdminEmailPage,
+  adminError: enAdminError,
+  adminEventDetail: enAdminEventDetail,
+  adminEventForm: enAdminEventForm,
+  adminEvents: enAdminEvents,
+  adminLayout: enAdminLayout,
+  adminLeden: enAdminLeden,
+  adminMemberDetail: enAdminMemberDetail,
+  adminMemberTable: enAdminMemberTable,
+  adminNav: enAdminNav,
+  adminProjecten: enAdminProjecten,
+  adminQrScanner: enAdminQrScanner,
+  adminScanner: enAdminScanner,
+  adminStats: enAdminStats,
+  adminSubmissionInbox: enAdminSubmissionInbox,
+  adminVacatures: enAdminVacatures,
   authClassSelector: enAuthClassSelector,
   authForgotPassword: enAuthForgotPassword,
   authLogin: enAuthLogin,
@@ -228,6 +326,7 @@ const en = {
   dashboardError: enDashboardError,
   dashboardNav: enDashboardNav,
   documentenContent: enDocumentenContent,
+  errorPage: enErrorPage,
   eventCalendar: enEventCalendar,
   eventCheckIn: enEventCheckIn,
   eventFeaturedCard: enEventFeaturedCard,
@@ -244,10 +343,14 @@ const en = {
   homeMeta: enHomeMeta,
   introweekClient: enIntroweekClient,
   joinCta: enJoinCta,
+  konamiGame: enKonamiGame,
   leaderboardContent: enLeaderboardContent,
+  lidWordenWrap: enLidWordenWrap,
   memberCard: enMemberCard,
   moederbord: enMoederbord,
+  motionToggle: enMotionToggle,
   navbar: enNavbar,
+  notFound: enNotFound,
   pageCardEditor: enPageCardEditor,
   pageDashboard: enPageDashboard,
   pageDocumenten: enPageDocumenten,
@@ -271,6 +374,7 @@ const en = {
   pageVacatures: enPageVacatures,
   partnersNetwork: enPartnersNetwork,
   privacyContent: enPrivacyContent,
+  scrollMorphNumbers: enScrollMorphNumbers,
   shopBuyButton: enShopBuyButton,
   shopGrid: enShopGrid,
   shopItemCard: enShopItemCard,

@@ -1,0 +1,6 @@
+{
+  "heading": "QR Scanner",
+  "activeEvent": "Actief event: {name}",
+  "selectEventLabel": "event selecteren",
+  "noEventSelected": "- geen event geselecteerd -"
+}

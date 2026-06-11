@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Mail, Send, Users, AlertTriangle, Check, X, FileText } from 'lucide-react'
 import { inputStyle as baseInputStyle, labelStyle as baseLabelStyle } from '@/components/admin/adminStyles'
 import { CornerDecorations } from '@/components/ui/CornerDecorations'
@@ -10,68 +11,32 @@ import { SITE_CONFIG } from '@/lib/constants'
 
 type EmailFilter = 'all' | 'active' | 'bestuur' | 'commissie'
 
-interface FilterOption {
-  value: EmailFilter
-  label: string
-  description: string
-}
-
 // ─── Email templates per aanleiding ───────────────────────────────────────────
 
-interface EmailTemplate {
-  id: string
-  label: string
-  description: string
-  subject: string
-  body: string
-}
+// Template ids — labels/descriptions/subject/body come from translations
+const TEMPLATE_IDS = ['blank', 'new_event', 'new_challenge', 'newsletter', 'reminder'] as const
+type TemplateId = (typeof TEMPLATE_IDS)[number]
 
-const EMAIL_TEMPLATES: EmailTemplate[] = [
-  {
-    id: 'blank',
-    label: 'Leeg bericht',
-    description: 'Begin vanaf scratch',
-    subject: '',
-    body: '',
-  },
-  {
-    id: 'new_event',
-    label: 'Nieuw event',
-    description: 'Kondig een event aan',
-    subject: 'Nieuw SIT event: [EVENT NAAM]',
-    body: `Er staat weer een vet event op de planning!\n\n[EVENT NAAM]\nDatum: [DATUM]\nLocatie: [LOCATIE]\nTijd: [TIJD]\n\nWat kun je verwachten?\n[KORTE BESCHRIJVING]\n\nMeld je aan via svsit.nl en verdien XP door aanwezig te zijn.\n\nHope to see you there!`,
-  },
-  {
-    id: 'new_challenge',
-    label: 'Nieuwe challenge',
-    description: 'Kondig een challenge of quest aan',
-    subject: 'Nieuwe challenge: [CHALLENGE NAAM]',
-    body: `Er is een nieuwe challenge beschikbaar!\n\n[CHALLENGE NAAM]\nCategorie: [CODE/SOCIAL/LEARN/IMPACT]\nXP reward: [AANTAL] XP\nDeadline: [DATUM]\n\n[BESCHRIJVING]\n\nGa naar je dashboard op svsit.nl om de challenge te bekijken en bewijs in te leveren.`,
-  },
-  {
-    id: 'newsletter',
-    label: 'Nieuwsbrief',
-    description: 'Maandelijkse update',
-    subject: 'SIT Update - [MAAND] [JAAR]',
-    body: `Hier is je maandelijkse SIT update!\n\nWat is er gebeurd\n- [HIGHLIGHT 1]\n- [HIGHLIGHT 2]\n- [HIGHLIGHT 3]\n\nKomende events\n- [EVENT 1] - [DATUM]\n- [EVENT 2] - [DATUM]\n\nLeaderboard update\nDe huidige top 3: [NAAM 1], [NAAM 2], [NAAM 3]. Check svsit.nl/leaderboard voor de volledige ranking.\n\nNieuwe shop items\n[ITEMS BESCHRIJVING]\n\nTot de volgende!`,
-  },
-  {
-    id: 'reminder',
-    label: 'Event reminder',
-    description: 'Herinnering voor een event',
-    subject: 'Reminder: [EVENT NAAM] is morgen!',
-    body: `Niet vergeten: morgen is [EVENT NAAM]!\n\nDatum: [DATUM]\nTijd: [TIJD]\nLocatie: [LOCATIE]\n\nVergeet je telefoon niet - je hebt je QR code nodig om in te checken en XP te verdienen.\n\nTot morgen!`,
-  },
-]
+// Maps a template id to its translation key prefix
+const TEMPLATE_KEY: Record<TemplateId, string> = {
+  blank: 'templateBlank',
+  new_event: 'templateNewEvent',
+  new_challenge: 'templateNewChallenge',
+  newsletter: 'templateNewsletter',
+  reminder: 'templateReminder',
+}
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const FILTER_OPTIONS: FilterOption[] = [
-  { value: 'all',       label: 'Alle actieve leden',        description: 'Iedereen met een actief lidmaatschap'   },
-  { value: 'active',    label: 'Recent actief (30 dagen)',   description: 'Leden met een scan in de laatste 30 dagen' },
-  { value: 'bestuur',   label: 'Bestuur',                   description: 'Alleen bestuursleden'                   },
-  { value: 'commissie', label: 'Commissieleden',             description: 'Leden in een of meer commissies'        },
-]
+const FILTER_VALUES: EmailFilter[] = ['all', 'active', 'bestuur', 'commissie']
+
+// Maps a filter value to its translation key suffix
+const FILTER_KEY: Record<EmailFilter, string> = {
+  all: 'All',
+  active: 'Active',
+  bestuur: 'Bestuur',
+  commissie: 'Commissie',
+}
 
 // ─── Shared input/label styles (with EmailComposer overrides) ────────────────
 
@@ -80,7 +45,15 @@ const labelStyle: React.CSSProperties = { ...baseLabelStyle, marginBottom: 6 }
 
 // ─── Live email preview (approximates the template) ───────────────────────────
 
-function EmailPreview({ subject, body }: { subject: string; body: string }) {
+function EmailPreview({
+  subject,
+  body,
+  t,
+}: {
+  subject: string
+  body: string
+  t: ReturnType<typeof useTranslations>
+}) {
   const paragraphs = body
     .split('\n')
     .map((p) => p.trim())
@@ -114,7 +87,7 @@ function EmailPreview({ subject, body }: { subject: string; body: string }) {
             <span style={{ color: '#F29E18' }}>{`}`}</span>
           </div>
           <div style={{ fontSize: 10, color: '#6B7280', letterSpacing: '0.05em' }}>
-            Studievereniging ICT
+            {t('previewOrgName')}
           </div>
         </div>
 
@@ -124,13 +97,13 @@ function EmailPreview({ subject, body }: { subject: string; body: string }) {
         {/* Subject as preview label */}
         {subject && (
           <div style={{ fontSize: 10, color: '#6B7280', marginBottom: 16, letterSpacing: '0.04em' }}>
-            Onderwerp: <span style={{ color: '#F29E18' }}>{subject}</span>
+            {t('previewSubjectLabel')} <span style={{ color: '#F29E18' }}>{subject}</span>
           </div>
         )}
 
         {/* Greeting */}
         <div style={{ fontSize: 13, fontWeight: 600, color: '#FAFAFA', marginBottom: 16, lineHeight: 1.5 }}>
-          Hoi [voornaam],
+          {t('previewGreeting')}
         </div>
 
         {/* Body */}
@@ -145,7 +118,7 @@ function EmailPreview({ subject, body }: { subject: string; body: string }) {
           ))
         ) : (
           <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)', fontStyle: 'italic', marginBottom: 12 }}>
-            Begin met typen...
+            {t('previewEmptyBody')}
           </div>
         )}
 
@@ -154,14 +127,14 @@ function EmailPreview({ subject, body }: { subject: string; body: string }) {
 
         {/* Signature */}
         <div style={{ fontSize: 11, color: '#6B7280', lineHeight: 1.4, marginBottom: 4 }}>
-          Met vriendelijke groet,
+          {t('previewSignOff')}
         </div>
         <div style={{ fontSize: 12, fontWeight: 600, color: '#FAFAFA', marginBottom: 4, lineHeight: 1.4 }}>
-          Bestuur XII - <span style={{ color: '#F29E18' }}>{`{`}SIT{`}`}</span>
+          {t('previewBoard')} - <span style={{ color: '#F29E18' }}>{`{`}SIT{`}`}</span>
         </div>
         <div style={{ fontSize: 10, color: '#6B7280', lineHeight: 1.7 }}>
-          Studievereniging ICT<br />
-          Hogeschool van Amsterdam
+          {t('previewOrgName')}<br />
+          {t('previewOrgSchool')}
         </div>
         <div style={{ fontSize: 10, color: '#6B7280', marginTop: 8, lineHeight: 1.8 }}>
           <span style={{ color: '#F29E18' }}>svsit.nl</span>
@@ -184,6 +157,7 @@ function EmailPreview({ subject, body }: { subject: string; body: string }) {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function EmailComposer() {
+  const t = useTranslations('adminEmailComposer')
   const [filter, setFilter]   = useState<EmailFilter>('all')
   const [subject, setSubject] = useState('')
   const [body, setBody]       = useState('')
@@ -226,7 +200,7 @@ export default function EmailComposer() {
         body: JSON.stringify({ subject, body, filter }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? 'Verzenden mislukt')
+      if (!res.ok) throw new Error(data.error ?? t('errorSendFailed'))
       setResult({ sent: data.sent, failed: data.failed })
       // Reset form on full success
       if (data.failed === 0) {
@@ -234,7 +208,7 @@ export default function EmailComposer() {
         setBody('')
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Onbekende fout')
+      setError(err instanceof Error ? err.message : t('errorUnknown'))
     } finally {
       setSending(false)
     }
@@ -242,7 +216,7 @@ export default function EmailComposer() {
 
   const canSend = subject.trim().length > 0 && body.trim().length > 0 && !sending
 
-  const selectedFilter = FILTER_OPTIONS.find((o) => o.value === filter)!
+  const selectedFilterDescription = t(`filter${FILTER_KEY[filter]}Description`)
 
   return (
     <div style={{ maxWidth: 1100 }}>
@@ -259,10 +233,10 @@ export default function EmailComposer() {
             margin: 0,
           }}
         >
-          {'>'} email.compose
+          {'>'} {t('headerTitle')}
         </h1>
         <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 4, marginBottom: 0 }}>
-          Verstuur een e-mail naar SIT leden via het branded template
+          {t('headerSubtitle')}
         </p>
       </div>
 
@@ -305,7 +279,7 @@ export default function EmailComposer() {
             }}
           >
             <Mail size={13} />
-            // Stel e-mail in
+            // {t('formSection')}
           </h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -314,7 +288,7 @@ export default function EmailComposer() {
             <div>
               <label style={labelStyle}>
                 <Users size={11} style={{ display: 'inline', marginRight: 5, verticalAlign: 'middle' }} />
-                Ontvangers
+                {t('recipientsLabel')}
               </label>
               <select
                 value={filter}
@@ -325,23 +299,23 @@ export default function EmailComposer() {
                 }}
                 style={inputStyle}
               >
-                {FILTER_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
+                {FILTER_VALUES.map((value) => (
+                  <option key={value} value={value}>
+                    {t(`filter${FILTER_KEY[value]}Label`)}
                   </option>
                 ))}
               </select>
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-text-muted)', marginTop: 6, marginBottom: 0 }}>
-                {selectedFilter.description}
+                {selectedFilterDescription}
                 {' - '}
                 {countLoading ? (
-                  <span style={{ color: 'var(--color-text-muted)' }}>laden...</span>
+                  <span style={{ color: 'var(--color-text-muted)' }}>{t('recipientsLoading')}</span>
                 ) : count !== null ? (
                   <span style={{ color: 'var(--color-accent-gold)', fontWeight: 700 }}>
-                    {count} {count === 1 ? 'ontvanger' : 'ontvangers'}
+                    {t('recipientsCount', { count })}
                   </span>
                 ) : (
-                  <span style={{ color: 'var(--color-accent-red)' }}>onbekend</span>
+                  <span style={{ color: 'var(--color-accent-red)' }}>{t('recipientsUnknown')}</span>
                 )}
               </p>
             </div>
@@ -350,15 +324,16 @@ export default function EmailComposer() {
             <div>
               <label style={labelStyle}>
                 <FileText size={11} style={{ display: 'inline', marginRight: 5, verticalAlign: 'middle' }} />
-                Template
+                {t('templateLabel')}
               </label>
               <select
                 value=""
                 onChange={(e) => {
-                  const tpl = EMAIL_TEMPLATES.find((t) => t.id === e.target.value)
-                  if (tpl) {
-                    setSubject(tpl.subject)
-                    setBody(tpl.body)
+                  const id = e.target.value as TemplateId
+                  if (TEMPLATE_IDS.includes(id)) {
+                    const key = TEMPLATE_KEY[id]
+                    setSubject(id === 'blank' ? '' : t(`${key}Subject`))
+                    setBody(id === 'blank' ? '' : t(`${key}Body`))
                     setResult(null)
                     setError(null)
                   }
@@ -366,10 +341,10 @@ export default function EmailComposer() {
                 style={inputStyle}
                 disabled={sending}
               >
-                <option value="" disabled>Kies een template...</option>
-                {EMAIL_TEMPLATES.map((tpl) => (
-                  <option key={tpl.id} value={tpl.id}>
-                    {tpl.label} - {tpl.description}
+                <option value="" disabled>{t('templatePlaceholder')}</option>
+                {TEMPLATE_IDS.map((id) => (
+                  <option key={id} value={id}>
+                    {t(`${TEMPLATE_KEY[id]}Label`)} - {t(`${TEMPLATE_KEY[id]}Description`)}
                   </option>
                 ))}
               </select>
@@ -377,12 +352,12 @@ export default function EmailComposer() {
 
             {/* ── Subject ── */}
             <div>
-              <label style={labelStyle}>Onderwerp *</label>
+              <label style={labelStyle}>{t('subjectLabel')}</label>
               <input
                 type="text"
                 value={subject}
                 onChange={(e) => { setSubject(e.target.value); setResult(null); setError(null) }}
-                placeholder="Bijv. Aankomende events - april 2026"
+                placeholder={t('subjectPlaceholder')}
                 style={inputStyle}
                 disabled={sending}
               />
@@ -390,17 +365,17 @@ export default function EmailComposer() {
 
             {/* ── Body ── */}
             <div>
-              <label style={labelStyle}>Berichttekst *</label>
+              <label style={labelStyle}>{t('bodyLabel')}</label>
               <textarea
                 rows={10}
                 value={body}
                 onChange={(e) => { setBody(e.target.value); setResult(null); setError(null) }}
-                placeholder={'Schrijf hier je bericht...\n\nElke lege regel wordt een nieuwe alinea.'}
+                placeholder={t('bodyPlaceholder')}
                 style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.7 }}
                 disabled={sending}
               />
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-text-muted)', marginTop: 4, marginBottom: 0 }}>
-                Lege regels worden losse alineas. De aanhef en handtekening worden automatisch toegevoegd.
+                {t('bodyHint')}
               </p>
             </div>
 
@@ -439,8 +414,8 @@ export default function EmailComposer() {
                   : <Check size={13} style={{ color: 'var(--color-accent-green)', flexShrink: 0, marginTop: 1 }} />
                 }
                 <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: result.failed > 0 ? 'var(--color-accent-gold)' : 'var(--color-accent-green)', margin: 0 }}>
-                  {result.sent} {result.sent === 1 ? 'e-mail' : 'e-mails'} verzonden
-                  {result.failed > 0 && ` · ${result.failed} mislukt`}
+                  {t('resultSent', { count: result.sent })}
+                  {result.failed > 0 && t('resultFailed', { count: result.failed })}
                 </p>
               </div>
             )}
@@ -464,10 +439,10 @@ export default function EmailComposer() {
                   }}
                 >
                   <AlertTriangle size={12} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle', color: 'var(--color-accent-gold)' }} />
-                  Verstuur <strong style={{ color: 'var(--color-accent-gold)' }}>{subject}</strong> naar{' '}
+                  {t('confirmPrefix')} <strong style={{ color: 'var(--color-accent-gold)' }}>{subject}</strong> {t('confirmTo')}{' '}
                   <strong style={{ color: 'var(--color-accent-gold)' }}>
-                    {count ?? '?'} {(count ?? 0) === 1 ? 'ontvanger' : 'ontvangers'}
-                  </strong>?
+                    {count !== null ? t('confirmRecipients', { count }) : '?'}
+                  </strong>{t('confirmSuffix')}
                 </p>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button
@@ -486,7 +461,7 @@ export default function EmailComposer() {
                     }}
                   >
                     <Send size={11} style={{ display: 'inline', marginRight: 5, verticalAlign: 'middle' }} />
-                    Bevestig
+                    {t('confirmSend')}
                   </button>
                   <button
                     onClick={() => setShowConfirm(false)}
@@ -504,7 +479,7 @@ export default function EmailComposer() {
                     }}
                   >
                     <X size={11} style={{ display: 'inline', marginRight: 5, verticalAlign: 'middle' }} />
-                    Annuleer
+                    {t('confirmCancel')}
                   </button>
                 </div>
               </div>
@@ -531,7 +506,7 @@ export default function EmailComposer() {
                 }}
               >
                 <Send size={13} />
-                {sending ? 'Verzenden...' : 'Verstuur'}
+                {sending ? t('sendingButton') : t('sendButton')}
               </button>
             )}
 
@@ -557,10 +532,10 @@ export default function EmailComposer() {
             }}
           >
             <Mail size={11} />
-            // Live preview
+            // {t('previewSectionLabel')}
           </p>
 
-          <EmailPreview subject={subject} body={body} />
+          <EmailPreview subject={subject} body={body} t={t} />
         </div>
       </div>
 

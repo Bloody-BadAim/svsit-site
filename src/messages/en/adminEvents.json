@@ -1,0 +1,19 @@
+{
+  "title": "events.manage",
+  "subtitle": "{count} events in database",
+  "active": "active: {name}",
+  "newEvent": "New event",
+  "filterAll": "All",
+  "filterUpcoming": "Upcoming",
+  "filterActive": "Active",
+  "filterCompleted": "Past",
+  "filterCancelled": "Cancelled",
+  "emptyAll": "No events found. Create an event to get started.",
+  "emptyFiltered": "No {filter} events.",
+  "free": "free",
+  "confirmCancel": "Cancel this event? This cannot be undone.",
+  "errorLoad": "Failed to load events",
+  "errorLoadStatus": "Error {status} while loading events",
+  "errorCancel": "Failed to cancel",
+  "errorCancelStatus": "Error {status} while cancelling"
+}

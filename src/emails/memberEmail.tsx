@@ -1,6 +1,7 @@
 import { Text, Link, Hr } from "@react-email/components";
 import EmailLayout, { C } from "./components/EmailLayout";
 import { SITE_CONFIG } from "@/lib/constants";
+import type { Locale } from "./i18n";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -10,7 +11,27 @@ export interface MemberEmailProps {
   voornaam: string;
   subject: string;
   body: string; // plain text, newlines -> paragraphs
+  locale?: Locale;
 }
+
+// ---------------------------------------------------------------------------
+// Copy (the subject + body are supplied by the caller and stay as-is)
+// ---------------------------------------------------------------------------
+
+const copy = {
+  nl: {
+    greeting: (name: string) => `Hoi ${name},`,
+    signOff: "Met vriendelijke groet,",
+    association: "Studievereniging ICT",
+    instagramLabel: "Instagram:",
+  },
+  en: {
+    greeting: (name: string) => `Hi ${name},`,
+    signOff: "Kind regards,",
+    association: "ICT Student Association",
+    instagramLabel: "Instagram:",
+  },
+} as const;
 
 // ---------------------------------------------------------------------------
 // Main component
@@ -20,7 +41,9 @@ export default function MemberEmail({
   voornaam,
   subject,
   body,
+  locale = "nl",
 }: MemberEmailProps) {
+  const t = copy[locale];
   // Split body on newlines -> array of non-empty paragraph strings
   const paragraphs = body
     .split("\n")
@@ -28,7 +51,7 @@ export default function MemberEmail({
     .filter((p) => p.length > 0);
 
   return (
-    <EmailLayout previewText={subject}>
+    <EmailLayout previewText={subject} locale={locale}>
       {/* Greeting */}
       <Text
         style={{
@@ -40,7 +63,7 @@ export default function MemberEmail({
           lineHeight: "1.5",
         }}
       >
-        Hoi {voornaam},
+        {t.greeting(voornaam)}
       </Text>
 
       {/* Body paragraphs */}
@@ -78,7 +101,7 @@ export default function MemberEmail({
           lineHeight: "1.4",
         }}
       >
-        Met vriendelijke groet,
+        {t.signOff}
       </Text>
 
       <Text
@@ -106,7 +129,7 @@ export default function MemberEmail({
           lineHeight: "1.6",
         }}
       >
-        Studievereniging ICT
+        {t.association}
       </Text>
 
       <Text
@@ -144,7 +167,7 @@ export default function MemberEmail({
           {SITE_CONFIG.email}
         </Link>
         <br />
-        Instagram:{" "}
+        {t.instagramLabel}{" "}
         <Link
           href={SITE_CONFIG.socials.instagram.url}
           style={{ color: C.muted, textDecoration: "none" }}

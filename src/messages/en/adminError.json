@@ -1,0 +1,6 @@
+{
+  "heading": "Something went wrong",
+  "serviceUnavailable": "The service is temporarily unavailable",
+  "unknownError": "Unknown error",
+  "retry": "Try again"
+}

@@ -1,6 +1,7 @@
 'use client'
 
 import { AlertTriangle, RefreshCw } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function GlobalError({
   error,
@@ -9,6 +10,7 @@ export default function GlobalError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const t = useTranslations('errorPage')
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-6">
       <div className="max-w-md text-center">
@@ -24,22 +26,22 @@ export default function GlobalError({
           className="font-mono text-xl font-bold mb-2"
           style={{ color: 'var(--color-text)' }}
         >
-          Er ging iets mis
+          {t('heading')}
         </h2>
         <p
           className="font-mono text-sm mb-2"
           style={{ color: 'var(--color-text-muted)' }}
         >
           {error.message?.toLowerCase().includes('supabase')
-            ? 'Service is tijdelijk niet beschikbaar'
-            : error.message || 'Een onverwachte fout is opgetreden'}
+            ? t('serviceUnavailable')
+            : error.message || t('genericError')}
         </p>
         {error.digest && (
           <p
             className="font-mono text-xs mb-6"
             style={{ color: 'var(--color-text-muted)', opacity: 0.6 }}
           >
-            Error ID: {error.digest}
+            {t('errorId', { digest: error.digest })}
           </p>
         )}
         <div className="flex items-center justify-center gap-3">
@@ -52,7 +54,7 @@ export default function GlobalError({
             }}
           >
             <RefreshCw size={14} />
-            Probeer opnieuw
+            {t('retry')}
           </button>
           <a
             href="/"
@@ -62,7 +64,7 @@ export default function GlobalError({
               border: '1px solid var(--color-border)',
             }}
           >
-            Naar home
+            {t('home')}
           </a>
         </div>
       </div>

@@ -1,0 +1,15 @@
+{
+  "title": "challenge.create()",
+  "labelTitle": "titel",
+  "placeholderTitle": "Bijv. Push je eerste open source PR",
+  "labelDescription": "omschrijving",
+  "placeholderDescription": "Leg uit wat er gedaan moet worden...",
+  "labelCategory": "categorie",
+  "labelPoints": "punten",
+  "labelDeadline": "deadline (optioneel)",
+  "submit": "Aanmaken",
+  "submitting": "Aanmaken...",
+  "success": "Challenge aangemaakt",
+  "errorCreate": "Aanmaken mislukt",
+  "errorNetwork": "Netwerkfout - probeer opnieuw"
+}

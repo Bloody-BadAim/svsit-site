@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import QRScanner from '@/components/admin/QRScanner'
 import { useScannerStore } from '@/stores/useScannerStore'
 
@@ -11,6 +12,7 @@ interface DbEvent {
 }
 
 export default function ScannerPage() {
+  const t = useTranslations('adminScanner')
   const { actiefEvent, actiefEventNaam, setActiefEvent } = useScannerStore()
   const [dbEvents, setDbEvents] = useState<DbEvent[]>([])
   const [loading, setLoading] = useState(true)
@@ -51,11 +53,11 @@ export default function ScannerPage() {
     <div className="max-w-2xl">
       <div className="mb-6">
         <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text)' }}>
-          QR Scanner
+          {t('heading')}
         </h1>
         {actiefEventNaam && (
           <p className="mt-1 text-sm" style={{ color: 'var(--color-accent-gold)' }}>
-            Actief event: {actiefEventNaam}
+            {t('activeEvent', { name: actiefEventNaam })}
           </p>
         )}
       </div>
@@ -67,7 +69,7 @@ export default function ScannerPage() {
             className="block text-sm mb-2"
             style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}
           >
-            event selecteren
+            {t('selectEventLabel')}
           </label>
           <select
             value={actiefEvent ?? ''}
@@ -79,7 +81,7 @@ export default function ScannerPage() {
               border: '1px solid var(--color-border)',
             }}
           >
-            <option value="">- geen event geselecteerd -</option>
+            <option value="">{t('noEventSelected')}</option>
             {dbEvents.map((ev) => (
               <option key={ev.id} value={ev.id}>
                 [{ev.status.toUpperCase()}] {ev.title}

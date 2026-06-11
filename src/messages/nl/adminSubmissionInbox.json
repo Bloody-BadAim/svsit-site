@@ -1,0 +1,10 @@
+{
+  "title": "submissions.inbox()",
+  "refresh": "refresh",
+  "empty": "// geen pending submissions",
+  "approve": "Approve",
+  "reject": "Reject",
+  "errorLoad": "Laden mislukt",
+  "errorAction": "Actie mislukt",
+  "errorNetwork": "Netwerkfout - probeer opnieuw"
+}

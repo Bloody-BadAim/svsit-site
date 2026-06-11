@@ -12,6 +12,7 @@ import {
   Hr,
 } from "@react-email/components";
 import { C, SitLogo } from "./components/EmailLayout";
+import { layoutCopy, type Locale } from "./i18n";
 import { SITE_CONFIG } from "@/lib/constants";
 
 // ---------------------------------------------------------------------------
@@ -29,7 +30,37 @@ interface TicketEmailProps {
   ticketNumber: string; // e.g. "#SIT-2026-0001"
   price: string; // "€10" or "GRATIS"
   qrCodeDataUrl: string; // base64 data URL
+  locale?: Locale;
 }
+
+// ---------------------------------------------------------------------------
+// Copy (event/ticket data above is supplied by the caller and stays as-is)
+// ---------------------------------------------------------------------------
+
+const copy = {
+  nl: {
+    preview: (title: string, date: string) => `Jouw ticket voor ${title} - ${date}`,
+    tag: "// event ticket",
+    ticketIsMembership: "ticket = lidmaatschap",
+    showAtEntrance: "Toon dit ticket bij de ingang.",
+    onePerson: "Geldig voor één persoon.",
+    legal:
+      "Dit is een automatisch gegenereerd ticket van SIT - Studievereniging ICT HvA.",
+    keepTicket: "Bewaar dit ticket. Vragen? Mail naar",
+    qrAlt: (nr: string) => `QR code voor ticket ${nr}`,
+  },
+  en: {
+    preview: (title: string, date: string) => `Your ticket for ${title} - ${date}`,
+    tag: "// event ticket",
+    ticketIsMembership: "ticket = membership",
+    showAtEntrance: "Show this ticket at the entrance.",
+    onePerson: "Valid for one person.",
+    legal:
+      "This is an automatically generated ticket from SIT - ICT Student Association HvA.",
+    keepTicket: "Keep this ticket. Questions? Email",
+    qrAlt: (nr: string) => `QR code for ticket ${nr}`,
+  },
+} as const;
 
 // ---------------------------------------------------------------------------
 // Ticket-specific token extension (adds heading font)
@@ -74,11 +105,14 @@ export default function TicketEmail({
   ticketNumber,
   price,
   qrCodeDataUrl,
+  locale = "nl",
 }: TicketEmailProps) {
-  const previewText = `Jouw ticket voor ${eventTitle} - ${eventDate}`;
+  const t = copy[locale];
+  const tl = layoutCopy[locale];
+  const previewText = t.preview(eventTitle, eventDate);
 
   return (
-    <Html lang="nl">
+    <Html lang={locale}>
       <Head />
       <Preview>{previewText}</Preview>
       <Body
@@ -165,7 +199,7 @@ export default function TicketEmail({
                     letterSpacing: "0.06em",
                   }}
                 >
-                  // event ticket
+                  {t.tag}
                 </Text>
 
                 {/* Event title - BIG */}
@@ -239,7 +273,7 @@ export default function TicketEmail({
                     margin: "0",
                   }}
                 >
-                  ticket = lidmaatschap
+                  {t.ticketIsMembership}
                 </Text>
               </Column>
 
@@ -365,7 +399,7 @@ export default function TicketEmail({
                       >
                         <Img
                           src={qrCodeDataUrl}
-                          alt={`QR code voor ticket ${ticketNumber}`}
+                          alt={t.qrAlt(ticketNumber)}
                           width="140"
                           height="140"
                           style={{
@@ -454,9 +488,9 @@ export default function TicketEmail({
                       lineHeight: "1.6",
                     }}
                   >
-                    Toon dit ticket bij de ingang.
+                    {t.showAtEntrance}
                     <br />
-                    Geldig voor één persoon.
+                    {t.onePerson}
                   </Text>
                 </Column>
                 <Column
@@ -478,7 +512,7 @@ export default function TicketEmail({
                   >
                     svsit.nl
                     <br />
-                    Bestuur XII
+                    {tl.boardLabel}
                   </Text>
                 </Column>
               </Row>
@@ -516,9 +550,9 @@ export default function TicketEmail({
                 letterSpacing: "0.03em",
               }}
             >
-              Dit is een automatisch gegenereerd ticket van SIT - Studievereniging ICT HvA.
+              {t.legal}
               <br />
-              Bewaar dit ticket. Vragen? Mail naar{" "}
+              {t.keepTicket}{" "}
               <span style={{ color: C.gold }}>{SITE_CONFIG.email}</span>
             </Text>
           </Section>

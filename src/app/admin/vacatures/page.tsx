@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Plus, Pencil, Trash2, X, Eye, EyeOff } from 'lucide-react'
 import { inputStyle, labelStyle } from '@/components/admin/adminStyles'
 
@@ -48,14 +49,17 @@ const EMPTY_FORM: VacatureForm = {
   active: true,
 }
 
-const TYPES = [
-  { key: 'stage', label: 'Stage' },
-  { key: 'werkplek', label: 'Werkplek' },
-  { key: 'bijbaan', label: 'Bijbaan' },
-  { key: 'afstuderen', label: 'Afstuderen' },
-]
+const TYPE_KEYS = ['stage', 'werkplek', 'bijbaan', 'afstuderen'] as const
+
+const TYPE_LABEL_KEYS: Record<string, string> = {
+  stage: 'typeStage',
+  werkplek: 'typeWerkplek',
+  bijbaan: 'typeBijbaan',
+  afstuderen: 'typeAfstuderen',
+}
 
 export default function AdminVacaturesPage() {
+  const t = useTranslations('adminVacatures')
   const [vacatures, setVacatures] = useState<Vacature[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -77,11 +81,11 @@ export default function AdminVacaturesPage() {
       if (apiError) throw new Error(apiError)
       setVacatures(data || [])
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Fout bij laden vacatures')
+      setError(err instanceof Error ? err.message : t('errorLoad'))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [t])
 
   useEffect(() => { fetchVacatures() }, [fetchVacatures])
 
@@ -144,7 +148,7 @@ export default function AdminVacaturesPage() {
       setShowForm(false)
       fetchVacatures()
     } catch (err) {
-      setSaveError(err instanceof Error ? err.message : 'Opslaan mislukt')
+      setSaveError(err instanceof Error ? err.message : t('errorSave'))
     } finally {
       setSaving(false)
     }
@@ -160,10 +164,10 @@ export default function AdminVacaturesPage() {
       data.append('file', file)
       const res = await fetch('/api/vacatures/logo', { method: 'POST', body: data })
       const { data: result, error: apiError } = await res.json()
-      if (!res.ok || apiError) throw new Error(apiError || `Fout ${res.status}`)
+      if (!res.ok || apiError) throw new Error(apiError || t('errorLogoStatus', { status: res.status }))
       setForm((prev) => ({ ...prev, company_logo: result.url }))
     } catch (err) {
-      setSaveError(err instanceof Error ? err.message : 'Logo uploaden mislukt')
+      setSaveError(err instanceof Error ? err.message : t('errorLogo'))
     } finally {
       setLogoUploading(false)
       e.target.value = ''
@@ -171,14 +175,14 @@ export default function AdminVacaturesPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Vacature verwijderen?')) return
+    if (!confirm(t('confirmDelete'))) return
     try {
       const res = await fetch(`/api/vacatures/${id}`, { method: 'DELETE' })
       const { error: apiError } = await res.json()
       if (apiError) throw new Error(apiError)
       fetchVacatures()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Verwijderen mislukt')
+      alert(err instanceof Error ? err.message : t('errorDelete'))
     }
   }
 
@@ -193,7 +197,7 @@ export default function AdminVacaturesPage() {
       if (apiError) throw new Error(apiError)
       fetchVacatures()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Status wijzigen mislukt')
+      alert(err instanceof Error ? err.message : t('errorToggle'))
     }
   }
 
@@ -201,7 +205,7 @@ export default function AdminVacaturesPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-mono text-lg font-bold" style={{ color: 'var(--color-text)' }}>
-          Vacatures beheer
+          {t('heading')}
         </h1>
         <button
           onClick={openCreate}
@@ -211,7 +215,7 @@ export default function AdminVacaturesPage() {
             color: 'var(--color-bg)',
           }}
         >
-          <Plus size={14} /> Nieuwe vacature
+          <Plus size={14} /> {t('newVacature')}
         </button>
       </div>
 
@@ -223,7 +227,7 @@ export default function AdminVacaturesPage() {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-mono text-sm font-bold" style={{ color: 'var(--color-text)' }}>
-              {editingId ? 'Vacature bewerken' : 'Nieuwe vacature'}
+              {editingId ? t('editTitle') : t('createTitle')}
             </h2>
             <button onClick={() => setShowForm(false)} style={{ color: 'var(--color-text-muted)' }}>
               <X size={16} />
@@ -232,7 +236,7 @@ export default function AdminVacaturesPage() {
 
           <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label style={labelStyle}>Functietitel *</label>
+              <label style={labelStyle}>{t('labelTitle')}</label>
               <input
                 style={inputStyle}
                 value={form.title}
@@ -241,7 +245,7 @@ export default function AdminVacaturesPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Bedrijf *</label>
+              <label style={labelStyle}>{t('labelCompany')}</label>
               <input
                 style={inputStyle}
                 value={form.company}
@@ -250,28 +254,28 @@ export default function AdminVacaturesPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Type</label>
+              <label style={labelStyle}>{t('labelType')}</label>
               <select
                 style={inputStyle}
                 value={form.type}
                 onChange={(e) => setForm({ ...form, type: e.target.value })}
               >
-                {TYPES.map((t) => (
-                  <option key={t.key} value={t.key}>{t.label}</option>
+                {TYPE_KEYS.map((key) => (
+                  <option key={key} value={key}>{t(TYPE_LABEL_KEYS[key])}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label style={labelStyle}>Locatie</label>
+              <label style={labelStyle}>{t('labelLocation')}</label>
               <input
                 style={inputStyle}
                 value={form.location}
                 onChange={(e) => setForm({ ...form, location: e.target.value })}
-                placeholder="Amsterdam"
+                placeholder={t('placeholderLocation')}
               />
             </div>
             <div className="md:col-span-2">
-              <label style={labelStyle}>Beschrijving</label>
+              <label style={labelStyle}>{t('labelDescription')}</label>
               <textarea
                 style={{ ...inputStyle, minHeight: 80 }}
                 value={form.description}
@@ -279,7 +283,7 @@ export default function AdminVacaturesPage() {
               />
             </div>
             <div className="md:col-span-2">
-              <label style={labelStyle}>Vereisten</label>
+              <label style={labelStyle}>{t('labelRequirements')}</label>
               <textarea
                 style={{ ...inputStyle, minHeight: 60 }}
                 value={form.requirements}
@@ -287,13 +291,13 @@ export default function AdminVacaturesPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Bedrijf logo</label>
+              <label style={labelStyle}>{t('labelLogo')}</label>
               <div className="flex items-center gap-3">
                 {form.company_logo && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={form.company_logo}
-                    alt="Logo"
+                    alt={t('logoAlt')}
                     className="w-10 h-10 object-contain rounded shrink-0"
                     style={{ border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg)' }}
                   />
@@ -302,7 +306,7 @@ export default function AdminVacaturesPage() {
                   className="px-3 py-2 font-mono text-xs cursor-pointer shrink-0"
                   style={{ color: 'var(--color-text-muted)', border: '1px solid var(--color-border)', opacity: logoUploading ? 0.5 : 1 }}
                 >
-                  {logoUploading ? 'Uploaden...' : form.company_logo ? 'Vervangen' : 'Bestand kiezen'}
+                  {logoUploading ? t('logoUploading') : form.company_logo ? t('logoReplace') : t('logoChoose')}
                   <input
                     type="file"
                     accept="image/png,image/jpeg,image/webp,image/avif,image/gif,image/svg+xml"
@@ -318,13 +322,13 @@ export default function AdminVacaturesPage() {
                     className="font-mono text-xs"
                     style={{ color: 'var(--color-accent-red)' }}
                   >
-                    Verwijderen
+                    {t('logoRemove')}
                   </button>
                 )}
               </div>
             </div>
             <div>
-              <label style={labelStyle}>Vacature URL</label>
+              <label style={labelStyle}>{t('labelUrl')}</label>
               <input
                 style={inputStyle}
                 value={form.url}
@@ -333,7 +337,7 @@ export default function AdminVacaturesPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Contact email</label>
+              <label style={labelStyle}>{t('labelContactEmail')}</label>
               <input
                 style={inputStyle}
                 type="email"
@@ -342,7 +346,7 @@ export default function AdminVacaturesPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Deadline</label>
+              <label style={labelStyle}>{t('labelDeadline')}</label>
               <input
                 style={inputStyle}
                 type="datetime-local"
@@ -358,7 +362,7 @@ export default function AdminVacaturesPage() {
                 onChange={(e) => setForm({ ...form, active: e.target.checked })}
               />
               <label htmlFor="active" className="font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
-                Actief (zichtbaar op website)
+                {t('labelActive')}
               </label>
             </div>
 
@@ -375,7 +379,7 @@ export default function AdminVacaturesPage() {
                 className="px-5 py-2 font-mono text-xs font-bold"
                 style={{ backgroundColor: 'var(--color-accent-gold)', color: 'var(--color-bg)', opacity: saving ? 0.5 : 1 }}
               >
-                {saving ? 'Opslaan...' : editingId ? 'Bijwerken' : 'Aanmaken'}
+                {saving ? t('saving') : editingId ? t('update') : t('create')}
               </button>
               <button
                 type="button"
@@ -383,7 +387,7 @@ export default function AdminVacaturesPage() {
                 className="px-5 py-2 font-mono text-xs"
                 style={{ color: 'var(--color-text-muted)', border: '1px solid var(--color-border)' }}
               >
-                Annuleren
+                {t('cancel')}
               </button>
             </div>
           </form>
@@ -395,7 +399,7 @@ export default function AdminVacaturesPage() {
         <div className="py-8 text-center">
           <p className="font-mono text-sm" style={{ color: 'var(--color-accent-red)' }}>{error}</p>
           <button onClick={fetchVacatures} className="font-mono text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
-            Opnieuw laden
+            {t('reload')}
           </button>
         </div>
       ) : loading ? (
@@ -406,7 +410,7 @@ export default function AdminVacaturesPage() {
         </div>
       ) : vacatures.length === 0 ? (
         <p className="font-mono text-sm text-center py-8" style={{ color: 'var(--color-text-muted)' }}>
-          Nog geen vacatures. Klik &quot;Nieuwe vacature&quot; om te beginnen.
+          {t('empty')}
         </p>
       ) : (
         <div className="space-y-2">
@@ -435,12 +439,12 @@ export default function AdminVacaturesPage() {
                     </span>
                     {!vacature.active && (
                       <span className="font-mono text-[10px] uppercase" style={{ color: 'var(--color-accent-red)' }}>
-                        Inactief
+                        {t('inactive')}
                       </span>
                     )}
                     {isExpired && (
                       <span className="font-mono text-[10px] uppercase" style={{ color: 'var(--color-accent-red)' }}>
-                        Verlopen
+                        {t('expired')}
                       </span>
                     )}
                   </div>
@@ -453,7 +457,7 @@ export default function AdminVacaturesPage() {
                   <button
                     onClick={() => handleToggleActive(vacature)}
                     className="p-2 rounded hover:bg-[var(--color-bg)] transition-colors"
-                    title={vacature.active ? 'Deactiveren' : 'Activeren'}
+                    title={vacature.active ? t('deactivate') : t('activate')}
                   >
                     {vacature.active
                       ? <Eye size={14} style={{ color: 'var(--color-accent-green)' }} />
@@ -463,14 +467,14 @@ export default function AdminVacaturesPage() {
                   <button
                     onClick={() => openEdit(vacature)}
                     className="p-2 rounded hover:bg-[var(--color-bg)] transition-colors"
-                    title="Bewerken"
+                    title={t('edit')}
                   >
                     <Pencil size={14} style={{ color: 'var(--color-text-muted)' }} />
                   </button>
                   <button
                     onClick={() => handleDelete(vacature.id)}
                     className="p-2 rounded hover:bg-[var(--color-bg)] transition-colors"
-                    title="Verwijderen"
+                    title={t('delete')}
                   >
                     <Trash2 size={14} style={{ color: 'var(--color-accent-red)' }} />
                   </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useKonamiCode } from "@/hooks/useKonamiCode";
 
 // ─── Types ───────────────────────────────────────────────
@@ -151,14 +152,15 @@ function collides(
 }
 
 // ─── Score messages ──────────────────────────────────────
-function getScoreMessage(score: number): string {
-  if (score > 200) return "// je bent klaar voor de hackathon";
-  if (score > 100) return "// niet slecht voor een eerstejaars";
-  return "// probeer het nog eens na een borrel";
+function getScoreMessageKey(score: number): "scoreHigh" | "scoreMid" | "scoreLow" {
+  if (score > 200) return "scoreHigh";
+  if (score > 100) return "scoreMid";
+  return "scoreLow";
 }
 
 // ─── Component ───────────────────────────────────────────
 export default function KonamiGame() {
+  const t = useTranslations("konamiGame");
   const [active, setActive] = useState(false);
   const [showGame, setShowGame] = useState(false);
   const [gameOver, setGameOver] = useState(false);
@@ -444,13 +446,13 @@ export default function KonamiGame() {
           e.currentTarget.style.borderColor = `${BRAND.muted}40`;
         }}
       >
-        ESC / CLOSE
+        {t("close")}
       </button>
 
       {/* Title */}
       <div style={{ marginBottom: "20px", textAlign: "center" }}>
         <div style={{ color: BRAND.gold, fontSize: "10px", letterSpacing: "0.3em", opacity: 0.5, marginBottom: "4px" }}>
-          KONAMI CODE ACTIVATED
+          {t("activated")}
         </div>
         <div style={{ color: BRAND.text, fontSize: "24px", fontWeight: 800, fontFamily: "var(--font-big-shoulders)", letterSpacing: "0.05em" }}>
           {"{ SIT } CATCH"}
@@ -478,7 +480,7 @@ export default function KonamiGame() {
             />
           </div>
           <div style={{ color: BRAND.muted, fontSize: "11px", marginTop: "12px", opacity: 0.5 }}>
-            WASD / Arrow Keys to move - Catch items, avoid bugs
+            {t("controls")}
           </div>
         </>
       ) : (
@@ -492,18 +494,18 @@ export default function KonamiGame() {
             letterSpacing: "0.05em",
             marginBottom: "8px",
           }}>
-            GAME OVER
+            {t("gameOver")}
           </div>
 
           <div style={{ marginBottom: "24px" }}>
-            <span style={{ color: BRAND.muted, fontSize: "14px" }}>SCORE: </span>
+            <span style={{ color: BRAND.muted, fontSize: "14px" }}>{t("scoreLabel")} </span>
             <span style={{ color: BRAND.gold, fontSize: "48px", fontWeight: 800, fontFamily: "var(--font-big-shoulders)" }}>
               {finalScore}
             </span>
           </div>
 
           <div style={{ color: BRAND.green, fontSize: "14px", opacity: 0.7, marginBottom: "40px" }}>
-            {getScoreMessage(finalScore)}
+            {t(getScoreMessageKey(finalScore))}
           </div>
 
           <div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
@@ -524,7 +526,7 @@ export default function KonamiGame() {
               onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.04)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
             >
-              PLAY AGAIN
+              {t("playAgain")}
             </button>
             <button
               onClick={closeGame}
@@ -548,7 +550,7 @@ export default function KonamiGame() {
                 e.currentTarget.style.borderColor = `${BRAND.muted}40`;
               }}
             >
-              CLOSE
+              {t("closeButton")}
             </button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { useToast } from '@/components/Toast'
 import { ROLLEN } from '@/lib/constants'
 import { getLevelForXp } from '@/lib/levelEngine'
@@ -29,6 +30,7 @@ interface MemberDetailModalProps {
 }
 
 export default function MemberDetailModal({ member, onClose, onUpdate }: MemberDetailModalProps) {
+  const t = useTranslations('adminMemberDetail')
   const { toast } = useToast()
   const [studentNumber, setStudentNumber] = useState(member.student_number || '')
   const [displayName, setDisplayName] = useState(member.display_name || '')
@@ -71,14 +73,14 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
   }, [member.id])
 
   async function handleDelete() {
-    if (!confirm('Weet je zeker dat je dit lid wilt verwijderen? Dit kan niet ongedaan worden.')) return
+    if (!confirm(t('confirmDelete'))) return
     setDeleting(true)
     const res = await fetch(`/api/members/${member.id}`, { method: 'DELETE' })
     if (res.ok) {
       onUpdate()
     } else {
       const data = await res.json()
-      setMessage(data.error || 'Fout bij verwijderen')
+      setMessage(data.error || t('errorDelete'))
       setDeleting(false)
       setTimeout(() => setMessage(''), 3000)
     }
@@ -97,11 +99,11 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
       }),
     })
     if (res.ok) {
-      setMessage('Punten toegekend')
+      setMessage(t('pointsAwarded'))
       setPuntenReden('')
       onUpdate()
     } else {
-      setMessage('Fout bij toekennen')
+      setMessage(t('errorAward'))
     }
     setSaving(false)
     setTimeout(() => setMessage(''), 3000)
@@ -115,10 +117,10 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
       body: JSON.stringify({ role: rol }),
     })
     if (res.ok) {
-      setMessage('Rol gewijzigd')
+      setMessage(t('roleChanged'))
       onUpdate()
     } else {
-      setMessage('Fout bij wijzigen')
+      setMessage(t('errorChange'))
     }
     setSaving(false)
     setTimeout(() => setMessage(''), 3000)
@@ -134,11 +136,11 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
     })
     if (res.ok) {
       setIsAdmin(newValue)
-      setMessage(newValue ? 'Admin rechten toegekend' : 'Admin rechten ingetrokken')
+      setMessage(newValue ? t('adminGranted') : t('adminRevoked'))
       onUpdate()
     } else {
       const data = await res.json()
-      const errMsg = data.error || 'Fout bij wijzigen admin status'
+      const errMsg = data.error || t('errorAdminToggle')
       setMessage(errMsg)
       toast(errMsg, 'error')
     }
@@ -159,10 +161,10 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
     })
     if (res.ok) {
       setMemberCommissieIds(newIds)
-      setMessage('Commissies bijgewerkt')
+      setMessage(t('commissiesUpdated'))
       onUpdate()
     } else {
-      setMessage('Fout bij wijzigen')
+      setMessage(t('errorChange'))
     }
     setSaving(false)
     setTimeout(() => setMessage(''), 3000)
@@ -187,7 +189,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
       body: JSON.stringify(updateBody),
     })
     if (res.ok) {
-      setMessage('Lidmaatschap verlengd tot ' + expiresAt.toLocaleDateString('nl-NL'))
+      setMessage(t('membershipExtended', { date: expiresAt.toLocaleDateString('nl-NL') }))
       onUpdate()
     }
     setSaving(false)
@@ -213,10 +215,10 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
       body: JSON.stringify(body),
     })
     if (res.ok) {
-      setMessage('Profiel bijgewerkt')
+      setMessage(t('profileUpdated'))
       onUpdate()
     } else {
-      setMessage('Fout bij opslaan profiel')
+      setMessage(t('errorProfileSave'))
     }
     setProfileSaving(false)
     setTimeout(() => setMessage(''), 3000)
@@ -242,7 +244,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
                   className="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider"
                   style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: 'var(--color-accent-red)' }}
                 >
-                  Admin
+                  {t('adminBadge')}
                 </span>
               )}
             </div>
@@ -250,7 +252,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
               {member.email}
             </p>
             <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-              Lid sinds {new Date(member.created_at).toLocaleDateString('nl-NL')}
+              {t('memberSince', { date: new Date(member.created_at).toLocaleDateString('nl-NL') })}
             </p>
           </div>
           <button onClick={onClose} className="text-xl leading-none" style={{ color: 'var(--color-text-muted)' }}>
@@ -263,28 +265,28 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
         {/* Info grid */}
         <div className="grid grid-cols-2 gap-3">
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg)' }}>
-            <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>Rol</p>
+            <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>{t('infoRole')}</p>
             <p className="font-semibold" style={{ color: 'var(--color-accent-blue)' }}>{ROLLEN[member.role as Role]?.naam}</p>
           </div>
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg)' }}>
-            <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>Punten</p>
+            <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>{t('infoPoints')}</p>
             <p className="font-semibold" style={{ color: 'var(--color-accent-gold)' }}>
               {member.total_xp} <span className="text-xs font-normal" style={{ color: levelDef.color }}>({levelDef.title})</span>
             </p>
           </div>
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg)' }}>
-            <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>Status</p>
+            <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>{t('infoStatus')}</p>
             <p className="font-semibold" style={{ color: member.membership_active ? 'var(--color-accent-green)' : 'var(--color-accent-red)' }}>
-              {member.membership_active ? 'Actief' : 'Inactief'}
+              {member.membership_active ? t('statusActive') : t('statusInactive')}
             </p>
             {member.membership_expires_at && (
               <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
-                Verloopt: {new Date(member.membership_expires_at).toLocaleDateString('nl-NL')}
+                {t('expires', { date: new Date(member.membership_expires_at).toLocaleDateString('nl-NL') })}
               </p>
             )}
           </div>
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg)' }}>
-            <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>Commissies</p>
+            <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>{t('infoCommissies')}</p>
             <p className="font-semibold text-sm" style={{ color: 'var(--color-text)' }}>
               {memberCommissieIds.length > 0
                 ? allCommissies
@@ -299,31 +301,31 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
         {/* Studentnummer + naam */}
         <div className="space-y-2">
           <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-            Profiel bewerken
+            {t('editProfile')}
           </h3>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="block text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-                Naam
+                {t('labelName')}
               </label>
               <input
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="Weergavenaam"
+                placeholder={t('placeholderName')}
                 className="w-full py-2 px-3 rounded-lg text-sm outline-none"
                 style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
               />
             </div>
             <div>
               <label className="block text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-                Studentnummer
+                {t('labelStudentNumber')}
               </label>
               <input
                 type="text"
                 value={studentNumber}
                 onChange={(e) => setStudentNumber(e.target.value)}
-                placeholder="500123456"
+                placeholder={t('placeholderStudentNumber')}
                 className="w-full py-2 px-3 rounded-lg text-sm outline-none"
                 style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
               />
@@ -335,14 +337,14 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
             className="py-1.5 px-4 rounded-lg text-xs font-semibold disabled:opacity-50"
             style={{ backgroundColor: 'var(--color-surface-hover, #1A1A1D)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
           >
-            {profileSaving ? 'Opslaan...' : 'Profiel opslaan'}
+            {profileSaving ? t('saving') : t('saveProfile')}
           </button>
         </div>
 
         {/* Admin toggle */}
         <div className="space-y-2">
           <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-            Admin status
+            {t('adminStatus')}
           </h3>
           <button
             onClick={handleAdminToggle}
@@ -363,7 +365,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
               />
             </div>
             <span style={{ color: isAdmin ? 'var(--color-accent-red)' : 'var(--color-text-muted)' }}>
-              {isAdmin ? 'Admin rechten actief' : 'Geen admin rechten'}
+              {isAdmin ? t('adminActive') : t('adminNone')}
             </span>
           </button>
         </div>
@@ -371,7 +373,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
         {/* Punten toekennen */}
         <div className="space-y-2">
           <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-            Punten toekennen
+            {t('awardPoints')}
           </h3>
           <div className="flex gap-2">
             <input
@@ -386,7 +388,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
               type="text"
               value={puntenReden}
               onChange={(e) => setPuntenReden(e.target.value)}
-              placeholder="Reden..."
+              placeholder={t('placeholderReason')}
               className="flex-1 py-2 px-3 rounded-lg text-sm outline-none"
               style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
             />
@@ -404,7 +406,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
         {/* Rol wijzigen */}
         <div className="space-y-2">
           <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-            Rol wijzigen
+            {t('changeRole')}
           </h3>
           <div className="flex gap-2">
             <select
@@ -423,7 +425,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
               className="py-2 px-4 rounded-lg text-sm font-semibold disabled:opacity-50"
               style={{ backgroundColor: 'var(--color-surface-hover, #1A1A1D)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
             >
-              Wijzig
+              {t('change')}
             </button>
           </div>
         </div>
@@ -431,10 +433,10 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
         {/* Commissies toewijzen */}
         <div className="space-y-2">
           <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-            Commissies
+            {t('infoCommissies')}
           </h3>
           {allCommissies.length === 0 ? (
-            <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Laden...</p>
+            <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{t('loading')}</p>
           ) : (
             <div className="grid grid-cols-2 gap-2">
               {allCommissies.map((c) => {
@@ -476,7 +478,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
         {scanHistory.length > 0 && (
           <div className="space-y-2">
             <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-              Punten historie
+              {t('pointsHistory')}
             </h3>
             <div className="max-h-40 overflow-y-auto space-y-1">
               {scanHistory.slice(0, 20).map((scan, i) => (
@@ -498,7 +500,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
           className="w-full py-2 rounded-lg text-sm font-semibold"
           style={{ backgroundColor: 'rgba(34, 197, 94, 0.15)', color: 'var(--color-accent-green)', border: '1px solid var(--color-accent-green)' }}
         >
-          {member.membership_active ? 'Lidmaatschap verlengen (+1 jaar)' : 'Lidmaatschap activeren (1 jaar)'}
+          {member.membership_active ? t('extendMembership') : t('activateMembership')}
         </button>
 
         {/* Delete member */}
@@ -508,7 +510,7 @@ export default function MemberDetailModal({ member, onClose, onUpdate }: MemberD
           className="w-full py-2 rounded-lg text-sm font-semibold disabled:opacity-50"
           style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--color-accent-red)', border: '1px solid rgba(239, 68, 68, 0.3)' }}
         >
-          {deleting ? 'Verwijderen...' : 'Lid verwijderen'}
+          {deleting ? t('deleting') : t('deleteMember')}
         </button>
 
         {message && (

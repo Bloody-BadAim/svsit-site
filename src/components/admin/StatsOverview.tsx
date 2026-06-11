@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations, useLocale } from 'next-intl'
+
 interface Stats {
   totaal: number
   actief: number
@@ -15,8 +17,10 @@ interface StatsOverviewProps {
 }
 
 export default function StatsOverview({ stats }: StatsOverviewProps) {
+  const t = useTranslations('adminStats')
+  const locale = useLocale()
   const formatEuro = (euros: number) =>
-    new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(euros)
+    new Intl.NumberFormat(locale === 'en' ? 'en-IE' : 'nl-NL', { style: 'currency', currency: 'EUR' }).format(euros)
 
   const activePercent = stats.totaal > 0 ? Math.round((stats.actief / stats.totaal) * 100) : 0
 
@@ -30,7 +34,7 @@ export default function StatsOverview({ stats }: StatsOverviewProps) {
         >
           <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2" style={{ borderColor: 'var(--color-accent-gold)' }} />
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] block mb-2" style={{ color: 'var(--color-text-muted)' }}>
-            members.count()
+            {t('membersCount')}
           </span>
           <span
             className="text-5xl font-bold tracking-tight"
@@ -40,11 +44,11 @@ export default function StatsOverview({ stats }: StatsOverviewProps) {
           </span>
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px]">
             <span style={{ color: 'var(--color-accent-green)' }}>
-              {stats.actief} actief
+              {t('active', { count: stats.actief })}
             </span>
             <span style={{ color: 'var(--color-text-muted)' }}>·</span>
             <span style={{ color: 'var(--color-accent-gold)' }}>
-              +{stats.nieuwDezeMaand} deze maand
+              {t('newThisMonth', { count: stats.nieuwDezeMaand })}
             </span>
           </div>
           {/* Activity bar */}
@@ -52,7 +56,7 @@ export default function StatsOverview({ stats }: StatsOverviewProps) {
             <div className="h-full" style={{ width: `${activePercent}%`, backgroundColor: 'var(--color-accent-green)' }} />
           </div>
           <span className="font-mono text-[9px] mt-1 block" style={{ color: 'rgba(255,255,255,0.2)' }}>
-            {activePercent}% actief
+            {t('activePercent', { percent: activePercent })}
           </span>
         </div>
 
@@ -62,7 +66,7 @@ export default function StatsOverview({ stats }: StatsOverviewProps) {
         >
           <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2" style={{ borderColor: 'var(--color-accent-green)' }} />
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] block mb-2" style={{ color: 'var(--color-text-muted)' }}>
-            revenue.total
+            {t('revenueTotal')}
           </span>
           <span
             className="text-3xl font-bold tracking-tight"
@@ -71,7 +75,7 @@ export default function StatsOverview({ stats }: StatsOverviewProps) {
             {formatEuro(stats.inkomstenTotaal)}
           </span>
           <div className="font-mono text-[10px] mt-2" style={{ color: 'var(--color-text-muted)' }}>
-            deze maand: <span style={{ color: 'var(--color-accent-blue)' }}>{formatEuro(stats.inkomstenDezeMaand)}</span>
+            {t('thisMonth')} <span style={{ color: 'var(--color-accent-blue)' }}>{formatEuro(stats.inkomstenDezeMaand)}</span>
           </div>
         </div>
       </div>
@@ -84,7 +88,7 @@ export default function StatsOverview({ stats }: StatsOverviewProps) {
         >
           <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] block mb-4" style={{ color: 'var(--color-text-muted)' }}>
-            per rol
+            {t('perRole')}
           </span>
           <div className="space-y-3">
             {Object.entries(stats.perRol).map(([rol, count]) => {
@@ -113,11 +117,11 @@ export default function StatsOverview({ stats }: StatsOverviewProps) {
         >
           <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] block mb-4" style={{ color: 'var(--color-text-muted)' }}>
-            per commissie
+            {t('perCommittee')}
           </span>
           <div className="space-y-3">
             {Object.entries(stats.perCommissie).length === 0 ? (
-              <p className="font-mono text-[11px]" style={{ color: 'var(--color-text-muted)' }}>geen data</p>
+              <p className="font-mono text-[11px]" style={{ color: 'var(--color-text-muted)' }}>{t('noData')}</p>
             ) : (
               Object.entries(stats.perCommissie).map(([commissie, count]) => {
                 const percent = stats.totaal > 0 ? (count / stats.totaal) * 100 : 0

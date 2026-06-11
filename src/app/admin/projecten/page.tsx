@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Plus, Pencil, Trash2, Star, X } from 'lucide-react'
 import { inputStyle, labelStyle } from '@/components/admin/adminStyles'
 
@@ -42,14 +43,17 @@ const EMPTY_FORM: ProjectForm = {
   featured: false,
 }
 
-const CATEGORIES = [
-  { key: 'hackathon', label: 'Hackathon' },
-  { key: 'community', label: 'Community' },
-  { key: 'game', label: 'Game' },
-  { key: 'tool', label: 'Tool' },
-]
+const CATEGORY_KEYS = ['hackathon', 'community', 'game', 'tool'] as const
+
+const CATEGORY_LABEL_KEYS: Record<string, string> = {
+  hackathon: 'categoryHackathon',
+  community: 'categoryCommunity',
+  game: 'categoryGame',
+  tool: 'categoryTool',
+}
 
 export default function AdminProjectenPage() {
+  const t = useTranslations('adminProjecten')
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -69,11 +73,11 @@ export default function AdminProjectenPage() {
       if (apiError) throw new Error(apiError)
       setProjects(data || [])
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Fout bij laden projecten')
+      setError(err instanceof Error ? err.message : t('errorLoad'))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [t])
 
   useEffect(() => { fetchProjects() }, [fetchProjects])
 
@@ -132,21 +136,21 @@ export default function AdminProjectenPage() {
       setShowForm(false)
       fetchProjects()
     } catch (err) {
-      setSaveError(err instanceof Error ? err.message : 'Opslaan mislukt')
+      setSaveError(err instanceof Error ? err.message : t('errorSave'))
     } finally {
       setSaving(false)
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Project verwijderen?')) return
+    if (!confirm(t('confirmDelete'))) return
     try {
       const res = await fetch(`/api/projecten/${id}`, { method: 'DELETE' })
       const { error: apiError } = await res.json()
       if (apiError) throw new Error(apiError)
       fetchProjects()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Verwijderen mislukt')
+      alert(err instanceof Error ? err.message : t('errorDelete'))
     }
   }
 
@@ -154,7 +158,7 @@ export default function AdminProjectenPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-mono text-lg font-bold" style={{ color: 'var(--color-text)' }}>
-          Projecten beheer
+          {t('heading')}
         </h1>
         <button
           onClick={openCreate}
@@ -164,7 +168,7 @@ export default function AdminProjectenPage() {
             color: 'var(--color-bg)',
           }}
         >
-          <Plus size={14} /> Nieuw project
+          <Plus size={14} /> {t('newProject')}
         </button>
       </div>
 
@@ -176,7 +180,7 @@ export default function AdminProjectenPage() {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-mono text-sm font-bold" style={{ color: 'var(--color-text)' }}>
-              {editingId ? 'Project bewerken' : 'Nieuw project'}
+              {editingId ? t('editTitle') : t('createTitle')}
             </h2>
             <button onClick={() => setShowForm(false)} style={{ color: 'var(--color-text-muted)' }}>
               <X size={16} />
@@ -185,7 +189,7 @@ export default function AdminProjectenPage() {
 
           <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label style={labelStyle}>Titel *</label>
+              <label style={labelStyle}>{t('labelTitle')}</label>
               <input
                 style={inputStyle}
                 value={form.title}
@@ -194,19 +198,19 @@ export default function AdminProjectenPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Categorie</label>
+              <label style={labelStyle}>{t('labelCategory')}</label>
               <select
                 style={inputStyle}
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
               >
-                {CATEGORIES.map((c) => (
-                  <option key={c.key} value={c.key}>{c.label}</option>
+                {CATEGORY_KEYS.map((key) => (
+                  <option key={key} value={key}>{t(CATEGORY_LABEL_KEYS[key])}</option>
                 ))}
               </select>
             </div>
             <div className="md:col-span-2">
-              <label style={labelStyle}>Beschrijving</label>
+              <label style={labelStyle}>{t('labelDescription')}</label>
               <textarea
                 style={{ ...inputStyle, minHeight: 80 }}
                 value={form.description}
@@ -214,7 +218,7 @@ export default function AdminProjectenPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Repository URL</label>
+              <label style={labelStyle}>{t('labelRepoUrl')}</label>
               <input
                 style={inputStyle}
                 value={form.repo_url}
@@ -223,7 +227,7 @@ export default function AdminProjectenPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Demo URL</label>
+              <label style={labelStyle}>{t('labelDemoUrl')}</label>
               <input
                 style={inputStyle}
                 value={form.demo_url}
@@ -232,7 +236,7 @@ export default function AdminProjectenPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Afbeelding URL</label>
+              <label style={labelStyle}>{t('labelImageUrl')}</label>
               <input
                 style={inputStyle}
                 value={form.image_url}
@@ -240,21 +244,21 @@ export default function AdminProjectenPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Creators (komma-gescheiden)</label>
+              <label style={labelStyle}>{t('labelCreators')}</label>
               <input
                 style={inputStyle}
                 value={form.creators}
                 onChange={(e) => setForm({ ...form, creators: e.target.value })}
-                placeholder="Jan, Piet, Klaas"
+                placeholder={t('placeholderCreators')}
               />
             </div>
             <div>
-              <label style={labelStyle}>Tech stack (komma-gescheiden)</label>
+              <label style={labelStyle}>{t('labelTechStack')}</label>
               <input
                 style={inputStyle}
                 value={form.tech_stack}
                 onChange={(e) => setForm({ ...form, tech_stack: e.target.value })}
-                placeholder="React, Node.js, PostgreSQL"
+                placeholder={t('placeholderTechStack')}
               />
             </div>
             <div className="flex items-center gap-2">
@@ -265,7 +269,7 @@ export default function AdminProjectenPage() {
                 onChange={(e) => setForm({ ...form, featured: e.target.checked })}
               />
               <label htmlFor="featured" className="font-mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
-                Featured (uitgelicht)
+                {t('labelFeatured')}
               </label>
             </div>
 
@@ -282,7 +286,7 @@ export default function AdminProjectenPage() {
                 className="px-5 py-2 font-mono text-xs font-bold"
                 style={{ backgroundColor: 'var(--color-accent-gold)', color: 'var(--color-bg)', opacity: saving ? 0.5 : 1 }}
               >
-                {saving ? 'Opslaan...' : editingId ? 'Bijwerken' : 'Aanmaken'}
+                {saving ? t('saving') : editingId ? t('update') : t('create')}
               </button>
               <button
                 type="button"
@@ -290,7 +294,7 @@ export default function AdminProjectenPage() {
                 className="px-5 py-2 font-mono text-xs"
                 style={{ color: 'var(--color-text-muted)', border: '1px solid var(--color-border)' }}
               >
-                Annuleren
+                {t('cancel')}
               </button>
             </div>
           </form>
@@ -302,7 +306,7 @@ export default function AdminProjectenPage() {
         <div className="py-8 text-center">
           <p className="font-mono text-sm" style={{ color: 'var(--color-accent-red)' }}>{error}</p>
           <button onClick={fetchProjects} className="font-mono text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
-            Opnieuw laden
+            {t('reload')}
           </button>
         </div>
       ) : loading ? (
@@ -313,7 +317,7 @@ export default function AdminProjectenPage() {
         </div>
       ) : projects.length === 0 ? (
         <p className="font-mono text-sm text-center py-8" style={{ color: 'var(--color-text-muted)' }}>
-          Nog geen projecten. Klik &quot;Nieuw project&quot; om te beginnen.
+          {t('empty')}
         </p>
       ) : (
         <div className="space-y-2">
@@ -347,14 +351,14 @@ export default function AdminProjectenPage() {
                 <button
                   onClick={() => openEdit(project)}
                   className="p-2 rounded hover:bg-[var(--color-bg)] transition-colors"
-                  title="Bewerken"
+                  title={t('edit')}
                 >
                   <Pencil size={14} style={{ color: 'var(--color-text-muted)' }} />
                 </button>
                 <button
                   onClick={() => handleDelete(project.id)}
                   className="p-2 rounded hover:bg-[var(--color-bg)] transition-colors"
-                  title="Verwijderen"
+                  title={t('delete')}
                 >
                   <Trash2 size={14} style={{ color: 'var(--color-accent-red)' }} />
                 </button>

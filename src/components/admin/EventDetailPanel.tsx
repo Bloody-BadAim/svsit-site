@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { X, Pencil, Download } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { inputStyle, labelStyle } from '@/components/admin/adminStyles'
@@ -74,6 +75,7 @@ function centsEuro(cents: number): string {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }: EventDetailPanelProps) {
+  const t = useTranslations('adminEventDetail')
   const { actiefEvent, setActiefEvent } = useScannerStore()
   const isActive = actiefEvent === event.id
 
@@ -151,10 +153,10 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
     try {
       const res = await fetch(`/api/admin/events/${event.id}/checkin-code`, { method: 'POST' })
       const { data, error } = await res.json()
-      if (!res.ok || error) throw new Error(error || `Fout ${res.status}`)
+      if (!res.ok || error) throw new Error(error || t('errorStatus', { status: res.status }))
       setCheckinCode(data?.checkin_code ?? null)
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Code genereren mislukt')
+      alert(err instanceof Error ? err.message : t('errorGenerateCode'))
     } finally {
       setCheckinLoading(false)
     }
@@ -182,10 +184,10 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
         }),
       })
       const { error } = await res.json()
-      if (!res.ok || error) throw new Error(error || `Fout ${res.status}`)
+      if (!res.ok || error) throw new Error(error || t('errorStatus', { status: res.status }))
       onRefresh()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Recap opslaan mislukt')
+      alert(err instanceof Error ? err.message : t('errorRecapSave'))
     } finally {
       setRecapSaving(false)
     }
@@ -203,14 +205,14 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
         body: form,
       })
       const { data, error } = await res.json()
-      if (!res.ok || error) throw new Error(error || `Fout ${res.status}`)
+      if (!res.ok || error) throw new Error(error || t('errorStatus', { status: res.status }))
       const urls: string[] = data?.urls || []
       setRecapPhotos((prev) => {
         const existing = prev.split('\n').map((u) => u.trim()).filter(Boolean)
         return [...existing, ...urls].join('\n')
       })
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Uploaden mislukt')
+      alert(err instanceof Error ? err.message : t('errorUpload'))
     } finally {
       setRecapUploading(false)
       e.target.value = ''
@@ -243,15 +245,15 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
       <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
         <button onClick={onEdit} style={btnStyle('var(--color-accent-blue)')}>
           <Pencil size={11} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />
-          Bewerken
+          {t('btnEdit')}
         </button>
         <button onClick={handleActivate} style={btnStyle('var(--color-accent-green)', isActive)}>
-          {isActive ? 'Scanner actief' : 'Activeren voor scanner'}
+          {isActive ? t('btnScannerActive') : t('btnActivateScanner')}
         </button>
         {event.status !== 'cancelled' && (
           <button onClick={onCancel} style={btnStyle('var(--color-accent-red)')}>
             <X size={11} style={{ display: 'inline', marginRight: 3, verticalAlign: 'middle' }} />
-            Annuleren
+            {t('btnCancel')}
           </button>
         )}
       </div>
@@ -268,16 +270,16 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <div>
             <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)', marginBottom: 4 }}>
-              Check-in code
+              {t('checkinCodeLabel')}
             </p>
             {checkinLoading ? (
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-text-muted)' }}>Laden...</p>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-text-muted)' }}>{t('checkinLoading')}</p>
             ) : checkinCode ? (
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: 24, fontWeight: 700, letterSpacing: '0.2em', color: 'var(--color-accent-gold)' }}>
                 {checkinCode}
               </p>
             ) : (
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-text-muted)' }}>Geen code ingesteld</p>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-text-muted)' }}>{t('checkinNoCode')}</p>
             )}
           </div>
           <button
@@ -290,12 +292,12 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
               flexShrink: 0,
             }}
           >
-            {checkinCode ? 'Nieuwe code' : 'Code genereren'}
+            {checkinCode ? t('checkinNewCode') : t('checkinGenerate')}
           </button>
         </div>
         {checkinCode && (
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-text-muted)', marginTop: 6, opacity: 0.7 }}>
-            Toon deze code op een scherm of poster bij het event. Leden voeren dit in op de event pagina om in te checken.
+            {t('checkinHint')}
           </p>
         )}
       </div>
@@ -309,13 +311,13 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 16px', marginBottom: 16 }}>
         {[
-          ['ID', event.id.slice(0, 8) + '...'],
-          ['Categorie', CATEGORY_LABELS[event.category]],
-          ['Capaciteit', event.capacity ? `${event.capacity} plekken` : 'Onbeperkt'],
-          ['Aangemaakt', formatDate(event.created_at)],
+          [t('fieldId'), event.id.slice(0, 8) + '...'],
+          [t('fieldCategory'), CATEGORY_LABELS[event.category]],
+          [t('fieldCapacity'), event.capacity ? t('capacitySpots', { count: event.capacity }) : t('capacityUnlimited')],
+          [t('fieldCreated'), formatDate(event.created_at)],
           ...(event.is_paid ? [
-            ['Prijs leden', `EUR ${centsEuro(event.price_members)}`],
-            ['Prijs niet-leden', `EUR ${centsEuro(event.price_nonmembers)}`],
+            [t('fieldPriceMembers'), `EUR ${centsEuro(event.price_members)}`],
+            [t('fieldPriceNonMembers'), `EUR ${centsEuro(event.price_nonmembers)}`],
           ] : []),
         ].map(([k, v]) => (
           <div key={k} style={{ display: 'flex', gap: 6 }}>
@@ -333,26 +335,26 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
       {event.status === 'completed' && (
         <div style={{ marginBottom: 16, padding: '12px 16px', backgroundColor: 'rgba(59, 130, 246, 0.04)', border: '1px solid rgba(59, 130, 246, 0.12)' }}>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-accent-blue)', marginBottom: 8 }}>
-            Recap
+            {t('recapTitle')}
             {event.recap_published && (
               <span style={{ marginLeft: 8, color: 'var(--color-accent-green)', fontWeight: 400 }}>
-                (gepubliceerd)
+                {t('recapPublished')}
               </span>
             )}
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <div>
-              <label style={labelStyle}>Beschrijving</label>
+              <label style={labelStyle}>{t('recapDescriptionLabel')}</label>
               <textarea
                 rows={3}
                 value={recapDesc}
                 onChange={(e) => setRecapDesc(e.target.value)}
-                placeholder="Korte terugblik op het event..."
+                placeholder={t('recapDescriptionPlaceholder')}
                 style={{ ...inputStyle, resize: 'vertical' }}
               />
             </div>
             <div>
-              <label style={labelStyle}>Foto&apos;s uploaden</label>
+              <label style={labelStyle}>{t('recapUploadLabel')}</label>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
@@ -362,11 +364,11 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
                 style={{ ...inputStyle, padding: '6px 8px', cursor: recapUploading ? 'wait' : 'pointer' }}
               />
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-text-muted)', marginTop: 4 }}>
-                {recapUploading ? 'Bezig met uploaden...' : 'JPG, PNG, WebP, AVIF of GIF, max 10MB per foto. URLs worden hieronder ingevuld.'}
+                {recapUploading ? t('recapUploading') : t('recapUploadHint')}
               </p>
             </div>
             <div>
-              <label style={labelStyle}>Foto URLs (1 per regel)</label>
+              <label style={labelStyle}>{t('recapPhotoUrlsLabel')}</label>
               <textarea
                 rows={3}
                 value={recapPhotos}
@@ -381,14 +383,14 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
                 disabled={recapSaving}
                 style={btnStyle('var(--color-text-muted)')}
               >
-                Opslaan (concept)
+                {t('recapSaveDraft')}
               </button>
               <button
                 onClick={() => handleRecapSave(true)}
                 disabled={recapSaving}
                 style={btnStyle('var(--color-accent-green)', true)}
               >
-                Publiceer recap
+                {t('recapPublish')}
               </button>
             </div>
           </div>
@@ -399,7 +401,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
       <div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)' }}>
-            Aanmeldingen
+            {t('ticketsTitle')}
           </p>
           {tickets.length > 0 && (
             <a
@@ -411,7 +413,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
                 border: '1px solid var(--color-border)', padding: '4px 10px',
               }}
             >
-              <Download size={12} /> CSV-export
+              <Download size={12} /> {t('ticketsExport')}
             </a>
           )}
         </div>
@@ -429,13 +431,13 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
             }}
           >
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-text-muted)' }}>Attendance:</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-text-muted)' }}>{t('attendanceLabel')}</span>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--color-accent-green)' }}>
-                {checkedInCount} / {paidCount} aanwezig ({pct}%)
+                {t('attendanceSummary', { checkedIn: checkedInCount, paid: paidCount, pct })}
               </span>
             </div>
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-text-muted)' }}>No-shows:</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-text-muted)' }}>{t('noShowsLabel')}</span>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: paidCount - checkedInCount > 0 ? 'var(--color-accent-red)' : 'var(--color-text-muted)' }}>
                 {paidCount - checkedInCount}
               </span>
@@ -444,9 +446,9 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
         )}
 
         {ticketsLoading ? (
-          <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>Laden...</p>
+          <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>{t('ticketsLoading')}</p>
         ) : tickets.length === 0 ? (
-          <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>Geen tickets.</p>
+          <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>{t('ticketsEmpty')}</p>
         ) : (
           <div className="space-y-1">
             {tickets.map((ticket) => (
@@ -517,7 +519,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
           <div style={{ position: 'relative', padding: '16px', backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
             <CornerDecorations />
             <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)', marginBottom: 8 }}>
-              Scans - <span style={{ color: 'var(--color-accent-gold)' }}>{event.title}</span>
+              {t('scansTitle')} - <span style={{ color: 'var(--color-accent-gold)' }}>{event.title}</span>
             </p>
 
             {scansLoading ? (
@@ -528,7 +530,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
               </div>
             ) : scans.length === 0 ? (
               <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-                Nog geen scans voor dit event.
+                {t('scansEmpty')}
               </p>
             ) : (
               <div className="space-y-1">
@@ -554,7 +556,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
                           hour: '2-digit',
                           minute: '2-digit',
                         })}
-                        {scan.scanned_by && ` door ${scan.scanned_by.split('@')[0]}`}
+                        {scan.scanned_by && ` ${t('scansBy', { name: scan.scanned_by.split('@')[0] })}`}
                       </p>
                     </div>
                     <span
@@ -567,7 +569,7 @@ export default function EventDetailPanel({ event, onEdit, onCancel, onRefresh }:
                         marginLeft: 12,
                       }}
                     >
-                      +{scan.points} pts
+                      {t('scansPoints', { points: scan.points })}
                     </span>
                   </div>
                 ))}

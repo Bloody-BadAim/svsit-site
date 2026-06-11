@@ -1,0 +1,10 @@
+{
+  "title": "submissions.inbox()",
+  "refresh": "refresh",
+  "empty": "// no pending submissions",
+  "approve": "Approve",
+  "reject": "Reject",
+  "errorLoad": "Failed to load",
+  "errorAction": "Action failed",
+  "errorNetwork": "Network error. Try again."
+}

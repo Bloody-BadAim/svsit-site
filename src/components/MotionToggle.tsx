@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 
 export default function MotionToggle() {
+  const t = useTranslations('motionToggle')
   const [reduced, setReduced] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -29,8 +31,8 @@ export default function MotionToggle() {
       onClick={() => setReduced(!reduced)}
       className="font-mono text-xs transition-colors cursor-pointer"
       style={{ color: reduced ? 'var(--color-accent-red)' : 'var(--color-text-muted)' }}
-      aria-label={reduced ? 'Animaties aanzetten' : 'Animaties uitzetten'}
-      title={reduced ? 'Animaties aan' : 'Animaties uit'}
+      aria-label={reduced ? t('enableLabel') : t('disableLabel')}
+      title={reduced ? t('enabledTitle') : t('disabledTitle')}
     >
       {reduced ? '// static' : '// motion'}
     </button>

@@ -1,13 +1,19 @@
+import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { auth } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
 import StatsOverview from '@/components/admin/StatsOverview'
 
-export const metadata = {
-  title: 'Admin - SIT',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('adminDashboard')
+  return {
+    title: t('metaTitle'),
+  }
 }
 
 export default async function AdminPage() {
+  const t = await getTranslations('adminDashboard')
   const session = await auth()
   if (!session?.user?.isAdmin && session?.user?.role !== 'bestuur') {
     redirect('/dashboard')
@@ -64,7 +70,7 @@ export default async function AdminPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6" style={{ color: 'var(--color-text)' }}>
-        Admin Overview
+        {t('heading')}
       </h1>
       <StatsOverview stats={stats} />
     </div>

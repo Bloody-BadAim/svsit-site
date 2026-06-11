@@ -1,0 +1,11 @@
+{
+  "membersCount": "members.count()",
+  "active": "{count} active",
+  "newThisMonth": "+{count} this month",
+  "activePercent": "{percent}% active",
+  "revenueTotal": "revenue.total",
+  "thisMonth": "this month:",
+  "perRole": "per role",
+  "perCommittee": "per committee",
+  "noData": "no data"
+}

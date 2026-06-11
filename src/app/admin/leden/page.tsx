@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import MemberTable from '@/components/admin/MemberTable'
 
 interface MemberCommissieJoin {
@@ -26,6 +27,7 @@ interface MemberRow {
 }
 
 export default function LedenPage() {
+  const t = useTranslations('adminLeden')
   const [members, setMembers] = useState<MemberRow[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -42,7 +44,16 @@ export default function LedenPage() {
   }, [])
 
   function exportCsv() {
-    const headers = ['Naam', 'Email', 'Studentnummer', 'Rol', 'Commissies', 'XP', 'Status', 'Lid sinds']
+    const headers = [
+      t('csv.name'),
+      t('csv.email'),
+      t('csv.studentNumber'),
+      t('csv.role'),
+      t('csv.commissies'),
+      t('csv.xp'),
+      t('csv.status'),
+      t('csv.memberSince'),
+    ]
     const rows = members.map((m) => [
       m.display_name || '',
       m.email,
@@ -50,7 +61,7 @@ export default function LedenPage() {
       m.role,
       m.member_commissies?.map((mc) => mc.commissies.naam).join('; ') || '',
       String(m.total_xp),
-      m.membership_active ? 'Actief' : 'Inactief',
+      m.membership_active ? t('csv.active') : t('csv.inactive'),
       m.membership_started_at ? new Date(m.membership_started_at).toLocaleDateString('nl-NL') : '',
     ])
 
@@ -71,7 +82,7 @@ export default function LedenPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text)' }}>
-          Ledenlijst
+          {t('heading')}
         </h1>
         {members.length > 0 && (
           <button
@@ -79,7 +90,7 @@ export default function LedenPage() {
             className="py-2 px-4 rounded-lg text-sm font-semibold"
             style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
           >
-            Export CSV
+            {t('exportCsv')}
           </button>
         )}
       </div>

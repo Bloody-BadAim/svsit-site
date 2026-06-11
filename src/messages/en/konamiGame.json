@@ -1,0 +1,12 @@
+{
+  "activated": "KONAMI CODE ACTIVATED",
+  "close": "ESC / CLOSE",
+  "controls": "WASD / arrow keys to move - catch items, dodge bugs",
+  "gameOver": "GAME OVER",
+  "scoreLabel": "SCORE:",
+  "playAgain": "PLAY AGAIN",
+  "closeButton": "CLOSE",
+  "scoreHigh": "// you are ready for the hackathon",
+  "scoreMid": "// not bad for a first year",
+  "scoreLow": "// give it another go after a drink"
+}

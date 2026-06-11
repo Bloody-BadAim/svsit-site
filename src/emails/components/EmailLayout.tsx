@@ -10,6 +10,7 @@ import {
   Text,
   Hr,
 } from "@react-email/components";
+import { layoutCopy, type Locale } from "../i18n";
 
 // ---------------------------------------------------------------------------
 // Design tokens (inline - required by email clients)
@@ -86,11 +87,13 @@ export function SitLogo() {
 interface EmailLayoutProps {
   children: React.ReactNode;
   previewText: string;
+  locale?: Locale;
 }
 
-export default function EmailLayout({ children, previewText }: EmailLayoutProps) {
+export default function EmailLayout({ children, previewText, locale = "nl" }: EmailLayoutProps) {
+  const t = layoutCopy[locale];
   return (
-    <Html lang="nl">
+    <Html lang={locale}>
       <Head />
       <Preview>{previewText}</Preview>
       <Body
@@ -191,7 +194,7 @@ export default function EmailLayout({ children, previewText }: EmailLayoutProps)
                     lineHeight: "1.6",
                   }}
                 >
-                  Bestuur XII
+                  {t.boardLabel}
                 </Text>
               </Column>
             </Row>
@@ -228,7 +231,7 @@ export default function EmailLayout({ children, previewText }: EmailLayoutProps)
                 letterSpacing: "0.03em",
               }}
             >
-              Dit is een automatisch bericht van SIT - Studievereniging ICT HvA.
+              {t.autoNotice}
             </Text>
           </Section>
         </Container>

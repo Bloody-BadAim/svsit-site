@@ -2,15 +2,17 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
+import { useTranslations } from 'next-intl'
 
 const SECTIONS = [
-  { id: 'about', number: '01', label: 'OVER' },
-  { id: 'whyjoin', number: '02', label: 'WAAROM' },
-  { id: 'events', number: '03', label: 'EVENTS' },
-  { id: 'join', number: '04', label: 'JOIN' },
-]
+  { id: 'about', number: '01', labelKey: 'about' },
+  { id: 'whyjoin', number: '02', labelKey: 'whyjoin' },
+  { id: 'events', number: '03', labelKey: 'events' },
+  { id: 'join', number: '04', labelKey: 'join' },
+] as const
 
 export default function ScrollMorphNumbers() {
+  const t = useTranslations('scrollMorphNumbers')
   const [activeIndex, setActiveIndex] = useState<number>(-1)
   const [visible, setVisible] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
@@ -117,7 +119,7 @@ export default function ScrollMorphNumbers() {
                 className="font-mono text-[9px] tracking-[0.25em] uppercase mt-1 block"
                 style={{ color: 'rgba(255,255,255,0.3)' }}
               >
-                {current.label}
+                {t(current.labelKey)}
               </span>
             </motion.div>
           )}

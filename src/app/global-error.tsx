@@ -11,8 +11,8 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
   return (
     <html lang="nl">
       <body style={{ backgroundColor: '#09090B', color: '#A1A1AA', fontFamily: 'monospace', padding: 40 }}>
-        <h2 style={{ color: '#F29E18', fontSize: 18, marginBottom: 12 }}>{'>'} er ging iets mis</h2>
-        <p style={{ fontSize: 13, marginBottom: 20 }}>We hebben de fout automatisch gemeld.</p>
+        <h2 style={{ color: '#F29E18', fontSize: 18, marginBottom: 12 }}>{'>'} er ging iets mis / something went wrong</h2>
+        <p style={{ fontSize: 13, marginBottom: 20 }}>We hebben de fout automatisch gemeld. / We reported the error automatically.</p>
         <button
           onClick={reset}
           style={{
@@ -28,7 +28,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
             letterSpacing: '0.08em',
           }}
         >
-          {'>'} opnieuw proberen
+          {'>'} opnieuw proberen / try again
         </button>
       </body>
     </html>

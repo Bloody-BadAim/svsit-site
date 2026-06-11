@@ -1,0 +1,12 @@
+{
+  "activated": "KONAMI CODE ACTIVATED",
+  "close": "ESC / CLOSE",
+  "controls": "WASD / pijltjestoetsen om te bewegen - vang items, ontwijk bugs",
+  "gameOver": "GAME OVER",
+  "scoreLabel": "SCORE:",
+  "playAgain": "PLAY AGAIN",
+  "closeButton": "CLOSE",
+  "scoreHigh": "// je bent klaar voor de hackathon",
+  "scoreMid": "// niet slecht voor een eerstejaars",
+  "scoreLow": "// probeer het nog eens na een borrel"
+}

@@ -2,21 +2,23 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { LayoutDashboard, Users, ScanLine, CalendarDays, Target, Mail, FolderGit2, Briefcase } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
-const ADMIN_ITEMS: { href: string; label: string; Icon: LucideIcon }[] = [
-  { href: '/admin',            label: 'Overview',    Icon: LayoutDashboard },
-  { href: '/admin/leden',      label: 'Leden',       Icon: Users           },
-  { href: '/admin/scanner',    label: 'Scanner',     Icon: ScanLine        },
-  { href: '/admin/events',     label: 'Events',      Icon: CalendarDays    },
-  { href: '/admin/challenges', label: 'Challenges',  Icon: Target          },
-  { href: '/admin/projecten',  label: 'Projecten',   Icon: FolderGit2      },
-  { href: '/admin/vacatures',  label: 'Vacatures',   Icon: Briefcase       },
-  { href: '/admin/email',      label: 'Email',       Icon: Mail            },
+const ADMIN_ITEMS: { href: string; labelKey: string; Icon: LucideIcon }[] = [
+  { href: '/admin',            labelKey: 'overview',    Icon: LayoutDashboard },
+  { href: '/admin/leden',      labelKey: 'leden',       Icon: Users           },
+  { href: '/admin/scanner',    labelKey: 'scanner',     Icon: ScanLine        },
+  { href: '/admin/events',     labelKey: 'events',      Icon: CalendarDays    },
+  { href: '/admin/challenges', labelKey: 'challenges',  Icon: Target          },
+  { href: '/admin/projecten',  labelKey: 'projecten',   Icon: FolderGit2      },
+  { href: '/admin/vacatures',  labelKey: 'vacatures',   Icon: Briefcase       },
+  { href: '/admin/email',      labelKey: 'email',       Icon: Mail            },
 ]
 
 export default function AdminNav() {
+  const t = useTranslations('adminNav')
   const pathname = usePathname()
 
   return (
@@ -24,7 +26,7 @@ export default function AdminNav() {
       className="flex gap-1 p-1 rounded-lg mb-8"
       style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
     >
-      {ADMIN_ITEMS.map(({ href, label, Icon }) => {
+      {ADMIN_ITEMS.map(({ href, labelKey, Icon }) => {
         const active = href === '/admin'
           ? pathname === '/admin'
           : pathname.startsWith(href)
@@ -40,7 +42,7 @@ export default function AdminNav() {
             }}
           >
             <Icon size={16} strokeWidth={active ? 2.2 : 1.5} />
-            <span className="hidden sm:inline">{label}</span>
+            <span className="hidden sm:inline">{t(labelKey)}</span>
           </Link>
         )
       })}

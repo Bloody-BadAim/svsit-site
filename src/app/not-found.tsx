@@ -1,6 +1,8 @@
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 
-export default function NotFound() {
+export default async function NotFound() {
+  const t = await getTranslations('notFound')
   return (
     <main
       className="min-h-screen flex flex-col items-center justify-center px-6"
@@ -13,17 +15,17 @@ export default function NotFound() {
         404
       </span>
       <h1 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>
-        Pagina niet gevonden
+        {t('heading')}
       </h1>
       <p className="mb-8" style={{ color: 'var(--color-text-muted)' }}>
-        Deze route bestaat niet.
+        {t('description')}
       </p>
       <Link
         href="/"
         className="py-3 px-6 rounded-lg font-semibold transition-all"
         style={{ backgroundColor: 'var(--color-accent-gold)', color: 'var(--color-bg)' }}
       >
-        Terug naar home
+        {t('home')}
       </Link>
     </main>
   )

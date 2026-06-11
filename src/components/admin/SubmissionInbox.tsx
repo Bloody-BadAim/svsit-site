@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Check, X } from 'lucide-react'
 
 interface EnrichedSubmission {
@@ -16,6 +17,7 @@ interface EnrichedSubmission {
 }
 
 export default function SubmissionInbox() {
+  const t = useTranslations('adminSubmissionInbox')
   const [submissions, setSubmissions] = useState<EnrichedSubmission[]>([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
@@ -28,16 +30,16 @@ export default function SubmissionInbox() {
       const res = await fetch('/api/challenges/submissions')
       const json = await res.json()
       if (!res.ok || json.error) {
-        setError(json.error ?? 'Laden mislukt')
+        setError(json.error ?? t('errorLoad'))
         return
       }
       setSubmissions(json.data ?? [])
     } catch {
-      setError('Netwerkfout - probeer opnieuw')
+      setError(t('errorNetwork'))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [t])
 
   useEffect(() => {
     fetchSubmissions()
@@ -53,13 +55,13 @@ export default function SubmissionInbox() {
       })
       const json = await res.json()
       if (!res.ok || json.error) {
-        alert(json.error ?? 'Actie mislukt')
+        alert(json.error ?? t('errorAction'))
         return
       }
       // Remove from list after action
       setSubmissions((prev) => prev.filter((s) => s.id !== id))
     } catch {
-      alert('Netwerkfout - probeer opnieuw')
+      alert(t('errorNetwork'))
     } finally {
       setActionLoading(null)
     }
@@ -75,7 +77,7 @@ export default function SubmissionInbox() {
           className="text-xs font-bold uppercase tracking-widest"
           style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}
         >
-          {'>'} submissions.inbox()
+          {'>'} {t('title')}
         </h2>
         <button
           onClick={fetchSubmissions}
@@ -86,7 +88,7 @@ export default function SubmissionInbox() {
             fontFamily: 'var(--font-mono)',
           }}
         >
-          refresh
+          {t('refresh')}
         </button>
       </div>
 
@@ -122,7 +124,7 @@ export default function SubmissionInbox() {
             className="text-sm"
             style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}
           >
-            // geen pending submissions
+            {t('empty')}
           </p>
         </div>
       ) : (
@@ -198,7 +200,7 @@ export default function SubmissionInbox() {
                     fontFamily: 'var(--font-mono)',
                   }}
                 >
-                  {actionLoading === sub.id ? '...' : <span className="flex items-center gap-1"><Check className="w-3 h-3" /> Approve</span>}
+                  {actionLoading === sub.id ? '...' : <span className="flex items-center gap-1"><Check className="w-3 h-3" /> {t('approve')}</span>}
                 </button>
                 <button
                   onClick={() => handleAction(sub.id, 'rejected')}
@@ -211,7 +213,7 @@ export default function SubmissionInbox() {
                     fontFamily: 'var(--font-mono)',
                   }}
                 >
-                  {actionLoading === sub.id ? '...' : <span className="flex items-center gap-1"><X className="w-3 h-3" /> Reject</span>}
+                  {actionLoading === sub.id ? '...' : <span className="flex items-center gap-1"><X className="w-3 h-3" /> {t('reject')}</span>}
                 </button>
               </div>
             </div>

@@ -1,0 +1,15 @@
+{
+  "title": "challenge.create()",
+  "labelTitle": "title",
+  "placeholderTitle": "E.g. Push your first open source PR",
+  "labelDescription": "description",
+  "placeholderDescription": "Explain what needs to be done...",
+  "labelCategory": "category",
+  "labelPoints": "points",
+  "labelDeadline": "deadline (optional)",
+  "submit": "Create",
+  "submitting": "Creating...",
+  "success": "Challenge created",
+  "errorCreate": "Failed to create",
+  "errorNetwork": "Network error. Try again."
+}

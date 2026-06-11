@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Plus, X } from 'lucide-react'
 import { useScannerStore } from '@/stores/useScannerStore'
 import { formatDate } from '@/lib/utils'
@@ -52,17 +53,20 @@ function centsEuro(cents: number): string {
   return (cents / 100).toFixed(2)
 }
 
-const FILTERS: { key: StatusFilter; label: string }[] = [
-  { key: 'all', label: 'Alle' },
-  { key: 'upcoming', label: 'Upcoming' },
-  { key: 'active', label: 'Actief' },
-  { key: 'completed', label: 'Afgelopen' },
-  { key: 'cancelled', label: 'Geannuleerd' },
-]
+const FILTER_KEYS: StatusFilter[] = ['all', 'upcoming', 'active', 'completed', 'cancelled']
+
+const FILTER_LABEL_KEYS: Record<StatusFilter, string> = {
+  all: 'filterAll',
+  upcoming: 'filterUpcoming',
+  active: 'filterActive',
+  completed: 'filterCompleted',
+  cancelled: 'filterCancelled',
+}
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function EventsPage() {
+  const t = useTranslations('adminEvents')
   const { actiefEvent, setActiefEvent } = useScannerStore()
 
   const [events, setEvents] = useState<DbEvent[]>([])
@@ -84,14 +88,14 @@ export default function EventsPage() {
     try {
       const res = await fetch('/api/events', { cache: 'no-store' })
       const body = await res.json()
-      if (!res.ok || body.error) throw new Error(body.error || `Fout ${res.status} bij laden events`)
+      if (!res.ok || body.error) throw new Error(body.error || t('errorLoadStatus', { status: res.status }))
       setEvents(body.data || [])
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Fout bij laden events')
+      setError(err instanceof Error ? err.message : t('errorLoad'))
     } finally {
       if (!silent) setLoading(false)
     }
-  }, [])
+  }, [t])
 
   useEffect(() => { fetchEvents() }, [fetchEvents])
 
@@ -121,7 +125,7 @@ export default function EventsPage() {
   }
 
   async function handleCancel(eventId: string) {
-    if (!confirm('Event annuleren? Dit kan niet ongedaan worden.')) return
+    if (!confirm(t('confirmCancel'))) return
     try {
       const res = await fetch(`/api/events/${eventId}`, {
         method: 'PATCH',
@@ -129,7 +133,7 @@ export default function EventsPage() {
         body: JSON.stringify({ status: 'cancelled' }),
       })
       const body = await res.json()
-      if (!res.ok || body.error) throw new Error(body.error || `Fout ${res.status} bij annuleren`)
+      if (!res.ok || body.error) throw new Error(body.error || t('errorCancelStatus', { status: res.status }))
       // Optimistisch: werk de ene rij bij uit de teruggegeven event-data
       // (PATCH geeft de bijgewerkte rij terug) i.p.v. alles opnieuw te laden.
       if (body.data) {
@@ -139,7 +143,7 @@ export default function EventsPage() {
       }
       if (actiefEvent === eventId) setActiefEvent(null, null)
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Fout bij annuleren')
+      alert(err instanceof Error ? err.message : t('errorCancel'))
     }
   }
 
@@ -165,10 +169,10 @@ export default function EventsPage() {
             {'>'} events.manage
           </h1>
           <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 4 }}>
-            {events.length} events in database
+            {t('subtitle', { count: events.length })}
             {actiefEvent && (
               <span style={{ color: 'var(--color-accent-green)', marginLeft: 12 }}>
-                actief: {events.find((e) => e.id === actiefEvent)?.title ?? '...'}
+                {t('active', { name: events.find((e) => e.id === actiefEvent)?.title ?? '...' })}
               </span>
             )}
           </p>
@@ -192,13 +196,14 @@ export default function EventsPage() {
             cursor: 'pointer',
           }}
         >
-          <Plus size={14} /> Nieuw event
+          <Plus size={14} /> {t('newEvent')}
         </button>
       </div>
 
       {/* Filter tabs */}
       <div style={{ display: 'flex', gap: 2, borderBottom: '1px solid var(--color-border)' }}>
-        {FILTERS.map(({ key, label }) => {
+        {FILTER_KEYS.map((key) => {
+          const label = t(FILTER_LABEL_KEYS[key])
           const active = filter === key
           return (
             <button
@@ -253,7 +258,7 @@ export default function EventsPage() {
           }}
         >
           <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-            {filter === 'all' ? 'Geen events gevonden. Maak een event aan om te starten.' : `Geen ${filter} events.`}
+            {filter === 'all' ? t('emptyAll') : t('emptyFiltered', { filter })}
           </p>
         </div>
       ) : (
@@ -343,7 +348,7 @@ export default function EventsPage() {
                         color: event.is_paid ? 'var(--color-accent-gold)' : 'var(--color-text-muted)',
                       }}
                     >
-                      {event.is_paid ? `EUR ${centsEuro(event.price_members)}` : 'gratis'}
+                      {event.is_paid ? `EUR ${centsEuro(event.price_members)}` : t('free')}
                     </span>
                   </div>
                 </div>

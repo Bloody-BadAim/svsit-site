@@ -8,6 +8,7 @@ import { SITE_CONFIG } from '@/lib/constants'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('pageLidWorden')
+  const tw = await getTranslations('lidWordenWrap')
   const price = SITE_CONFIG.membership.pricePerYear
   return {
     title: t('meta.title'),
@@ -16,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: t('meta.ogTitle'),
       description: t('meta.ogDescription', { price }),
       siteName: '{SIT}',
-      locale: 'nl_NL',
+      locale: tw('ogLocale'),
       type: 'website',
       url: 'https://svsit.nl/lid-worden',
     },

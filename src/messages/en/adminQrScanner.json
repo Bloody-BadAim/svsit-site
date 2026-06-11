@@ -1,0 +1,16 @@
+{
+  "checkedIn": "Checked in",
+  "cameraScanner": "Camera scanner",
+  "stop": "Stop",
+  "start": "Start",
+  "manualEntry": "Manual entry",
+  "manualHint": "Enter a ticket ID to check in",
+  "manualPlaceholder": "Ticket ID or full QR payload...",
+  "scan": "Scan",
+  "lastScan": "Last scan",
+  "ticketCheckinOk": "TICKET CHECK-IN [OK] - {name} for {event}",
+  "alreadyCheckedIn": "Already checked in",
+  "errorCheckin": "Check-in failed",
+  "invalidQr": "Invalid QR code",
+  "cameraUnavailable": "Camera unavailable"
+}

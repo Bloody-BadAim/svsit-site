@@ -1,0 +1,16 @@
+{
+  "heading": "Ledenlijst",
+  "exportCsv": "Export CSV",
+  "csv": {
+    "name": "Naam",
+    "email": "Email",
+    "studentNumber": "Studentnummer",
+    "role": "Rol",
+    "commissies": "Commissies",
+    "xp": "XP",
+    "status": "Status",
+    "memberSince": "Lid sinds",
+    "active": "Actief",
+    "inactive": "Inactief"
+  }
+}

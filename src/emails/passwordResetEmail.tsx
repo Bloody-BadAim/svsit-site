@@ -1,5 +1,6 @@
 import { Text, Link } from "@react-email/components";
 import EmailLayout, { C } from "./components/EmailLayout";
+import type { Locale } from "./i18n";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -8,7 +9,33 @@ import EmailLayout, { C } from "./components/EmailLayout";
 interface PasswordResetEmailProps {
   firstName: string;
   resetUrl: string;
+  locale?: Locale;
 }
+
+// ---------------------------------------------------------------------------
+// Copy
+// ---------------------------------------------------------------------------
+
+const copy = {
+  nl: {
+    preview: "Stel je wachtwoord in voor SIT",
+    tag: "// wachtwoord instellen",
+    greeting: (name: string) => `Hoi ${name},`,
+    explanation:
+      "We hebben de SIT website vernieuwd. Klik hieronder om je wachtwoord in te stellen en toegang te krijgen tot je account, events en je member card.",
+    button: "WACHTWOORD INSTELLEN",
+    validity: "Deze link is 7 dagen geldig.",
+  },
+  en: {
+    preview: "Set your password for SIT",
+    tag: "// set password",
+    greeting: (name: string) => `Hi ${name},`,
+    explanation:
+      "We have updated the SIT website. Click below to set your password and get access to your account, events and your member card.",
+    button: "SET PASSWORD",
+    validity: "This link is valid for 7 days.",
+  },
+} as const;
 
 // ---------------------------------------------------------------------------
 // Main component
@@ -17,9 +44,11 @@ interface PasswordResetEmailProps {
 export default function PasswordResetEmail({
   firstName,
   resetUrl,
+  locale = "nl",
 }: PasswordResetEmailProps) {
+  const t = copy[locale];
   return (
-    <EmailLayout previewText="Stel je wachtwoord in voor SIT">
+    <EmailLayout previewText={t.preview} locale={locale}>
       {/* // wachtwoord instellen */}
       <Text
         style={{
@@ -30,7 +59,7 @@ export default function PasswordResetEmail({
           letterSpacing: "0.06em",
         }}
       >
-        // wachtwoord instellen
+        {t.tag}
       </Text>
 
       {/* Greeting */}
@@ -44,7 +73,7 @@ export default function PasswordResetEmail({
           lineHeight: "1.5",
         }}
       >
-        Hoi {firstName},
+        {t.greeting(firstName)}
       </Text>
 
       {/* Explanation */}
@@ -57,9 +86,7 @@ export default function PasswordResetEmail({
           margin: "0 0 28px 0",
         }}
       >
-        We hebben de SIT website vernieuwd. Klik hieronder om je wachtwoord in
-        te stellen en toegang te krijgen tot je account, events en je member
-        card.
+        {t.explanation}
       </Text>
 
       {/* CTA button */}
@@ -85,7 +112,7 @@ export default function PasswordResetEmail({
                   letterSpacing: "0.06em",
                 }}
               >
-                WACHTWOORD INSTELLEN
+                {t.button}
               </Link>
             </td>
           </tr>
@@ -102,7 +129,7 @@ export default function PasswordResetEmail({
           lineHeight: "1.6",
         }}
       >
-        Deze link is 7 dagen geldig.
+        {t.validity}
       </Text>
     </EmailLayout>
   );

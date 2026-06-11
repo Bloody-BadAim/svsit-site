@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import type { StatCategory } from '@/types/database'
 import { Check, X } from 'lucide-react'
 
@@ -12,6 +13,7 @@ const CATEGORIES: { value: StatCategory; label: string }[] = [
 ]
 
 export default function ChallengeManager() {
+  const t = useTranslations('adminChallengeManager')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState<StatCategory>('code')
@@ -47,7 +49,7 @@ export default function ChallengeManager() {
 
       const json = await res.json()
       if (!res.ok || json.error) {
-        setError(json.error ?? 'Aanmaken mislukt')
+        setError(json.error ?? t('errorCreate'))
         return
       }
 
@@ -58,7 +60,7 @@ export default function ChallengeManager() {
       setPoints(50)
       setActiveUntil('')
     } catch {
-      setError('Netwerkfout - probeer opnieuw')
+      setError(t('errorNetwork'))
     } finally {
       setLoading(false)
     }
@@ -73,7 +75,7 @@ export default function ChallengeManager() {
         className="text-xs font-bold uppercase tracking-widest"
         style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}
       >
-        {'>'} challenge.create()
+        {'>'} {t('title')}
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-3">
@@ -83,13 +85,13 @@ export default function ChallengeManager() {
             className="text-xs font-semibold uppercase tracking-wider"
             style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}
           >
-            titel
+            {t('labelTitle')}
           </label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Bijv. Push je eerste open source PR"
+            placeholder={t('placeholderTitle')}
             required
             className="w-full py-2 px-3 rounded-lg text-sm outline-none"
             style={{
@@ -107,12 +109,12 @@ export default function ChallengeManager() {
             className="text-xs font-semibold uppercase tracking-wider"
             style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}
           >
-            omschrijving
+            {t('labelDescription')}
           </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Leg uit wat er gedaan moet worden..."
+            placeholder={t('placeholderDescription')}
             required
             rows={3}
             className="w-full py-2 px-3 rounded-lg text-sm outline-none resize-none"
@@ -132,7 +134,7 @@ export default function ChallengeManager() {
               className="text-xs font-semibold uppercase tracking-wider"
               style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}
             >
-              categorie
+              {t('labelCategory')}
             </label>
             <select
               value={category}
@@ -158,7 +160,7 @@ export default function ChallengeManager() {
               className="text-xs font-semibold uppercase tracking-wider"
               style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}
             >
-              punten
+              {t('labelPoints')}
             </label>
             <input
               type="number"
@@ -184,7 +186,7 @@ export default function ChallengeManager() {
             className="text-xs font-semibold uppercase tracking-wider"
             style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}
           >
-            deadline (optioneel)
+            {t('labelDeadline')}
           </label>
           <input
             type="date"
@@ -208,7 +210,7 @@ export default function ChallengeManager() {
         )}
         {success && (
           <p className="text-xs py-2 px-3 rounded-lg flex items-center gap-1.5" style={{ color: 'var(--color-accent-green)', backgroundColor: 'rgba(34,197,94,0.08)', fontFamily: 'var(--font-mono)' }}>
-            <Check className="w-3.5 h-3.5 shrink-0" /> Challenge aangemaakt
+            <Check className="w-3.5 h-3.5 shrink-0" /> {t('success')}
           </p>
         )}
 
@@ -222,7 +224,7 @@ export default function ChallengeManager() {
             fontFamily: 'var(--font-mono)',
           }}
         >
-          {loading ? 'Aanmaken...' : 'Aanmaken'}
+          {loading ? t('submitting') : t('submit')}
         </button>
       </form>
     </div>

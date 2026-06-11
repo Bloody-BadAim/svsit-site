@@ -1,0 +1,8 @@
+{
+  "heading": "Er ging iets mis",
+  "serviceUnavailable": "Service is tijdelijk niet beschikbaar",
+  "genericError": "Een onverwachte fout is opgetreden",
+  "errorId": "Error ID: {digest}",
+  "retry": "Probeer opnieuw",
+  "home": "Naar home"
+}

@@ -1,0 +1,8 @@
+{
+  "heading": "Something went wrong",
+  "serviceUnavailable": "Service is temporarily unavailable",
+  "genericError": "An unexpected error occurred",
+  "errorId": "Error ID: {digest}",
+  "retry": "Try again",
+  "home": "Back home"
+}

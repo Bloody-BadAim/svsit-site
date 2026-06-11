@@ -1,0 +1,11 @@
+{
+  "membersCount": "members.count()",
+  "active": "{count} actief",
+  "newThisMonth": "+{count} deze maand",
+  "activePercent": "{percent}% actief",
+  "revenueTotal": "revenue.total",
+  "thisMonth": "deze maand:",
+  "perRole": "per rol",
+  "perCommittee": "per commissie",
+  "noData": "geen data"
+}

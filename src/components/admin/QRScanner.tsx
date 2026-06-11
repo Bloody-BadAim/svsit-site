@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { useScannerStore } from '@/stores/useScannerStore'
 
 interface QRScannerProps {
@@ -11,6 +12,7 @@ interface QRScannerProps {
 type MessageType = 'success' | 'error' | 'warning'
 
 export default function QRScanner({ eventId, eventName }: QRScannerProps) {
+  const t = useTranslations('adminQrScanner')
   const scannerRef = useRef<HTMLDivElement>(null)
   const html5QrCodeRef = useRef<unknown>(null)
   const { setLaatsteScan, laatsteScan, scannerActief, setScannerActief } = useScannerStore()
@@ -52,10 +54,10 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
 
     if (res.ok && json.data) {
       const { name, event_title } = json.data
-      setMessage(`TICKET CHECK-IN [OK] - ${name} voor ${event_title}`)
+      setMessage(t('ticketCheckinOk', { name, event: event_title }))
       setMessageType('success')
       // Flash green with name
-      setFlashName(name || 'Ingecheckt')
+      setFlashName(name || t('checkedIn'))
       setTimeout(() => setFlashName(null), 3000)
       // Store last scan - punten 0 since this is just a check-in
       setLaatsteScan({
@@ -66,10 +68,10 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
       })
     } else if (res.status === 409) {
       // 409 = al ingecheckt OF ticket hoort bij ander event
-      setMessage(json.error || 'Al ingecheckt')
+      setMessage(json.error || t('alreadyCheckedIn'))
       setMessageType('warning')
     } else {
-      setMessage(json.error || 'Fout bij check-in')
+      setMessage(json.error || t('errorCheckin'))
       setMessageType('error')
     }
 
@@ -81,7 +83,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
   async function handleScan(raw: string) {
     const ticketId = parseTicketId(raw)
     if (!ticketId) {
-      setMessage('Ongeldig QR code')
+      setMessage(t('invalidQr'))
       setMessageType('error')
       setTimeout(() => setMessage(''), 5000)
       return
@@ -115,7 +117,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
       )
       setScannerActief(true)
     } catch {
-      setMessage('Camera niet beschikbaar')
+      setMessage(t('cameraUnavailable'))
       setMessageType('error')
     }
   }
@@ -172,7 +174,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
             }}
           >
             <p className="font-mono text-3xl font-bold">{flashName}</p>
-            <p className="font-mono text-sm mt-2 opacity-80 uppercase tracking-widest">Ingecheckt</p>
+            <p className="font-mono text-sm mt-2 opacity-80 uppercase tracking-widest">{t('checkedIn')}</p>
           </div>
         </div>
       )}
@@ -184,7 +186,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
       >
         <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--color-border)' }}>
           <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-            Camera Scanner
+            {t('cameraScanner')}
           </h3>
           <button
             onClick={scannerActief ? stopScanner : startScanner}
@@ -195,7 +197,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
               border: `1px solid ${scannerActief ? 'var(--color-accent-red)' : 'var(--color-accent-green)'}`,
             }}
           >
-            {scannerActief ? 'Stop' : 'Start'}
+            {scannerActief ? t('stop') : t('start')}
           </button>
         </div>
         <div id="qr-reader" ref={scannerRef} className="w-full" />
@@ -207,10 +209,10 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
         style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
       >
         <h3 className="text-sm font-semibold mb-1" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-          Handmatige invoer
+          {t('manualEntry')}
         </h3>
         <p className="text-xs mb-3" style={{ color: 'var(--color-text-muted)', opacity: 0.7 }}>
-          Voer een ticket ID in om in te checken
+          {t('manualHint')}
         </p>
         <div className="flex gap-2">
           <input
@@ -218,7 +220,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
             value={ticketInput}
             onChange={(e) => setTicketInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
-            placeholder="Ticket ID of volledige QR payload..."
+            placeholder={t('manualPlaceholder')}
             className="flex-1 py-2 px-3 rounded-lg text-sm outline-none"
             style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
           />
@@ -228,7 +230,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
             className="py-2 px-4 rounded-lg text-sm font-semibold disabled:opacity-50"
             style={{ backgroundColor: 'var(--color-accent-gold)', color: 'var(--color-bg)' }}
           >
-            Scan
+            {t('scan')}
           </button>
         </div>
       </div>
@@ -251,7 +253,7 @@ export default function QRScanner({ eventId, eventName }: QRScannerProps) {
       {/* Laatste scan */}
       {laatsteScan && (
         <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-          <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>Laatste scan</p>
+          <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>{t('lastScan')}</p>
           <p className="text-sm" style={{ color: 'var(--color-text)' }}>
             {laatsteScan.email}
             {laatsteScan.punten > 0 && (

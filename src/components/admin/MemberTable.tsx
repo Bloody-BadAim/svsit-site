@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { useAdminStore } from '@/stores/useAdminStore'
 import { COMMISSIES } from '@/lib/constants'
 import MemberDetailModal from './MemberDetailModal'
@@ -50,8 +51,21 @@ function getCommissieNames(member: MemberRow): string[] {
   return []
 }
 
-function exportCSV(members: MemberRow[]) {
-  const headers = ['Naam', 'Email', 'Studentnummer', 'Rol', 'Commissie(s)', 'Punten', 'Status', 'Lid sinds']
+interface CsvLabels {
+  name: string
+  email: string
+  studentNr: string
+  role: string
+  committees: string
+  points: string
+  status: string
+  memberSince: string
+  active: string
+  inactive: string
+}
+
+function exportCSV(members: MemberRow[], labels: CsvLabels) {
+  const headers = [labels.name, labels.email, labels.studentNr, labels.role, labels.committees, labels.points, labels.status, labels.memberSince]
   const rows = members.map(m => [
     m.display_name || m.email.split('@')[0],
     m.email,
@@ -59,7 +73,7 @@ function exportCSV(members: MemberRow[]) {
     m.role,
     getCommissieNames(m).join(' | ') || '',
     m.total_xp.toString(),
-    m.membership_active ? 'Actief' : 'Inactief',
+    m.membership_active ? labels.active : labels.inactive,
     m.created_at ? new Date(m.created_at).toLocaleDateString('nl-NL') : ''
   ])
 
@@ -77,6 +91,7 @@ function exportCSV(members: MemberRow[]) {
 }
 
 export default function MemberTable({ members, onRefresh }: MemberTableProps) {
+  const t = useTranslations('adminMemberTable')
   const { filters, setFilter } = useAdminStore()
   const [selectedMember, setSelectedMember] = useState<MemberRow | null>(null)
   const [showAddForm, setShowAddForm] = useState(false)
@@ -103,7 +118,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
       onRefresh()
     } else {
       const data = await res.json()
-      setAddError(data.error || 'Fout bij aanmaken')
+      setAddError(data.error || t('errorAdd'))
     }
     setAdding(false)
   }
@@ -157,7 +172,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
           className="py-2 px-4 rounded-lg text-sm font-semibold"
           style={{ backgroundColor: 'var(--color-accent-gold)', color: 'var(--color-bg)' }}
         >
-          + Nieuw lid
+          {t('newMember')}
         </button>
       </div>
 
@@ -168,7 +183,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
               type="email"
               value={newEmail}
               onChange={(e) => setNewEmail(e.target.value)}
-              placeholder="Email..."
+              placeholder={t('placeholderEmail')}
               className="flex-1 min-w-[200px] py-2 px-3 rounded-lg text-sm outline-none"
               style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
             />
@@ -176,7 +191,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
               type="text"
               value={newStudentNr}
               onChange={(e) => setNewStudentNr(e.target.value)}
-              placeholder="Studentnummer (optioneel)"
+              placeholder={t('placeholderStudentNr')}
               className="py-2 px-3 rounded-lg text-sm outline-none"
               style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
             />
@@ -197,7 +212,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
               className="py-2 px-4 rounded-lg text-sm font-semibold disabled:opacity-50"
               style={{ backgroundColor: 'var(--color-accent-gold)', color: 'var(--color-bg)' }}
             >
-              {adding ? 'Toevoegen...' : 'Toevoegen'}
+              {adding ? t('adding') : t('add')}
             </button>
           </div>
           {addError && <p className="text-sm" style={{ color: 'var(--color-accent-red)' }}>{addError}</p>}
@@ -210,7 +225,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
           type="text"
           value={filters.zoekterm}
           onChange={(e) => setFilter('zoekterm', e.target.value)}
-          placeholder="Zoek op naam, email of studentnummer..."
+          placeholder={t('searchPlaceholder')}
           className="flex-1 min-w-[200px] py-2 px-3 rounded-lg text-sm outline-none"
           style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
         />
@@ -220,9 +235,9 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
           className="py-2 px-3 rounded-lg text-sm"
           style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
         >
-          <option value="all">Alle statussen</option>
-          <option value="active">Actief</option>
-          <option value="expired">Inactief</option>
+          <option value="all">{t('filterAllStatuses')}</option>
+          <option value="active">{t('statusActive')}</option>
+          <option value="expired">{t('statusInactive')}</option>
         </select>
         <select
           value={filters.role}
@@ -230,7 +245,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
           className="py-2 px-3 rounded-lg text-sm"
           style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
         >
-          <option value="all">Alle rollen</option>
+          <option value="all">{t('filterAllRoles')}</option>
           <option value="member">Member</option>
           <option value="contributor">Contributor</option>
           <option value="mentor">Mentor</option>
@@ -242,13 +257,24 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
           className="py-2 px-3 rounded-lg text-sm"
           style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}
         >
-          <option value="all">Alle commissies</option>
+          <option value="all">{t('filterAllCommittees')}</option>
           {COMMISSIES.map((c) => (
             <option key={c.id} value={c.id}>{c.naam}</option>
           ))}
         </select>
         <button
-          onClick={() => exportCSV(filtered)}
+          onClick={() => exportCSV(filtered, {
+            name: t('csvName'),
+            email: t('csvEmail'),
+            studentNr: t('csvStudentNr'),
+            role: t('csvRole'),
+            committees: t('csvCommittees'),
+            points: t('csvPoints'),
+            status: t('csvStatus'),
+            memberSince: t('csvMemberSince'),
+            active: t('csvActive'),
+            inactive: t('csvInactive'),
+          })}
           className="py-2 px-4 rounded-lg text-sm font-semibold flex items-center gap-2"
           style={{
             backgroundColor: 'var(--color-surface)',
@@ -259,12 +285,12 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
             <path d="M2 10v3a1 1 0 001 1h10a1 1 0 001-1v-3M8 2v8M5 7l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          Export CSV
+          {t('exportCsv')}
         </button>
       </div>
 
       <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-        {filtered.length} leden gevonden
+        {t('resultCount', { count: filtered.length })}
       </p>
 
       {/* Tabel */}
@@ -272,7 +298,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
         <table className="w-full text-sm">
           <thead>
             <tr style={{ backgroundColor: 'var(--color-surface)' }}>
-              {['Naam / Email', 'Studentnr.', 'Rol', 'Commissie(s)', 'Punten', 'Status', 'Lid sinds'].map((col) => (
+              {[t('colNameEmail'), t('colStudentNr'), t('colRole'), t('colCommittees'), t('colPoints'), t('colStatus'), t('colMemberSince')].map((col) => (
                 <th
                   key={col}
                   className="text-left px-4 py-3 font-semibold uppercase tracking-wider text-xs"
@@ -304,7 +330,7 @@ export default function MemberTable({ members, onRefresh }: MemberTableProps) {
                             className="text-[9px] font-bold px-1 py-px rounded uppercase tracking-wider"
                             style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: 'var(--color-accent-red)' }}
                           >
-                            Admin
+                            {t('badgeAdmin')}
                           </span>
                         )}
                       </span>

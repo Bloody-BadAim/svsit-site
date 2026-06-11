@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { X, Check, Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react'
 import { inputStyle, labelStyle } from '@/components/admin/adminStyles'
 import {
@@ -112,6 +113,7 @@ function eventToForm(event: DbEvent): EventFormData {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function EventFormModal({ event, onClose, onSaved }: EventFormModalProps) {
+  const t = useTranslations('adminEventForm')
   const isEdit = !!event
   const [form, setForm] = useState<EventFormData>(event ? eventToForm(event) : EMPTY_FORM)
   const [saving, setSaving] = useState(false)
@@ -166,24 +168,24 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
     const labels = cleanFields.map((f) => f.label.toLowerCase())
     const dup = labels.find((l, i) => labels.indexOf(l) !== i)
     if (dup) {
-      setError(`Dubbel aanmeld-veld: "${dup}". Geef elk veld een unieke naam.`)
+      setError(t('errorDuplicateField', { label: dup }))
       return
     }
     const badSelect = cleanFields.find((f) => f.type === 'select' && (!f.options || f.options.length === 0))
     if (badSelect) {
-      setError(`Dropdown "${badSelect.label}" heeft geen opties. Voeg minstens één optie toe.`)
+      setError(t('errorEmptySelect', { label: badSelect.label }))
       return
     }
     if (cleanFields.length > 25) {
-      setError('Maximaal 25 aanmeld-velden per event.')
+      setError(t('errorMaxFields'))
       return
     }
     if (isPaid && euroCents(form.price_members) === 0 && euroCents(form.price_nonmembers) === 0) {
-      setError('Vul minstens één prijs in voor eigen verkoop, of kies "Gratis / geen tickets".')
+      setError(t('errorNoPrice'))
       return
     }
     if (ticketMode === 'external' && !form.external_ticket_url.trim()) {
-      setError('Vul een ticket-URL in voor externe verkoop.')
+      setError(t('errorNoTicketUrl'))
       return
     }
 
@@ -214,12 +216,12 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
         body: JSON.stringify(body),
       })
       const { error: apiError } = await res.json()
-      if (!res.ok || apiError) throw new Error(apiError || `Fout ${res.status} bij opslaan`)
+      if (!res.ok || apiError) throw new Error(apiError || t('errorSaveStatus', { status: res.status }))
       setSuccess(true)
       onSaved()
       setTimeout(() => onClose(), 600)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Opslaan mislukt')
+      setError(err instanceof Error ? err.message : t('errorSaveFailed'))
     } finally {
       setSaving(false)
     }
@@ -255,7 +257,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
               letterSpacing: '0.06em',
             }}
           >
-            {isEdit ? `> event.edit - ${event.title}` : '> event.create'}
+            {isEdit ? t('headerEdit', { title: event.title }) : t('headerCreate')}
           </h2>
           <button onClick={onClose} style={{ color: 'var(--color-text-muted)', cursor: 'pointer' }}>
             <X size={16} />
@@ -268,32 +270,32 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
 
             {/* Title */}
             <div style={{ gridColumn: '1 / -1' }}>
-              <label style={labelStyle}>Titel *</label>
+              <label style={labelStyle}>{t('labelTitle')}</label>
               <input
                 required
                 type="text"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="Bijv. Intro Borrel XI"
+                placeholder={t('placeholderTitle')}
                 style={inputStyle}
               />
             </div>
 
             {/* Description */}
             <div style={{ gridColumn: '1 / -1' }}>
-              <label style={labelStyle}>Beschrijving</label>
+              <label style={labelStyle}>{t('labelDescription')}</label>
               <textarea
                 rows={3}
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder="Optionele beschrijving..."
+                placeholder={t('placeholderDescription')}
                 style={{ ...inputStyle, resize: 'vertical' }}
               />
             </div>
 
             {/* Date */}
             <div>
-              <label style={labelStyle}>Datum + tijd *</label>
+              <label style={labelStyle}>{t('labelDate')}</label>
               <input
                 required
                 type="datetime-local"
@@ -305,7 +307,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
 
             {/* End date */}
             <div>
-              <label style={labelStyle}>Einddatum (optioneel)</label>
+              <label style={labelStyle}>{t('labelEndDate')}</label>
               <input
                 type="datetime-local"
                 value={form.end_date}
@@ -316,32 +318,32 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
 
             {/* Location */}
             <div>
-              <label style={labelStyle}>Locatie</label>
+              <label style={labelStyle}>{t('labelLocation')}</label>
               <input
                 type="text"
                 value={form.location}
                 onChange={(e) => setForm({ ...form, location: e.target.value })}
-                placeholder="Bijv. HvA Wibauthuis"
+                placeholder={t('placeholderLocation')}
                 style={inputStyle}
               />
             </div>
 
             {/* Capacity */}
             <div>
-              <label style={labelStyle}>Capaciteit (optioneel)</label>
+              <label style={labelStyle}>{t('labelCapacity')}</label>
               <input
                 type="number"
                 min="1"
                 value={form.capacity}
                 onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                placeholder="Onbeperkt"
+                placeholder={t('placeholderCapacity')}
                 style={inputStyle}
               />
             </div>
 
             {/* Category */}
             <div>
-              <label style={labelStyle}>Categorie</label>
+              <label style={labelStyle}>{t('labelCategory')}</label>
               <select
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value as EventFormData['category'] })}
@@ -356,7 +358,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
 
             {/* Status */}
             <div>
-              <label style={labelStyle}>Status</label>
+              <label style={labelStyle}>{t('labelStatus')}</label>
               <select
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value as EventFormData['status'] })}
@@ -371,9 +373,9 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
 
             {/* Ticket mode */}
             <div style={{ gridColumn: '1 / -1' }}>
-              <label style={labelStyle}>Ticketverkoop</label>
+              <label style={labelStyle}>{t('labelTickets')}</label>
               <div style={{ display: 'flex', gap: 8 }}>
-                {([['none', 'Gratis / geen tickets'], ['own', 'Eigen verkoop (Stripe)'], ['external', 'Externe link']] as const).map(([value, label]) => (
+                {([['none', t('ticketNone')], ['own', t('ticketOwn')], ['external', t('ticketExternal')]] as const).map(([value, label]) => (
                   <button
                     key={value}
                     type="button"
@@ -399,7 +401,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
             {ticketMode === 'own' && (
               <>
                 <div>
-                  <label style={labelStyle}>Prijs leden (EUR)</label>
+                  <label style={labelStyle}>{t('labelPriceMembers')}</label>
                   <input
                     type="number"
                     min="0"
@@ -411,7 +413,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
                   />
                 </div>
                 <div>
-                  <label style={labelStyle}>Prijs niet-leden (EUR)</label>
+                  <label style={labelStyle}>{t('labelPriceNonmembers')}</label>
                   <input
                     type="number"
                     min="0"
@@ -428,7 +430,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
             {/* External ticket URL */}
             {ticketMode === 'external' && (
               <div style={{ gridColumn: '1 / -1' }}>
-                <label style={labelStyle}>Ticket URL</label>
+                <label style={labelStyle}>{t('labelTicketUrl')}</label>
                 <input
                   type="url"
                   value={form.external_ticket_url}
@@ -443,9 +445,9 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
                 gaat via een externe site) */}
             {ticketMode !== 'external' && (
               <div style={{ gridColumn: '1 / -1', marginTop: 4 }}>
-                <label style={labelStyle}>Aanmeld-velden (extra vragen per deelnemer)</label>
+                <label style={labelStyle}>{t('labelFormFields')}</label>
                 <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-text-muted)', margin: '0 0 8px' }}>
-                  Naam en e-mail worden altijd gevraagd. Voeg hier extra velden toe (bijv. shirtmaat, dieetwens).
+                  {t('formFieldsHelp')}
                 </p>
 
                 {fields.length > 0 && (
@@ -467,7 +469,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
                             type="text"
                             value={f.label}
                             onChange={(e) => updateField(f.id, { label: e.target.value })}
-                            placeholder="Vraag / label"
+                            placeholder={t('placeholderFieldLabel')}
                             style={{ ...inputStyle, flex: 2 }}
                           />
                           <select
@@ -486,7 +488,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
                             type="text"
                             value={(f.options ?? []).join(', ')}
                             onChange={(e) => updateField(f.id, { options: e.target.value.split(',').map((o) => o.trimStart()) })}
-                            placeholder="Opties, komma-gescheiden (bijv. S, M, L)"
+                            placeholder={t('placeholderOptions')}
                             style={inputStyle}
                           />
                         )}
@@ -498,19 +500,19 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
                               checked={f.required}
                               onChange={(e) => updateField(f.id, { required: e.target.checked })}
                             />
-                            Verplicht
+                            {t('fieldRequired')}
                           </label>
                           <div style={{ display: 'flex', gap: 6 }}>
                             <button type="button" onClick={() => moveField(f.id, -1)} disabled={idx === 0}
-                              style={{ color: 'var(--color-text-muted)', cursor: idx === 0 ? 'not-allowed' : 'pointer', opacity: idx === 0 ? 0.3 : 1 }} aria-label="Omhoog">
+                              style={{ color: 'var(--color-text-muted)', cursor: idx === 0 ? 'not-allowed' : 'pointer', opacity: idx === 0 ? 0.3 : 1 }} aria-label={t('ariaMoveUp')}>
                               <ArrowUp size={14} />
                             </button>
                             <button type="button" onClick={() => moveField(f.id, 1)} disabled={idx === fields.length - 1}
-                              style={{ color: 'var(--color-text-muted)', cursor: idx === fields.length - 1 ? 'not-allowed' : 'pointer', opacity: idx === fields.length - 1 ? 0.3 : 1 }} aria-label="Omlaag">
+                              style={{ color: 'var(--color-text-muted)', cursor: idx === fields.length - 1 ? 'not-allowed' : 'pointer', opacity: idx === fields.length - 1 ? 0.3 : 1 }} aria-label={t('ariaMoveDown')}>
                               <ArrowDown size={14} />
                             </button>
                             <button type="button" onClick={() => removeField(f.id)}
-                              style={{ color: 'var(--color-accent-red)', cursor: 'pointer' }} aria-label="Verwijderen">
+                              style={{ color: 'var(--color-accent-red)', cursor: 'pointer' }} aria-label={t('ariaRemove')}>
                               <Trash2 size={14} />
                             </button>
                           </div>
@@ -533,7 +535,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
                     cursor: 'pointer',
                   }}
                 >
-                  <Plus size={14} /> Veld toevoegen
+                  <Plus size={14} /> {t('addField')}
                 </button>
               </div>
             )}
@@ -547,7 +549,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
           )}
           {success && (
             <p style={{ color: 'var(--color-accent-green)', fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
-              <Check size={13} style={{ flexShrink: 0 }} /> {isEdit ? 'Event bijgewerkt' : 'Event aangemaakt'}
+              <Check size={13} style={{ flexShrink: 0 }} /> {isEdit ? t('eventUpdated') : t('eventCreated')}
             </p>
           )}
 
@@ -570,7 +572,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
                 opacity: (!form.title || !form.date) ? 0.4 : 1,
               }}
             >
-              {saving ? '> opslaan...' : isEdit ? '> Opslaan' : '> Aanmaken'}
+              {saving ? t('submitSaving') : isEdit ? t('submitSave') : t('submitCreate')}
             </button>
             <button
               type="button"
@@ -588,7 +590,7 @@ export default function EventFormModal({ event, onClose, onSaved }: EventFormMod
                 cursor: 'pointer',
               }}
             >
-              Annuleren
+              {t('cancel')}
             </button>
           </div>
         </form>
