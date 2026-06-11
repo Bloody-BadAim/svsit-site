@@ -15,6 +15,12 @@ export interface Partner {
   url?: string;
   /** Short slug shown as node://<id> */
   slug: string;
+  /**
+   * Optional brand wordmark. When set, the node renders this logo (white,
+   * for the dark substrate) instead of the scrambled name text. Width/height
+   * are the intrinsic ratio; actual size is capped in CSS (.brand-logo).
+   */
+  logo?: { src: string; width: number; height: number };
 }
 
 export const TIER_META: Record<PartnerTier, { label: string; color: string }> = {
@@ -52,6 +58,7 @@ export const PARTNERS: Partner[] = [
     tagline: "Marktleider in zorg-IT. Bouwt het EPD dat heel zorgend Nederland draait.",
     url: "https://www.chipsoft.nl",
     slug: "chipsoft",
+    logo: { src: "/chipsoft-logo.svg", width: 2649, height: 1183 },
   },
   {
     name: "JetBrains",

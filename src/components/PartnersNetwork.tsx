@@ -222,6 +222,17 @@ export default function PartnersNetwork() {
                         {p.name}
                       </TextScramble>
                     </h3>
+                  ) : p.logo ? (
+                    <h3 className="node-logo brand-logo">
+                      <Image
+                        src={p.logo.src}
+                        alt={p.name}
+                        width={p.logo.width}
+                        height={p.logo.height}
+                        priority={false}
+                        unoptimized
+                      />
+                    </h3>
                   ) : (
                     <h3 className="node-logo">
                       <TextScramble as="span" trigger={inView} duration={0.6} speed={0.03}>

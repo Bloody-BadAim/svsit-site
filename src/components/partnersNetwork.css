@@ -166,6 +166,13 @@
 .pnet .hboict-logo img { width: 100%; max-width: 172px; height: auto; display: block; }
 .pnet .node.hboict { border-color: color-mix(in srgb, var(--hboict-blue) 55%, rgba(255,255,255,0.08)); }
 
+/* Generieke merk-wordmark (wit) i.p.v. naam-tekst, bijv. ChipSoft */
+.pnet .brand-logo { display: flex; align-items: center; margin: 1rem 0 0.55rem; min-height: 2.2rem; }
+.pnet .brand-logo img {
+  width: auto; max-width: 150px; max-height: 2.4rem; height: auto; display: block;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c) 35%, transparent));
+}
+
 /* FemIT vrouwennetwerk-node: paarse merkkleur via --c + logo-mark */
 .pnet .node.femit { border-color: color-mix(in srgb, var(--c) 45%, rgba(255,255,255,0.08)); }
 .pnet .femit-logo { display: flex; align-items: center; gap: 0.6rem; margin: 1rem 0 0.55rem; }
