@@ -120,7 +120,7 @@ const KIT = [
     idx: '02',
     color: 'var(--green)',
     Icon: Coffee,
-    title: 'Gratis eten & drank',
+    title: 'Gratis eten & drinken',
     body: 'Lunch, borrels en genoeg koffie om je eerste week echt te overleven.',
   },
   {
