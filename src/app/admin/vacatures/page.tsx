@@ -65,6 +65,7 @@ export default function AdminVacaturesPage() {
   const [form, setForm] = useState<VacatureForm>(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [logoUploading, setLogoUploading] = useState(false)
 
   const fetchVacatures = useCallback(async () => {
     setLoading(true)
@@ -146,6 +147,26 @@ export default function AdminVacaturesPage() {
       setSaveError(err instanceof Error ? err.message : 'Opslaan mislukt')
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setLogoUploading(true)
+    setSaveError(null)
+    try {
+      const data = new FormData()
+      data.append('file', file)
+      const res = await fetch('/api/vacatures/logo', { method: 'POST', body: data })
+      const { data: result, error: apiError } = await res.json()
+      if (!res.ok || apiError) throw new Error(apiError || `Fout ${res.status}`)
+      setForm((prev) => ({ ...prev, company_logo: result.url }))
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Logo uploaden mislukt')
+    } finally {
+      setLogoUploading(false)
+      e.target.value = ''
     }
   }
 
@@ -266,12 +287,41 @@ export default function AdminVacaturesPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Bedrijf logo URL</label>
-              <input
-                style={inputStyle}
-                value={form.company_logo}
-                onChange={(e) => setForm({ ...form, company_logo: e.target.value })}
-              />
+              <label style={labelStyle}>Bedrijf logo</label>
+              <div className="flex items-center gap-3">
+                {form.company_logo && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={form.company_logo}
+                    alt="Logo"
+                    className="w-10 h-10 object-contain rounded shrink-0"
+                    style={{ border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg)' }}
+                  />
+                )}
+                <label
+                  className="px-3 py-2 font-mono text-xs cursor-pointer shrink-0"
+                  style={{ color: 'var(--color-text-muted)', border: '1px solid var(--color-border)', opacity: logoUploading ? 0.5 : 1 }}
+                >
+                  {logoUploading ? 'Uploaden...' : form.company_logo ? 'Vervangen' : 'Bestand kiezen'}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/avif,image/gif,image/svg+xml"
+                    onChange={handleLogoUpload}
+                    disabled={logoUploading}
+                    className="hidden"
+                  />
+                </label>
+                {form.company_logo && (
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, company_logo: '' })}
+                    className="font-mono text-xs"
+                    style={{ color: 'var(--color-accent-red)' }}
+                  >
+                    Verwijderen
+                  </button>
+                )}
+              </div>
             </div>
             <div>
               <label style={labelStyle}>Vacature URL</label>
