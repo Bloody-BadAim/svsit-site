@@ -29,6 +29,12 @@ function Corners() {
 
 export default function PartnersNetwork() {
   const t = useTranslations("partnersNetwork");
+  const td = useTranslations("partnersData");
+  // Capitalised tier label from the translated all-caps value (e.g. "SPONSOR" -> "Sponsor").
+  const tierCap = (tier: keyof typeof TIER_META) => {
+    const label = td(`tier.${tier}`);
+    return label.charAt(0) + label.slice(1).toLowerCase();
+  };
   const gridRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
 
@@ -197,7 +203,7 @@ export default function PartnersNetwork() {
                   <div className="spot" />
                   <div className="scan" />
                   <div className="node-head">
-                    <span className="badge">{isHboIct ? t("badgeHome") : tier.label}</span>
+                    <span className="badge">{isHboIct ? t("badgeHome") : td(`tier.${p.tier}`)}</span>
                     <span className="onl"><i />{t("nodeOnline")}</span>
                   </div>
                   {isHboIct ? (
@@ -242,7 +248,7 @@ export default function PartnersNetwork() {
                       </TextScramble>
                     </h3>
                   )}
-                  <p className="node-tag">{p.tagline}</p>
+                  <p className="node-tag">{td(`tagline.${p.slug}`, { SIT: "{SIT}" })}</p>
                   <div className="node-foot">
                     <span className="addr">node://<b>{p.slug}</b></span>
                     {p.url && <span className="go">{t("nodeConnect")}</span>}
@@ -283,10 +289,10 @@ export default function PartnersNetwork() {
 
         <div className="legend">
           <span className="c-green">{t("legendLabel")}</span>
-          {TIER_ORDER.map((t) => (
-            <span className="tier" key={t}>
-              <i style={{ background: TIER_META[t].color }} />
-              {TIER_META[t].label.charAt(0) + TIER_META[t].label.slice(1).toLowerCase()}
+          {TIER_ORDER.map((tier) => (
+            <span className="tier" key={tier}>
+              <i style={{ background: TIER_META[tier].color }} />
+              {tierCap(tier)}
             </span>
           ))}
         </div>

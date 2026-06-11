@@ -1,0 +1,19 @@
+{
+  "tier": {
+    "strategisch": "STRATEGISCH",
+    "hoofdsponsor": "HOOFDSPONSOR",
+    "sponsor": "SPONSOR",
+    "partner": "PARTNER"
+  },
+  "tagline": {
+    "hbo-ict": "De opleiding HBO-ICT aan de HvA. Waar {SIT} thuishoort.",
+    "cern": "Europees lab voor deeltjesfysica - waar ICT op wereldschaal draait.",
+    "chipsoft": "Marktleider in zorg-IT. Bouwt het EPD dat heel zorgend Nederland draait.",
+    "jetbrains": "Developer tools - de IDE's die je elke dag draait.",
+    "sogeti": "Technology & engineering. Consultancy waar studenten écht meebouwen.",
+    "coe-aai": "HvA-kenniscentrum voor toegepaste AI.",
+    "ai4hva": "De AI-community van de HvA.",
+    "femit": "Het vrouwennetwerk van HBO-ICT. Samen sterker in tech.",
+    "rank-my-ai": "Partner uit het AI-netwerk."
+  }
+}

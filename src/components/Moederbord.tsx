@@ -14,7 +14,6 @@ import {
   PEOPLE,
   BESTUUR,
   COMMISSIES,
-  STATUS_LABELS,
   JOIN_URL,
   memberName,
   type Commissie,
@@ -186,6 +185,7 @@ function BoardChip({
   onHover: (h: HoverState) => void;
   onClick: (s: Selected) => void;
 }) {
+  const t = useTranslations("moederbord");
   const p = PEOPLE[m.person];
   return (
     <button
@@ -200,7 +200,7 @@ function BoardChip({
       <span className="board-code">{m.code}</span>
       <Avatar personKey={m.person} color={m.color} size={92} />
       <span className="board-name">{p.name}</span>
-      <span className="board-role">{m.role}</span>
+      <span className="board-role">{t(`role.${m.role}`)}</span>
     </button>
   );
 }
@@ -245,7 +245,7 @@ function ModuleCard({
         <span className="mod-code">{c.code}</span>
         <span className="mod-status" style={{ "--st": statusColor } as CSSVars}>
           <i />
-          {STATUS_LABELS[c.status]}
+          {t(`status.${c.status}`)}
         </span>
       </span>
       <span className="mod-name">
@@ -259,7 +259,7 @@ function ModuleCard({
           <i>{vz ? t("module.chair") : t("module.seekingChair")}</i>
         </span>
       </span>
-      <span className="mod-tag">{c.tagline}</span>
+      <span className="mod-tag">{t(`commissie.${c.id}.tagline`)}</span>
       <span className="mod-cta">
         {t("module.open")} <span aria-hidden="true">→</span>
       </span>
@@ -358,7 +358,7 @@ function DetailSheet({
                 <>
                   <h2 className="sheet-title">{person!.name}</h2>
                   <p className="sheet-sub" style={{ color }}>
-                    {t("sheet.roleBoard", { role: b!.role })}
+                    {t("sheet.roleBoard", { role: t(`role.${b!.role}`) })}
                   </p>
                 </>
               )}
@@ -376,21 +376,21 @@ function DetailSheet({
                   {">"} {t("sheet.labelTagline")}
                 </p>
                 <p className="sheet-quote" style={{ borderColor: color }}>
-                  {c!.tagline}
+                  {t(`commissie.${c!.id}.tagline`)}
                 </p>
               </div>
               <div className="sheet-block">
                 <p className="sheet-label" style={{ color }}>
                   {">"} {t("sheet.labelOver")}
                 </p>
-                <p className="sheet-text">{c!.beschrijving}</p>
+                <p className="sheet-text">{t(`commissie.${c!.id}.beschrijving`)}</p>
               </div>
               <div className="sheet-block">
                 <p className="sheet-label" style={{ color }}>
                   {">"} {t("sheet.labelMissie")}
                 </p>
                 <p className="sheet-quote" style={{ borderColor: color }}>
-                  &quot;{c!.missie}&quot;
+                  &quot;{t(`commissie.${c!.id}.missie`)}&quot;
                 </p>
               </div>
               <div className="sheet-block">
@@ -398,12 +398,14 @@ function DetailSheet({
                   {">"} {t("sheet.labelActiviteiten")}
                 </p>
                 <ul className="sheet-list">
-                  {c!.activiteiten.map((a) => (
-                    <li key={a}>
-                      <span>$</span>
-                      {a}
-                    </li>
-                  ))}
+                  {(t.raw(`commissie.${c!.id}.activiteiten`) as string[]).map(
+                    (a) => (
+                      <li key={a}>
+                        <span>$</span>
+                        {a}
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
               <div className="sheet-block">
@@ -449,7 +451,7 @@ function DetailSheet({
                   {">"} over
                 </p>
                 <p className="sheet-quote" style={{ borderColor: color }}>
-                  {b!.over}
+                  {t(`memberBio.${b!.id}.over`)}
                 </p>
               </div>
               {chairs.length > 0 && (

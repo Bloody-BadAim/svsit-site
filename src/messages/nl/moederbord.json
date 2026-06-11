@@ -1,4 +1,9 @@
 {
+  "status": {
+    "actief": "ACTIEF",
+    "nieuw": "NIEUW",
+    "zoekt-leden": "ZOEKT LEDEN"
+  },
   "head": {
     "title1": "HET",
     "title2": "MOEDERBORD",
@@ -39,5 +44,112 @@
     "joinChoice": "<jouw keuze>",
     "joinCta": "MELD JE AAN",
     "mailPre": "Of mail naar "
+  },
+  "role": {
+    "Voorzitter": "Voorzitter",
+    "Secretaris": "Secretaris",
+    "Penningmeester": "Penningmeester",
+    "Vice Voorzitter": "Vice Voorzitter"
+  },
+  "memberBio": {
+    "matin": {
+      "role": "Voorzitter",
+      "over": "Als voorzitter bewaak ik de grote lijn van SIT en zorg ik dat alle commissies dezelfde kant op draaien. Mijn focus dit jaar: AI4HvA groot maken en SIT stevig op de kaart zetten binnen de HvA."
+    },
+    "idil": {
+      "role": "Secretaris",
+      "over": "Als secretaris zorg ik dat de boel georganiseerd blijft: van notulen en planning tot communicatie en opvolging. Ik hou bij wat er afgesproken is en zorg dat niemand iets mist. Ook breng ik wat enthousiasme mee om er echt iets moois van te maken."
+    },
+    "wesley": {
+      "role": "Penningmeester",
+      "over": "Als penningmeester bewaak ik de centen, regel ik de contributie en zorg ik dat events financieel kloppen. Geen verrassingen op de rekening."
+    },
+    "mats": {
+      "role": "Vice Voorzitter",
+      "over": "Als vice voorzitter ben ik het tweede gezicht van SIT. Met trots zet ik mij in voor beter onderwijs in Nederland, en bouw ik community voor alle studenten. Ik ben betrokken bij EduCo en ik denk mee over de koers van de studievereniging en HBO-ICT."
+    }
+  },
+  "commissie": {
+    "servco": {
+      "tagline": "De tech-backbone van SIT - server, site en studentprojecten.",
+      "beschrijving": "De technische backbone van SIT. ServCo beheert de eigen SIT-server, vernieuwt svsit.nl met studentprojecten, en onderzoekt mogelijkheden zoals game servers en hosting.",
+      "missie": "SIT een eigen digitale infrastructuur geven die door studenten wordt gebouwd en onderhouden.",
+      "activiteiten": [
+        "Eigen SIT-server beheren",
+        "svsit.nl vernieuwen met studentprojecten",
+        "Game server hosting",
+        "Technische projecten voor leden"
+      ]
+    },
+    "community": {
+      "tagline": "De stem van de leden - online en offline.",
+      "beschrijving": "Ontstaan uit de samenvoeging van PR & Socials en Peiling. Community zorgt voor de online aanwezigheid van SIT, haalt op wat studenten willen, en activeert leden.",
+      "missie": "SIT is er voor de studenten, niet andersom. Als we niet weten wat ze willen, kunnen we ze niet geven wat ze nodig hebben.",
+      "activiteiten": [
+        "Instagram en LinkedIn content",
+        "Maandelijkse mini-peilingen",
+        "Onboarding nieuwe studenten",
+        "Leden activeren en feedback ophalen",
+        "Semester-enquetes"
+      ]
+    },
+    "educo": {
+      "tagline": "Workshops, tech talks en skill-ups.",
+      "beschrijving": "Verantwoordelijk voor educatieve content: workshops, tech talks, en kennissessies. Werkt samen met de opleiding voor Fusion klassen en evenementen.",
+      "missie": "Studenten helpen groeien door workshops, lezingen en hands-on leermomenten te organiseren.",
+      "activiteiten": [
+        "Workshops organiseren",
+        "Tech talks en coding sessions",
+        "Samenwerking met opleiding (Fusion klassen)",
+        "Skill development events"
+      ]
+    },
+    "events": {
+      "tagline": "Borrels, uitjes en alles wat SIT samenbrengt.",
+      "beschrijving": "Gefocust op leuke activiteiten: feestjes, uitjes, sport, en gaming events. Van kroegentochten tot Thuishaven - alles wat SIT sociaal maakt.",
+      "missie": "Zorgen dat SIT-leden elkaar ontmoeten buiten de collegebanken, met events die passen bij wat studenten willen.",
+      "activiteiten": [
+        "Borrels en kroegentochten",
+        "Feesten en borrels",
+        "Sportactiviteiten (voetbal, padel)",
+        "Bedrijfsbezoeken en netwerkborrels",
+        "Game-avonden en uitjes"
+      ]
+    },
+    "ai4hva": {
+      "tagline": "De AI-community van de HvA.",
+      "beschrijving": "De AI-community van de HvA, officieel georganiseerd onder SIT. AI4HvA is het unieke speerpunt van SIT - het positioneert de vereniging als meer dan alleen een sociale club.",
+      "missie": "De go-to plek worden voor AI-interesse op de HvA, met workshops, hackathons en connecties naar de 5 HvA AI Labs.",
+      "activiteiten": [
+        "AI workshops en hackathons",
+        "AI Marathon organiseren",
+        "Lab Ambassadeurs bij 5 HvA AI Labs",
+        "AI020 events bezoeken",
+        "Kennisdeling over AI tools"
+      ]
+    },
+    "gameit": {
+      "tagline": "Game nights, toernooien en D&D.",
+      "beschrijving": "Gaming-gerelateerde activiteiten en events voor SIT leden. Van casual game nights tot D&D campagnes en gaming tournaments.",
+      "missie": "Gamers binnen HBO-ICT samenbrengen met regelmatige game nights, toernooien en community events.",
+      "activiteiten": [
+        "Game nights",
+        "D&D sessies en campagnes",
+        "Gaming tournaments",
+        "LAN parties"
+      ]
+    },
+    "sponsoring": {
+      "tagline": "Verbindt leden met de IT-arbeidsmarkt.",
+      "beschrijving": "Werft en onderhoudt sponsorrelaties met bedrijven. Van tech talks tot stages - sponsoring zorgt dat SIT-leden in contact komen met de IT-arbeidsmarkt.",
+      "missie": "Waardevolle partnerships opbouwen die concreet iets opleveren voor leden: stagekansen, workshops, tooling en netwerkmomenten.",
+      "activiteiten": [
+        "Bedrijven benaderen en partnerships opzetten",
+        "Sponsorpakketten beheren",
+        "Tech talks en bedrijfsbezoeken organiseren",
+        "Stagemarkt coordineren",
+        "Pipeline van 46+ bedrijven onderhouden"
+      ]
+    }
   }
 }

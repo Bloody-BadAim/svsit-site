@@ -57,8 +57,12 @@ import nlAuthRegister from "@/messages/nl/authRegister.json";
 import enAuthRegister from "@/messages/en/authRegister.json";
 import nlAuthResetPassword from "@/messages/nl/authResetPassword.json";
 import enAuthResetPassword from "@/messages/en/authResetPassword.json";
+import nlBadgeDefs from "@/messages/nl/badgeDefs.json";
+import enBadgeDefs from "@/messages/en/badgeDefs.json";
 import nlCardEditor from "@/messages/nl/cardEditor.json";
 import enCardEditor from "@/messages/en/cardEditor.json";
+import nlCommissies from "@/messages/nl/commissies.json";
+import enCommissies from "@/messages/en/commissies.json";
 import nlCommon from "@/messages/nl/common.json";
 import enCommon from "@/messages/en/common.json";
 import nlCommunityLog from "@/messages/nl/communityLog.json";
@@ -171,6 +175,8 @@ import nlPageTickets from "@/messages/nl/pageTickets.json";
 import enPageTickets from "@/messages/en/pageTickets.json";
 import nlPageVacatures from "@/messages/nl/pageVacatures.json";
 import enPageVacatures from "@/messages/en/pageVacatures.json";
+import nlPartnersData from "@/messages/nl/partnersData.json";
+import enPartnersData from "@/messages/en/partnersData.json";
 import nlPartnersNetwork from "@/messages/nl/partnersNetwork.json";
 import enPartnersNetwork from "@/messages/en/partnersNetwork.json";
 import nlPrivacyContent from "@/messages/nl/privacyContent.json";
@@ -219,7 +225,9 @@ const nl = {
   authLogin: nlAuthLogin,
   authRegister: nlAuthRegister,
   authResetPassword: nlAuthResetPassword,
+  badgeDefs: nlBadgeDefs,
   cardEditor: nlCardEditor,
+  commissies: nlCommissies,
   common: nlCommon,
   communityLog: nlCommunityLog,
   dashBadgesTab: nlDashBadgesTab,
@@ -276,6 +284,7 @@ const nl = {
   pageShop: nlPageShop,
   pageTickets: nlPageTickets,
   pageVacatures: nlPageVacatures,
+  partnersData: nlPartnersData,
   partnersNetwork: nlPartnersNetwork,
   privacyContent: nlPrivacyContent,
   scrollMorphNumbers: nlScrollMorphNumbers,
@@ -315,7 +324,9 @@ const en = {
   authLogin: enAuthLogin,
   authRegister: enAuthRegister,
   authResetPassword: enAuthResetPassword,
+  badgeDefs: enBadgeDefs,
   cardEditor: enCardEditor,
+  commissies: enCommissies,
   common: enCommon,
   communityLog: enCommunityLog,
   dashBadgesTab: enDashBadgesTab,
@@ -372,6 +383,7 @@ const en = {
   pageShop: enPageShop,
   pageTickets: enPageTickets,
   pageVacatures: enPageVacatures,
+  partnersData: enPartnersData,
   partnersNetwork: enPartnersNetwork,
   privacyContent: enPrivacyContent,
   scrollMorphNumbers: enScrollMorphNumbers,

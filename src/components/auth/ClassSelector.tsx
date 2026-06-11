@@ -24,6 +24,7 @@ export default function ClassSelector({
 }: ClassSelectorProps) {
   const [showEigenIdee, setShowEigenIdee] = useState(false)
   const t = useTranslations('authClassSelector')
+  const tc = useTranslations('commissies')
 
   return (
     <div className="space-y-6">
@@ -78,11 +79,11 @@ export default function ClassSelector({
                 className="font-semibold"
                 style={{ color: selected === commissie.id ? 'var(--color-accent-gold)' : 'var(--color-text)' }}
               >
-                {commissie.naam}
+                {tc(`${commissie.id}.naam`)}
               </span>
             </div>
             <p className="text-sm ml-8" style={{ color: 'var(--color-text-muted)' }}>
-              {commissie.beschrijving}
+              {tc(`${commissie.id}.beschrijving`)}
             </p>
           </button>
         ))}

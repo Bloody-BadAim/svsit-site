@@ -57,6 +57,7 @@ function PartnerChip({
   decorative?: boolean;
 }) {
   const t = useTranslations("sponsorShowcase");
+  const td = useTranslations("partnersData");
   const meta = TIER_META[tier];
   const isHboIct = slug === "hbo-ict";
   const isBig = tier === "strategisch" || tier === "hoofdsponsor";
@@ -72,7 +73,7 @@ function PartnerChip({
       <div className="sbus-spot" aria-hidden="true" />
 
       <div className="sbus-chip-head">
-        <span className="sbus-badge">{isHboIct ? t("homebase") : meta.label}</span>
+        <span className="sbus-badge">{isHboIct ? t("homebase") : td(`tier.${tier}`)}</span>
         <span className="sbus-onl" aria-hidden="true" />
       </div>
 
@@ -86,7 +87,7 @@ function PartnerChip({
         )}
       </h3>
 
-      <p className="sbus-tag">{tagline}</p>
+      <p className="sbus-tag">{td(`tagline.${slug}`, { SIT: "{SIT}" })}</p>
 
       <div className="sbus-foot">
         <span className="sbus-addr">
@@ -162,6 +163,12 @@ function SlotChip({ decorative }: { decorative?: boolean }) {
 
 export default function SponsorShowcase() {
   const t = useTranslations("sponsorShowcase");
+  const td = useTranslations("partnersData");
+  // Capitalised tier label from the translated all-caps value (e.g. "SPONSOR" -> "Sponsor").
+  const tierCap = (tier: keyof typeof TIER_META) => {
+    const label = td(`tier.${tier}`);
+    return label.charAt(0) + label.slice(1).toLowerCase();
+  };
   const ref = useRef<HTMLElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
@@ -361,11 +368,10 @@ export default function SponsorShowcase() {
         <div className="px-6 md:px-12 lg:px-24 mt-9 md:mt-11 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="sbus-legend">
             <span className="g">{t("legend")}</span>
-            {TIER_ORDER.filter((t) => t !== "hoofdsponsor").map((t) => (
-              <span className="tier" key={t}>
-                <i style={{ background: TIER_META[t].color }} aria-hidden="true" />
-                {TIER_META[t].label.charAt(0) +
-                  TIER_META[t].label.slice(1).toLowerCase()}
+            {TIER_ORDER.filter((tier) => tier !== "hoofdsponsor").map((tier) => (
+              <span className="tier" key={tier}>
+                <i style={{ background: TIER_META[tier].color }} aria-hidden="true" />
+                {tierCap(tier)}
               </span>
             ))}
           </div>

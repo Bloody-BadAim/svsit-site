@@ -50,6 +50,7 @@ function EquippedSlots({
 }) {
   const shouldReduceMotion = useReducedMotion()
   const t = useTranslations('dashBadgesTab')
+  const tb = useTranslations('badgeDefs')
 
   return (
     <div
@@ -109,7 +110,7 @@ function EquippedSlots({
                 {badge ? (
                   <div
                     className="relative cursor-pointer group"
-                    title={t('removeTitle', { name: badge.name })}
+                    title={t('removeTitle', { name: tb(`${badge.id}.name`) })}
                     onClick={() => onUnequip(badge.id)}
                   >
                     <BadgeIcon badgeId={badge.id} size={28} rarity={badge.rarity} />
@@ -218,6 +219,7 @@ function BadgeDetail({
   onClose: () => void
 }) {
   const t = useTranslations('dashBadgesTab')
+  const tb = useTranslations('badgeDefs')
   const locale = useLocale()
   const badge = BADGE_DEFS.find((b) => b.id === badgeId)
   if (!badge) return null
@@ -268,7 +270,7 @@ function BadgeDetail({
                 fontFamily: "'Big Shoulders Display', var(--font-geist-sans), sans-serif",
               }}
             >
-              {badge.name}
+              {tb(`${badge.id}.name`)}
             </h3>
             {/* Rarity label */}
             <span
@@ -284,7 +286,7 @@ function BadgeDetail({
           </div>
 
           <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-            {badge.description}
+            {tb(`${badge.id}.description`)}
           </p>
 
           <div className="mt-3 font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.25)' }}>
@@ -367,6 +369,7 @@ function BadgeGridItem({
   isSelected: boolean
   onClick: () => void
 }) {
+  const tb = useTranslations('badgeDefs')
   const rarityColor = badge.rarity === 'mythic'
     ? 'rgba(255,255,255,0.7)'
     : RARITY_CONFIG[badge.rarity].color
@@ -430,7 +433,7 @@ function BadgeGridItem({
           overflow: 'hidden',
         }}
       >
-        {badge.name}
+        {tb(`${badge.id}.name`)}
       </span>
     </button>
   )

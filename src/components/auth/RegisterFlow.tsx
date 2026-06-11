@@ -5,7 +5,7 @@ import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import ClassSelector from './ClassSelector'
-import { COMMISSIES, ROLLEN, SITE_CONFIG } from '@/lib/constants'
+import { ROLLEN, SITE_CONFIG } from '@/lib/constants'
 import type { Role } from '@/types/database'
 import { Check, ArrowRight, User, GraduationCap } from 'lucide-react'
 
@@ -13,6 +13,7 @@ type Step = 1 | 2
 
 export default function RegisterFlow() {
   const t = useTranslations('authRegister')
+  const tc = useTranslations('commissies')
   const { data: session } = useSession()
   const router = useRouter()
   const isMicrosoft = !!session?.user?.email
@@ -62,7 +63,9 @@ export default function RegisterFlow() {
   const role: Role = isDocent ? 'mentor' : selectedCommissie ? 'contributor' : 'member'
   const commissieNaam = selectedCommissie === 'eigen-idee'
     ? eigenIdee
-    : COMMISSIES.find((c) => c.id === selectedCommissie)?.naam || null
+    : selectedCommissie
+      ? tc(`${selectedCommissie}.naam`)
+      : null
 
   // Stap 1 validatie
   const step1Valid = email.trim().length > 0

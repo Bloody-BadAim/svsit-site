@@ -1,0 +1,30 @@
+{
+  "servo": {
+    "naam": "ServCo",
+    "beschrijving": "Server beheer, svsit.nl, technische projecten"
+  },
+  "community": {
+    "naam": "Community",
+    "beschrijving": "Socials, peilingen, onboarding, leden activeren"
+  },
+  "educo": {
+    "naam": "Educatie (EduCo)",
+    "beschrijving": "Workshops, lezingen, en skill development"
+  },
+  "events": {
+    "naam": "Evenementen",
+    "beschrijving": "Borrels, feesten, uitjes, en grote events organiseren"
+  },
+  "ai4hva": {
+    "naam": "AI4HvA",
+    "beschrijving": "AI workshops, hackathons, en de AI community"
+  },
+  "gameit": {
+    "naam": "GameIT",
+    "beschrijving": "Game nights, toernooien, en game dev showcases"
+  },
+  "sponsoring": {
+    "naam": "Sponsoring",
+    "beschrijving": "Bedrijven benaderen, partnerships opzetten"
+  }
+}
