@@ -3,45 +3,40 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
-import { Lock, Check, Users, Coffee, Zap, Sparkles, Send, ChevronDown } from 'lucide-react'
+import { Check, Users, Gift, KeyRound, Compass, MapPin, Send, ChevronDown } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/constants'
 import HboIctVormtaal from '@/components/HboIctVormtaal'
 
 // ── Program data (two intro weeks) ───────────────────────────────────────────
-// Structural fields only (number, color, brand title, locked state). All
-// translatable copy (slug, desc, tags, scr) lives in the introweekClient
-// namespace, keyed by week + num. See src/messages/{nl,en}/introweekClient.json.
+// Structural fields only (number, color, brand title). All translatable copy
+// (slug, desc, tags, date, loc) lives in the introweekClient namespace, keyed
+// by week + num. See src/messages/{nl,en}/introweekClient.json.
 
 type DayCard = {
   num: string
   color: string
   title: string
   weekKey: 'week1' | 'week2'
-  locked?: boolean
-  blocks?: string
 }
 
 const WEEK1: DayCard[] = [
-  { num: '01', color: 'var(--gold)', title: 'Power On', weekKey: 'week1' },
-  { num: '02', color: 'var(--blue)', title: 'Campus Hunt', weekKey: 'week1' },
-  { num: '03', color: 'var(--green)', title: 'First Borrel', weekKey: 'week1' },
-  { num: '04', color: 'var(--purple)', title: 'Connect', weekKey: 'week1' },
-  { num: '05', color: 'var(--cyan)', title: '???', weekKey: 'week1', locked: true, blocks: '████ ███ ██████ ████' },
+  { num: '01', color: 'var(--gold)', title: 'Hub Open', weekKey: 'week1' },
+  { num: '02', color: 'var(--blue)', title: 'Kickoff Middag', weekKey: 'week1' },
+  { num: '03', color: 'var(--green)', title: 'Pizza & Projects', weekKey: 'week1' },
+  { num: '04', color: 'var(--purple)', title: 'Study with SIT', weekKey: 'week1' },
+  { num: '05', color: 'var(--cyan)', title: 'Hub Open', weekKey: 'week1' },
 ]
 
 const WEEK2: DayCard[] = [
-  { num: '01', color: 'var(--blue)', title: 'Build Mode', weekKey: 'week2' },
-  { num: '02', color: 'var(--purple)', title: 'Player 2', weekKey: 'week2' },
-  { num: '03', color: 'var(--green)', title: 'Stad In', weekKey: 'week2' },
-  { num: '04', color: 'var(--red)', title: 'Launch', weekKey: 'week2' },
-  { num: '05', color: 'var(--cyan)', title: '???', weekKey: 'week2', locked: true, blocks: '██ ████ ███████ ████' },
+  { num: '01', color: 'var(--red)', title: 'Hackathon', weekKey: 'week2' },
+  { num: '02', color: 'var(--gold)', title: 'Aloha Feest', weekKey: 'week2' },
 ]
 
 const KIT = [
-  { idx: '01', color: 'var(--gold)', Icon: Users },
-  { idx: '02', color: 'var(--green)', Icon: Coffee },
-  { idx: '03', color: 'var(--blue)', Icon: Zap },
-  { idx: '04', color: 'var(--purple)', Icon: Sparkles },
+  { idx: '01', color: 'var(--gold)', Icon: Gift },
+  { idx: '02', color: 'var(--green)', Icon: KeyRound },
+  { idx: '03', color: 'var(--blue)', Icon: Compass },
+  { idx: '04', color: 'var(--purple)', Icon: Users },
 ]
 
 // ── Day card ──────────────────────────────────────────────────────────────────
@@ -51,34 +46,17 @@ type DayT = ReturnType<typeof useTranslations>
 function Day({ d, t }: { d: DayCard; t: DayT }) {
   const base = `${d.weekKey}.${d.num}`
   const slug = t(`${base}.slug`)
-  if (d.locked) {
-    return (
-      <article className="day tilt soon locked-card reveal" style={{ '--c': d.color } as CSSProperties} tabIndex={0} role="button" aria-expanded={false}>
-        <div className="tilt-inner">
-          <span className="day-corner tl" /><span className="day-corner br" />
-          <div className="day-top"><span className="day-num">{d.num}</span><span className="day-soon"><span className="sd" />{t('day.secret')}</span></div>
-          <div className="day-body locked-body">
-            <h3 className="day-title">??? <span className="lockico"><Lock size={16} /></span></h3>
-            <p className="day-slug mono">// <span className="c">{slug}</span></p>
-            <div className="scrambled mono" data-scr={t(`${base}.scr`)}>{d.blocks}</div>
-          </div>
-          <div className="day-foot"><span className="more c-muted">{t('day.locked')}</span><span className="compiling">{t('day.decrypting')}</span></div>
-        </div>
-      </article>
-    )
-  }
   const tags = t.raw(`${base}.tags`) as string[]
   return (
     <article className="day tilt soon reveal" style={{ '--c': d.color } as CSSProperties} tabIndex={0} role="button" aria-expanded={false}>
       <div className="tilt-inner">
         <span className="day-corner tl" /><span className="day-corner br" />
-        <div className="day-top"><span className="day-num">{d.num}</span><span className="day-soon"><span className="sd" />{t('day.soon')}</span></div>
+        <div className="day-top"><span className="day-num">{d.num}</span><span className="day-soon"><span className="sd" />{t(`${base}.date`)}</span></div>
         <div className="day-body">
           <h3 className="day-title">{d.title}</h3>
           <p className="day-slug mono">// <span className="c">{slug}</span></p>
-          <div className="day-meta locked">
-            <span><Lock size={13} />{t('day.dateMeta')}</span>
-            <span><Lock size={13} />{t('day.timeMeta')}</span>
+          <div className="day-meta">
+            <span><MapPin size={13} />{t(`${base}.loc`)}</span>
           </div>
         </div>
         <div className="day-extra">
@@ -879,7 +857,7 @@ const CSS = `
 .iw .sec-intro b { color: var(--text); }
 
 /* ── PROGRAM CARDS ── */
-.iw .days { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(.8rem, 1.4vw, 1.3rem); perspective: 1400px; }
+.iw .days { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: clamp(.8rem, 1.4vw, 1.3rem); perspective: 1400px; }
 @media (max-width: 1100px) { .iw .days { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .iw .days { grid-template-columns: 1fr; } }
 .iw .day { --c: var(--gold); position: relative; cursor: pointer; transform-style: preserve-3d; border-radius: 16px; outline: none; }

@@ -12,13 +12,13 @@
     "start": "start introweek"
   },
   "hero": {
-    "eyebrow": "twee introweken · september 2026 · HvA Amsterdam",
+    "eyebrow": "introweek · 31 aug t/m 4 sep · HvA Amsterdam",
     "cobrand": "de studievereniging van HBO-ICT",
     "kicker": "~/hva/hbo-ict > ./start --new-student",
-    "subPre": "Je eerste weken aan de HvA. Waar je studie begint, en waar je ",
+    "subPre": "Je eerste week aan de HvA. Waar je studie begint, en waar je ",
     "subBold": "je mensen vindt",
     "subPost": ". Boot in. Vlieg de SIT-core in.",
-    "countdownLabel": "geschat aftellen tot ",
+    "countdownLabel": "aftellen tot ",
     "countdownTarget": "introweek",
     "countdownLive": "het is zover, kom langs!",
     "unitDays": "dagen",
@@ -34,104 +34,99 @@
     "scroll": "scroll"
   },
   "day": {
-    "soon": "binnenkort",
-    "secret": "geheim",
-    "dateMeta": "datum · t.b.a.",
-    "timeMeta": "tijd & locatie · volgt",
     "vibe": "vibe",
-    "compiling": "compiling...",
-    "locked": "vergrendeld",
-    "decrypting": "decrypting..."
+    "compiling": "compiling..."
   },
   "week1": {
     "01": {
-      "slug": "kickoff & kennismaking",
-      "desc": "Officiele opening en je eerste kennismaking met het bestuur, de commissies en je mede-eerstejaars. Exacte invulling volgt.",
-      "tags": ["opening", "kennismaking"]
+      "slug": "inloop & starterpakket",
+      "desc": "De Hub op de 6e gaat open. Loop binnen, haal je starterpakket op en meld je aan met de QR. Geen vast programma, gewoon kennismaken.",
+      "tags": ["hub", "inloop"],
+      "date": "ma 31 aug",
+      "loc": "SIT Hub · 6e"
     },
     "02": {
-      "slug": "de stad & je crew",
-      "desc": "Leer de gebouwen, labs en koffieautomaten kennen, en vooral de mensen waarmee je je jaar gaat doorkomen.",
-      "tags": ["campus", "intro-groep"]
+      "slug": "game toernooi & commissiemarkt",
+      "desc": "De grote middag, op de dag dat alle eerstejaars vrij zijn. De finish van de campustocht bij de Hub: Mario Kart en Smash bracket op de Switch, de commissiemarkt, snacks en lid worden.",
+      "tags": ["kickoff", "game toernooi"],
+      "date": "di 1 sep",
+      "loc": "SIT Hub · 6e"
     },
     "03": {
-      "slug": "de eerste borrel",
-      "desc": "De eerste echte SIT-borrel. Dit is waar intro-groepjes vriendengroepen worden, en waar je jaar pas echt begint.",
-      "tags": ["borrel", "social"]
+      "slug": "pizza & side projects",
+      "desc": "Gratis pizza terwijl ouderejaars hun studie en eigen side projecten laten zien. Zo zie je wat je straks zelf gaat bouwen.",
+      "tags": ["pizza", "ouderejaars"],
+      "date": "wo 2 sep",
+      "loc": "SIT Hub · 6e"
     },
     "04": {
-      "slug": "chill & contact",
-      "desc": "Laagdrempelig samen chillen, gamen of gewoon kletsen. Geen druk, geen ervaring nodig. Kom zoals je bent.",
-      "tags": ["chill", "iedereen welkom"]
+      "slug": "laptop setup & gratis tools",
+      "desc": "Kom met je laptop. We zetten samen een sterke setup op met gratis licenties via GitHub Education en JetBrains, plus de tools waarmee je je opleiding sterk begint.",
+      "tags": ["dev tools", "setup"],
+      "date": "do 3 sep",
+      "loc": "SIT Hub · 6e"
     },
     "05": {
-      "slug": "nog niet onthuld",
-      "scr": "er staat iets moois gepland, geduld..."
+      "slug": "inloop & vooruitblik feest",
+      "desc": "Laatste inloop van de week. Chill na, stel je vragen en krijg een vooruitblik op het Aloha feest in week 2.",
+      "tags": ["hub", "feest"],
+      "date": "vr 4 sep",
+      "loc": "SIT Hub · 6e"
     }
   },
   "week2": {
     "01": {
-      "slug": "tech & workshops",
-      "desc": "Hands-on de tech in met AI4HvA en EduCo: workshops en een CTF-taster waar je je eerste flag hackt. Geen voorkennis nodig.",
-      "tags": ["ai4hva", "ctf taster"]
+      "slug": "hands-on bouwen",
+      "desc": "Je eerste hands-on event. In een dag bouw je iets echt met AI4HvA, voortbouwend op onze AI hackathon ervaring. De exacte datum in week 2 volgt.",
+      "tags": ["ai4hva", "hands-on"],
+      "date": "week 2",
+      "loc": "HvA · volgt"
     },
     "02": {
-      "slug": "game night & lan",
-      "desc": "Een avond LAN, tournaments en couch co-op, georganiseerd door GameIT. Breng je setup of speel op de onze.",
-      "tags": ["lan", "gameit"]
-    },
-    "03": {
-      "slug": "stadsspel & kroegentocht",
-      "desc": "Amsterdam in met een stadsspel dat eindigt in een kroegentocht. Een week lang wordt de hele stad je campus.",
-      "tags": ["stadsspel", "kroegentocht"]
-    },
-    "04": {
-      "slug": "de grote afsluiter",
-      "desc": "De grote afsluiter van de introperiode. Live muziek, de hele vereniging op een vloer en het officiele begin van jouw jaar bij SIT.",
-      "tags": ["feest", "afsluiter"]
-    },
-    "05": {
-      "slug": "nog niet onthuld",
-      "scr": "een verrassing voor de echte die-hards..."
+      "slug": "bowlen, lasergamen & meer",
+      "desc": "Het introfeest bij Aloha Amsterdam naast Centraal Station. Bowlen, lasergamen, glow minigolf, karaoke en VR. Inschrijven kan per mentorgroep zodat niemand alleen komt. Datum in week 2 volgt.",
+      "tags": ["feest", "aloha"],
+      "date": "week 2",
+      "loc": "Aloha Amsterdam"
     }
   },
   "kit": {
     "01": {
-      "title": "Een crew die blijft",
-      "body": "Je intro-groepje wordt het groepje waarmee je vier jaar lang door de opleiding rolt."
+      "title": "Starterpakket",
+      "body": "Stickers, goodies en de HBO-ICT survival guide met alles wat je nodig hebt."
     },
     "02": {
-      "title": "Gratis eten & drinken",
-      "body": "Lunch, borrels en genoeg koffie om je eerste week echt te overleven."
+      "title": "Gratis dev tools",
+      "body": "GitHub Education, JetBrains en meer. Bij Study with SIT zetten we ze samen op je laptop."
     },
     "03": {
-      "title": "Direct ingeplugd",
-      "body": "Toegang tot {commissies} commissies, de Discord en de eigen SIT-server, vanaf dag een."
+      "title": "Wegwijs op de HvA",
+      "body": "Brightspace, roosters, de HvA-apps en de medezeggenschap stamboom. Je weet meteen je weg."
     },
     "04": {
-      "title": "Geen ervaring nodig",
-      "body": "Kom zoals je bent, coder, gamer, of nog geen idee. Wij regelen de rest."
+      "title": "Een crew vanaf dag 1",
+      "body": "Het bestuur, {commissies} commissies en ouderejaars. Je staat nooit alleen in je eerste week."
     }
   },
   "program": {
     "label": "// het programma",
-    "introPre": "Dit jaar zijn er ",
-    "introBold1": "twee introweken",
-    "introMid": " in september. We zijn het volledige programma nog aan het plannen. Hieronder de ",
-    "introBold2": "vibe",
-    "introPost": " die je kan verwachten. Exacte dagen, tijden en locaties volgen binnenkort.",
-    "week1Btn": "Intro Week ",
-    "week2Btn": "Intro Week ",
-    "schemaTag": "// schema compileert...",
-    "notePre": "Het definitieve schema voor beide weken volgt binnenkort. ",
-    "noteLink": "word lid",
-    "notePost": " en je krijgt het als eerste in je inbox."
+    "introPre": "SIT is ",
+    "introBold1": "partner van HBO-ICT",
+    "introMid": " tijdens de introweek. Week 1 draait de ",
+    "introBold2": "SIT Hub op de 6e",
+    "introPost": ", elke dag iets nieuws. In week 2 volgen de hackathon en het Aloha feest.",
+    "week1Btn": "Week ",
+    "week2Btn": "Week ",
+    "schemaTag": "// wk 1 vast · wk 2 volgt",
+    "notePre": "De datums voor week 2 volgen zodra de hackathon en het feest vaststaan. ",
+    "noteLink": "Word lid",
+    "notePost": " en je hoort het als eerste."
   },
   "kitSection": {
     "label": "// je intro-survival kit",
-    "introPre": "Wat je uit deze weken meeneemt, ",
-    "introBold": "los van de hoofdpijn",
-    "introPost": "."
+    "introPre": "Iedereen die langskomt pakt het ",
+    "introBold": "SIT starterpakket",
+    "introPost": ". Dit zit erin."
   },
   "finale": {
     "label": "// claim je plek",
